@@ -1,9 +1,0 @@
-{
-  "runtimeOptions": {
-    "additionalProbingPaths": [
-      "C:\\Users\\Lutando Ngqakaza\\.dotnet\\store\\|arch|\\|tfm|",
-      "C:\\Users\\Lutando Ngqakaza\\.nuget\\packages",
-      "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-    ]
-  }
-}
