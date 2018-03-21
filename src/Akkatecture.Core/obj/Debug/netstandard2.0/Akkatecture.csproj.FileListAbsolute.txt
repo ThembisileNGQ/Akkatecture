@@ -1,0 +1,9 @@
+C:\Workspace\Entropy\Akkatecture\src\Akkatecture.Core\bin\Debug\netstandard2.0\Akkatecture.deps.json
+C:\Workspace\Entropy\Akkatecture\src\Akkatecture.Core\bin\Debug\netstandard2.0\Akkatecture.dll
+C:\Workspace\Entropy\Akkatecture\src\Akkatecture.Core\obj\Debug\netstandard2.0\Akkatecture.csprojResolveAssemblyReference.cache
+C:\Workspace\Entropy\Akkatecture\src\Akkatecture.Core\obj\Debug\netstandard2.0\Akkatecture.csproj.CoreCompileInputs.cache
+C:\Workspace\Entropy\Akkatecture\src\Akkatecture.Core\obj\Debug\netstandard2.0\Akkatecture.AssemblyInfoInputs.cache
+C:\Workspace\Entropy\Akkatecture\src\Akkatecture.Core\obj\Debug\netstandard2.0\Akkatecture.AssemblyInfo.cs
+C:\Workspace\Entropy\Akkatecture\src\Akkatecture.Core\bin\Debug\netstandard2.0\Akkatecture.pdb
+C:\Workspace\Entropy\Akkatecture\src\Akkatecture.Core\obj\Debug\netstandard2.0\Akkatecture.dll
+C:\Workspace\Entropy\Akkatecture\src\Akkatecture.Core\obj\Debug\netstandard2.0\Akkatecture.pdb

@@ -1,0 +1,58 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2009
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture", "src\Akkatecture.Core\Akkatecture.csproj", "{3D397B96-ED4E-4CBA-87FF-E045E650DADA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C7A99371-DCC0-4726-A971-E35C8CDF4768}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{86C56730-ABA0-411C-898C-5966EC483594}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Tests", "test\Akkatecture.Tests\Akkatecture.Tests.csproj", "{90CF254E-E922-4935-8381-00644FD668AC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{7522402D-176E-4305-A68B-F3FFBFD38158}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "simple", "simple", "{090ECC2F-5647-4B15-ABDF-2E1B44439626}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Examples.UserAccount", "examples\Akkatecture.Examples.UserAccount\Akkatecture.Examples.UserAccount.csproj", "{EDA99D27-D7E2-4D3D-909E-7F31B1AF36A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.Examples.UserAccount.Application", "examples\Akkatecture.Examples.UserAccount.Application\Akkatecture.Examples.UserAccount.Application.csproj", "{030BB76F-102D-4B96-96E5-B2166DE4DD63}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3D397B96-ED4E-4CBA-87FF-E045E650DADA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D397B96-ED4E-4CBA-87FF-E045E650DADA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D397B96-ED4E-4CBA-87FF-E045E650DADA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D397B96-ED4E-4CBA-87FF-E045E650DADA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90CF254E-E922-4935-8381-00644FD668AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90CF254E-E922-4935-8381-00644FD668AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90CF254E-E922-4935-8381-00644FD668AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90CF254E-E922-4935-8381-00644FD668AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDA99D27-D7E2-4D3D-909E-7F31B1AF36A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDA99D27-D7E2-4D3D-909E-7F31B1AF36A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDA99D27-D7E2-4D3D-909E-7F31B1AF36A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDA99D27-D7E2-4D3D-909E-7F31B1AF36A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{030BB76F-102D-4B96-96E5-B2166DE4DD63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{030BB76F-102D-4B96-96E5-B2166DE4DD63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{030BB76F-102D-4B96-96E5-B2166DE4DD63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{030BB76F-102D-4B96-96E5-B2166DE4DD63}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3D397B96-ED4E-4CBA-87FF-E045E650DADA} = {C7A99371-DCC0-4726-A971-E35C8CDF4768}
+		{90CF254E-E922-4935-8381-00644FD668AC} = {86C56730-ABA0-411C-898C-5966EC483594}
+		{090ECC2F-5647-4B15-ABDF-2E1B44439626} = {7522402D-176E-4305-A68B-F3FFBFD38158}
+		{EDA99D27-D7E2-4D3D-909E-7F31B1AF36A1} = {090ECC2F-5647-4B15-ABDF-2E1B44439626}
+		{030BB76F-102D-4B96-96E5-B2166DE4DD63} = {090ECC2F-5647-4B15-ABDF-2E1B44439626}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F5A40806-ED71-4286-A37C-BE0364FA29A6}
+	EndGlobalSection
+EndGlobal
