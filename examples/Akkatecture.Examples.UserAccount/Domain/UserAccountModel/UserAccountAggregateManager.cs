@@ -1,5 +1,4 @@
-﻿using Akka.Actor;
-using Akkatecture.Aggregates;
+﻿using Akkatecture.Aggregates;
 using Akkatecture.Commands;
 
 namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel

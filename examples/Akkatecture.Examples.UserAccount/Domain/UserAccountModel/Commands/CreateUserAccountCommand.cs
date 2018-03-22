@@ -1,5 +1,4 @@
 ﻿using Akkatecture.Commands;
-using Akkatecture.Examples.UserAccount.Domain.UserAccountModel.Events;
 
 namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel.Commands
 {

@@ -1,4 +1,4 @@
-﻿namespace Akkatecture.TestsHelper
+﻿namespace Akkatecture.TestHelpers
 {
     public sealed class Categories
     {

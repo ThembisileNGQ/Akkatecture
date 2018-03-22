@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Akkatecture.Aggregates;
+﻿using Akkatecture.Aggregates;
 using Akkatecture.Events;
 
 namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel.Events

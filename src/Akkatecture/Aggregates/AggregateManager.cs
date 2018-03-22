@@ -3,7 +3,6 @@ using Akka.Event;
 using Akkatecture.Commands;
 using Akkatecture.Core;
 using Akkatecture.Extensions;
-using Akkatecture.Messaging;
 
 namespace Akkatecture.Aggregates
 {
@@ -77,8 +76,7 @@ namespace Akkatecture.Aggregates
 
                     Logger.Error($"[{GetType()}] Exception={x.ToString()} to be decided.");
                     return Directive.Restart;
-                },
-                loggingEnabled: true);
+                });
         }
     }
 }

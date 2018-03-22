@@ -1,5 +1,4 @@
-﻿using System;
-using Akka.Persistence;
+﻿using Akka.Persistence;
 using Akkatecture.Aggregates;
 using Akkatecture.Examples.UserAccount.Domain.UserAccountModel.Commands;
 using Akkatecture.Examples.UserAccount.Domain.UserAccountModel.Events;

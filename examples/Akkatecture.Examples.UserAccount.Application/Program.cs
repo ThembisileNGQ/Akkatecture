@@ -1,4 +1,5 @@
-﻿using Akka.Actor;
+﻿using System;
+using Akka.Actor;
 using Akkatecture.Examples.UserAccount.Domain.UserAccountModel;
 using Akkatecture.Examples.UserAccount.Domain.UserAccountModel.Commands;
 
@@ -17,10 +18,7 @@ namespace Akkatecture.Examples.UserAccount.Application
 
             aggregateManager.Tell(command);
 
-            while (true)
-            {
-                
-            }
+            Console.ReadLine();
         }
     }
 }
