@@ -9,14 +9,14 @@ using Akkatecture.Extensions;
 namespace Akkatecture.Aggregates
 {
     //TODO Uncomitted Events
-    public abstract class AggregateRoot<TAggregate, TIdentity, TState> : ReceivePersistentActor, IAggregateRoot<TIdentity>
-        where TAggregate : AggregateRoot<TAggregate, TIdentity, TState>
-        where TState : AggregateState<TAggregate,TIdentity, IEventApplier<TAggregate,TIdentity>>
+    public abstract class AggregateRoot<TAggregate, TIdentity, TAggregateState> : ReceivePersistentActor, IAggregateRoot<TIdentity>
+        where TAggregate : AggregateRoot<TAggregate, TIdentity, TAggregateState>
+        where TAggregateState : AggregateState<TAggregate,TIdentity, IEventApplier<TAggregate,TIdentity>>
         where TIdentity : IIdentity
     {
         private static readonly IReadOnlyDictionary<Type, Action<TAggregate, IAggregateEvent>> ApplyMethods;
         private static readonly IAggregateName AggregateName = typeof(TAggregate).GetAggregateName();
-        public TState State { get; protected set; } = null;
+        public TAggregateState State { get; protected set; } = null;
         private CircularBuffer<ISourceId> _previousSourceIds = new CircularBuffer<ISourceId>(10);
         private ILoggingAdapter Logger { get; set; }
 
@@ -29,6 +29,8 @@ namespace Akkatecture.Aggregates
         static AggregateRoot()
         {
             ApplyMethods = typeof(TAggregate).GetAggregateEventApplyMethods<TAggregate, TIdentity, TAggregate>();
+            /*ApplyMethods = typeof(TAggregateState)
+                .GetAggregateStateEventApplyMethods<TAggregate, TIdentity, TAggregateState, TAggregateState>();*/
         }
 
         protected AggregateRoot(TIdentity id)
@@ -44,7 +46,7 @@ namespace Akkatecture.Aggregates
             {     
                 try
                 {
-                    State = (TState)Activator.CreateInstance(typeof(TState));
+                    State = (TAggregateState)Activator.CreateInstance(typeof(TAggregateState));
                 }
                 catch
                 {
@@ -54,6 +56,7 @@ namespace Akkatecture.Aggregates
             }
 
             Id = id;
+            Register(State);
             Logger = Context.GetLogger();
         }
 
@@ -93,11 +96,17 @@ namespace Akkatecture.Aggregates
             {
                 eventMetadata.AddRange(metadata);
             }
-            
+
             var type = typeof(TAggregateEvent);
             var applyMethod = ApplyMethods[type];
             var aggregateApplyMethod = applyMethod.Bind(this as TAggregate);
-            
+
+            //var h = ApplyEvent(aggregateEvent)
+
+            //var type = typeof(TAggregateEvent);
+
+            //var handler = _eventHandlers[type];
+
             //Need to figure out how to Persist CommittedEvent with Metadata and then publish the DomainEvent (not aggregate event to event stream)
 
             Persist(aggregateEvent, aggregateApplyMethod);
@@ -200,7 +209,7 @@ namespace Akkatecture.Aggregates
         {
             try
             {
-                State = aggregateSnapshotOffer.Snapshot as TState;
+                State = aggregateSnapshotOffer.Snapshot as TAggregateState;
             }
             catch
             {

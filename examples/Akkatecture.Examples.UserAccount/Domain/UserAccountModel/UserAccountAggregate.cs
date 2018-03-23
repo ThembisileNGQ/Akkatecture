@@ -10,7 +10,7 @@ namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel
         public UserAccountAggregate(UserAccountId id)
             : base(id)
         {
-            Register<UserAccountCreatedEvent>(Apply);
+            //Register<UserAccountCreatedEvent>(Apply);
             Become(UserAccount);
         }
 
@@ -38,11 +38,6 @@ namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel
             {
                 Emit(new UserAccountCreatedEvent(name));
             }        
-        }
-
-        public void Apply(UserAccountCreatedEvent aggregateEvent)
-        {
-            State.Apply(aggregateEvent);
         }
         
     }

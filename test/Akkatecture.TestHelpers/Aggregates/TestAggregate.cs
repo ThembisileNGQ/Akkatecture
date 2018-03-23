@@ -1,7 +1,14 @@
-﻿namespace Akkatecture.TestHelpers.Aggregates
+﻿using Akkatecture.Aggregates;
+
+namespace Akkatecture.TestHelpers.Aggregates
 {
-    public class TestAggregate
+    [AggregateName("Test")]
+    public class TestAggregate : AggregateRoot<TestAggregate, TestId, TestState>
     {
-        
+        public TestAggregate(TestId aggregateId)
+            : base(aggregateId)
+        {
+            
+        }
     }
 }

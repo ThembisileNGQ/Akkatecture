@@ -89,27 +89,6 @@ namespace Akkatecture.Extensions
                     mi => mi.GetParameters()[0].ParameterType,
                     mi => ReflectionHelper.CompileMethodInvocation<Action<T, IAggregateEvent>>(type, "Apply", mi.GetParameters()[0].ParameterType));
         }
-
-        internal static IReadOnlyDictionary<Type, Action<IAggregateEvent>> GetAggregateEventApplyMethods2<TAggregate, TIdentity>(this Type type)
-            where TAggregate : IAggregateRoot<TIdentity>
-            where TIdentity : IIdentity
-        {
-            var aggregateEventType = typeof(IAggregateEvent<TAggregate, TIdentity>);
-
-            return type
-                .GetTypeInfo()
-                .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                .Where(mi =>
-                {
-                    if (mi.Name != "Apply2") return false;
-                    var parameters = mi.GetParameters();
-                    return
-                        parameters.Length == 1 &&
-                        aggregateEventType.GetTypeInfo().IsAssignableFrom(parameters[0].ParameterType);
-                })
-                .ToDictionary(
-                    mi => mi.GetParameters()[0].ParameterType,
-                    mi => ReflectionHelper.CompileMethodInvocation<Action<IAggregateEvent>>(type, "Apply", mi.GetParameters()[0].ParameterType));
-        }
+        
     }
 }

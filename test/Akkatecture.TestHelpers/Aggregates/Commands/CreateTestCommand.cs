@@ -2,13 +2,12 @@
 
 namespace Akkatecture.TestHelpers.Aggregates.Commands
 {
-    public class TestDomainErrorCommand : Command<TestAggregate, TestId>
+    public class CreateTestCommand : Command<TestAggregate, TestId>
     {
-        public TestDomainErrorCommand(TestId aggregateId)
+        public CreateTestCommand(TestId aggregateId)
             : base(aggregateId)
         {
-
+            
         }
-        
     }
 }

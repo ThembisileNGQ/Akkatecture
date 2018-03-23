@@ -1,7 +1,13 @@
-﻿namespace Akkatecture.TestHelpers.Aggregates
+﻿using Akkatecture.Core;
+
+namespace Akkatecture.TestHelpers.Aggregates
 {
-    public class TestId
+    public class TestId : Identity<TestId> 
     {
-        
+        public TestId(string value)
+            : base(value)
+        {
+            
+        }
     }
 }
