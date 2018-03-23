@@ -15,6 +15,7 @@ namespace Akkatecture.Aggregates
         where TIdentity : IIdentity
     {
         private static readonly IReadOnlyDictionary<Type, Action<TAggregate, IAggregateEvent>> ApplyMethods;
+        private static readonly IReadOnlyDictionary<Type, Action<TAggregateState, IAggregateEvent>> ApplyMethods2;
         private static readonly IAggregateName AggregateName = typeof(TAggregate).GetAggregateName();
         public TAggregateState State { get; protected set; } = null;
         private CircularBuffer<ISourceId> _previousSourceIds = new CircularBuffer<ISourceId>(10);
@@ -29,8 +30,8 @@ namespace Akkatecture.Aggregates
         static AggregateRoot()
         {
             ApplyMethods = typeof(TAggregate).GetAggregateEventApplyMethods<TAggregate, TIdentity, TAggregate>();
-            /*ApplyMethods = typeof(TAggregateState)
-                .GetAggregateStateEventApplyMethods<TAggregate, TIdentity, TAggregateState, TAggregateState>();*/
+            ApplyMethods2 = typeof(TAggregateState)
+                .GetAggregateStateEventApplyMethods<TAggregate, TIdentity, TAggregateState, TAggregateState>();
         }
 
         protected AggregateRoot(TIdentity id)
@@ -98,8 +99,8 @@ namespace Akkatecture.Aggregates
             }
 
             var type = typeof(TAggregateEvent);
-            var applyMethod = ApplyMethods[type];
-            var aggregateApplyMethod = applyMethod.Bind(this as TAggregate);
+            var applyMethod = ApplyMethods2[type];
+            var aggregateApplyMethod = applyMethod.Bind(this as TAggregateState);
 
             //var h = ApplyEvent(aggregateEvent)
 
