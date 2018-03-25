@@ -13,15 +13,5 @@ namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel.Commands
             Name = name;
         }
     }
-
-
-    //not in use yet
-    public class CreateUserAccountCommandHandler : CommandHandler<UserAccountAggregate, UserAccountId, CreateUserAccountCommand>
-    {
-        public override bool Handle(UserAccountAggregate aggregate, CreateUserAccountCommand command)
-        {
-            aggregate.Create(command.Name);
-            return true;
-        }
-    }
+    
 }

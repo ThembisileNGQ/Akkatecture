@@ -4,7 +4,8 @@ using Akkatecture.Examples.UserAccount.Domain.UserAccountModel.Events;
 namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel
 {
     public class UserAccountState : AggregateState<UserAccountAggregate,UserAccountId,IEventApplier<UserAccountAggregate, UserAccountId>>,
-        IApply<UserAccountCreatedEvent>
+        IApply<UserAccountCreatedEvent>,
+        IApply<UserAccountNameChangedEvent>
     {
         public string Name { get; private set; }
 
@@ -12,6 +13,11 @@ namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel
         {
             Name = aggregateEvent.Name;
         }
-        
+
+        public void Apply(UserAccountNameChangedEvent aggregateEvent)
+        {
+            Name = aggregateEvent.Name;
+        }
+
     }
 }

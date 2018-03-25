@@ -10,10 +10,6 @@ namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel
         public UserAccountAggregate(UserAccountId id)
             : base(id)
         {
-            //event handler registration
-            Register<UserAccountCreatedEvent>(State.Apply);
-            
-            
             Become(UserAccount);
         }
 
@@ -22,10 +18,11 @@ namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel
         {
             //command handler registration
             Command<CreateUserAccountCommand>(Handle);
-
-
+            Command<UserAccountChangeNameCommand>(Handle);
+            
             //recovery from persistent event source
             Recover<UserAccountCreatedEvent>(Recover);
+            Recover<UserAccountNameChangedEvent>(Recover);
             Recover<SnapshotOffer>(Recover);
         }
 
@@ -35,12 +32,34 @@ namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel
             return true;
         }
 
-        public void Create(string name)
+        public bool Handle(UserAccountChangeNameCommand command)
+        {
+            ChangeName(command.Name);
+            return true;
+        }
+
+        private void Create(string name)
         {
             if (Version <= 0)
             {
                 Emit(new UserAccountCreatedEvent(name));
-            }        
+            }
+            else
+            {
+                //signal domain error
+            }
+        }
+
+        private void ChangeName(string name)
+        {
+            if (Version >= 0)
+            {
+                Emit(new UserAccountNameChangedEvent(name));
+            }
+            else
+            {
+                //signal domain error
+            }
         }
         
     }
