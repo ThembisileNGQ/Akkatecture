@@ -12,7 +12,7 @@ namespace Akkatecture.Aggregates
         int EventVersion { get; }
         DateTimeOffset Timestamp { get; }
         long TimestampEpoch { get; }
-        int AggregateSequenceNumber { get; }
+        long AggregateSequenceNumber { get; }
         string AggregateId { get; }
 
         IMetadata CloneWith(params KeyValuePair<string, string>[] keyValuePairs);

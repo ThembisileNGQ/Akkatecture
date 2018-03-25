@@ -15,7 +15,7 @@ namespace Akkatecture.Aggregates
         where TIdentity : IIdentity
     {
         private static readonly IReadOnlyDictionary<Type, Action<TAggregate, IAggregateEvent>> ApplyMethods;
-        private static readonly IReadOnlyDictionary<Type, Action<TAggregateState, IAggregateEvent>> ApplyMethods2;
+        private static readonly IReadOnlyDictionary<Type, Action<TAggregateState, IAggregateEvent>> ApplyMethodsFromState;
         private static readonly IAggregateName AggregateName = typeof(TAggregate).GetAggregateName();
         public TAggregateState State { get; protected set; } = null;
         private CircularBuffer<ISourceId> _previousSourceIds = new CircularBuffer<ISourceId>(10);
@@ -24,13 +24,13 @@ namespace Akkatecture.Aggregates
         public IAggregateName Name => AggregateName;
         public override string PersistenceId => Id.Value;
         public TIdentity Id { get; }
-        public int Version { get; protected set; }
+        public long Version { get; protected set; }
         public bool IsNew => Version <= 0;
         
         static AggregateRoot()
         {
             ApplyMethods = typeof(TAggregate).GetAggregateEventApplyMethods<TAggregate, TIdentity, TAggregate>();
-            ApplyMethods2 = typeof(TAggregateState)
+            ApplyMethodsFromState = typeof(TAggregateState)
                 .GetAggregateStateEventApplyMethods<TAggregate, TIdentity, TAggregateState, TAggregateState>();
         }
 
@@ -57,7 +57,7 @@ namespace Akkatecture.Aggregates
             }
 
             Id = id;
-            Register(State);
+            //Register(State);
             Logger = Context.GetLogger();
         }
 
@@ -97,28 +97,24 @@ namespace Akkatecture.Aggregates
             {
                 eventMetadata.AddRange(metadata);
             }
-
+            
             var type = typeof(TAggregateEvent);
-            var applyMethod = ApplyMethods2[type];
-            var aggregateApplyMethod = applyMethod.Bind(this as TAggregateState);
-
-            //var h = ApplyEvent(aggregateEvent)
-
-            //var type = typeof(TAggregateEvent);
-
-            //var handler = _eventHandlers[type];
-
-            //Need to figure out how to Persist CommittedEvent with Metadata and then publish the DomainEvent (not aggregate event to event stream)
-
+            var applyMethod = ApplyMethods[type];
+            var aggregateApplyMethod = applyMethod.Bind(this as TAggregate);
             Persist(aggregateEvent, aggregateApplyMethod);
+
+            /*var type2 = typeof(TAggregateEvent);
+            var applyMethod2 = ApplyMethodsFromState[type2];
+            var aggregateApplyMethod2 = applyMethod2.Bind(this as TAggregateState);
+            Persist(aggregateEvent, aggregateApplyMethod2);*/
 
             Logger.Info($"[{Name}] With Id={Id} Commited [{typeof(TAggregateEvent)}]");
 
-
-            //Eventsourced.LastSequenceNr or Version
+            Version++;
+                
             var domainEvent = new DomainEvent<TAggregate,TIdentity,TAggregateEvent>(aggregateEvent,eventMetadata,now,Id,Version);
 
-            Publish(domainEvent);
+            //Publish(domainEvent);
         }
 
         protected virtual void Publish<TEvent>(TEvent aggregateEvent)

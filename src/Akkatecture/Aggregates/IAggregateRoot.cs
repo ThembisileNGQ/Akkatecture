@@ -6,7 +6,7 @@ namespace Akkatecture.Aggregates
     public interface IAggregateRoot
     {
         IAggregateName Name { get; }
-        int Version { get; }
+        long Version { get; }
         //IEnumerable<IUncommittedEvent> UncommittedEvents { get; }
         bool IsNew { get; }
 

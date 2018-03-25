@@ -66,7 +66,7 @@ namespace Akkatecture.Aggregates
         }
 
         [JsonIgnore]
-        public int AggregateSequenceNumber
+        public long AggregateSequenceNumber
         {
             get { return GetMetadataValue(MetadataKeys.AggregateSequenceNumber, int.Parse); }
             set { Add(MetadataKeys.AggregateSequenceNumber, value.ToString()); }

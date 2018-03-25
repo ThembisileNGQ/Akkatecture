@@ -10,18 +10,21 @@ namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel
         public UserAccountAggregate(UserAccountId id)
             : base(id)
         {
-            //Register<UserAccountCreatedEvent>(Apply);
+            //event handler registration
+            Register<UserAccountCreatedEvent>(State.Apply);
+            
+            
             Become(UserAccount);
         }
 
 
         public void UserAccount()
         {
-            //
+            //command handler registration
             Command<CreateUserAccountCommand>(Handle);
 
 
-            //recovery from persistence
+            //recovery from persistent event source
             Recover<UserAccountCreatedEvent>(Recover);
             Recover<SnapshotOffer>(Recover);
         }

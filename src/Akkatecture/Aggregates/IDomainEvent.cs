@@ -8,7 +8,7 @@ namespace Akkatecture.Aggregates
         Type AggregateType { get; }
         Type IdentityType { get; }
         Type EventType { get; }
-        int AggregateSequenceNumber { get; }
+        long AggregateSequenceNumber { get; }
         IMetadata Metadata { get; }
         DateTimeOffset Timestamp { get; }
 
