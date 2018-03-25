@@ -17,8 +17,8 @@ namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel
         public void UserAccount()
         {
             //command handler registration
-            Command<CreateUserAccountCommand>(Handle);
-            Command<UserAccountChangeNameCommand>(Handle);
+            Command<CreateUserAccountCommand>(Execute);
+            Command<UserAccountChangeNameCommand>(Execute);
             
             //recovery from persistent event source
             Recover<UserAccountCreatedEvent>(Recover);
@@ -26,13 +26,13 @@ namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel
             Recover<SnapshotOffer>(Recover);
         }
 
-        public bool Handle(CreateUserAccountCommand command)
+        public bool Execute(CreateUserAccountCommand command)
         {
             Create(command.Name);
             return true;
         }
 
-        public bool Handle(UserAccountChangeNameCommand command)
+        public bool Execute(UserAccountChangeNameCommand command)
         {
             ChangeName(command.Name);
             return true;
@@ -40,7 +40,7 @@ namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel
 
         private void Create(string name)
         {
-            if (Version <= 0)
+            if (IsNew)
             {
                 Emit(new UserAccountCreatedEvent(name));
             }
@@ -52,7 +52,7 @@ namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel
 
         private void ChangeName(string name)
         {
-            if (Version >= 0)
+            if (!IsNew)
             {
                 Emit(new UserAccountNameChangedEvent(name));
             }

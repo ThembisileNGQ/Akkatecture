@@ -6,11 +6,11 @@ namespace Akkatecture.TestHelpers.Aggregates.Events
     [EventVersion("TestTested", 1)]
     public class TestTestedEvent : AggregateEvent<TestAggregate, TestId>
     {
-        public Test Test { get; }
-
-        public TestTestedEvent(Test test)
+        public int Tests { get; }
+        
+        public TestTestedEvent(int tests)
         {
-            Test = test;
+            Tests = tests;
         }
     }
 }

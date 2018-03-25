@@ -8,7 +8,6 @@ using Akkatecture.Extensions;
 
 namespace Akkatecture.Aggregates
 {
-    //TODO Uncomitted Events
     public abstract class AggregateRoot<TAggregate, TIdentity, TAggregateState> : ReceivePersistentActor, IAggregateRoot<TIdentity>
         where TAggregate : AggregateRoot<TAggregate, TIdentity, TAggregateState>
         where TAggregateState : AggregateState<TAggregate,TIdentity, IEventApplier<TAggregate,TIdentity>>
@@ -112,6 +111,40 @@ namespace Akkatecture.Aggregates
 
             Publish(domainEvent);
         }
+        
+        protected virtual void Signal<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
+            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+        {
+            if (aggregateEvent == null)
+            {
+                throw new ArgumentNullException(nameof(aggregateEvent));
+            }
+
+            var aggregateSequenceNumber = Version;
+            var eventId = EventId.NewDeterministic(
+                GuidFactories.Deterministic.Namespaces.Events,
+                $"{Id.Value}-v{aggregateSequenceNumber}");
+            var now = DateTimeOffset.Now;
+            var eventMetadata = new Metadata
+            {
+                Timestamp = now,
+                AggregateSequenceNumber = aggregateSequenceNumber,
+                AggregateName = Name.Value,
+                AggregateId = Id.Value,
+                EventId = eventId
+            };
+            eventMetadata.Add(MetadataKeys.TimestampEpoch, now.ToUnixTime().ToString());
+            if (metadata != null)
+            {
+                eventMetadata.AddRange(metadata);
+            }
+
+            Logger.Info($"[{Name}] With Id={Id} Commited [{typeof(TAggregateEvent)}]");
+
+            var domainEvent = new DomainEvent<TAggregate,TIdentity,TAggregateEvent>(aggregateEvent,eventMetadata,now,Id,Version);
+
+            Publish(domainEvent);
+        }
 
         protected virtual void Publish<TEvent>(TEvent aggregateEvent)
         {
@@ -188,6 +221,7 @@ namespace Akkatecture.Aggregates
         {
             try
             {
+                //TODO event upcasting goes here
                 ApplyEvent(aggregateEvent);
             }
             catch

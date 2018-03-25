@@ -6,12 +6,11 @@ namespace Akkatecture.Aggregates
     public interface IAggregateRoot
     {
         IAggregateName Name { get; }
+        
         long Version { get; }
-        //IEnumerable<IUncommittedEvent> UncommittedEvents { get; }
+        
         bool IsNew { get; }
-
-        //Task<IReadOnlyCollection<IDomainEvent>> CommitAsync(IEventStore eventStore, ISnapshotStore snapshotStore, ISourceId sourceId, CancellationToken cancellationToken);
-
+        
         bool HasSourceId(ISourceId sourceId);
 
         void ApplyEvents(IEnumerable<IAggregateEvent> aggregateEvents);
@@ -19,8 +18,6 @@ namespace Akkatecture.Aggregates
         void ApplyEvents(IReadOnlyCollection<IDomainEvent> domainEvents);
 
         IIdentity GetIdentity();
-
-        //Task LoadAsync(IEventStore eventStore, ISnapshotStore snapshotStore, CancellationToken cancellationToken);
     }
 
     public interface IAggregateRoot<out TIdentity> : IAggregateRoot

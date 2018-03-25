@@ -4,11 +4,19 @@ using Akkatecture.TestHelpers.Aggregates.Events;
 namespace Akkatecture.TestHelpers.Aggregates
 {
     public class TestState : AggregateState<TestAggregate, TestId, IEventApplier<TestAggregate, TestId>>,
-        IApply<TestTestedEvent>
+        IApply<TestTestedEvent>,
+        IApply<TestCreatedEvent>
     {
+        private Test Test { get; set; }
+        
+        public void Apply(TestCreatedEvent aggregateEvent)
+        {
+            Test = new Test(aggregateEvent.TestId);
+        }
+        
         public void Apply(TestTestedEvent aggregateEvent)
         {
-            throw new System.NotImplementedException();
+            Test.SetTestsDone(aggregateEvent.Tests);
         }
     }
 }
