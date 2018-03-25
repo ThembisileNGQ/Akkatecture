@@ -96,7 +96,18 @@ namespace Akkatecture.Extensions
             where TAggregateState : IEventApplier<TAggregate, TIdentity>
         {
             var aggregateEventType = typeof(IAggregateEvent<TAggregate, TIdentity>);
-
+            var a = type
+                .GetTypeInfo()
+                .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .Where(mi =>
+                {
+                    if (mi.Name != "Apply") return false;
+                    var parameters = mi.GetParameters();
+                    return
+                        parameters.Length == 1 &&
+                        aggregateEventType.GetTypeInfo().IsAssignableFrom(parameters[0].ParameterType);
+                }).Select(mi => ReflectionHelper.CompileMethodInvocation<Action<T, IAggregateEvent>>(type, "Apply", mi.GetParameters()[0].ParameterType));
+            
             return type
                 .GetTypeInfo()
                 .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
