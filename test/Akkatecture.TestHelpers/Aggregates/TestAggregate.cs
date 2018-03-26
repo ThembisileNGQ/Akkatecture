@@ -1,15 +1,21 @@
-﻿using Akkatecture.Aggregates;
+﻿using Akka.Actor;
+using Akkatecture.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Events;
+using Akkatecture.TestHelpers.Aggregates.Events.Errors;
+using Akkatecture.TestHelpers.Aggregates.Events.Signals;
 
 namespace Akkatecture.TestHelpers.Aggregates
 {
     [AggregateName("Test")]
     public class TestAggregate : AggregateRoot<TestAggregate, TestId, TestState>
     {
+        public int TestErrors { get; private set; }
         public TestAggregate(TestId aggregateId)
             : base(aggregateId)
         {
+            TestErrors = 0;
+
             Command<CreateTestCommand>(Execute);
             Command<PoisonTestAggregateCommand>(Execute);
             Command<PublishTestStateCommand>(Execute);
@@ -25,12 +31,14 @@ namespace Akkatecture.TestHelpers.Aggregates
         {
             if (IsNew)
             {
-                
+                Emit(new TestCreatedEvent(command.AggregateId));
             }
             else
             {
-                //signal domain error
+                TestErrors++;
+                Throw(new TestedErrorEvent(TestErrors));
             }
+
             return true;
         }
         
@@ -38,25 +46,21 @@ namespace Akkatecture.TestHelpers.Aggregates
         {
             if (!IsNew)
             {
-                
+                Self.Tell(PoisonPill.Instance);
             }
             else
             {
-                //signal domain error
+                TestErrors++;
+                Throw(new TestedErrorEvent(TestErrors));
             }
+
             return true;
         }
         
         private bool Execute(PublishTestStateCommand command)
         {
-            if (!IsNew)
-            {
-                
-            }
-            else
-            {
-                //signal domain error
-            }
+            Signal(new TestStateSignalEvent(State,LastSequenceNr,Version));
+
             return true;
         }
         
@@ -64,25 +68,22 @@ namespace Akkatecture.TestHelpers.Aggregates
         {
             if (!IsNew)
             {
-                
+                Emit(new TestTestedEvent(State.Test.TestsDone + 1));
+
             }
             else
             {
-                //signal domain error
+                TestErrors++;
+                Throw(new TestedErrorEvent(TestErrors));
             }
             return true;
         }
         
         private bool Execute(TestDomainErrorCommand command)
         {
-            if (!IsNew)
-            {
-                
-            }
-            else
-            {
-                //signal domain error
-            }
+            TestErrors++;
+            Throw(new TestedErrorEvent(TestErrors));
+
             return true;
         }
     }

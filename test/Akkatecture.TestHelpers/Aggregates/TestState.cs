@@ -7,7 +7,7 @@ namespace Akkatecture.TestHelpers.Aggregates
         IApply<TestTestedEvent>,
         IApply<TestCreatedEvent>
     {
-        private Test Test { get; set; }
+        public Test Test { get; set; }
         
         public void Apply(TestCreatedEvent aggregateEvent)
         {

@@ -131,8 +131,9 @@ namespace Akkatecture.Aggregates
                 AggregateSequenceNumber = aggregateSequenceNumber,
                 AggregateName = Name.Value,
                 AggregateId = Id.Value,
-                EventId = eventId
+                EventId = eventId,
             };
+
             eventMetadata.Add(MetadataKeys.TimestampEpoch, now.ToUnixTime().ToString());
             if (metadata != null)
             {
@@ -144,6 +145,12 @@ namespace Akkatecture.Aggregates
             var domainEvent = new DomainEvent<TAggregate,TIdentity,TAggregateEvent>(aggregateEvent,eventMetadata,now,Id,Version);
 
             Publish(domainEvent);
+        }
+
+        protected virtual void Throw<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
+            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+        {
+            Signal(aggregateEvent,metadata);
         }
 
         protected virtual void Publish<TEvent>(TEvent aggregateEvent)
