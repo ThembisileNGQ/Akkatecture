@@ -24,6 +24,7 @@ namespace Akkatecture.Aggregates
         protected virtual void Manager()
         {
             Receive<TCommand>(Dispatch);
+            Receive<Terminated>(Terminate);
             Receive<object>(Fail);
         }
         
@@ -35,6 +36,12 @@ namespace Akkatecture.Aggregates
 
             aggregateRef.Tell(command);
 
+            return true;
+        }
+
+        protected virtual bool Terminate(Terminated message)
+        {
+            Logger.Warning($"Aggregate Root: {message.ActorRef.Path} has terminated.");
             return true;
         }
 

@@ -16,6 +16,11 @@ namespace Akkatecture.TestHelpers.Aggregates
         {
             TestErrors = 0;
 
+            if (IsRecovering)
+            {
+                Logger.Info("Recovering");
+            }
+
             Command<CreateTestCommand>(Execute);
             Command<PoisonTestAggregateCommand>(Execute);
             Command<PublishTestStateCommand>(Execute);
@@ -41,12 +46,28 @@ namespace Akkatecture.TestHelpers.Aggregates
 
             return true;
         }
-        
+
+        private bool Execute(TestCommand command)
+        {
+            if (!IsNew)
+            {
+                Emit(new TestTestedEvent(State.Test.TestsDone + 1));
+
+            }
+            else
+            {
+                TestErrors++;
+                Throw(new TestedErrorEvent(TestErrors));
+            }
+            return true;
+        }
+
         private bool Execute(PoisonTestAggregateCommand command)
         {
             if (!IsNew)
             {
-                Self.Tell(PoisonPill.Instance);
+                //Self.Tell(PoisonPill.Instance);
+                Context.Stop(Self);
             }
             else
             {
@@ -63,21 +84,7 @@ namespace Akkatecture.TestHelpers.Aggregates
 
             return true;
         }
-        
-        private bool Execute(TestCommand command)
-        {
-            if (!IsNew)
-            {
-                Emit(new TestTestedEvent(State.Test.TestsDone + 1));
-
-            }
-            else
-            {
-                TestErrors++;
-                Throw(new TestedErrorEvent(TestErrors));
-            }
-            return true;
-        }
+       
         
         private bool Execute(TestDomainErrorCommand command)
         {

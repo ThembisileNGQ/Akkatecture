@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using Akka.Actor;
 using Akka.TestKit.Xunit2;
 using Akkatecture.Aggregates;
@@ -73,6 +74,82 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
                      && x.AggregateEvent.Version == 1
                      && x.AggregateEvent.State.Test.Id.Equals(aggregateId)
                      && x.AggregateEvent.State.Test.TestsDone == 0);
+        }
+
+        [Fact]
+        [Category(Category)]
+        public void TestCommand_AfterAggregateCreation_TestEventEmitted()
+        {
+            var probe = CreateTestActor("probeActor");
+            Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestId, TestTestedEvent>));
+            var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
+
+            var aggregateId = TestId.New;
+            var command = new CreateTestCommand(aggregateId);
+            var nextCommand = new TestCommand(aggregateId);
+            aggregateManager.Tell(command);
+            aggregateManager.Tell(nextCommand);
+
+            ExpectMsg<DomainEvent<TestAggregate, TestId, TestTestedEvent>>(
+                x => x.AggregateEvent.Tests == 1);
+        }
+
+        [Fact]
+        [Category(Category)]
+        public void TestCommandTwice_AfterAggregateCreation_TestEventEmitted()
+        {
+            var probe = CreateTestActor("probeActor");
+            Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestId, TestTestedEvent>));
+            var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
+
+            var aggregateId = TestId.New;
+            var command = new CreateTestCommand(aggregateId);
+            var nextCommand = new TestCommand(aggregateId);
+            var nextCommand2 = new TestCommand(aggregateId);
+            aggregateManager.Tell(command);
+            aggregateManager.Tell(nextCommand);
+            aggregateManager.Tell(nextCommand2);
+
+            ExpectMsg<DomainEvent<TestAggregate, TestId, TestTestedEvent>>(
+                x => x.AggregateEvent.Tests == 1
+                     && x.AggregateSequenceNumber == 2);
+
+            ExpectMsg<DomainEvent<TestAggregate, TestId, TestTestedEvent>>(
+                x => x.AggregateEvent.Tests == 2
+                     && x.AggregateSequenceNumber == 3);
+        }
+
+        [Fact]
+        [Category(Category)]
+        public void TestEventSourcing_AfterManyTests_TestStateSignalled()
+        {
+            var probe = CreateTestActor("probeActor");
+            Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestId, TestStateSignalEvent>));
+            var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
+            var aggregateId = TestId.New;
+
+            var command = new CreateTestCommand(aggregateId);
+            aggregateManager.Tell(command);
+
+            for (var i = 0; i < 5; i++)
+            {
+                var testCommand = new TestCommand(aggregateId);
+                aggregateManager.Tell(testCommand);
+            }
+            var poisonCommand = new PoisonTestAggregateCommand(aggregateId);
+            aggregateManager.Tell(poisonCommand);
+            var reviveCommand = new PublishTestStateCommand(aggregateId);
+            aggregateManager.Tell(reviveCommand);
+
+
+
+            /*ExpectMsg<DomainEvent<TestAggregate, TestId, TestStateSignalEvent>>(
+                x => x.AggregateEvent.LastSequenceNr > 4
+                     && x.AggregateEvent.Version > 4
+                     && x.AggregateEvent.State.Test.Id.Equals(aggregateId)
+                     && x.AggregateEvent.State.Test.TestsDone > 4, TimeSpan.FromMinutes(2));*/
+
+            ExpectMsg<DomainEvent<TestAggregate, TestId, TestStateSignalEvent>>(TimeSpan.FromMinutes(2));
         }
 
 

@@ -18,7 +18,7 @@ namespace Akkatecture.Aggregates
         private static readonly IAggregateName AggregateName = typeof(TAggregate).GetAggregateName();
         public TAggregateState State { get; protected set; } = null;
         private CircularBuffer<ISourceId> _previousSourceIds = new CircularBuffer<ISourceId>(10);
-        private ILoggingAdapter Logger { get; set; }
+        protected ILoggingAdapter Logger { get; set; }
 
         public IAggregateName Name => AggregateName;
         public override string PersistenceId => Id.Value;
