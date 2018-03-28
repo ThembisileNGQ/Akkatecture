@@ -1,4 +1,5 @@
 ﻿using Akka.Actor;
+using Akka.Dispatch.SysMsg;
 using Akka.Event;
 using Akkatecture.Commands;
 using Akkatecture.Core;
@@ -42,6 +43,7 @@ namespace Akkatecture.Aggregates
         protected virtual bool Terminate(Terminated message)
         {
             Logger.Warning($"Aggregate Root: {message.ActorRef.Path} has terminated.");
+            Context.Unwatch(message.ActorRef);
             return true;
         }
 

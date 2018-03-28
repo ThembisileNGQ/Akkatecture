@@ -229,6 +229,7 @@ namespace Akkatecture.Aggregates
             try
             {
                 //TODO event upcasting goes here
+                //Debug Recovery from here
                 ApplyEvent(aggregateEvent);
             }
             catch
