@@ -1,4 +1,5 @@
-﻿using Akka.Persistence;
+﻿using System;
+using Akka.Persistence;
 using Akkatecture.Aggregates;
 using Akkatecture.Examples.UserAccount.Domain.UserAccountModel.Commands;
 using Akkatecture.Examples.UserAccount.Domain.UserAccountModel.Events;
@@ -7,9 +8,11 @@ namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel
 {
     public class UserAccountAggregate : AggregateRoot<UserAccountAggregate,UserAccountId,UserAccountState>
     {
+        public int Counter { get; set; } = 0;
         public UserAccountAggregate(UserAccountId id)
             : base(id)
         {
+            
             Become(UserAccount);
         }
 
@@ -56,6 +59,12 @@ namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel
             if (!IsNew)
             {
                 Emit(new UserAccountNameChangedEvent(name));
+                Counter++;
+                if (Counter > 4)
+                {
+                    throw new Exception("restart");
+                }
+
             }
             else
             {

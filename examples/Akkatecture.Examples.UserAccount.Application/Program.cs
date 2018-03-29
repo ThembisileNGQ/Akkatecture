@@ -21,6 +21,7 @@ namespace Akkatecture.Examples.UserAccount.Application
             var aggregateId = UserAccountId.With("useraccount-9a5e0078-a5cc-48f1-b38f-edfc6c25dee9");//UserAccountId.New;
             //var command = new CreateUserAccountCommand(aggregateId, "Foo");
 
+            
             //Send command, this is equivalent to command.publish() in other cqrs frameworks
             //aggregateManager.Tell(command);
 
@@ -28,6 +29,15 @@ namespace Akkatecture.Examples.UserAccount.Application
             var newCommand = new UserAccountChangeNameCommand(aggregateId, "Foo6");
             aggregateManager.Tell(newCommand);
             
+
+            for (var i = 0; i < 8; i++)
+            {
+                var loopCommand = new UserAccountChangeNameCommand(aggregateId, $"Foo{i}");
+                aggregateManager.Tell(loopCommand);
+            }
+            
+            var newCommand2 = new UserAccountChangeNameCommand(aggregateId, "FooEnd");
+            aggregateManager.Tell(newCommand2);
             //block end of program
             Console.ReadLine();
         }
