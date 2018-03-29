@@ -7,6 +7,7 @@ using Akkatecture.TestHelpers.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Events;
 using Akkatecture.TestHelpers.Aggregates.Events.Signals;
+using Akkatecture.TestHelpers.Akka;
 using Xunit;
 
 namespace Akkatecture.Tests.UnitTests.Aggregates
@@ -15,6 +16,12 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
     public class AggregateTests : TestKit
     {
         private const string Category = "Aggregates";
+
+        public AggregateTests()
+            //: base(Configuration.Config)
+        {
+            
+        }
 
         [Fact]
         [Category(Category)]
@@ -136,10 +143,50 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
                 var testCommand = new TestCommand(aggregateId);
                 aggregateManager.Tell(testCommand);
             }
-            var poisonCommand = new PoisonTestAggregateCommand(aggregateId);
-            aggregateManager.Tell(poisonCommand);
+            /*var poisonCommand = new PoisonTestAggregateCommand(aggregateId);
+            aggregateManager.Tell(poisonCommand);*/
+
+            aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager-two");
             var reviveCommand = new PublishTestStateCommand(aggregateId);
             aggregateManager.Tell(reviveCommand);
+
+
+
+            ExpectMsg<DomainEvent<TestAggregate, TestId, TestStateSignalEvent>>(
+                x => x.AggregateEvent.LastSequenceNr > 4
+                     && x.AggregateEvent.Version > 4
+                     && x.AggregateEvent.State.Test.Id.Equals(aggregateId)
+                     && x.AggregateEvent.State.Test.TestsDone > 4, TimeSpan.FromMinutes(2));
+
+            //ExpectMsg<DomainEvent<TestAggregate, TestId, TestStateSignalEvent>>(TimeSpan.FromMinutes(2));
+        }
+
+        /*[Fact]
+        [Category(Category)]
+        public void TestEventSourcing_AfterManyTests_TestStateSignalled()
+        {
+            var probe = CreateTestActor("probeActor");
+
+            Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestId, TestStateSignalEvent>));
+            var aggregateId = TestId.New;
+            var aggregateRoot = Sys.ActorOf(Props.Create(() => new TestAggregate(aggregateId)), "test-aggregate");
+            
+
+            var command = new CreateTestCommand(aggregateId);
+            aggregateRoot.Tell(command);
+
+            for (var i = 0; i < 5; i++)
+            {
+                var testCommand = new TestCommand(aggregateId);
+                aggregateRoot.Tell(testCommand);
+            }
+
+
+            aggregateRoot.Tell(PoisonPill.Instance);
+            aggregateRoot = Sys.ActorOf(Props.Create(() => new TestAggregate(aggregateId)), "test-aggregate2");
+            
+            var reviveCommand = new PublishTestStateCommand(aggregateId);
+            aggregateRoot.Tell(reviveCommand);
 
 
 
@@ -147,10 +194,11 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
                 x => x.AggregateEvent.LastSequenceNr > 4
                      && x.AggregateEvent.Version > 4
                      && x.AggregateEvent.State.Test.Id.Equals(aggregateId)
-                     && x.AggregateEvent.State.Test.TestsDone > 4, TimeSpan.FromMinutes(2));*/
+                     && x.AggregateEvent.State.Test.TestsDone > 4, TimeSpan.FromMinutes(2));#1#
 
             ExpectMsg<DomainEvent<TestAggregate, TestId, TestStateSignalEvent>>(TimeSpan.FromMinutes(2));
-        }
+            
+        }*/
 
 
     }

@@ -19,8 +19,9 @@ namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel
             //command handler registration
             Command<CreateUserAccountCommand>(Execute);
             Command<UserAccountChangeNameCommand>(Execute);
-            
+
             //recovery from persistent event source
+            //Recover<object>(R);
             Recover<UserAccountCreatedEvent>(Recover);
             Recover<UserAccountNameChangedEvent>(Recover);
             Recover<SnapshotOffer>(Recover);
@@ -37,7 +38,7 @@ namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel
             ChangeName(command.Name);
             return true;
         }
-
+        
         private void Create(string name)
         {
             if (IsNew)

@@ -66,7 +66,6 @@ namespace Akkatecture.TestHelpers.Aggregates
         {
             if (!IsNew)
             {
-                //Self.Tell(PoisonPill.Instance);
                 Context.Stop(Self);
             }
             else

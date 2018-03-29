@@ -21,7 +21,7 @@ namespace Akkatecture.Aggregates
         protected ILoggingAdapter Logger { get; set; }
 
         public IAggregateName Name => AggregateName;
-        public override string PersistenceId => Id.Value;
+        public override string PersistenceId { get; }
         public TIdentity Id { get; }
         public long Version { get; protected set; }
         public bool IsNew => Version <= 0;
@@ -56,10 +56,12 @@ namespace Akkatecture.Aggregates
             }
 
             Id = id;
+            PersistenceId = id.Value;
             Register(State);
             Logger = Context.GetLogger();
         }
-
+        
+        
         protected void SetSourceIdHistory(int count)
         {
             _previousSourceIds = new CircularBuffer<ISourceId>(count);
@@ -69,6 +71,8 @@ namespace Akkatecture.Aggregates
         {
             return !sourceId.IsNone() && _previousSourceIds.Any(s => s.Value == sourceId.Value);
         }
+
+        
 
         protected virtual void Emit<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
             where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
@@ -97,9 +101,7 @@ namespace Akkatecture.Aggregates
                 eventMetadata.AddRange(metadata);
             }
             
-            var type = typeof(TAggregateEvent);
-            var applyMethod = ApplyMethodsFromState[type];
-            var aggregateApplyMethod = applyMethod.Bind(State);
+            var aggregateApplyMethod = GetEventApplyMethods(aggregateEvent);
 
             Persist(aggregateEvent, aggregateApplyMethod);
 
@@ -198,6 +200,24 @@ namespace Akkatecture.Aggregates
             }
         }
 
+        protected Action<IAggregateEvent> GetEventApplyMethods<TAggregateEvent>(TAggregateEvent aggregateEvent)
+            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+        {
+            var eventType = aggregateEvent.GetType();
+
+            Action<TAggregateState, IAggregateEvent> applyMethod;
+            if (!ApplyMethodsFromState.TryGetValue(eventType, out applyMethod))
+            {
+                throw new NotImplementedException(
+                    $"Aggregate State '{State.GetType().PrettyPrint()}' does have an 'Apply' method that takes aggregate event '{eventType.PrettyPrint()}' as argument");
+            }
+
+            //applyMethod = ApplyMethodsFromState[eventType];
+            var aggregateApplyMethod = applyMethod.Bind(State);
+
+            return aggregateApplyMethod;
+        }
+
         protected virtual void ApplyEvent(IAggregateEvent<TAggregate, TIdentity> aggregateEvent)
         {
             var eventType = aggregateEvent.GetType();
@@ -209,17 +229,10 @@ namespace Akkatecture.Aggregates
             {
                 // Already done
             }
-            else
-            {
-                Action<TAggregate, IAggregateEvent> applyMethod;
-                if (!ApplyMethods.TryGetValue(eventType, out applyMethod))
-                {
-                    throw new NotImplementedException(
-                        $"Aggregate '{Name}' does have an 'Apply' method that takes aggregate event '{eventType.PrettyPrint()}' as argument");
-                }
+           
+            var eventApplier = GetEventApplyMethods(aggregateEvent);
 
-                applyMethod(this as TAggregate, aggregateEvent);
-            }
+            eventApplier(aggregateEvent);
 
             Version++;
         }
@@ -228,7 +241,9 @@ namespace Akkatecture.Aggregates
         {
             try
             {
+
                 //TODO event upcasting goes here
+                Logger.Debug($"Recovering with event of type [{aggregateEvent.GetType().PrettyPrint()}] ");
                 ApplyEvent(aggregateEvent);
             }
             catch
