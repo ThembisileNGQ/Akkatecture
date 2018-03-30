@@ -2,7 +2,7 @@
 A CQRS+ES Toolkit for Akka.NET.
 
 # Motivations
-Doing domain driven design in a distributed scenario is quite tricky. And even more so when you add CQRS and event sourcing style mechanics to your business domain. Akka gives you powerful ways to co-ordinate and organise your business rules by using actors and message passing, which can be done by sending messages by location transparent addresses. The major benefits of using Akka.NET is that we can isolate our domain models into actors where it makes sense.
+Doing domain driven design in a distributed scenario is quite tricky. And even more so when you add CQRS and event sourcing style mechanics to your business domain. Akka gives you powerful ways to co-ordinate and organise your business rules by using actors and message passing, which can be done by sending messages through location transparent addresses (or references). The major benefits of using Akka.NET is that we can isolate our domain models into actors where it makes sense.
 
 Akkatecture gives you a set of semi-opinionated generic constructs that you can use to wire up your application so that you can focus on your main task, modelling and codifying your business domain.
 
