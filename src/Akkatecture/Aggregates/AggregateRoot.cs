@@ -59,6 +59,9 @@ namespace Akkatecture.Aggregates
             PersistenceId = id.Value;
             Register(State);
             Logger = Context.GetLogger();
+            
+            //Recovery
+            Recover<IAggregateEvent<TAggregate, TIdentity>>(Recover);
         }
         
         

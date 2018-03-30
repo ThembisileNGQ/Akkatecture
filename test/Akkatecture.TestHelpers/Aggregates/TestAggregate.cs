@@ -15,21 +15,12 @@ namespace Akkatecture.TestHelpers.Aggregates
             : base(aggregateId)
         {
             TestErrors = 0;
-
-            if (IsRecovering)
-            {
-                Logger.Info("Recovering");
-            }
-
+            
             Command<CreateTestCommand>(Execute);
             Command<PoisonTestAggregateCommand>(Execute);
             Command<PublishTestStateCommand>(Execute);
             Command<TestCommand>(Execute);
             Command<TestDomainErrorCommand>(Execute);
-
-            Recover<TestCreatedEvent>(Recover);
-            Recover<TestTestedEvent>(Recover);
-
         }
 
         private bool Execute(CreateTestCommand command)

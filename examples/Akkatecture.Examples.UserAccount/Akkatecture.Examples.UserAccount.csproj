@@ -2,6 +2,23 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <Title>Akkatecture.Examples.UserAccount</Title>
+    <Authors>Lutando Ngqakaza</Authors>
+    <Company>Lutando Ngqakaza</Company>
+    <Copyright>Copyright (c) Lutando Ngqakaza 2018 - 2018</Copyright>
+    <Description>
+      The domain project for the simple Akkatecture "Hello world" example
+    </Description>
+    <PackageTags>Akka CQRS ES EventSourcing</PackageTags>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/Lutando/Akkatecture</RepositoryUrl>
+      <PackageLicenseUrl>https://raw.githubusercontent.com/Lutando/Akkatecture/master/LICENSE</PackageLicenseUrl>
+    <NeutralLanguage>en-GB</NeutralLanguage>
+    <PackageReleaseNotes>Externally Updated</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

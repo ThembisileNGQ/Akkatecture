@@ -135,6 +135,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
             var aggregateId = TestId.New;
 
+            
             var command = new CreateTestCommand(aggregateId);
             aggregateManager.Tell(command);
 
@@ -151,12 +152,11 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             aggregateManager.Tell(reviveCommand);
 
 
-
             ExpectMsg<DomainEvent<TestAggregate, TestId, TestStateSignalEvent>>(
-                x => x.AggregateEvent.LastSequenceNr > 1
-                     && x.AggregateEvent.Version > 1
+                x => x.AggregateEvent.LastSequenceNr == 6
+                     && x.AggregateEvent.Version == 6
                      && x.AggregateEvent.State.Test.Id.Equals(aggregateId)
-                     && x.AggregateEvent.State.Test.TestsDone > 0);
+                     && x.AggregateEvent.State.Test.TestsDone == 5);
 
         }
     }
