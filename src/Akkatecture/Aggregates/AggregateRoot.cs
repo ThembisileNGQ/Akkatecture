@@ -212,7 +212,6 @@ namespace Akkatecture.Aggregates
                     $"Aggregate State '{State.GetType().PrettyPrint()}' does have an 'Apply' method that takes aggregate event '{eventType.PrettyPrint()}' as argument");
             }
 
-            //applyMethod = ApplyMethodsFromState[eventType];
             var aggregateApplyMethod = applyMethod.Bind(State);
 
             return aggregateApplyMethod;

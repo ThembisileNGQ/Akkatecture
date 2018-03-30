@@ -19,15 +19,18 @@ namespace Akkatecture.Aggregates
         {
             Logger = Context.GetLogger();
 
-            Become(Manager);
+            //Become(Manager);
+            Receive<TCommand>(Dispatch);
+            Receive<Terminated>(Terminate);
+            //Receive<object>(Fail);
         }
 
-        protected virtual void Manager()
+        /*protected virtual void Manager()
         {
             Receive<TCommand>(Dispatch);
             Receive<Terminated>(Terminate);
             Receive<object>(Fail);
-        }
+        }*/
         
         protected virtual bool Dispatch(TCommand command)
         {
@@ -39,10 +42,23 @@ namespace Akkatecture.Aggregates
 
             return true;
         }
+        
+        protected virtual bool ReDispatch(TCommand command)
+        {
+            Logger.Info($"{GetType().DeclaringType} as dead letter {command.GetType()}");
+
+            var aggregateRef = FindOrCreate(command.AggregateId);
+
+            aggregateRef.Tell(command);
+
+            return true;
+        }
+
+
 
         protected virtual bool Terminate(Terminated message)
         {
-            Logger.Warning($"Aggregate Root: {message.ActorRef.Path} has terminated.");
+            Logger.Warning($"AggregateRoot: {message.ActorRef.Path} has terminated.");
             Context.Unwatch(message.ActorRef);
             return true;
         }
@@ -61,9 +77,8 @@ namespace Akkatecture.Aggregates
             if (Equals(aggregateRef,ActorRefs.Nobody))
             {
                 aggregateRef = CreateAggregate(aggregateId);
+                Context.Watch(aggregateRef);
             }
-
-            Context.Watch(aggregateRef);
 
             return aggregateRef;
         }
