@@ -96,17 +96,6 @@ namespace Akkatecture.Extensions
             where TAggregateState : IEventApplier<TAggregate, TIdentity>
         {
             var aggregateEventType = typeof(IAggregateEvent<TAggregate, TIdentity>);
-            var a = type
-                .GetTypeInfo()
-                .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                .Where(mi =>
-                {
-                    if (mi.Name != "Apply") return false;
-                    var parameters = mi.GetParameters();
-                    return
-                        parameters.Length == 1 &&
-                        aggregateEventType.GetTypeInfo().IsAssignableFrom(parameters[0].ParameterType);
-                }).Select(mi => ReflectionHelper.CompileMethodInvocation<Action<T, IAggregateEvent>>(type, "Apply", mi.GetParameters()[0].ParameterType));
             
             return type
                 .GetTypeInfo()
@@ -122,6 +111,42 @@ namespace Akkatecture.Extensions
                 .ToDictionary(
                     mi => mi.GetParameters()[0].ParameterType,
                     mi => ReflectionHelper.CompileMethodInvocation<Action<T, IAggregateEvent>>(type, "Apply", mi.GetParameters()[0].ParameterType));
+        }
+
+        internal static IReadOnlyList<Type> GetDomainEventSubscriberSubscriptionTypes<TAggregate, TIdentity>(this Type type)
+            where TAggregate : IAggregateRoot<TIdentity>
+            where TIdentity : IIdentity
+        {
+            var aggregateEventType = typeof(IAggregateEvent<TAggregate, TIdentity>);
+
+            var types = type
+                .GetTypeInfo()
+                .GetInterfaces()
+                .Where(i =>
+                {
+                    if (!i.Name.Contains("ISubscribeTo"))
+                        return false;
+                    
+                    var parameters = i.GenericTypeArguments;
+                    
+                    return
+                        parameters.Length == 3 &&
+                        aggregateEventType.GetTypeInfo().IsAssignableFrom(parameters[2]);
+
+                })
+                .Select(parameter => parameter.GenericTypeArguments[2])
+                .ToList();
+
+
+            var domainEventTypes = types
+                .Select(x =>
+                {
+                    var typeContainer = typeof(DomainEvent<,,>);
+                    return typeContainer.MakeGenericType(typeof(TAggregate), typeof(TIdentity), x);
+                })
+                .ToList();
+            
+            return domainEventTypes;
         }
 
     }
