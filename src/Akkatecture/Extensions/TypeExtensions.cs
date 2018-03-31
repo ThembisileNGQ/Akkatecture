@@ -119,7 +119,7 @@ namespace Akkatecture.Extensions
         {
             var aggregateEventType = typeof(IAggregateEvent<TAggregate, TIdentity>);
 
-            var types = type
+            var domainEventTypes = type
                 .GetTypeInfo()
                 .GetInterfaces()
                 .Where(i =>
@@ -135,10 +135,6 @@ namespace Akkatecture.Extensions
 
                 })
                 .Select(parameter => parameter.GenericTypeArguments[2])
-                .ToList();
-
-
-            var domainEventTypes = types
                 .Select(x =>
                 {
                     var typeContainer = typeof(DomainEvent<,,>);
