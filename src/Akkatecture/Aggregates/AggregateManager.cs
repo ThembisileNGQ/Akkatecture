@@ -1,4 +1,5 @@
-﻿using Akka.Actor;
+﻿using System;
+using Akka.Actor;
 using Akka.Dispatch.SysMsg;
 using Akka.Event;
 using Akkatecture.Commands;
@@ -11,7 +12,7 @@ namespace Akkatecture.Aggregates
         where TAggregate : AggregateRoot<TAggregate, TIdentity, TState>
         where TState : AggregateState<TAggregate, TIdentity, IEventApplier<TAggregate, TIdentity>>
         where TIdentity : IIdentity
-        where TCommand : ICommand<TAggregate,TIdentity>
+        where TCommand : class, ICommand<TAggregate,TIdentity>
     {
         protected ILoggingAdapter Logger { get; set; }
 
@@ -19,19 +20,22 @@ namespace Akkatecture.Aggregates
         {
             Logger = Context.GetLogger();
 
-            //Become(Manager);
+            Context.System.EventStream.Subscribe(Self, typeof(DeadLetter));
+            
             Receive<TCommand>(Dispatch);
             Receive<Terminated>(Terminate);
-            //Receive<object>(Fail);
+            
+            Receive<DeadLetter>(
+                x => x.Message is TCommand,
+                x =>
+                {
+                    var command = x.Message as TCommand;
+                    
+                    ReDispatch(x.Message as TCommand);
+                });
+             
         }
 
-        /*protected virtual void Manager()
-        {
-            Receive<TCommand>(Dispatch);
-            Receive<Terminated>(Terminate);
-            Receive<object>(Fail);
-        }*/
-        
         protected virtual bool Dispatch(TCommand command)
         {
             Logger.Info($"{GetType().DeclaringType} received {command.GetType()}");
@@ -60,13 +64,6 @@ namespace Akkatecture.Aggregates
         {
             Logger.Warning($"AggregateRoot: {message.ActorRef.Path} has terminated.");
             Context.Unwatch(message.ActorRef);
-            return true;
-        }
-
-        protected virtual bool Fail(object message)
-        {
-            Logger.Warning($"{this.GetType().DeclaringType} received {message.GetType()}");
-            Unhandled(message);
             return true;
         }
 
@@ -102,5 +99,27 @@ namespace Akkatecture.Aggregates
                     return Directive.Restart;
                 });
         }
+
+        protected new void Become(Action action)
+        {
+            Logger.Warning($"{GetType().DeclaringType} Has called Become() which is not supported in Akkatecture.");
+        }
+        
+        protected new void Become(Receive receive)
+        {
+            Logger.Warning($"{GetType().DeclaringType} Has called Become() which is not supported in Akkatecture.");
+        }
+        
+        protected new void BecomeStacked(Action action)
+        {
+            Logger.Warning($"{GetType().DeclaringType} Has called Become() which is not supported in Akkatecture.");
+        }
+        
+        protected new void Become(UntypedReceive untypedReceive)
+        {
+            Logger.Warning($"{GetType().DeclaringType} Has called Become() which is not supported in Akkatecture.");
+        }
+        
+        
     }
 }

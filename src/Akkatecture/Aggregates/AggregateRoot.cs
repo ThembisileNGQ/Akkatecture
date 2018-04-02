@@ -62,6 +62,7 @@ namespace Akkatecture.Aggregates
             
             //Recovery
             Recover<IAggregateEvent<TAggregate, TIdentity>>(Recover);
+            
         }
         
         
@@ -89,7 +90,7 @@ namespace Akkatecture.Aggregates
             var eventId = EventId.NewDeterministic(
                 GuidFactories.Deterministic.Namespaces.Events,
                 $"{Id.Value}-v{aggregateSequenceNumber}");
-            var now = DateTimeOffset.Now;
+            var now = DateTimeOffset.UtcNow;
             var eventMetadata = new Metadata
             {
                 Timestamp = now,
@@ -129,7 +130,7 @@ namespace Akkatecture.Aggregates
             var eventId = EventId.NewDeterministic(
                 GuidFactories.Deterministic.Namespaces.Events,
                 $"{Id.Value}-v{aggregateSequenceNumber}");
-            var now = DateTimeOffset.Now;
+            var now = DateTimeOffset.UtcNow;
             var eventMetadata = new Metadata
             {
                 Timestamp = now,
@@ -248,8 +249,9 @@ namespace Akkatecture.Aggregates
                 Logger.Debug($"Recovering with event of type [{aggregateEvent.GetType().PrettyPrint()}] ");
                 ApplyEvent(aggregateEvent);
             }
-            catch
+            catch(Exception exception)
             {
+                Logger.Error($"Recovering with event of type [{aggregateEvent.GetType().PrettyPrint()}] caused an exception {exception.GetType().PrettyPrint()}");
                 return false;
             }
 
@@ -262,8 +264,10 @@ namespace Akkatecture.Aggregates
             {
                 State = aggregateSnapshotOffer.Snapshot as TAggregateState;
             }
-            catch
+            catch (Exception exception)
             {
+                Logger.Error($"Recovering with snapshot of type [{aggregateSnapshotOffer.Snapshot.GetType().PrettyPrint()}] caused an exception {exception.GetType().PrettyPrint()}");
+
                 return false;
             }
 
@@ -293,5 +297,16 @@ namespace Akkatecture.Aggregates
         {
             return $"{GetType().PrettyPrint()} v{Version}";
         }
+        
+        protected new void Become(Action something)
+        {
+            Logger.Warning($"{GetType().DeclaringType} Has called Become() which is not supported in Akkatecture.");
+        }
+        
+        protected new void BecomeStacked(Action something)
+        {
+            Logger.Warning($"{GetType().DeclaringType} Has called Become() which is not supported in Akkatecture.");
+        }
+        
     }
 }

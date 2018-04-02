@@ -8,14 +8,6 @@ namespace Akkatecture.TestHelpers.Aggregates
     {
         public TestAggregateManager()
         {
-            Context.System.EventStream.Subscribe(Self, typeof(DeadLetter));
-
-            Receive<DeadLetter>(
-                x => x.Message is Command<TestAggregate,TestId>,
-                x =>
-                {
-                    ReDispatch(x.Message as Command<TestAggregate, TestId>);
-                });
             
         }
     }

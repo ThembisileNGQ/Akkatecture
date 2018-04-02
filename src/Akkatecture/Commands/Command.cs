@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+using Akka.Actor;
 using Akkatecture.Aggregates;
 using Akkatecture.Core;
 using Akkatecture.ValueObjects;
@@ -23,11 +25,6 @@ namespace Akkatecture.Commands
             AggregateId = aggregateId;
             SourceId = sourceId;
         }
-
-        /*public Task<ISourceId> PublishAsync(ICommandBus commandBus, CancellationToken cancellationToken)
-        {
-            return commandBus.PublishAsync(this, cancellationToken);
-        }*/
 
         public ISourceId GetSourceId()
         {

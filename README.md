@@ -8,6 +8,9 @@ Akkatecture gives you a set of semi-opinionated generic constructs that you can 
 
 Akka.NET gives us a wealth of good APIs out of the box that can be used to build entire systems out of. It also has a decent ecosystem and community for support. I also am of the opinion that commands translate well semantically in actor systems since you are telling the actor what you want, and the actor might or might not "respond" with a fact or a bag of facts relating to what that command produced in context of that aggregate.
 
+# Personal Motivations
+I find the lack of good domain driven design frameworks and libraries for akka.net quite sad. There are a few out there if you look hard enough but they fail in one or two aspects that I find really important. I really like the APIs that ReceiveActors and ReceivePersistentActors expose as opposed to their base variants. I find the APIs to be far more cleaner and geared towards a better functional programming paradigm. Although nothing is perfect. Akkatecture tries to make your domain semi-declarative and at least highly readable and maintainable. 
+
 # What it is not
 This is not meant to be a framework for CQRS and ES. This toolkit is made such that you can enhance your Akka.NET based CQRS/ES solution, at anytime you can break out of the framework to do as you please within the Akka framework.
 
