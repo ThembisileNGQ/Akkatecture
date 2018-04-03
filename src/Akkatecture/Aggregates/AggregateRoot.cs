@@ -109,7 +109,7 @@ namespace Akkatecture.Aggregates
 
             Persist(aggregateEvent, aggregateApplyMethod);
 
-            Logger.Info($"[{Name}] With Id={Id} Commited [{typeof(TAggregateEvent)}]");
+            Logger.Info($"[{Name}] With Id={Id} Commited [{typeof(TAggregateEvent).PrettyPrint()}]");
 
             Version++;
                 
@@ -146,7 +146,7 @@ namespace Akkatecture.Aggregates
                 eventMetadata.AddRange(metadata);
             }
 
-            Logger.Info($"[{Name}] With Id={Id} Commited [{typeof(TAggregateEvent)}]");
+            Logger.Info($"[{Name}] With Id={Id} Commited [{typeof(TAggregateEvent).PrettyPrint()}]");
 
             var domainEvent = new DomainEvent<TAggregate,TIdentity,TAggregateEvent>(aggregateEvent,eventMetadata,now,Id,Version);
 
@@ -162,7 +162,7 @@ namespace Akkatecture.Aggregates
         protected virtual void Publish<TEvent>(TEvent aggregateEvent)
         {
             Context.System.EventStream.Publish(aggregateEvent);
-            Logger.Info($"[{Name}] With Id={Id} Published [{typeof(TEvent)}]");
+            Logger.Info($"[{Name}] With Id={Id} Published [{typeof(TEvent).PrettyPrint()}]");
         }
         
         public void ApplyEvents(IReadOnlyCollection<IDomainEvent> domainEvents)
@@ -300,12 +300,12 @@ namespace Akkatecture.Aggregates
         
         protected new void Become(Action something)
         {
-            Logger.Warning($"{GetType().DeclaringType} Has called Become() which is not supported in Akkatecture.");
+            Logger.Warning($"{GetType().PrettyPrint()} Has called Become() which is not supported in Akkatecture.");
         }
         
         protected new void BecomeStacked(Action something)
         {
-            Logger.Warning($"{GetType().DeclaringType} Has called Become() which is not supported in Akkatecture.");
+            Logger.Warning($"{GetType().PrettyPrint()} Has called Become() which is not supported in Akkatecture.");
         }
         
     }

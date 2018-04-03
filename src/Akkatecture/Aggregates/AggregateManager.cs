@@ -37,7 +37,7 @@ namespace Akkatecture.Aggregates
 
         protected virtual bool Dispatch(TCommand command)
         {
-            Logger.Info($"{GetType().DeclaringType} received {command.GetType()}");
+            Logger.Info($"{GetType().PrettyPrint()} received {command.GetType().PrettyPrint()}");
 
             var aggregateRef = FindOrCreate(command.AggregateId);
 
@@ -48,7 +48,7 @@ namespace Akkatecture.Aggregates
         
         protected virtual bool ReDispatch(TCommand command)
         {
-            Logger.Info($"{GetType().DeclaringType} as dead letter {command.GetType()}");
+            Logger.Info($"{GetType().PrettyPrint()} as dead letter {command.GetType().PrettyPrint()}");
 
             var aggregateRef = FindOrCreate(command.AggregateId);
 
@@ -94,29 +94,29 @@ namespace Akkatecture.Aggregates
                 localOnlyDecider: x =>
                 {
 
-                    Logger.Error($"[{GetType()}] Exception={x.ToString()} to be decided.");
+                    Logger.Error($"[{GetType().PrettyPrint()}] Exception={x.ToString()} to be decided.");
                     return Directive.Restart;
                 });
         }
 
         protected new void Become(Action action)
         {
-            Logger.Warning($"{GetType().DeclaringType} Has called Become() which is not supported in Akkatecture.");
+            Logger.Warning($"{GetType().PrettyPrint()} Has called Become() which is not supported in Akkatecture.");
         }
         
         protected new void Become(Receive receive)
         {
-            Logger.Warning($"{GetType().DeclaringType} Has called Become() which is not supported in Akkatecture.");
+            Logger.Warning($"{GetType().PrettyPrint()} Has called Become() which is not supported in Akkatecture.");
         }
         
         protected new void BecomeStacked(Action action)
         {
-            Logger.Warning($"{GetType().DeclaringType} Has called Become() which is not supported in Akkatecture.");
+            Logger.Warning($"{GetType().PrettyPrint()} Has called Become() which is not supported in Akkatecture.");
         }
         
         protected new void Become(UntypedReceive untypedReceive)
         {
-            Logger.Warning($"{GetType().DeclaringType} Has called Become() which is not supported in Akkatecture.");
+            Logger.Warning($"{GetType().PrettyPrint()} Has called Become() which is not supported in Akkatecture.");
         }
         
         

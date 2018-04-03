@@ -1,5 +1,4 @@
-﻿using Akka.Actor;
-using Akkatecture.Aggregates;
+﻿using Akkatecture.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Events;
 using Akkatecture.TestHelpers.Aggregates.Events.Errors;
