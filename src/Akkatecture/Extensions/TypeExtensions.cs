@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Akkatecture.Aggregates;
 using Akkatecture.Core;
+using Akkatecture.Subscribers;
 
 namespace Akkatecture.Extensions
 {
@@ -119,27 +120,18 @@ namespace Akkatecture.Extensions
         {
             var aggregateEventType = typeof(IAggregateEvent<TAggregate, TIdentity>);
 
-            var domainEventTypes = type
+            var interfaces = type
                 .GetTypeInfo()
                 .GetInterfaces()
-                .Where(i =>
-                {
-                    if (!i.Name.Contains("ISubscribeTo"))
-                        return false;
-                    
-                    var parameters = i.GenericTypeArguments;
-                    
-                    return
-                        parameters.Length == 3 &&
-                        aggregateEventType.GetTypeInfo().IsAssignableFrom(parameters[2]);
-
-                })
-                .Select(parameter => parameter.GenericTypeArguments[2])
-                .Select(x =>
-                {
-                    var typeContainer = typeof(DomainEvent<,,>);
-                    return typeContainer.MakeGenericType(typeof(TAggregate), typeof(TIdentity), x);
-                })
+                .Select(i => i.GetTypeInfo())
+                .ToList();
+            var aggregateEventSubscriptionTypes = interfaces
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISubscribeTo<,,>))
+                .Where(i => aggregateEventType.GetTypeInfo().IsAssignableFrom(i.GenericTypeArguments[2]))
+                .Select(i => i.GetGenericArguments()[2])
+                .ToList();
+            var domainEventTypes = aggregateEventSubscriptionTypes
+                .Select(t => typeof(DomainEvent<,,>).MakeGenericType(typeof(TAggregate), typeof(TIdentity), t))
                 .ToList();
             
             return domainEventTypes;

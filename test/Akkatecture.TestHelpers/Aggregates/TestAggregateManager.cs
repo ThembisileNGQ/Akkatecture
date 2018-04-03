@@ -1,5 +1,4 @@
-﻿using Akka.Event;
-using Akkatecture.Aggregates;
+﻿using Akkatecture.Aggregates;
 using Akkatecture.Commands;
 
 namespace Akkatecture.TestHelpers.Aggregates

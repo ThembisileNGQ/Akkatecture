@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using Akka.Actor;
 using Akka.TestKit.Xunit2;
-using Akkatecture.Akka;
 using Akkatecture.TestHelpers.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Events;

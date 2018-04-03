@@ -1,5 +1,4 @@
-﻿using System.Reflection.Metadata;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Akkatecture.Aggregates;
 using Akkatecture.Subscribers;
 using Akkatecture.TestHelpers.Aggregates;
