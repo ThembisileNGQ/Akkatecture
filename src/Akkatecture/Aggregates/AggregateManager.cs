@@ -1,6 +1,5 @@
 ﻿using System;
 using Akka.Actor;
-using Akka.Dispatch.SysMsg;
 using Akka.Event;
 using Akkatecture.Commands;
 using Akkatecture.Core;
