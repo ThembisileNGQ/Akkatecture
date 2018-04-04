@@ -1,49 +1,52 @@
 ﻿using System;
 using System.Collections.Generic;
-using Akka.Dispatch.SysMsg;
 
 namespace Akkatecture.Sagas
 {
-    public abstract class SagaState
+    public abstract class SagaState<TSaga, TIdentity> : ISagaState<TSaga, TIdentity>
+        where TSaga : ISaga
+        where TIdentity : ISagaId
     {
         public SagaStatus Status { get; private set; }
-        private Dictionary<SagaStatus, DateTimeOffset> SagaTimes = new Dictionary<SagaStatus, DateTimeOffset>();
+        public Dictionary<SagaStatus, DateTimeOffset> SagaTimes { get; } = new Dictionary<SagaStatus, DateTimeOffset>();
         
-        public SagaState()
+        protected SagaState()
         {
             Status = SagaStatus.NotStarted;
+            StopWatch();
         }
 
-        public void Start()
+        public virtual void Start()
         {
             Status = SagaStatus.Running;
+            StopWatch();
         }
 
-        public void Complete()
+        public virtual void Complete()
         {
             Status = SagaStatus.Completed;
             StopWatch();
         }
 
-        public void Fail()
+        public virtual void Fail()
         {
             Status = SagaStatus.Failed;
             StopWatch();
         }
 
-        public void Cancel()
+        public virtual void Cancel()
         {
             Status = SagaStatus.Cancelled;
             StopWatch();
         }
 
-        public void PartiallySucceed()
+        public virtual void PartiallySucceed()
         {
             Status = SagaStatus.PartiallySucceeded;
             StopWatch();
         }
 
-        private void StopWatch()
+        public void StopWatch()
         {
             if (!SagaTimes.ContainsKey(Status))
             {
