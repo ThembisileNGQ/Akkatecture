@@ -1,4 +1,5 @@
 ﻿using Akkatecture.Aggregates;
+using Akkatecture.Core;
 
 namespace Akkatecture.Sagas
 {
@@ -6,4 +7,5 @@ namespace Akkatecture.Sagas
     {
         ISagaId LocateSaga(IDomainEvent domainEvent);
     }
+    
 }

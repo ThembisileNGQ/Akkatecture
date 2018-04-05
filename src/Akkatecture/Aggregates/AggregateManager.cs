@@ -25,12 +25,12 @@ namespace Akkatecture.Aggregates
             Receive<Terminated>(Terminate);
             
             Receive<DeadLetter>(
-                x => x.Message is TCommand,
+                x => x.Message is TCommand && (x.Message as TCommand).AggregateId.GetType() == typeof(TIdentity),
                 x =>
                 {
                     var command = x.Message as TCommand;
                     
-                    ReDispatch(x.Message as TCommand);
+                    ReDispatch(command);
                 });
              
         }
@@ -68,25 +68,24 @@ namespace Akkatecture.Aggregates
 
         protected virtual IActorRef FindOrCreate(TIdentity aggregateId)
         {
-            var aggregateRef = Context.Child(aggregateId);
+            var aggregate = Context.Child(aggregateId);
 
-            if (Equals(aggregateRef,ActorRefs.Nobody))
+            if (Equals(aggregate,ActorRefs.Nobody))
             {
-                aggregateRef = CreateAggregate(aggregateId);
-                Context.Watch(aggregateRef);
+                aggregate = CreateAggregate(aggregateId);      
             }
 
-            return aggregateRef;
+            return aggregate;
         }
 
         protected virtual IActorRef CreateAggregate(TIdentity aggregateId)
         {
             var aggregateRef = Context.ActorOf(Props.Create<TAggregate>(aggregateId),aggregateId.Value);
-
+            Context.Watch(aggregateRef);
             return aggregateRef;
         }
 
-        protected  override SupervisorStrategy SupervisorStrategy()
+        protected override SupervisorStrategy SupervisorStrategy()
         {
             return new OneForOneStrategy(
                 maxNrOfRetries: 3,
