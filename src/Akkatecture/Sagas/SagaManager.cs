@@ -15,12 +15,16 @@ namespace Akkatecture.Sagas
     {
         protected ILoggingAdapter Logger { get; set; }
         private readonly Expression<Func<TSaga>> SagaFactory;
+        private TSagaLocator SagaLocator { get; }
 
         protected SagaManager(Expression<Func<TSaga>> sagaFactory)
         {
             Logger = Context.GetLogger();
 
             Context.System.EventStream.Subscribe(Self, typeof(DeadLetter));
+
+            SagaLocator = (TSagaLocator)Activator.CreateInstance(typeof(TSagaLocator));
+
             SagaFactory = sagaFactory;
         }
 
