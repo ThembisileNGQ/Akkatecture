@@ -16,21 +16,21 @@ namespace Akkatecture.Tests.UnitTests.Core
             var namespaceId = Guid.Parse("769077C6-F84D-46E3-AD2E-828A576AAAF3");
             const string name = "fantastic 4";
 
-            var testId = TestId.NewDeterministic(namespaceId, name);
+            var testId = TestAggregateId.NewDeterministic(namespaceId, name);
 
-            testId.Value.Should().Be("test-da7ab6b1-c513-581f-a1a0-7cdf17109deb");
-            TestId.IsValid(testId.Value).Should().BeTrue();
+            testId.Value.Should().Be("testaggregate-da7ab6b1-c513-581f-a1a0-7cdf17109deb");
+            TestAggregateId.IsValid(testId.Value).Should().BeTrue();
         }
 
         [Theory]
-        [InlineData("test-da7ab6b1-c513-581f-a1a0-7cdf17109deb", "da7ab6b1-c513-581f-a1a0-7cdf17109deb")]
-        [InlineData("test-00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000000")]
-        public void WithValidValue(string value, string expectedGuidValue)
+        [InlineData("testaggregate-da7ab6b1-c513-581f-a1a0-7cdf17109deb", "da7ab6b1-c513-581f-a1a0-7cdf17109deb")]
+        [InlineData("testaggregate-00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000000")]
+        public void Identity_Valid_WithValue(string value, string expectedGuidValue)
         {
-            TestId testId = null;
+            TestAggregateId testId = null;
             var expectedGuid = Guid.Parse(expectedGuidValue);
 
-            Action action = () => testId = TestId.With(value);
+            Action action = () => testId = TestAggregateId.With(value);
             action.Should().NotThrow();
 
             testId.Should().NotBeNull();
@@ -39,45 +39,45 @@ namespace Akkatecture.Tests.UnitTests.Core
         }
 
         [Fact]
-        public void InputOutput()
+        public void Identity_Created_WithGuid()
         {
             var guid = Guid.NewGuid();
             
-            var testId = TestId.With(guid);
+            var testId = TestAggregateId.With(guid);
 
             testId.GetGuid().Should().Be(guid);
         }
 
         [Fact]
-        public void ShouldBeLowerCase()
+        public void Identity_Value_ShouldBeLowerCase()
         {
-            var testId = TestId.New;
+            var testId = TestAggregateId.New;
 
             testId.Value.Should().Be(testId.Value.ToLowerInvariant());
         }
 
         [Fact]
-        public void New_IsValid()
+        public void Identity_New_IsValid()
         {
-            var testId = TestId.New;
+            var testId = TestAggregateId.New;
 
-            TestId.IsValid(testId.Value).Should().BeTrue(testId.Value);
+            TestAggregateId.IsValid(testId.Value).Should().BeTrue(testId.Value);
         }
 
         [Fact]
-        public void NewComb_IsValid()
+        public void Identity_NewComb_IsValid()
         {
-            var testId = TestId.NewComb();
+            var testId = TestAggregateId.NewComb();
 
-            TestId.IsValid(testId.Value).Should().BeTrue(testId.Value);
+            TestAggregateId.IsValid(testId.Value).Should().BeTrue(testId.Value);
         }
 
         [Fact]
-        public void NewDeterministic_IsValid()
+        public void Identity_NewDeterministic_IsValid()
         {
-            var testId = TestId.NewDeterministic(Guid.NewGuid(), Guid.NewGuid().ToString());
+            var testId = TestAggregateId.NewDeterministic(Guid.NewGuid(), Guid.NewGuid().ToString());
 
-            TestId.IsValid(testId.Value).Should().BeTrue(testId.Value);
+            TestAggregateId.IsValid(testId.Value).Should().BeTrue(testId.Value);
         }
 
         [Theory]
@@ -88,9 +88,9 @@ namespace Akkatecture.Tests.UnitTests.Core
         [InlineData("funny-da7ab6b1-c513-581f-a1a0-7cdf17109deb")]
         [InlineData(null)]
         [InlineData("")]
-        public void CannotCreateBadIds(string badIdValue)
+        public void Identity_CannotCreate_WithBadIds(string badIdValue)
         {
-            Action action = () => TestId.With(badIdValue);
+            Action action = () => TestAggregateId.With(badIdValue);
 
             action.Should().Throw<ArgumentException>();
         }

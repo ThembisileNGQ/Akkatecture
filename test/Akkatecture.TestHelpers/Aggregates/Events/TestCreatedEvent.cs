@@ -4,13 +4,13 @@ using Akkatecture.Events;
 namespace Akkatecture.TestHelpers.Aggregates.Events
 {
     [EventVersion("TestCreated", 1)]
-    public class TestCreatedEvent : AggregateEvent<TestAggregate, TestId>
+    public class TestCreatedEvent : AggregateEvent<TestAggregate, TestAggregateId>
     {
-        public TestId TestId { get; }
+        public TestAggregateId TestAggregateId { get; }
 
-        public TestCreatedEvent(TestId testId)
+        public TestCreatedEvent(TestAggregateId testAggregateId)
         {
-            TestId = testId;
+            TestAggregateId = testAggregateId;
         }
     }
 }

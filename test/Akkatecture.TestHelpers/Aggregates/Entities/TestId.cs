@@ -2,13 +2,13 @@
 using Akkatecture.ValueObjects;
 using Newtonsoft.Json;
 
-namespace Akkatecture.TestHelpers.Aggregates
+namespace Akkatecture.TestHelpers.Aggregates.Entities
 {
     [JsonConverter(typeof(SingleValueObjectConverter))]
-    public class TestId : Identity<TestId> 
+    public class TestId : Identity<TestId>
     {
-        public TestId(string value)
-            : base(value)
+        public TestId(string entityId)
+            : base(entityId)
         {
             
         }

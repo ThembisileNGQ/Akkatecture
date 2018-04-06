@@ -4,6 +4,7 @@ using Akka.TestKit.Xunit2;
 using Akkatecture.Aggregates;
 using Akkatecture.TestHelpers.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Commands;
+using Akkatecture.TestHelpers.Aggregates.Entities;
 using Akkatecture.TestHelpers.Aggregates.Events;
 using Akkatecture.TestHelpers.Aggregates.Events.Signals;
 using Akkatecture.TestHelpers.Akka;
@@ -27,15 +28,15 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         public void InitialState_AfterAggregateCreation_TestCreatedEventEmitted()
         {
             var probe = CreateTestActor("probeActor");
-            Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestId, TestCreatedEvent>));
+            Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
             
-            var aggregateId = TestId.New;
+            var aggregateId = TestAggregateId.New;
             var command = new CreateTestCommand(aggregateId);
             aggregateManager.Tell(command);
 
-            ExpectMsg<DomainEvent<TestAggregate, TestId, TestCreatedEvent>>(
-                x => x.AggregateEvent.TestId.Equals(aggregateId));
+            ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent>>(
+                x => x.AggregateEvent.TestAggregateId.Equals(aggregateId));
         }
 
         [Fact]
@@ -43,16 +44,16 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         public void EventContainerMetadata_AfterAggregateCreation_TestCreatedEventEmitted()
         {
             var probe = CreateTestActor("probeActor");
-            Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestId, TestCreatedEvent>));
+            Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
 
-            var aggregateId = TestId.New;
+            var aggregateId = TestAggregateId.New;
             var command = new CreateTestCommand(aggregateId);
             aggregateManager.Tell(command);
 
-            ExpectMsg<DomainEvent<TestAggregate, TestId, TestCreatedEvent>>(
+            ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent>>(
                 x => x.AggregateIdentity.Equals(aggregateId)
-                    && x.IdentityType == typeof(TestId)
+                    && x.IdentityType == typeof(TestAggregateId)
                     && x.AggregateType == typeof(TestAggregate)
                     && x.EventType == typeof(TestCreatedEvent)
                     //&& x.Metadata.EventName == "TestCreated"
@@ -66,20 +67,19 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         public void InitialState_AfterAggregateCreation_TestStateSignalled()
         {
             var probe = CreateTestActor("probeActor");
-            Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestId, TestStateSignalEvent>));
+            Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
 
-            var aggregateId = TestId.New;
+            var aggregateId = TestAggregateId.New;
             var command = new CreateTestCommand(aggregateId);
             var nextCommand = new PublishTestStateCommand(aggregateId);
             aggregateManager.Tell(command);
             aggregateManager.Tell(nextCommand);
 
-            ExpectMsg<DomainEvent<TestAggregate, TestId, TestStateSignalEvent>>(
+            ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>>(
                 x => x.AggregateEvent.LastSequenceNr == 1
                      && x.AggregateEvent.Version == 1
-                     && x.AggregateEvent.State.Test.Id.Equals(aggregateId)
-                     && x.AggregateEvent.State.Test.TestsDone == 0);
+                     && x.AggregateEvent.State.TestCollection.Count == 0);
         }
 
         [Fact]
@@ -87,17 +87,19 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         public void TestCommand_AfterAggregateCreation_TestEventEmitted()
         {
             var probe = CreateTestActor("probeActor");
-            Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestId, TestTestedEvent>));
+            Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
 
-            var aggregateId = TestId.New;
+            var aggregateId = TestAggregateId.New;
             var command = new CreateTestCommand(aggregateId);
-            var nextCommand = new TestCommand(aggregateId);
+            var testId = TestId.New;
+            var test = new Test(testId);
+            var nextCommand = new AddTestCommand(aggregateId,test);
             aggregateManager.Tell(command);
             aggregateManager.Tell(nextCommand);
 
-            ExpectMsg<DomainEvent<TestAggregate, TestId, TestTestedEvent>>(
-                x => x.AggregateEvent.Tests == 1);
+            ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>>(
+                x => x.AggregateEvent.Test.Equals(test));
         }
 
         [Fact]
@@ -105,23 +107,29 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         public void TestCommandTwice_AfterAggregateCreation_TestEventEmitted()
         {
             var probe = CreateTestActor("probeActor");
-            Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestId, TestTestedEvent>));
+            Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
 
-            var aggregateId = TestId.New;
+
+            var aggregateId = TestAggregateId.New;
             var command = new CreateTestCommand(aggregateId);
-            var nextCommand = new TestCommand(aggregateId);
-            var nextCommand2 = new TestCommand(aggregateId);
+            var testId = TestId.New;
+            var test = new Test(testId);
+            var nextCommand = new AddTestCommand(aggregateId, test);
+            var test2Id = TestId.New;
+            var test2 = new Test(test2Id);
+            var nextCommand2 = new AddTestCommand(aggregateId, test2);
             aggregateManager.Tell(command);
             aggregateManager.Tell(nextCommand);
             aggregateManager.Tell(nextCommand2);
 
-            ExpectMsg<DomainEvent<TestAggregate, TestId, TestTestedEvent>>(
-                x => x.AggregateEvent.Tests == 1
+
+            ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>>(
+                x => x.AggregateEvent.Test.Equals(test)
                      && x.AggregateSequenceNumber == 2);
 
-            ExpectMsg<DomainEvent<TestAggregate, TestId, TestTestedEvent>>(
-                x => x.AggregateEvent.Tests == 2
+            ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>>(
+                x => x.AggregateEvent.Test.Equals(test2)
                      && x.AggregateSequenceNumber == 3);
         }
 
@@ -130,9 +138,9 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         public void TestEventSourcing_AfterManyTests_TestStateSignalled()
         {
             var probe = CreateTestActor("probeActor");
-            Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestId, TestStateSignalEvent>));
+            Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
-            var aggregateId = TestId.New;
+            var aggregateId = TestAggregateId.New;
 
             
             var command = new CreateTestCommand(aggregateId);
@@ -140,7 +148,8 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
 
             for (var i = 0; i < 5; i++)
             {
-                var testCommand = new TestCommand(aggregateId);
+                var test = new Test(TestId.New);
+                var testCommand = new AddTestCommand(aggregateId, test);
                 aggregateManager.Tell(testCommand);
             }
             
@@ -151,11 +160,10 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             aggregateManager.Tell(reviveCommand);
 
 
-            ExpectMsg<DomainEvent<TestAggregate, TestId, TestStateSignalEvent>>(
+            ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>>(
                 x => x.AggregateEvent.LastSequenceNr == 6
                      && x.AggregateEvent.Version == 6
-                     && x.AggregateEvent.State.Test.Id.Equals(aggregateId)
-                     && x.AggregateEvent.State.Test.TestsDone == 5);
+                     && x.AggregateEvent.State.TestCollection.Count == 5);
 
         }
     }

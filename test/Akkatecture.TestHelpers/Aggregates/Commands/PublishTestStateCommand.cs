@@ -2,9 +2,9 @@
 
 namespace Akkatecture.TestHelpers.Aggregates.Commands
 {
-    public class PublishTestStateCommand : Command<TestAggregate, TestId>
+    public class PublishTestStateCommand : Command<TestAggregate, TestAggregateId>
     {
-        public PublishTestStateCommand(TestId aggregateId)
+        public PublishTestStateCommand(TestAggregateId aggregateId)
             : base(aggregateId)
         {
             

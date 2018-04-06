@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Akkatecture.Sagas
 {
-    public abstract class SagaState<TSaga, TIdentity> : ISagaState<TSaga, TIdentity>
+    public abstract class SagaState<TSaga, TIdentity> : ISagaState<TIdentity>
         where TSaga : ISaga
         where TIdentity : ISagaId
     {
@@ -12,6 +12,7 @@ namespace Akkatecture.Sagas
         
         protected SagaState()
         {
+
             Status = SagaStatus.NotStarted;
             StopWatch();
         }

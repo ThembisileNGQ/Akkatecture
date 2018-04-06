@@ -22,7 +22,7 @@ namespace Akkatecture.Tests.UnitTests.Extensions
         [InlineData(typeof(IEnumerable<IEnumerable<string>>), "IEnumerable<IEnumerable<String>>")]
         [InlineData(typeof(KeyValuePair<bool, long>), "KeyValuePair<Boolean,Int64>")]
         [InlineData(typeof(KeyValuePair<KeyValuePair<bool, long>, KeyValuePair<bool, long>>), "KeyValuePair<KeyValuePair<Boolean,Int64>,KeyValuePair<Boolean,Int64>>")]
-        public void PrettyPrint(Type type, string expectedPrettyPrint)
+        public void PrettyPrint_Output_ShouldBeExpected(Type type, string expectedPrettyPrint)
         {
             var prettyPrint = type.PrettyPrint();
             
@@ -32,7 +32,7 @@ namespace Akkatecture.Tests.UnitTests.Extensions
         [Theory]
         [InlineData(typeof(FooAggregateWithOutAttribute), "FooAggregateWithOutAttribute")]
         [InlineData(typeof(FooAggregateWithAttribute), "BetterNameForAggregate")]
-        public void GetAggregateName(Type aggregateType, string expectedAggregateName)
+        public void AggregateName_FromType_ShouldBeExpected(Type aggregateType, string expectedAggregateName)
         {
             var aggregateName = aggregateType.GetAggregateName();
             

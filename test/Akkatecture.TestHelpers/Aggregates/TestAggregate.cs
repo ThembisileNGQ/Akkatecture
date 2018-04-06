@@ -7,10 +7,10 @@ using Akkatecture.TestHelpers.Aggregates.Events.Signals;
 namespace Akkatecture.TestHelpers.Aggregates
 {
     [AggregateName("Test")]
-    public class TestAggregate : AggregateRoot<TestAggregate, TestId, TestState>
+    public class TestAggregate : AggregateRoot<TestAggregate, TestAggregateId, TestState>
     {
         public int TestErrors { get; private set; }
-        public TestAggregate(TestId aggregateId)
+        public TestAggregate(TestAggregateId aggregateId)
             : base(aggregateId)
         {
             TestErrors = 0;
@@ -18,7 +18,7 @@ namespace Akkatecture.TestHelpers.Aggregates
             Command<CreateTestCommand>(Execute);
             Command<PoisonTestAggregateCommand>(Execute);
             Command<PublishTestStateCommand>(Execute);
-            Command<TestCommand>(Execute);
+            Command<AddTestCommand>(Execute);
             Command<TestDomainErrorCommand>(Execute);
         }
 
@@ -37,11 +37,12 @@ namespace Akkatecture.TestHelpers.Aggregates
             return true;
         }
 
-        private bool Execute(TestCommand command)
+        private bool Execute(AddTestCommand command)
         {
             if (!IsNew)
             {
-                Emit(new TestTestedEvent(State.Test.TestsDone + 1));
+
+                Emit(new TestAddedEvent(command.Test));
 
             }
             else

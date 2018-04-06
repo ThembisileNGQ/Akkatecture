@@ -93,7 +93,7 @@ namespace Akkatecture.Aggregates
                 localOnlyDecider: x =>
                 {
 
-                    Logger.Error($"[{GetType().PrettyPrint()}] Exception={x.ToString()} to be decided.");
+                    Logger.Warning($"[{GetType().PrettyPrint()}] Exception={x.ToString()} to be decided.");
                     return Directive.Restart;
                 });
         }

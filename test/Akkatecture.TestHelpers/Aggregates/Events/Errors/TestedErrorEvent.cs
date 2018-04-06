@@ -4,7 +4,7 @@ using Akkatecture.Events;
 namespace Akkatecture.TestHelpers.Aggregates.Events.Errors
 {
     [EventVersion("TestedError", 1)]
-    public class TestedErrorEvent : AggregateEvent<TestAggregate, TestId>
+    public class TestedErrorEvent : AggregateEvent<TestAggregate, TestAggregateId>
     {
         public int TestErrors { get; }
 

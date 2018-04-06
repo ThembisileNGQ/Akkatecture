@@ -1,22 +1,30 @@
-﻿using Akkatecture.Aggregates;
+﻿using System.Collections.Generic;
+using Akkatecture.Aggregates;
+using Akkatecture.TestHelpers.Aggregates.Entities;
 using Akkatecture.TestHelpers.Aggregates.Events;
 
 namespace Akkatecture.TestHelpers.Aggregates
 {
-    public class TestState : AggregateState<TestAggregate, TestId, IEventApplier<TestAggregate, TestId>>,
-        IApply<TestTestedEvent>,
+    public class TestState : AggregateState<TestAggregate, TestAggregateId, IEventApplier<TestAggregate, TestAggregateId>>,
+        IApply<TestAddedEvent>,
+        IApply<TestReceivedEvent>,
         IApply<TestCreatedEvent>
     {
-        public Test Test { get; set; }
+        public Dictionary<TestId, Test> TestCollection = null;
         
         public void Apply(TestCreatedEvent aggregateEvent)
         {
-            Test = new Test(aggregateEvent.TestId);
+            TestCollection = new Dictionary<TestId, Test>();
         }
         
-        public void Apply(TestTestedEvent aggregateEvent)
+        public void Apply(TestAddedEvent aggregateEvent)
         {
-            Test.SetTestsDone(aggregateEvent.Tests);
+            TestCollection.Add(aggregateEvent.Test.Id,aggregateEvent.Test);
+        }
+
+        public void Apply(TestReceivedEvent aggregateEvent)
+        {
+            TestCollection.Add(aggregateEvent.Test.Id,aggregateEvent.Test);
         }
     }
 }

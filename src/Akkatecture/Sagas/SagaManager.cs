@@ -10,8 +10,8 @@ namespace Akkatecture.Sagas
 {
     public abstract class SagaManager<TSaga, TSagaId, TSagaLocator> : ReceiveActor
         where TSagaId : ISagaId
-        where TSagaLocator : ISagaLocator
-        where TSaga : ReceiveActor
+        where TSagaLocator : ISagaLocator<TSagaId>
+        where TSaga : Saga
     {
         protected ILoggingAdapter Logger { get; set; }
         private readonly Expression<Func<TSaga>> SagaFactory;
@@ -69,7 +69,7 @@ namespace Akkatecture.Sagas
         }
     }
 
-    public class FooSaga : ReceiveActor
+    public class FooSaga : Saga
     {
         public FooSaga(int i, string q, long j)
         {
@@ -77,9 +77,9 @@ namespace Akkatecture.Sagas
         }
     }
 
-    public class FooSagaLocator : ISagaLocator
+    public class FooSagaLocator : ISagaLocator<FooSagaId>
     {
-        public ISagaId LocateSaga(IDomainEvent domainEvent)
+        public FooSagaId LocateSaga(IDomainEvent domainEvent)
         {
             var sagaId = domainEvent.GetIdentity();
             return new FooSagaId($"foosaga-{sagaId}");

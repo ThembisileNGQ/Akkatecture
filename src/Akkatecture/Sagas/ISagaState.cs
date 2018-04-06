@@ -3,8 +3,7 @@ using System.Collections.Generic;
 
 namespace Akkatecture.Sagas
 {
-    public interface ISagaState<TSaga, TIdentity>
-        where TSaga : ISaga
+    public interface ISagaState<out TIdentity>
         where TIdentity : ISagaId
     {
         SagaStatus Status { get; }

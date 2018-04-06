@@ -23,19 +23,19 @@ namespace Akkatecture.Tests.UnitTests.Subscribers
 
         [Fact]
         [Category(Category)]
-        public void Test()
+        public void Subscriber_ReceivedEvent_FromAggregatesEmit()
         {
             var probe = CreateTestActor("probeActor");
             Sys.EventStream.Subscribe(probe, typeof(Handled<TestCreatedEvent>));
             var aggregateSubscriber = Sys.ActorOf(Props.Create(() => new TestAggregateSubscriber()), "test-subscriber");        
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
             
-            var aggregateId = TestId.New;
+            var aggregateId = TestAggregateId.New;
             var command = new CreateTestCommand(aggregateId);
             aggregateManager.Tell(command);
 
             ExpectMsg<Handled<TestCreatedEvent>>(x =>
-                x.AggregateEvent.TestId == command.AggregateId);
+                x.AggregateEvent.TestAggregateId == command.AggregateId);
 
 
         }

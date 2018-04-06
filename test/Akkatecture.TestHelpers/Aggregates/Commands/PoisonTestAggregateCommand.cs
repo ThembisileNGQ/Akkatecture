@@ -2,9 +2,9 @@
 
 namespace Akkatecture.TestHelpers.Aggregates.Commands
 {
-    public class PoisonTestAggregateCommand : Command<TestAggregate, TestId>
+    public class PoisonTestAggregateCommand : Command<TestAggregate, TestAggregateId>
     {
-        public PoisonTestAggregateCommand(TestId aggregateId)
+        public PoisonTestAggregateCommand(TestAggregateId aggregateId)
             : base(aggregateId)
         {
             

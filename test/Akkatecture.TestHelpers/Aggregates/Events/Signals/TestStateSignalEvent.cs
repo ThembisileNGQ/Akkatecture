@@ -2,7 +2,7 @@
 
 namespace Akkatecture.TestHelpers.Aggregates.Events.Signals
 {
-    public class TestStateSignalEvent : AggregateEvent<TestAggregate, TestId>
+    public class TestStateSignalEvent : AggregateEvent<TestAggregate, TestAggregateId>
     {
         public TestState State { get; }
         public long LastSequenceNr { get; }
