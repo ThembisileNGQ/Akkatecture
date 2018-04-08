@@ -15,7 +15,7 @@ namespace Akkatecture.Subscribers
             
             var subscriptionTypes =
                 GetType()
-                    .GetDomainEventSubscriberSubscriptionTypes<TAggregate, TIdentity>(); 
+                .GetDomainEventSubscriberSubscriptionTypes<TAggregate, TIdentity>(); 
             
             foreach (var type in subscriptionTypes)
             {

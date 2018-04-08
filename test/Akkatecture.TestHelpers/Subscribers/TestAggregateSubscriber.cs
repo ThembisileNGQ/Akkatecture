@@ -17,17 +17,17 @@ namespace Akkatecture.TestHelpers.Subscribers
         
         public Task Handle(IDomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent> domainEvent)
         {
-            var handled = new Handled<TestCreatedEvent>(domainEvent.AggregateEvent);
+            var handled = new TestSubscribedEventHandled<TestCreatedEvent>(domainEvent.AggregateEvent);
             Context.System.EventStream.Publish(handled);
             return Task.CompletedTask;
         }
     }
 
-    public class Handled<T> 
+    public class TestSubscribedEventHandled<TAggregateEvent> 
     {
-        public T AggregateEvent { get;}
+        public TAggregateEvent AggregateEvent { get;}
 
-        public Handled(T aggregateEvent)
+        public TestSubscribedEventHandled(TAggregateEvent aggregateEvent)
         {
             AggregateEvent = aggregateEvent;
         }

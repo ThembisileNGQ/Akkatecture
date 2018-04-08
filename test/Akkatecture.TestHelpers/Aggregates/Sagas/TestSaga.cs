@@ -1,6 +1,4 @@
-﻿
-using Akka.Actor;
-using Akkatecture.Sagas;
+﻿using Akkatecture.Sagas;
 
 namespace Akkatecture.TestHelpers.Aggregates.Sagas
 {

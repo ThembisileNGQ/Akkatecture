@@ -26,7 +26,7 @@ namespace Akkatecture.Tests.UnitTests.Subscribers
         public void Subscriber_ReceivedEvent_FromAggregatesEmit()
         {
             var probe = CreateTestActor("probeActor");
-            Sys.EventStream.Subscribe(probe, typeof(Handled<TestCreatedEvent>));
+            Sys.EventStream.Subscribe(probe, typeof(TestSubscribedEventHandled<TestCreatedEvent>));
             var aggregateSubscriber = Sys.ActorOf(Props.Create(() => new TestAggregateSubscriber()), "test-subscriber");        
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
             
@@ -34,7 +34,7 @@ namespace Akkatecture.Tests.UnitTests.Subscribers
             var command = new CreateTestCommand(aggregateId);
             aggregateManager.Tell(command);
 
-            ExpectMsg<Handled<TestCreatedEvent>>(x =>
+            ExpectMsg<TestSubscribedEventHandled<TestCreatedEvent>>(x =>
                 x.AggregateEvent.TestAggregateId == command.AggregateId);
 
 

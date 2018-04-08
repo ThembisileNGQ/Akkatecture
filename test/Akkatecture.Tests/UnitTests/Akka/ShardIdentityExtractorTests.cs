@@ -43,6 +43,7 @@ namespace Akkatecture.Tests.UnitTests.Akka
         {
             ShardTestMessageId message = null;
 
+            // ReSharper disable once ExpressionIsAlwaysNull
             this.Invoking(test => ShardIdentityExtractor.IdentityExtrator(message))
                 .Should().Throw<ArgumentNullException>();
         }

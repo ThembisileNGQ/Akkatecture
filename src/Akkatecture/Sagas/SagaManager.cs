@@ -3,7 +3,6 @@ using System.Linq.Expressions;
 using Akka.Actor;
 using Akka.Event;
 using Akkatecture.Aggregates;
-using Akkatecture.ValueObjects;
 using Akkatecture.Extensions;
 
 namespace Akkatecture.Sagas

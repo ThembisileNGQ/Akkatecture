@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
-using Akka.Actor;
 using Akkatecture.Aggregates;
 using Akkatecture.Core;
 using Akkatecture.ValueObjects;

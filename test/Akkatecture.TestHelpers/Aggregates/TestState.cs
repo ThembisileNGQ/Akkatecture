@@ -10,7 +10,7 @@ namespace Akkatecture.TestHelpers.Aggregates
         IApply<TestReceivedEvent>,
         IApply<TestCreatedEvent>
     {
-        public Dictionary<TestId, Test> TestCollection = null;
+        public Dictionary<TestId, Test> TestCollection ;
         
         public void Apply(TestCreatedEvent aggregateEvent)
         {

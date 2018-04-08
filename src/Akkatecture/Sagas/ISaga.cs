@@ -1,6 +1,4 @@
-﻿using Akkatecture.Core;
-
-namespace Akkatecture.Sagas
+﻿namespace Akkatecture.Sagas
 {
     public interface ISaga
     {
@@ -11,7 +9,6 @@ namespace Akkatecture.Sagas
         where TSagaState : ISagaState<TSagaId>
         where TSagaId : ISagaId
     {
-        TSagaId Id { get; }
-        string Name { get; }
+        
     }
 }

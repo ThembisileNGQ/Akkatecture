@@ -67,13 +67,15 @@ namespace Akkatecture.Tests.UnitTests.ValueObjects
         }
 
         [JsonConverter(typeof(SingleValueObjectConverter))]
-        public class StringSVO : SingleValueObject<string>
+        // ReSharper disable once InconsistentNaming
+        private class StringSVO : SingleValueObject<string>
         {
             public StringSVO(string value) : base(value) { }
         }
 
         [JsonConverter(typeof(SingleValueObjectConverter))]
-        public class IntSVO : SingleValueObject<int>
+        // ReSharper disable once InconsistentNaming
+        private class IntSVO : SingleValueObject<int>
         {
             public IntSVO(int value) : base(value) { }
         }
