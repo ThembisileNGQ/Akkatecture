@@ -56,9 +56,9 @@ namespace Akkatecture.Sagas.AggregateSaga
                 }
 
             }
+            
+            Register(State);
 
-            Recover<IAggregateEvent<TAggregateSaga, TIdentity>>(Recover);
-            Recover<SnapshotOffer>(Recover);
         }
 
         protected Action<IAggregateEvent> GetEventApplyMethods<TAggregateEvent>(TAggregateEvent aggregateEvent)
@@ -110,6 +110,11 @@ namespace Akkatecture.Sagas.AggregateSaga
             eventApplier(aggregateEvent);
 
             Version++;
+        }
+        
+        protected void Register(IEventApplier<TAggregateSaga, TIdentity> eventApplier)
+        {
+            _eventAppliers.Add(eventApplier);
         }
 
         public void ApplyEvents(IEnumerable<IAggregateEvent> aggregateEvents)
