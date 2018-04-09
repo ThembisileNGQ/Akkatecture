@@ -58,7 +58,9 @@ namespace Akkatecture.Aggregates
         {
             get
             {
+#pragma warning disable IDE0018 // Inline variable declaration
                 string timestampEpoch;
+#pragma warning restore IDE0018 // Inline variable declaration
                 return TryGetValue(MetadataKeys.TimestampEpoch, out timestampEpoch)
                     ? long.Parse(timestampEpoch)
                     : Timestamp.ToUnixTime();

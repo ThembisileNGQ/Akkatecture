@@ -13,7 +13,6 @@ namespace Akkatecture.Aggregates
         where TAggregateState : AggregateState<TAggregate,TIdentity, IEventApplier<TAggregate,TIdentity>>
         where TIdentity : IIdentity
     {
-        private static readonly IReadOnlyDictionary<Type, Action<TAggregate, IAggregateEvent>> ApplyMethods;
         private static readonly IReadOnlyDictionary<Type, Action<TAggregateState, IAggregateEvent>> ApplyMethodsFromState;
         private static readonly IAggregateName AggregateName = typeof(TAggregate).GetAggregateName();
         public TAggregateState State { get; protected set; } = null;
@@ -28,9 +27,8 @@ namespace Akkatecture.Aggregates
         
         static AggregateRoot()
         {
-            ApplyMethods = typeof(TAggregate).GetAggregateEventApplyMethods<TAggregate, TIdentity, TAggregate>();
             ApplyMethodsFromState = typeof(TAggregateState)
-                .GetAggregateStateEventApplyMethods<TAggregate, TIdentity, TAggregateState, TAggregateState>();
+                .GetAggregateStateEventApplyMethods<TAggregate, TIdentity, TAggregateState>();
         }
 
         protected AggregateRoot(TIdentity id)
@@ -62,7 +60,8 @@ namespace Akkatecture.Aggregates
             
             //Recovery
             Recover<IAggregateEvent<TAggregate, TIdentity>>(Recover);
-            
+            Recover<SnapshotOffer>(Recover);
+
         }
         
         

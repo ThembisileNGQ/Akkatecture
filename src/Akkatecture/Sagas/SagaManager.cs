@@ -10,7 +10,7 @@ namespace Akkatecture.Sagas
     public abstract class SagaManager<TSaga, TSagaId, TSagaLocator> : ReceiveActor
         where TSagaId : ISagaId
         where TSagaLocator : ISagaLocator<TSagaId>
-        where TSaga : Saga<TSagaId, ISagaState<TSagaId>>
+        where TSaga : Saga<TSagaId, SagaState<TSaga,TSagaId>>
     {
         protected ILoggingAdapter Logger { get; set; }
         private readonly Expression<Func<TSaga>> SagaFactory;
@@ -68,7 +68,7 @@ namespace Akkatecture.Sagas
         }
     }
 
-    public class FooSaga : Saga<FooSagaId, ISagaState<FooSagaId>>
+    public class FooSaga : Saga<FooSagaId, SagaState<FooSaga,FooSagaId>>
     {
         public FooSaga(int i, string q, long j)
         {

@@ -70,6 +70,27 @@ namespace Akkatecture.Extensions
                 });
         }
 
+
+        private static readonly ConcurrentDictionary<Type, SagaName> SagaNames = new ConcurrentDictionary<Type, SagaName>();
+
+        public static SagaName GetSagaName(
+            this Type sagaType)
+        {
+            return SagaNames.GetOrAdd(
+                sagaType,
+                t =>
+                {
+                    if (!typeof(IAggregateRoot).GetTypeInfo().IsAssignableFrom(sagaType))
+                    {
+                        throw new ArgumentException($"Type '{sagaType.PrettyPrint()}' is not a saga.");
+                    }
+
+                    return new SagaName(
+                        t.GetTypeInfo().GetCustomAttributes<SagaNameAttribute>().SingleOrDefault()?.Name ??
+                        t.Name);
+                });
+        }
+
         internal static IReadOnlyDictionary<Type, Action<T, IAggregateEvent>> GetAggregateEventApplyMethods<TAggregate, TIdentity, T>(this Type type)
             where TAggregate : IAggregateRoot<TIdentity>
             where TIdentity : IIdentity
@@ -92,13 +113,13 @@ namespace Akkatecture.Extensions
                     mi => ReflectionHelper.CompileMethodInvocation<Action<T, IAggregateEvent>>(type, "Apply", mi.GetParameters()[0].ParameterType));
         }
 
-        internal static IReadOnlyDictionary<Type, Action<T, IAggregateEvent>> GetAggregateStateEventApplyMethods<TAggregate, TIdentity, TAggregateState, T>(this Type type)
+        internal static IReadOnlyDictionary<Type, Action<TAggregateState, IAggregateEvent>> GetAggregateStateEventApplyMethods<TAggregate, TIdentity, TAggregateState>(this Type type)
             where TAggregate : IAggregateRoot<TIdentity>
             where TIdentity : IIdentity
             where TAggregateState : IEventApplier<TAggregate, TIdentity>
         {
             var aggregateEventType = typeof(IAggregateEvent<TAggregate, TIdentity>);
-            
+
             return type
                 .GetTypeInfo()
                 .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
@@ -112,7 +133,7 @@ namespace Akkatecture.Extensions
                 })
                 .ToDictionary(
                     mi => mi.GetParameters()[0].ParameterType,
-                    mi => ReflectionHelper.CompileMethodInvocation<Action<T, IAggregateEvent>>(type, "Apply", mi.GetParameters()[0].ParameterType));
+                    mi => ReflectionHelper.CompileMethodInvocation<Action<TAggregateState, IAggregateEvent>>(type, "Apply", mi.GetParameters()[0].ParameterType));
         }
 
         internal static IReadOnlyList<Type> GetDomainEventSubscriberSubscriptionTypes<TAggregate, TIdentity>(this Type type)
@@ -134,7 +155,7 @@ namespace Akkatecture.Extensions
             var domainEventTypes = aggregateEventSubscriptionTypes
                 .Select(t => typeof(DomainEvent<,,>).MakeGenericType(typeof(TAggregate), typeof(TIdentity), t))
                 .ToList();
-            
+
             return domainEventTypes;
         }
 

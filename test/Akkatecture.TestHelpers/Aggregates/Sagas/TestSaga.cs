@@ -2,7 +2,7 @@
 
 namespace Akkatecture.TestHelpers.Aggregates.Sagas
 {
-    public class TestSaga : Saga<TestSagaId, ISagaState<TestSagaId>>
+    public class TestSaga : Saga<TestSagaId, SagaState<TestSaga,TestSagaId>>
     {
     }
 }
