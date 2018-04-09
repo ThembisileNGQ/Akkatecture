@@ -4,19 +4,24 @@ using Akka.Actor;
 using Akka.Event;
 using Akkatecture.Aggregates;
 using Akkatecture.Extensions;
+using Akkatecture.Sagas.AggregateSaga;
 
 namespace Akkatecture.Sagas
 {
-    public abstract class SagaManager<TSaga, TSagaId, TSagaLocator> : ReceiveActor
-        where TSagaId : ISagaId
-        where TSagaLocator : ISagaLocator<TSagaId>
-        where TSaga : Saga<TSagaId, SagaState<TSaga,TSagaId>>
+
+    //rename aggregatesagamanager?
+    public abstract class SagaManager<TAggregateSaga, TIdentity, TSagaLocator, TSagaState> : ReceiveActor
+        where TIdentity : SagaId<TIdentity>
+        where TSagaLocator : ISagaLocator<TIdentity>
+        where TSagaState : SagaState<TAggregateSaga, TIdentity, IEventApplier<TAggregateSaga, TIdentity>>
+        where TAggregateSaga : AggregateSaga<TAggregateSaga,TIdentity, TSagaState>
+//Saga<TIdentity, SagaState<TAggregateSaga,TIdentity, IEventApplier<TAggregateSaga,TIdentity>>>
     {
         protected ILoggingAdapter Logger { get; set; }
-        private readonly Expression<Func<TSaga>> SagaFactory;
+        private readonly Expression<Func<TAggregateSaga>> SagaFactory;
         private TSagaLocator SagaLocator { get; }
 
-        protected SagaManager(Expression<Func<TSaga>> sagaFactory)
+        protected SagaManager(Expression<Func<TAggregateSaga>> sagaFactory)
         {
             Logger = Context.GetLogger();
 
@@ -40,7 +45,7 @@ namespace Akkatecture.Sagas
                 });
         }
 
-        protected IActorRef FindOrSpawn(TSagaId sagaId)
+        protected IActorRef FindOrSpawn(TIdentity sagaId)
         {
             var saga = Context.Child(sagaId);
             if (Equals(saga, ActorRefs.Nobody))
@@ -50,7 +55,7 @@ namespace Akkatecture.Sagas
             return saga;
         }
 
-        private IActorRef Spawn(TSagaId sagaId)
+        private IActorRef Spawn(TIdentity sagaId)
         {
             var saga = Context.ActorOf(Props.Create(SagaFactory), sagaId.Value);
             Context.Watch(saga);
@@ -59,7 +64,7 @@ namespace Akkatecture.Sagas
         
     }
 
-    public class FooSagaManager : SagaManager<FooSaga, FooSagaId, FooSagaLocator>
+    public class FooSagaManager : SagaManager<FooSaga, FooSagaId, FooSagaLocator, FooSagaState>
     {
         public FooSagaManager(Expression<Func<FooSaga>> sagaFactory)
             : base(sagaFactory)
@@ -68,7 +73,8 @@ namespace Akkatecture.Sagas
         }
     }
 
-    public class FooSaga : Saga<FooSagaId, SagaState<FooSaga,FooSagaId>>
+    
+    public class FooSaga : AggregateSaga<FooSaga,FooSagaId, FooSagaState>
     {
         public FooSaga(int i, string q, long j)
         {
@@ -94,7 +100,7 @@ namespace Akkatecture.Sagas
         }
     }
 
-    public class FooSagaState : SagaState<FooSaga, FooSagaId>
+    public class FooSagaState : SagaState<FooSaga, FooSagaId, IEventApplier<FooSaga,FooSagaId>>
     {
         
     }

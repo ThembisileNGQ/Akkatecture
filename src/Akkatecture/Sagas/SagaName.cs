@@ -1,9 +1,8 @@
-﻿using Akkatecture.Aggregates;
-using Akkatecture.ValueObjects;
+﻿using Akkatecture.ValueObjects;
 
 namespace Akkatecture.Sagas
 {
-    public class SagaName : SingleValueObject<string>, IAggregateName
+    public class SagaName : SingleValueObject<string>, ISagaName
     {
         public SagaName(string value) : base(value)
         {

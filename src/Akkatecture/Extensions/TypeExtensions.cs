@@ -71,9 +71,9 @@ namespace Akkatecture.Extensions
         }
 
 
-        private static readonly ConcurrentDictionary<Type, SagaName> SagaNames = new ConcurrentDictionary<Type, SagaName>();
+        private static readonly ConcurrentDictionary<Type, AggregateName> SagaNames = new ConcurrentDictionary<Type, AggregateName>();
 
-        public static SagaName GetSagaName(
+        public static AggregateName GetSagaName(
             this Type sagaType)
         {
             return SagaNames.GetOrAdd(
@@ -85,7 +85,7 @@ namespace Akkatecture.Extensions
                         throw new ArgumentException($"Type '{sagaType.PrettyPrint()}' is not a saga.");
                     }
 
-                    return new SagaName(
+                    return new AggregateName(
                         t.GetTypeInfo().GetCustomAttributes<SagaNameAttribute>().SingleOrDefault()?.Name ??
                         t.Name);
                 });

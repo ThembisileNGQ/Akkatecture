@@ -15,7 +15,7 @@ namespace Akkatecture.Aggregates
     {
         private static readonly IReadOnlyDictionary<Type, Action<TAggregateState, IAggregateEvent>> ApplyMethodsFromState;
         private static readonly IAggregateName AggregateName = typeof(TAggregate).GetAggregateName();
-        public TAggregateState State { get; protected set; } = null;
+        public TAggregateState State { get; protected set; }
         private CircularBuffer<ISourceId> _previousSourceIds = new CircularBuffer<ISourceId>(10);
         protected ILoggingAdapter Logger { get; set; }
 
@@ -33,6 +33,7 @@ namespace Akkatecture.Aggregates
 
         protected AggregateRoot(TIdentity id)
         {
+            Logger = Context.GetLogger();
             if (id == null) throw new ArgumentNullException(nameof(id));
             if ((this as TAggregate) == null)
             {
@@ -56,7 +57,7 @@ namespace Akkatecture.Aggregates
             Id = id;
             PersistenceId = id.Value;
             Register(State);
-            Logger = Context.GetLogger();
+            
             
             //Recovery
             Recover<IAggregateEvent<TAggregate, TIdentity>>(Recover);

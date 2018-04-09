@@ -1,8 +1,9 @@
 ﻿using Akkatecture.Sagas;
+using Akkatecture.Sagas.AggregateSaga;
 
 namespace Akkatecture.TestHelpers.Aggregates.Sagas
 {
-    public class TestSaga : Saga<TestSagaId, SagaState<TestSaga,TestSagaId>>
+    public class TestSaga : AggregateSaga<TestSaga,TestSagaId,TestSagaState>
     {
     }
 }
