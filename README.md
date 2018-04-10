@@ -45,9 +45,9 @@ Akkatecture is still in development. The goal of this projects first version is 
 
 What comes with territory of having a toolkit that presumes a bit of intermediary knowledge about domain driven design is that there are many different opinions and best practices when it comes to building out DDD based solutions. Here are a few articles and resources that can give you a good foundational grounding on the concepts used extensively in this project.
 
-* **Domain-Driven Design**
+#### Domain-Driven Design
  - [Domain-Driven Design Reference](https://domainlanguage.com/ddd/reference/) by Eric Evans
-* **General CQRS+ES**
+#### General CQRS+ES
  - [CQRS Journey by Microsoft](https://msdn.microsoft.com/en-us/library/jj554200.aspx)
    published by Microsoft
  - [An In-Depth Look At CQRS](http://blog.sapiensworks.com/post/2015/09/01/In-Depth-CQRS/)
@@ -58,10 +58,10 @@ What comes with territory of having a toolkit that presumes a bit of intermediar
    by Jimmy Bogard
  - [CQRS applied](https://lostechies.com/gabrielschenker/2015/04/12/cqrs-applied/)
    by Gabriel Schenker
-* **Eventual consistency**
+#### Eventual consistency
  - [How To Ensure Idempotency In An Eventual Consistent DDD/CQRS Application](http://blog.sapiensworks.com/post/2015/08/26/How-To-Ensure-Idempotency)
    by Mike Mogosanu
-* **Video Content**
+#### Video Content
 - [CQRS and Event Sourcing](https://www.youtube.com/watch?v=JHGkaShoyNs) by Eric Evans
 - [An Introduction to CQRS and Event Sourcing Patterns](https://www.youtube.com/watch?v=9a1PqwFrMP0&t=2042s) by Mathew McLoughling
 - [The Future of Distributed Programming in .NET](https://www.youtube.com/watch?v=ozelpjr9SXE&t=2140s) by Aaron Stannard
