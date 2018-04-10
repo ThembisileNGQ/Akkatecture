@@ -3,12 +3,12 @@ A CQRS+ES Toolkit for Akka.NET. Fully optimised around using Tell() and Akka's e
 
 ### Features
 
-* **CQRS+ES tool kit** Backed by Akka.NET's persistent actors, CQRS/ES is easy to build out.
+* **CQRS+ES tool kit:** Backed by Akka.NET's persistent actors, CQRS/ES is easy to build out with Akkatecture.
 * **Don'Ask, Tell:** For high levels of message throughput and processing Akkatecture [does not Ask, it tells](http://bartoszsypytkowski.com/dont-ask-tell-2/).
 * **Highly configurable and extendable** Both via APIs and Akka's HOCON configuration.
-* **Highly scalable** Actors with their thread safe and distributed nature gives us this plus point
+* **Highly scalable** Actors with their thread safe and distributed nature gives us this plus point.
 
-  ### Examples
+### Examples
 
 * **[Simple](https://github.com/Lutando/Akkatecture/tree/master/examples):** A simple console based example that shows the most simple example of how to create an aggregate and issue commands to it.
 * **[Test Example](https://github.com/Lutando/Akkatecture/tree/master/test/Akkatecture.TestHelpers/Aggregates):** The test examples found in the Akkatecture.TestHelpers project is there to provide assistance when doing testing for Akkatecture. There is a simple aggregate with a simple aggregate saga, and these are used to do simple black box style testing on Akkatecture using Akka.NET's TestKit.
@@ -78,11 +78,11 @@ Akka.NET gives us a wealth of good APIs out of the box that can be used to build
 
 I find the lack of good domain driven design frameworks and libraries for akka.net quite sad. There are a few out there if you look hard enough but they fail in one or two aspects that I find really important. I really like the APIs that ReceiveActors and ReceivePersistentActors expose as opposed to their base variants. I find the APIs to be far more cleaner and geared towards a better functional programming paradigm, which can lead to code that is more readable, testable, and maintainable. Although nothing is perfect. Akkatecture tries to make your domain semi-declarative and at least highly readable and maintainable. 
 
-# What it is not
+# What Akkatecture is Not
 
 This is not meant to be a framework for CQRS and ES. This toolkit is made such that you can enhance your Akka.NET based CQRS/ES solution, at anytime you can break out of the framework to do as you please within the Akka framework as per usual.
 
-### Thanks
+## Thanks
 
 A huge thank you goes out to [EventFlow](https://github.com/eventflow/EventFlow) which is where Akkatecture draws most of its API surface inspiration from. A large amount of the CQRS/ES/DDD primitives come from that project. Furthermore, the [Akka.NET](https://github.com/akkadotnet/akka.net) project and the communities surrounding the ecosystem needs great praise, without Akka.NET this project would not be possible. And finally a thanks goes out to [Nact](https://nact.io/) for a good basis to form this projects documentation on.
 
