@@ -92,9 +92,9 @@ A huge thank you goes out to [EventFlow](https://github.com/eventflow/EventFlow)
 ```
 The MIT License (MIT)
 
-Copyright (c) 2015-2018 Rasmus Mikkelsen
-Copyright (c) 2015-2018 eBay Software Foundation
-https://github.com/eventflow/EventFlow
+Copyright (c) 2018 Lutando Ngqakaza
+
+https://github.com/Lutando/Akkatecture
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
