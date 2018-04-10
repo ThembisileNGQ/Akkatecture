@@ -11,9 +11,30 @@ A CQRS+ES Toolkit for Akka.NET. Fully optimised around using Tell() and Akka's e
   ### Examples
 
 * **[Simple](https://github.com/Lutando/Akkatecture/tree/master/examples):** A simple console based example that shows the most simple example of how to create an aggregate and issue commands to it.
-* **[Test Example](https://github.com/Lutando/Akkatecture/tree/master/test/Akkatecture.TestHelpers/Aggregates):** The test examples found in the Akkatecture.TestHelpers project is there to provide assistance when doing testing for Akkatecture. There is a simple aggregate with a simple aggregate saga, and these are used to do simple black box style testing on Akkatecture using Akka.NET's TestKit
+* **[Test Example](https://github.com/Lutando/Akkatecture/tree/master/test/Akkatecture.TestHelpers/Aggregates):** The test examples found in the Akkatecture.TestHelpers project is there to provide assistance when doing testing for Akkatecture. There is a simple aggregate with a simple aggregate saga, and these are used to do simple black box style testing on Akkatecture using Akka.NET's TestKit.
 
-### Assumptions about Akkatecture users
+**Note:** This example is part of the Akkatecture simple example project, so checkout the
+code and give it a run.
+```csharp
+            //Create actor system
+            var system = ActorSystem.Create("useraccount-example");
+
+            //Create supervising aggregate manager for UserAccount aggregate root actors
+            var aggregateManager = system.ActorOf(Props.Create(() => new UserAccountAggregateManager()));
+
+            //Build create user account aggregate command with name "foo bar"
+            var aggregateId = UserAccountId.New;
+            var createUserAccountCommand = new CreateUserAccountCommand(aggregateId, "foo bar");
+            
+            //Send command, this is equivalent to command.publish() in other cqrs frameworks
+            aggregateManager.Tell(createUserAccountCommand);
+            
+            //tell the aggregateManager to change the name of the aggregate root to "foo bar baz"
+            var changeNameCommand = new UserAccountChangeNameCommand(aggregateId, "foo bar baz");
+            aggregateManager.Tell(changeNameCommand);
+```
+
+### Assumptions About Akkatecture Users
 You have a good enough grasp of domain driven design, cqrs, and event sourcing.
 You have also used and played around with Akka.NET and are familiar with actor models in general. You also have a solid grasp of how event sourcing works with persisted actors in Akka.NET.
 
