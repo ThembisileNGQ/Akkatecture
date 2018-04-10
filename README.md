@@ -39,7 +39,7 @@ You have a good enough grasp of domain driven design, cqrs, and event sourcing.
 You have also used and played around with Akka.NET and are familiar with actor models in general. You also have a solid grasp of how event sourcing works with persisted actors in Akka.NET.
 
 ### Status of Akkatecture
-Akkatecture is still in development. The goal of this projects first version is to provide you with the neccassary building blocks to build out your own CQRS/ES solution without having to think of the dirty primitives.
+Akkatecture is still in development. The goal of this projects first version is to provide you with the neccassary building blocks to build out your own CQRS/ES solution without having to think of the dirty primitives. Akkatecture is still extensible by standard Akka methods (HOCON) so do feel free to apply those extension points where necassary.
 
 ### Useful Resources for Akka and DDD, CQRS, and ES
 
