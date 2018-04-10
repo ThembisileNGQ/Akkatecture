@@ -30,7 +30,7 @@ namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
             var probe = CreateTestActor("probeActor");
             Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestSaga, TestSagaId, TestSagaStartedEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
-            var aggregateSagaManager = Sys.ActorOf(Props.Create(() => new TestSagaManager(() => new TestSaga(aggregateManager))), "test-sagaaggregatemanager");
+            var aggregateSagaManager = Sys.ActorOf(Props.Create(() => new TestAggregateSagaManager(() => new TestSaga(aggregateManager))), "test-sagaaggregatemanager");
 
 
 
@@ -55,7 +55,7 @@ namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
             ExpectMsg<DomainEvent<TestSaga, TestSagaId, TestSagaStartedEvent>>(
                 x => x.AggregateEvent.Sender.Equals(senderAggregateId)
                     && x.AggregateEvent.Receiver.Equals(receiverAggregateId)
-                    && x.AggregateEvent.SentTest.Equals(senderTest), TimeSpan.FromMinutes(1));
+                    && x.AggregateEvent.SentTest.Equals(senderTest));
 
         }
     }
