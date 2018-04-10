@@ -5,13 +5,13 @@ namespace Akkatecture.TestHelpers.Aggregates.Commands
 {
     public class ReceiveTestCommand : Command<TestAggregate, TestAggregateId>
     {
-        public TestAggregateId ReceiverId { get; }
+        public TestAggregateId SenderAggregateId { get; }
         public Test TestToReceive { get; }
 
-        public ReceiveTestCommand(TestAggregateId aggregateId, TestAggregateId receiverId, Test testToReceive)
+        public ReceiveTestCommand(TestAggregateId aggregateId, TestAggregateId senderAggregateId, Test testToReceive)
             : base(aggregateId)
         {
-            ReceiverId = receiverId;
+            SenderAggregateId = senderAggregateId;
             TestToReceive = testToReceive;
         }
     }

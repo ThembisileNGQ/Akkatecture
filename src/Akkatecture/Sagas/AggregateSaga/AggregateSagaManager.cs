@@ -4,24 +4,20 @@ using Akka.Actor;
 using Akka.Event;
 using Akkatecture.Aggregates;
 using Akkatecture.Extensions;
-using Akkatecture.Sagas.AggregateSaga;
 
-namespace Akkatecture.Sagas
+namespace Akkatecture.Sagas.AggregateSaga
 {
-
-    //rename aggregatesagamanager?
-    public abstract class SagaManager<TAggregateSaga, TIdentity, TSagaLocator, TSagaState> : ReceiveActor
+    public abstract class AggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator, TSagaState> : ReceiveActor
         where TIdentity : SagaId<TIdentity>
         where TSagaLocator : ISagaLocator<TIdentity>
         where TSagaState : SagaState<TAggregateSaga, TIdentity, IEventApplier<TAggregateSaga, TIdentity>>
-        where TAggregateSaga : AggregateSaga<TAggregateSaga,TIdentity, TSagaState>
-//Saga<TIdentity, SagaState<TAggregateSaga,TIdentity, IEventApplier<TAggregateSaga,TIdentity>>>
+        where TAggregateSaga : AggregateSaga<TAggregateSaga, TIdentity, TSagaState>
     {
         protected ILoggingAdapter Logger { get; set; }
         private readonly Expression<Func<TAggregateSaga>> SagaFactory;
-        private TSagaLocator SagaLocator { get; }
+        protected TSagaLocator SagaLocator { get; }
 
-        protected SagaManager(Expression<Func<TAggregateSaga>> sagaFactory)
+        protected AggregateSagaManager(Expression<Func<TAggregateSaga>> sagaFactory)
         {
             Logger = Context.GetLogger();
 
@@ -30,8 +26,33 @@ namespace Akkatecture.Sagas
             SagaLocator = (TSagaLocator)Activator.CreateInstance(typeof(TSagaLocator));
 
             SagaFactory = sagaFactory;
+
+            var startedBySubscriptionTypes =
+                GetType()
+                    .GetSagaStartEventSubscriptionTypes();
+
+            foreach (var type in startedBySubscriptionTypes)
+            {
+                Context.System.EventStream.Subscribe(Self, type);
+            }
+
+            var sagaHandlesSubscriptionTypes =
+                GetType()
+                    .GetSagaHandleEventSubscriptionTypes();
+
+            foreach (var type in sagaHandlesSubscriptionTypes)
+            {
+                Context.System.EventStream.Subscribe(Self, type);
+            }
         }
 
+        protected virtual bool Terminate(Terminated message)
+        {
+            Logger.Warning($"{GetType().PrettyPrint()}: {message.ActorRef.Path} has terminated.");
+            Context.Unwatch(message.ActorRef);
+            return true;
+        }
+        
         protected override SupervisorStrategy SupervisorStrategy()
         {
             return new OneForOneStrategy(
@@ -63,45 +84,5 @@ namespace Akkatecture.Sagas
         }
         
     }
-
-    public class FooSagaManager : SagaManager<FooSaga, FooSagaId, FooSagaLocator, FooSagaState>
-    {
-        public FooSagaManager(Expression<Func<FooSaga>> sagaFactory)
-            : base(sagaFactory)
-        {
-            
-        }
-    }
-
     
-    public class FooSaga : AggregateSaga<FooSaga,FooSagaId, FooSagaState>
-    {
-        public FooSaga(int i, string q, long j)
-        {
-            
-        }
-    }
-
-    public class FooSagaLocator : ISagaLocator<FooSagaId>
-    {
-        public FooSagaId LocateSaga(IDomainEvent domainEvent)
-        {
-            var sagaId = domainEvent.GetIdentity();
-            return new FooSagaId($"foosaga-{sagaId}");
-        }
-    }
-
-    public class FooSagaId : SagaId<FooSagaId>
-    {
-        public FooSagaId(string value)
-            : base(value)
-        {
-            
-        }
-    }
-
-    public class FooSagaState : SagaState<FooSaga, FooSagaId, IEventApplier<FooSaga,FooSagaId>>
-    {
-        
-    }
 }

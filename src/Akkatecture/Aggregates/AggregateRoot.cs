@@ -57,6 +57,8 @@ namespace Akkatecture.Aggregates
             Id = id;
             PersistenceId = id.Value;
             Register(State);
+
+            Recover<DomainEvent<TAggregate, TIdentity, IAggregateEvent<TAggregate, TIdentity>>>(Recover);
         }
         
         
@@ -215,6 +217,13 @@ namespace Akkatecture.Aggregates
             return aggregateApplyMethod;
         }
 
+        protected Action<IAggregateEvent> GetDomainEventApplyMethods<TDomainEvent, TAggregateEvent>(TDomainEvent domainEvent)
+            where TDomainEvent : IDomainEvent<TAggregate,TIdentity,TAggregateEvent>
+            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+        {
+            return GetEventApplyMethods(domainEvent.AggregateEvent);
+        }
+
         protected virtual void ApplyEvent(IAggregateEvent<TAggregate, TIdentity> aggregateEvent)
         {
             var eventType = aggregateEvent.GetType();
@@ -252,11 +261,31 @@ namespace Akkatecture.Aggregates
             return true;
         }
 
+        protected virtual bool Recover(IDomainEvent<TAggregate, TIdentity, IAggregateEvent<TAggregate,TIdentity>> domainEvent)
+        {
+            try
+            {
+
+                //TODO event upcasting goes here
+                Logger.Debug($"Recovering with event of type [{domainEvent.GetType().PrettyPrint()}] ");
+                ApplyEvent(domainEvent.AggregateEvent);
+            }
+            catch (Exception exception)
+            {
+                Logger.Error($"Recovering with event of type [{domainEvent.GetType().PrettyPrint()}] caused an exception {exception.GetType().PrettyPrint()}");
+                return false;
+            }
+
+            return true;
+        }
+
         protected virtual bool Recover(SnapshotOffer aggregateSnapshotOffer)
         {
             try
             {
                 State = aggregateSnapshotOffer.Snapshot as TAggregateState;
+                Version = LastSequenceNr;
+
             }
             catch (Exception exception)
             {

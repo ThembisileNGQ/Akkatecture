@@ -9,6 +9,6 @@ namespace Akkatecture.Sagas
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
     {
-        Task Handle(IDomainEvent<TAggregate, TIdentity, TAggregateEvent> domainEvent);
+        Task Handle(DomainEvent<TAggregate, TIdentity, TAggregateEvent> domainEvent);
     }
 }

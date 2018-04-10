@@ -17,7 +17,6 @@ namespace Akkatecture.Sagas
         static SagaState()
         {
             ApplyMethods = typeof(TEventApplier).GetAggregateEventApplyMethods<TSaga, TIdentity, TEventApplier>();
-
         }
 
 

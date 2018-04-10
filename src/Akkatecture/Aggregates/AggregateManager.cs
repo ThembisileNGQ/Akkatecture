@@ -61,7 +61,7 @@ namespace Akkatecture.Aggregates
 
         protected virtual bool Terminate(Terminated message)
         {
-            Logger.Warning($"AggregateRoot: {message.ActorRef.Path} has terminated.");
+            Logger.Warning($"{typeof(TAggregate).PrettyPrint()}: {message.ActorRef.Path} has terminated.");
             Context.Unwatch(message.ActorRef);
             return true;
         }

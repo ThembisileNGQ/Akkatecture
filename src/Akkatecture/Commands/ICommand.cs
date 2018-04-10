@@ -6,7 +6,6 @@ namespace Akkatecture.Commands
 {
     public interface ICommand : IVersionedType
     {
-        //Task<ISourceId> PublishAsync(ICommandBus commandBus, CancellationToken cancellationToken);
         ISourceId GetSourceId();
     }
 

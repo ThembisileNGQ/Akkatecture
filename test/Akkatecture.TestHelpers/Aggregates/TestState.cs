@@ -8,6 +8,7 @@ namespace Akkatecture.TestHelpers.Aggregates
     public class TestState : AggregateState<TestAggregate, TestAggregateId, IEventApplier<TestAggregate, TestAggregateId>>,
         IApply<TestAddedEvent>,
         IApply<TestReceivedEvent>,
+        IApply<TestSentEvent>,
         IApply<TestCreatedEvent>
     {
         public Dictionary<TestId, Test> TestCollection ;
@@ -25,6 +26,11 @@ namespace Akkatecture.TestHelpers.Aggregates
         public void Apply(TestReceivedEvent aggregateEvent)
         {
             TestCollection.Add(aggregateEvent.Test.Id,aggregateEvent.Test);
+        }
+
+        public void Apply(TestSentEvent aggregateEvent)
+        {
+            TestCollection.Remove(aggregateEvent.Test.Id);
         }
     }
 }

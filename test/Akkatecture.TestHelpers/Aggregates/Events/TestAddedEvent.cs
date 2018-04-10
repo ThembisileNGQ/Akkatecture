@@ -4,7 +4,7 @@ using Akkatecture.TestHelpers.Aggregates.Entities;
 
 namespace Akkatecture.TestHelpers.Aggregates.Events
 {
-    [EventVersion("TestTested", 1)]
+    [EventVersion("TestAdded", 1)]
     public class TestAddedEvent : AggregateEvent<TestAggregate, TestAggregateId>
     {
         public Test Test { get; }

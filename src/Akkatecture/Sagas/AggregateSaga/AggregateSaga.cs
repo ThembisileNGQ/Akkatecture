@@ -27,7 +27,7 @@ namespace Akkatecture.Sagas.AggregateSaga
 
         static AggregateSaga()
         {
-            ApplyMethodsFromState = typeof(TAggregateSaga)
+            ApplyMethodsFromState = typeof(TSagaState)
                 .GetAggregateStateEventApplyMethods<TAggregateSaga, TIdentity, TSagaState>();
         }
 
@@ -37,6 +37,12 @@ namespace Akkatecture.Sagas.AggregateSaga
             var idValue = Context.Self.Path.Name;
             PersistenceId = Context.Self.Path.Name;
             Id = (TIdentity) Activator.CreateInstance(typeof(TIdentity), idValue);
+
+            if (Id == null)
+            {
+                throw new InvalidOperationException(
+                    $"Identity for Saga '{Id.GetType().PrettyPrint()}' could not be activated.");
+            }
 
             if ((this as TAggregateSaga) == null)
             {
@@ -61,6 +67,52 @@ namespace Akkatecture.Sagas.AggregateSaga
 
         }
 
+        protected virtual void Emit<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
+            where TAggregateEvent : IAggregateEvent<TAggregateSaga, TIdentity>
+        {
+            if (aggregateEvent == null)
+            {
+                throw new ArgumentNullException(nameof(aggregateEvent));
+            }
+
+            var aggregateSequenceNumber = Version + 1;
+            var eventId = EventId.NewDeterministic(
+                GuidFactories.Deterministic.Namespaces.Events,
+                $"{Id.Value}-v{aggregateSequenceNumber}");
+            var now = DateTimeOffset.UtcNow;
+            var eventMetadata = new Metadata
+            {
+                Timestamp = now,
+                AggregateSequenceNumber = aggregateSequenceNumber,
+                AggregateName = Name.Value,
+                AggregateId = Id.Value,
+                EventId = eventId
+            };
+            eventMetadata.Add(MetadataKeys.TimestampEpoch, now.ToUnixTime().ToString());
+            if (metadata != null)
+            {
+                eventMetadata.AddRange(metadata);
+            }
+
+            var aggregateApplyMethod = GetEventApplyMethods(aggregateEvent);
+
+            Persist(aggregateEvent, aggregateApplyMethod);
+
+            Logger.Info($"[{Name}] With Id={Id} Commited [{typeof(TAggregateEvent).PrettyPrint()}]");
+
+            Version++;
+
+            var domainEvent = new DomainEvent<TAggregateSaga, TIdentity, TAggregateEvent>(aggregateEvent, eventMetadata, now, Id, Version);
+
+            Publish(domainEvent);
+        }
+
+        protected virtual void Publish<TEvent>(TEvent aggregateEvent)
+        {
+            Context.System.EventStream.Publish(aggregateEvent);
+            Logger.Info($"[{Name}] With Id={Id} Published [{typeof(TEvent).PrettyPrint()}]");
+        }
+
         protected Action<IAggregateEvent> GetEventApplyMethods<TAggregateEvent>(TAggregateEvent aggregateEvent)
             where TAggregateEvent : IAggregateEvent<TAggregateSaga, TIdentity>
         {
@@ -80,7 +132,6 @@ namespace Akkatecture.Sagas.AggregateSaga
 
         private readonly List<IEventApplier<TAggregateSaga, TIdentity>> _eventAppliers = new List<IEventApplier<TAggregateSaga, TIdentity>>();
         
-    
         private readonly Dictionary<Type, Action<object>> _eventHandlers = new Dictionary<Type, Action<object>>();
         protected void Register<TAggregateEvent>(Action<TAggregateEvent> handler)
             where TAggregateEvent : IAggregateEvent<TAggregateSaga, TIdentity>

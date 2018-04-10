@@ -14,12 +14,24 @@ namespace Akkatecture.TestHelpers.Aggregates
             : base(aggregateId)
         {
             TestErrors = 0;
-            
+
+
+            //Aggregate Commands
             Command<CreateTestCommand>(Execute);
-            Command<PoisonTestAggregateCommand>(Execute);
-            Command<PublishTestStateCommand>(Execute);
             Command<AddTestCommand>(Execute);
+            Command<GiveTestCommand>(Execute);
+            Command<ReceiveTestCommand>(Execute);
+
+            //Aggregate Test Commands
+            Command<PoisonTestAggregateCommand>(Execute);
+            Command<PublishTestStateCommand>(Execute);         
             Command<TestDomainErrorCommand>(Execute);
+
+            //Recovery
+            Recover<TestAddedEvent>(Recover);
+            Recover<TestReceivedEvent>(Recover);
+            Recover<TestSentEvent>(Recover);
+            Recover<TestCreatedEvent>(Recover);
         }
 
         private bool Execute(CreateTestCommand command)
@@ -50,6 +62,40 @@ namespace Akkatecture.TestHelpers.Aggregates
                 TestErrors++;
                 Throw(new TestedErrorEvent(TestErrors));
             }
+            return true;
+        }
+
+        private bool Execute(GiveTestCommand command)
+        {
+            if (!IsNew)
+            {
+                if (State.TestCollection.ContainsKey(command.TestToGive.Id))
+                {
+                    Emit(new TestSentEvent(command.TestToGive,command.ReceiverAggregateId));
+                }
+                
+            }
+            else
+            {
+                TestErrors++;
+                Throw(new TestedErrorEvent(TestErrors));
+            }
+
+            return true;
+        }
+
+        private bool Execute(ReceiveTestCommand command)
+        {
+            if (!IsNew)
+            {
+                Emit(new TestReceivedEvent(command.SenderAggregateId,command.TestToReceive));
+            }
+            else
+            {
+                TestErrors++;
+                Throw(new TestedErrorEvent(TestErrors));
+            }
+
             return true;
         }
 
