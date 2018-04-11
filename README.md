@@ -4,7 +4,7 @@ A CQRS+ES Toolkit for Akka.NET. Fully optimised around using Tell() and Akka's e
 ### Features
 
 * **CQRS+ES tool kit:** Backed by Akka.NET's persistent actors, CQRS/ES is easy to build out with Akkatecture.
-* **Don'Ask, Tell:** For high levels of message throughput and processing Akkatecture [does not Ask, it tells](http://bartoszsypytkowski.com/dont-ask-tell-2/).
+* **Don't Ask, rather Tell:** For high levels of message throughput and processing Akkatecture [does not Ask, it tells](http://bartoszsypytkowski.com/dont-ask-tell-2/).
 * **Highly configurable and extendable** Both via APIs and Akka's HOCON configuration.
 * **Highly scalable** Actors with their thread safe and distributed nature gives us this plus point.
 
