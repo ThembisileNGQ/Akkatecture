@@ -1,7 +1,7 @@
 ﻿using System;
 using Akkatecture.Core;
 
-namespace Akkatecture.Akka
+namespace Akkatecture.Clustering.Core
 {
     public class ShardIdentityExtractor
     {

@@ -8,6 +8,17 @@ using Akkatecture.Extensions;
 
 namespace Akkatecture.Aggregates
 {
+
+    public abstract class AggregateRoot<TAggregate, TIdentity> : AggregateRoot<TAggregate, TIdentity, AggregateState<TAggregate, TIdentity, IEventApplier<TAggregate, TIdentity>>>
+        where TAggregate : AggregateRoot<TAggregate, TIdentity>
+        where TIdentity : IIdentity
+    {
+        protected AggregateRoot(TIdentity id)
+            : base(id)
+        {
+        }
+    }
+
     public abstract class AggregateRoot<TAggregate, TIdentity, TAggregateState> : ReceivePersistentActor, IAggregateRoot<TIdentity>
         where TAggregate : AggregateRoot<TAggregate, TIdentity, TAggregateState>
         where TAggregateState : AggregateState<TAggregate,TIdentity, IEventApplier<TAggregate,TIdentity>>

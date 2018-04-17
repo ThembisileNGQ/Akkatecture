@@ -1,10 +1,10 @@
 ﻿using System;
-using Akkatecture.Akka;
+using Akkatecture.Clustering.Core;
 using Akkatecture.Core;
 using FluentAssertions;
 using Xunit;
 
-namespace Akkatecture.Tests.UnitTests.Akka
+namespace Akkatecture.Tests.UnitTests.Clustering
 {
     public class ShardIdentityExtractorTests
     {

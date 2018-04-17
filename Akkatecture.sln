@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Examples.UserAc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.TestHelpers", "test\Akkatecture.TestHelpers\Akkatecture.TestHelpers.csproj", "{6543746C-F5D4-4F64-9C51-4470C4623428}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.Clustering", "src\Akkatecture.Clustering\Akkatecture.Clustering.csproj", "{8281381F-C7AD-41C0-8566-D3C2873B6FD6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{6543746C-F5D4-4F64-9C51-4470C4623428}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6543746C-F5D4-4F64-9C51-4470C4623428}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6543746C-F5D4-4F64-9C51-4470C4623428}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8281381F-C7AD-41C0-8566-D3C2873B6FD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8281381F-C7AD-41C0-8566-D3C2873B6FD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8281381F-C7AD-41C0-8566-D3C2873B6FD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8281381F-C7AD-41C0-8566-D3C2873B6FD6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -58,6 +64,7 @@ Global
 		{EDA99D27-D7E2-4D3D-909E-7F31B1AF36A1} = {090ECC2F-5647-4B15-ABDF-2E1B44439626}
 		{030BB76F-102D-4B96-96E5-B2166DE4DD63} = {090ECC2F-5647-4B15-ABDF-2E1B44439626}
 		{6543746C-F5D4-4F64-9C51-4470C4623428} = {86C56730-ABA0-411C-898C-5966EC483594}
+		{8281381F-C7AD-41C0-8566-D3C2873B6FD6} = {C7A99371-DCC0-4726-A971-E35C8CDF4768}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F5A40806-ED71-4286-A37C-BE0364FA29A6}

@@ -7,6 +7,15 @@ using Akkatecture.Extensions;
 
 namespace Akkatecture.Aggregates
 {
+    public abstract class AggregateManager<TAggregate, TIdentity, TCommand> : AggregateManager<TAggregate, TIdentity,
+        TCommand, AggregateState<TAggregate, TIdentity, IEventApplier<TAggregate, TIdentity>>>
+        where TAggregate : AggregateRoot<TAggregate, TIdentity, AggregateState<TAggregate, TIdentity, IEventApplier<TAggregate, TIdentity>>>
+        where TIdentity : IIdentity
+        where TCommand : class, ICommand<TAggregate, TIdentity>
+    {
+        
+    }
+
     public abstract class AggregateManager<TAggregate, TIdentity, TCommand, TState> : ReceiveActor
         where TAggregate : AggregateRoot<TAggregate, TIdentity, TState>
         where TState : AggregateState<TAggregate, TIdentity, IEventApplier<TAggregate, TIdentity>>
