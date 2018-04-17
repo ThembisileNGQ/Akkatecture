@@ -26,7 +26,4 @@
   <ItemGroup>
     <PackageReference Include="Moq" Version="4.8.2" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Aggregates\Sagas\Commands\" />
-  </ItemGroup>
 </Project>

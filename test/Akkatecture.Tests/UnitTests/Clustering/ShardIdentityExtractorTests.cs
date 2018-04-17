@@ -13,7 +13,7 @@ namespace Akkatecture.Tests.UnitTests.Clustering
         {
             var message = ShardTestMessageId.New;
 
-            var extractedIdentity = ShardIdentityExtractor.IdentityExtrator(message).Item1;
+            var extractedIdentity = ShardIdentityExtractors.IdentityExtrator(message).Item1;
 
             extractedIdentity.Should().BeEquivalentTo(message.Value);
         }
@@ -23,7 +23,7 @@ namespace Akkatecture.Tests.UnitTests.Clustering
         {
             var message = ShardTestMessageId.New;
 
-            var extractedObject = ShardIdentityExtractor.IdentityExtrator(message).Item2;
+            var extractedObject = ShardIdentityExtractors.IdentityExtrator(message).Item2;
 
             extractedObject.GetHashCode().Should().Be(message.GetHashCode());
         }
@@ -33,7 +33,7 @@ namespace Akkatecture.Tests.UnitTests.Clustering
         {
             var message = string.Empty;
 
-            this.Invoking(test => ShardIdentityExtractor.IdentityExtrator(message))
+            this.Invoking(test => ShardIdentityExtractors.IdentityExtrator(message))
                 .Should().Throw<ArgumentException>()
                 .WithMessage(nameof(message));
         }
@@ -44,7 +44,7 @@ namespace Akkatecture.Tests.UnitTests.Clustering
             ShardTestMessageId message = null;
 
             // ReSharper disable once ExpressionIsAlwaysNull
-            this.Invoking(test => ShardIdentityExtractor.IdentityExtrator(message))
+            this.Invoking(test => ShardIdentityExtractors.IdentityExtrator(message))
                 .Should().Throw<ArgumentNullException>();
         }
     }
