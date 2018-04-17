@@ -2,9 +2,10 @@
 {
     public static class Configuration
     {
-        public static string Config = 
-            @"    akka.loglevel = ""DEBUG""
-                  akka.stdout-loglevel = ""DEBUG"" 
+        public static string Config =
+            @"  akka.loglevel = ""DEBUG""
+                akka.stdout-loglevel = ""DEBUG""
+                akka.actor.serialize-messages = on
             ";
     }
 }

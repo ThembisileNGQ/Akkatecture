@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using Akka.Actor;
 using Akka.TestKit.Xunit2;
 using Akkatecture.Aggregates;
@@ -137,6 +138,8 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         [Category(Category)]
         public void TestEventSourcing_AfterManyTests_TestStateSignalled()
         {
+
+            //State has dictionary with complex key, NewtonSoft hates that
             var probe = CreateTestActor("probeActor");
             Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
@@ -158,6 +161,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
 
             var reviveCommand = new PublishTestStateCommand(aggregateId);
             aggregateManager.Tell(reviveCommand);
+
 
 
             ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>>(

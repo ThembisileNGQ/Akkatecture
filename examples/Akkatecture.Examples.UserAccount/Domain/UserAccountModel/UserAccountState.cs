@@ -3,7 +3,7 @@ using Akkatecture.Examples.UserAccount.Domain.UserAccountModel.Events;
 
 namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel
 {
-    public class UserAccountState : AggregateState<UserAccountAggregate,UserAccountId,IEventApplier<UserAccountAggregate, UserAccountId>>,
+    public class UserAccountState : AggregateState<UserAccountAggregate,UserAccountId>,
         IApply<UserAccountCreatedEvent>,
         IApply<UserAccountNameChangedEvent>
     {

@@ -1,4 +1,5 @@
-﻿using Akkatecture.Aggregates;
+﻿using System.Linq;
+using Akkatecture.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Events;
 using Akkatecture.TestHelpers.Aggregates.Events.Errors;
@@ -69,7 +70,7 @@ namespace Akkatecture.TestHelpers.Aggregates
         {
             if (!IsNew)
             {
-                if (State.TestCollection.ContainsKey(command.TestToGive.Id))
+                if (State.TestCollection.Any(x => x.Id == command.TestToGive.Id))
                 {
                     Emit(new TestSentEvent(command.TestToGive,command.ReceiverAggregateId));
                 }

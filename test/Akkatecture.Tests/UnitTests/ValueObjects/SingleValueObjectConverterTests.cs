@@ -1,5 +1,9 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using Akkatecture.TestHelpers;
+using Akkatecture.TestHelpers.Aggregates;
+using Akkatecture.TestHelpers.Aggregates.Entities;
+using Akkatecture.TestHelpers.Aggregates.Events;
 using Akkatecture.ValueObjects;
 using FluentAssertions;
 using Newtonsoft.Json;
@@ -23,6 +27,7 @@ namespace Akkatecture.Tests.UnitTests.ValueObjects
             
             json.Should().Be(expectedJson);
         }
+        
 
         [Fact]
         public void String_Deserialization_EmptyShouldResultInNull()
@@ -54,7 +59,7 @@ namespace Akkatecture.Tests.UnitTests.ValueObjects
             
             json.Should().Be(expectedJson);
         }
-
+        
         [Theory]
         [InlineData("0", 0)]
         [InlineData("42", 42)]
