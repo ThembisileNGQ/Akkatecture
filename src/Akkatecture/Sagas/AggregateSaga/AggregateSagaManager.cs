@@ -17,7 +17,7 @@ namespace Akkatecture.Sagas.AggregateSaga
         private readonly Expression<Func<TAggregateSaga>> SagaFactory;
         protected TSagaLocator SagaLocator { get; }
 
-        protected AggregateSagaManager(Expression<Func<TAggregateSaga>> sagaFactory)
+        protected AggregateSagaManager(Expression<Func<TAggregateSaga>> sagaFactory, bool autoSubscribe = true)
         {
             Logger = Context.GetLogger();
 
@@ -27,23 +27,27 @@ namespace Akkatecture.Sagas.AggregateSaga
 
             SagaFactory = sagaFactory;
 
-            var startedBySubscriptionTypes =
-                GetType()
-                    .GetSagaStartEventSubscriptionTypes();
-
-            foreach (var type in startedBySubscriptionTypes)
+            if (autoSubscribe)
             {
-                Context.System.EventStream.Subscribe(Self, type);
-            }
+                var startedBySubscriptionTypes =
+                    GetType()
+                        .GetSagaStartEventSubscriptionTypes();
 
-            var sagaHandlesSubscriptionTypes =
-                GetType()
-                    .GetSagaHandleEventSubscriptionTypes();
+                foreach (var type in startedBySubscriptionTypes)
+                {
+                    Context.System.EventStream.Subscribe(Self, type);
+                }
 
-            foreach (var type in sagaHandlesSubscriptionTypes)
-            {
-                Context.System.EventStream.Subscribe(Self, type);
+                var sagaHandlesSubscriptionTypes =
+                    GetType()
+                        .GetSagaHandleEventSubscriptionTypes();
+
+                foreach (var type in sagaHandlesSubscriptionTypes)
+                {
+                    Context.System.EventStream.Subscribe(Self, type);
+                }
             }
+            
         }
 
         protected virtual bool Terminate(Terminated message)
