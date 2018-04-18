@@ -1,4 +1,5 @@
 ﻿using System;
+using Akka.Util;
 using Akkatecture.Aggregates;
 using Akkatecture.Commands;
 using Akkatecture.Core;
@@ -23,7 +24,7 @@ namespace Akkatecture.Clustering.Core
                 throw new ArgumentNullException();
 
             if (message is ICommand<TAggregate, TIdentity> command)
-                return Math.Abs(GetPersistenceHash(command.AggregateId.Value)).ToString();
+                return Math.Abs(GetPersistenceHash(command.AggregateId.Value) % NumberOfShards).ToString();
 
             throw new ArgumentException(nameof(message));
             
@@ -31,10 +32,7 @@ namespace Akkatecture.Clustering.Core
         
         public int GetPersistenceHash(string aggregateId)
         {
-            var length = aggregateId.Length;
-            return aggregateId[length - 3] * 100 +
-                   aggregateId[length - 2] * 10 +
-                   aggregateId[length - 1];
+            return MurmurHash.StringHash(aggregateId);
         }
     }
 }

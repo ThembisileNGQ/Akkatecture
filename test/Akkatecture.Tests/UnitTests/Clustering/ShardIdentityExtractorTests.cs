@@ -1,6 +1,8 @@
 ﻿using System;
 using Akkatecture.Clustering.Core;
 using Akkatecture.Core;
+using Akkatecture.TestHelpers.Aggregates;
+using Akkatecture.TestHelpers.Aggregates.Commands;
 using FluentAssertions;
 using Xunit;
 
@@ -9,52 +11,46 @@ namespace Akkatecture.Tests.UnitTests.Clustering
     public class ShardIdentityExtractorTests
     {
         [Fact]
-        public void ShardIdentityExtractor_ValidMessage_ExtractsIdentity()
+        public void AggregateCommandIdentityExtractor_ValidMessage_ExtractsIdentity()
         {
-            var message = ShardTestMessageId.New;
+            var aggregateId = TestAggregateId.New;
+            var message = new CreateTestCommand(aggregateId);
 
-            var extractedIdentity = ShardIdentityExtractors.IdentityExtrator(message).Item1;
+            var extractedIdentity =
+                ShardIdentityExtractors.AggregateCommandIdentityExtractor<TestAggregate, TestAggregateId>(message).Item1;
 
-            extractedIdentity.Should().BeEquivalentTo(message.Value);
+            extractedIdentity.Should().BeEquivalentTo(message.AggregateId.Value);
         }
-        
-        [Fact]
-        public void ShardIdentityExtractor_ValidObject_ExtractsObject()
-        {
-            var message = ShardTestMessageId.New;
 
-            var extractedObject = ShardIdentityExtractors.IdentityExtrator(message).Item2;
+        [Fact]
+        public void AggregateCommandIdentityExtractor_ValidObject_ExtractsObject()
+        {
+            var aggregateId = TestAggregateId.New;
+            var message = new CreateTestCommand(aggregateId);
+
+            var extractedObject = ShardIdentityExtractors.AggregateCommandIdentityExtractor<TestAggregate, TestAggregateId>(message).Item2;
 
             extractedObject.GetHashCode().Should().Be(message.GetHashCode());
         }
-        
+
         [Fact]
-        public void ShardIdentityExtractor_InValidObject_ThrowsArgumentException()
+        public void AggregateCommandIdentityExtractor_InValidObject_ThrowsArgumentException()
         {
             var message = string.Empty;
 
-            this.Invoking(test => ShardIdentityExtractors.IdentityExtrator(message))
+            this.Invoking(test => ShardIdentityExtractors.AggregateCommandIdentityExtractor<TestAggregate, TestAggregateId>(message))
                 .Should().Throw<ArgumentException>()
                 .WithMessage(nameof(message));
         }
-        
+
         [Fact]
-        public void ShardIdentityExtractor_InValidObject_ThrowsArgumentNullException()
+        public void AggregateCommandIdentityExtractor_InValidObject_ThrowsArgumentNullException()
         {
-            ShardTestMessageId message = null;
+            CreateTestCommand message = null;
 
             // ReSharper disable once ExpressionIsAlwaysNull
-            this.Invoking(test => ShardIdentityExtractors.IdentityExtrator(message))
+            this.Invoking(test => ShardIdentityExtractors.AggregateCommandIdentityExtractor<TestAggregate, TestAggregateId>(message))
                 .Should().Throw<ArgumentNullException>();
-        }
-    }
-
-    public class ShardTestMessageId : Identity<ShardTestMessageId>
-    {
-        public ShardTestMessageId(string value)
-            : base(value)
-        {
-            
         }
     }
     
