@@ -1,4 +1,4 @@
-![Akkatecture logo](https://raw.githubusercontent.com/Lutando/Akkatecture/master/logo.svg)
+![Akkatecture logo](https://raw.githubusercontent.com/Lutando/Akkatecture/master/logo.svg?sanitize=true)
 # Akkatecture
 A CQRS+ES Toolkit for Akka.NET. Fully optimised around using Tell() and Akka's event stream pub sub mechanism. All written in .NET Core (netstandard 2.0).
 
