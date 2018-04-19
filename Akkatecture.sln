@@ -15,13 +15,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{75
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "simple", "simple", "{090ECC2F-5647-4B15-ABDF-2E1B44439626}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Examples.UserAccount", "examples\Akkatecture.Examples.UserAccount\Akkatecture.Examples.UserAccount.csproj", "{EDA99D27-D7E2-4D3D-909E-7F31B1AF36A1}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Examples.UserAccount.Application", "examples\Akkatecture.Examples.UserAccount.Application\Akkatecture.Examples.UserAccount.Application.csproj", "{030BB76F-102D-4B96-96E5-B2166DE4DD63}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.TestHelpers", "test\Akkatecture.TestHelpers\Akkatecture.TestHelpers.csproj", "{6543746C-F5D4-4F64-9C51-4470C4623428}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.Clustering", "src\Akkatecture.Clustering\Akkatecture.Clustering.csproj", "{8281381F-C7AD-41C0-8566-D3C2873B6FD6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Clustering", "src\Akkatecture.Clustering\Akkatecture.Clustering.csproj", "{8281381F-C7AD-41C0-8566-D3C2873B6FD6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cluster", "cluster", "{F39AA664-CAE8-4592-9173-8D03CABA1C07}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Examples.Seed", "examples\cluster\Akkatecture.Examples.Seed\Akkatecture.Examples.Seed.csproj", "{BEAC89B6-9B71-4BF6-9B3A-4193DE028F7A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Examples.Worker", "examples\cluster\Akkatecture.Examples.Worker\Akkatecture.Examples.Worker.csproj", "{DD833121-B2AD-4F2E-A12E-B1B28714817A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Examples.UserAccount", "examples\simple\Akkatecture.Examples.UserAccount\Akkatecture.Examples.UserAccount.csproj", "{8D9E347F-26AA-40E6-931B-763DE99F2B01}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Examples.UserAccount.Application", "examples\simple\Akkatecture.Examples.UserAccount.Application\Akkatecture.Examples.UserAccount.Application.csproj", "{2D58822C-DE63-43C6-A50A-384128D22548}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,14 +43,6 @@ Global
 		{90CF254E-E922-4935-8381-00644FD668AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90CF254E-E922-4935-8381-00644FD668AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90CF254E-E922-4935-8381-00644FD668AC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EDA99D27-D7E2-4D3D-909E-7F31B1AF36A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EDA99D27-D7E2-4D3D-909E-7F31B1AF36A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EDA99D27-D7E2-4D3D-909E-7F31B1AF36A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EDA99D27-D7E2-4D3D-909E-7F31B1AF36A1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{030BB76F-102D-4B96-96E5-B2166DE4DD63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{030BB76F-102D-4B96-96E5-B2166DE4DD63}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{030BB76F-102D-4B96-96E5-B2166DE4DD63}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{030BB76F-102D-4B96-96E5-B2166DE4DD63}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6543746C-F5D4-4F64-9C51-4470C4623428}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6543746C-F5D4-4F64-9C51-4470C4623428}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6543746C-F5D4-4F64-9C51-4470C4623428}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -53,6 +51,22 @@ Global
 		{8281381F-C7AD-41C0-8566-D3C2873B6FD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8281381F-C7AD-41C0-8566-D3C2873B6FD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8281381F-C7AD-41C0-8566-D3C2873B6FD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEAC89B6-9B71-4BF6-9B3A-4193DE028F7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEAC89B6-9B71-4BF6-9B3A-4193DE028F7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEAC89B6-9B71-4BF6-9B3A-4193DE028F7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEAC89B6-9B71-4BF6-9B3A-4193DE028F7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD833121-B2AD-4F2E-A12E-B1B28714817A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD833121-B2AD-4F2E-A12E-B1B28714817A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD833121-B2AD-4F2E-A12E-B1B28714817A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD833121-B2AD-4F2E-A12E-B1B28714817A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D9E347F-26AA-40E6-931B-763DE99F2B01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D9E347F-26AA-40E6-931B-763DE99F2B01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D9E347F-26AA-40E6-931B-763DE99F2B01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D9E347F-26AA-40E6-931B-763DE99F2B01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D58822C-DE63-43C6-A50A-384128D22548}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D58822C-DE63-43C6-A50A-384128D22548}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D58822C-DE63-43C6-A50A-384128D22548}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D58822C-DE63-43C6-A50A-384128D22548}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -61,10 +75,13 @@ Global
 		{3D397B96-ED4E-4CBA-87FF-E045E650DADA} = {C7A99371-DCC0-4726-A971-E35C8CDF4768}
 		{90CF254E-E922-4935-8381-00644FD668AC} = {86C56730-ABA0-411C-898C-5966EC483594}
 		{090ECC2F-5647-4B15-ABDF-2E1B44439626} = {7522402D-176E-4305-A68B-F3FFBFD38158}
-		{EDA99D27-D7E2-4D3D-909E-7F31B1AF36A1} = {090ECC2F-5647-4B15-ABDF-2E1B44439626}
-		{030BB76F-102D-4B96-96E5-B2166DE4DD63} = {090ECC2F-5647-4B15-ABDF-2E1B44439626}
 		{6543746C-F5D4-4F64-9C51-4470C4623428} = {86C56730-ABA0-411C-898C-5966EC483594}
 		{8281381F-C7AD-41C0-8566-D3C2873B6FD6} = {C7A99371-DCC0-4726-A971-E35C8CDF4768}
+		{F39AA664-CAE8-4592-9173-8D03CABA1C07} = {7522402D-176E-4305-A68B-F3FFBFD38158}
+		{BEAC89B6-9B71-4BF6-9B3A-4193DE028F7A} = {F39AA664-CAE8-4592-9173-8D03CABA1C07}
+		{DD833121-B2AD-4F2E-A12E-B1B28714817A} = {F39AA664-CAE8-4592-9173-8D03CABA1C07}
+		{8D9E347F-26AA-40E6-931B-763DE99F2B01} = {090ECC2F-5647-4B15-ABDF-2E1B44439626}
+		{2D58822C-DE63-43C6-A50A-384128D22548} = {090ECC2F-5647-4B15-ABDF-2E1B44439626}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F5A40806-ED71-4286-A37C-BE0364FA29A6}

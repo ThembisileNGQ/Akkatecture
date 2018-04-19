@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using Akka.Actor;
 using Akka.TestKit.Xunit2;
 using Akkatecture.Aggregates;
@@ -31,9 +30,7 @@ namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
             Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestSaga, TestSagaId, TestSagaStartedEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
             var aggregateSagaManager = Sys.ActorOf(Props.Create(() => new TestAggregateSagaManager(() => new TestSaga(aggregateManager))), "test-sagaaggregatemanager");
-
-
-
+            
             var senderAggregateId = TestAggregateId.New;
             var senderCreateAggregateCommand = new CreateTestCommand(senderAggregateId);
             aggregateManager.Tell(senderCreateAggregateCommand);
@@ -47,9 +44,11 @@ namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
             var nextAggregateCommand = new AddTestCommand(senderAggregateId, senderTest);
             aggregateManager.Tell(nextAggregateCommand);
 
+
+
             var sagaStartingCommand = new GiveTestCommand(senderAggregateId,receiverAggregateId,senderTest);
             aggregateManager.Tell(sagaStartingCommand);
-
+            
 
 
             ExpectMsg<DomainEvent<TestSaga, TestSagaId, TestSagaStartedEvent>>(

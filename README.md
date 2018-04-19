@@ -6,9 +6,9 @@ A CQRS+ES Toolkit for Akka.NET. Fully optimised around using Tell() and Akka's e
 
 ### Features
 
-* **CQRS+ES tool kit:** Backed by Akka.NET's persistent actors, CQRS/ES is easy to build out with Akkatecture.
-* **Don't Ask, rather Tell:** For high levels of message throughput and processing Akkatecture [does not Ask, it tells](http://bartoszsypytkowski.com/dont-ask-tell-2/).
-* **Highly configurable and extendable** Both via APIs and Akka's HOCON configuration.
+* **Distributed:** Backed by Akka.NET's persistent actors, CQRS/ES is easy to build out with Akkatecture.
+* **Message Based:** For high levels of message throughput and processing Akkatecture [does not Ask, it tells](http://bartoszsypytkowski.com/dont-ask-tell-2/).
+* **Event Sourced** By design.
 * **Highly scalable** Actors with their thread safe and distributed nature gives us this plus point.
 
 ### Examples
@@ -67,28 +67,25 @@ What comes with territory of having a toolkit that presumes a bit of intermediar
 #### Video Content
 - [CQRS and Event Sourcing](https://www.youtube.com/watch?v=JHGkaShoyNs) by Eric Evans
 - [An Introduction to CQRS and Event Sourcing Patterns](https://www.youtube.com/watch?v=9a1PqwFrMP0&t=2042s) by Mathew McLoughling
-- [The Future of Distributed Programming in .NET](https://www.youtube.com/watch?v=ozelpjr9SXE&t=2140s) by Aaron Stannard
+- [The Future of Distributed Programming in .NET](https://youtu.be/ozelpjr9SXE) by Aaron Stannard
 
 
 ## Motivations
-Doing domain driven design in a distributed scenario is quite tricky. And even more so when you add CQRS and event sourcing style mechanics to your business domain. Akka gives you powerful ways to co-ordinate and organise your business rules by using actors and message passing, which can be done by sending messages through location transparent addresses (or references). The major benefits of using Akka.NET is that we can isolate our domain models into actors where it makes sense.
+Doing domain driven design in a distributed scenario is quite tricky. And even more so when you add CQRS and event sourcing style mechanics to your business domain. Akka gives you powerful ways to co-ordinate and organise your business rules by using actors and message passing, which can be done by sending messages through location transparent addresses (or references). The major benefits of using akka.net is that we can isolate our domain models into actors where it makes sense.
 
 Akkatecture gives you a set of semi-opinionated generic constructs that you can use to wire up your application so that you can focus on your main task, modelling and codifying your business domain.
 
-Akka.NET gives us a wealth of good APIs out of the box that can be used to build entire systems out of. It also has a decent ecosystem and community for support. I also am of the opinion that commands translate well semantically in actor systems since you are telling the actor what you want, and the actor might or might not "respond" with a fact or a bag of facts relating to what that command produced in context of that aggregate.
+Akka.net gives us a wealth of good APIs out of the box that can be used to build entire systems out of. It also has a decent ecosystem and community for support. I also am of the opinion that commands translate well semantically in actor systems since you are telling the actor what you want, and the actor might or might not "respond" with a fact or a bag of facts relating to what that command produced in context of that aggregate.
 
 ### Personal Motivations
 
 I find the lack of good domain driven design frameworks and libraries for akka.net quite sad. There are a few out there if you look hard enough but they fail in one or two aspects that I find really important. I really like the APIs that ReceiveActors and ReceivePersistentActors expose as opposed to their base variants. I find the APIs to be far more cleaner and geared towards a better functional programming paradigm, which can lead to code that is more readable, testable, and maintainable. Although nothing is perfect. Akkatecture tries to make your domain semi-declarative and at least highly readable and maintainable. 
 
-# What Akkatecture is Not
+## Acknowledgements
 
-This is not meant to be a framework for CQRS and ES. This toolkit is made such that you can enhance your Akka.NET based CQRS/ES solution, at anytime you can break out of the framework to do as you please within the Akka framework as per usual.
-
-## Thanks
-
-A huge thank you goes out to [EventFlow](https://github.com/eventflow/EventFlow) which is where Akkatecture draws most of its API surface inspiration from. A large amount of the CQRS/ES/DDD primitives come from that project. Furthermore, the [Akka.NET](https://github.com/akkadotnet/akka.net) project and the communities surrounding the ecosystem needs great praise, without Akka.NET this project would not be possible. And finally a thanks goes out to [Nact](https://nact.io/) for a good basis to form this projects documentation on.
-
+- [Akka.NET](https://github.com/akkadotnet/akka.net) - The project which AKkatecture builds ontop of, without akka.net, Akkatecture wouldnt exist.
+- [EventFlow](https://github.com/eventflow/EventFlow) - Where Akkatecture draws most of its API surface inspiration from. A large amount of the CQRS/ES/DDD primitives come from that project, and have been adapted to work in the akka eco system.
+- [Nact](https://nact.io/) - For giving us basis to write our [documentation](https://akkatecture.github.io).
 
 ## License
 

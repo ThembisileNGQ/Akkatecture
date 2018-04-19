@@ -10,5 +10,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Akkatecture\Akkatecture.csproj" />
+    <EmbeddedResource Include="Configuration\default.conf" />
   </ItemGroup>
 </Project>

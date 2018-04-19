@@ -1,9 +1,5 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using Akkatecture.TestHelpers;
-using Akkatecture.TestHelpers.Aggregates;
-using Akkatecture.TestHelpers.Aggregates.Entities;
-using Akkatecture.TestHelpers.Aggregates.Events;
 using Akkatecture.ValueObjects;
 using FluentAssertions;
 using Newtonsoft.Json;

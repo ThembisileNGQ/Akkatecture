@@ -198,13 +198,7 @@ namespace Akkatecture.Extensions
                     .ToList();
 
             return domainEventTypes;
-            /*        .Select(i => i.GetGenericArguments()[2])
-                    .ToList();
-                var domainEventTypes = aggregateEventSubscriptionTypes
-                    .Select(t => typeof(DomainEvent<,,>).MakeGenericType(typeof(TAggregate), typeof(TIdentity), t))
-                    .ToList();
-
-                return domainEventTypes;*/
+            
         }
 
     }

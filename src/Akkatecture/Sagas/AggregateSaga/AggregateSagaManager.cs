@@ -7,14 +7,14 @@ using Akkatecture.Extensions;
 
 namespace Akkatecture.Sagas.AggregateSaga
 {
-    public abstract class AggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator, TSagaState> : ReceiveActor
+    public abstract class AggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator, TSagaState> : ReceiveActor, IAggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator>
         where TIdentity : SagaId<TIdentity>
         where TSagaLocator : ISagaLocator<TIdentity>
         where TSagaState : SagaState<TAggregateSaga, TIdentity, IEventApplier<TAggregateSaga, TIdentity>>
         where TAggregateSaga : AggregateSaga<TAggregateSaga, TIdentity, TSagaState>
     {
         protected ILoggingAdapter Logger { get; set; }
-        private readonly Expression<Func<TAggregateSaga>> SagaFactory;
+        public Expression<Func<TAggregateSaga>> SagaFactory { get; }
         protected TSagaLocator SagaLocator { get; }
 
         protected AggregateSagaManager(Expression<Func<TAggregateSaga>> sagaFactory, bool autoSubscribe = true)

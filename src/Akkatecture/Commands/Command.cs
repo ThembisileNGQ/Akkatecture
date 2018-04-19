@@ -18,7 +18,7 @@ namespace Akkatecture.Commands
         protected Command(TIdentity aggregateId, TSourceIdentity sourceId)
         {
             if (aggregateId == null) throw new ArgumentNullException(nameof(aggregateId));
-            if (sourceId == null) throw new ArgumentNullException(nameof(aggregateId));
+            if (sourceId == null) throw new ArgumentNullException(nameof(sourceId));
 
             AggregateId = aggregateId;
             SourceId = sourceId;

@@ -16,7 +16,7 @@ namespace Akkatecture.Aggregates
         
     }
 
-    public abstract class AggregateManager<TAggregate, TIdentity, TCommand, TState> : ReceiveActor
+    public abstract class AggregateManager<TAggregate, TIdentity, TCommand, TState> :  ReceiveActor, IAggregateManager<TAggregate, TIdentity>
         where TAggregate : AggregateRoot<TAggregate, TIdentity, TState>
         where TState : AggregateState<TAggregate, TIdentity, IEventApplier<TAggregate, TIdentity>>
         where TIdentity : IIdentity

@@ -22,7 +22,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Akkatecture\Akkatecture.csproj" />
+    <ProjectReference Include="..\..\..\src\Akkatecture\Akkatecture.csproj" />
   </ItemGroup>
 
 </Project>
