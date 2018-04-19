@@ -18,14 +18,6 @@ namespace Akkatecture.Clustering.Core
     {
         public static IActorRef StartAggregateCluster(ActorSystem actorSystem, int numberOfShards = 12)
         {
-            /*var t = typeof(TAggregateManager).BaseType;
-            var t43 = typeof(TAggregateManager).BaseType == typeof(IAggregateManager<TAggregate, TIdentity>);
-            //var t3 = t.GetGenericTypeDefinition();
-            var t2 = typeof(TAggregateManager).GetGenericTypeDefinition() == typeof(AggregateManager<,,,>);
-            if (typeof(TAggregateManager) != typeof(IAggregateManager<TAggregate,TIdentity>))
-            {
-                throw new ArgumentException($"{typeof(TAggregateManager).PrettyPrint()} is not a {typeof(AggregateManager<,,,>).PrettyPrint()}");
-            }*/
 
             var clusterSharding = ClusterSharding.Get(actorSystem);
             var clusterShardingSettings = clusterSharding.Settings;
@@ -33,7 +25,7 @@ namespace Akkatecture.Clustering.Core
             var shardResolver = new ShardResolvers(numberOfShards);
 
             var shardRef = clusterSharding.Start(
-                typeof(TAggregate).Name,
+                typeof(TAggregateManager).Name,
                 Props.Create<TAggregateManager>(),
                 clusterShardingSettings,
                 ShardIdentityExtractors
@@ -46,16 +38,12 @@ namespace Akkatecture.Clustering.Core
         
         public static IActorRef StartAggregateClusterProxy(ActorSystem actorSystem, string roleName, int numberOfShards = 12)
         {
-            /*if (typeof(TAggregateManager) != typeof(AggregateManager<,,,>))
-            {
-                throw new ArgumentException($"{typeof(TAggregateManager).PrettyPrint()} is not a {typeof(AggregateManager<,,,>).PrettyPrint()}");
-            }*/
             var clusterSharding = ClusterSharding.Get(actorSystem);
 
             var shardResolver = new ShardResolvers(numberOfShards);
 
             var shardRef = clusterSharding.StartProxy(
-                typeof(TAggregate).Name,
+                typeof(TAggregateManager).Name,
                 roleName,
                 ShardIdentityExtractors
                     .AggregateIdentityExtractor<TAggregate, TIdentity>,
@@ -75,11 +63,6 @@ namespace Akkatecture.Clustering.Core
     {
         public static IActorRef StartAggregateSagaCluster(ActorSystem actorSystem, Expression<Func<TAggregateSaga>> sagaFactory, int numberOfShards = 12)
         {
-            if (typeof(TAggregateSagaManager) != typeof(AggregateSagaManager<,,,>))
-            {
-                throw new ArgumentException($"{typeof(TAggregateSagaManager).PrettyPrint()} is not a {typeof(AggregateSagaManager<,,,>).PrettyPrint()}");
-            }
-
             if (sagaFactory == null)
             {
                 throw new ArgumentNullException(nameof(sagaFactory));

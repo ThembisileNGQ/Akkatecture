@@ -17,16 +17,16 @@ namespace Akkatecture.Examples.Worker
             var path = Environment.CurrentDirectory;
             var configPath = Path.Combine(path, "worker.conf");
             var baseConfig = ConfigurationFactory.ParseString(File.ReadAllText(configPath));
-            var clustername = baseConfig.GetString("akka.cluster.name");
 
             
 
-            foreach (var worker in Enumerable.Range(1,1))
+            foreach (var worker in Enumerable.Range(1,2))
             {
                 var config = ConfigurationFactory.ParseString($"akka.remote.dot-netty.tcp.port = 600{worker}");
                 config = config
                     .WithFallback(baseConfig)
                     .WithFallback(AkkatectureClusteringDefaultSettings.DefaultConfig());
+                var clustername = config.GetString("akka.cluster.name");
                 var actorSystem = ActorSystem.Create(clustername, config);
                 StartUserAccountCluster(actorSystem);
             }
