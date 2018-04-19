@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 using Akka.Actor;
+using Akka.Cluster.Sharding;
 using Akka.Configuration;
+using Akkatecture.Clustering.Configuration;
 
 namespace Akkatecture.Examples.Seed
 {
@@ -11,7 +13,8 @@ namespace Akkatecture.Examples.Seed
         {
             var path = Environment.CurrentDirectory;
             var configPath = Path.Combine(path, "seed.conf"); 
-            var config = ConfigurationFactory.ParseString(File.ReadAllText(configPath));
+            var config = ConfigurationFactory.ParseString(File.ReadAllText(configPath))
+                .WithFallback(AkkatectureClusteringDefaultSettings.DefaultConfig());
             var clustername = config.GetString("akka.cluster.name");
 
             var actorSystem = ActorSystem.Create(clustername, config);
@@ -24,4 +27,6 @@ namespace Akkatecture.Examples.Seed
             }
         }
     }
+    
+    
 }

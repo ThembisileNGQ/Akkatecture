@@ -2,7 +2,9 @@
 using System.IO;
 using System.Linq;
 using Akka.Actor;
+using Akka.Cluster.Sharding;
 using Akka.Configuration;
+using Akkatecture.Clustering.Configuration;
 using Akkatecture.Clustering.Core;
 using Akkatecture.Examples.UserAccount.Domain.UserAccountModel;
 
@@ -22,9 +24,11 @@ namespace Akkatecture.Examples.Worker
             foreach (var worker in Enumerable.Range(1,1))
             {
                 var config = ConfigurationFactory.ParseString($"akka.remote.dot-netty.tcp.port = 600{worker}");
-                config = config.WithFallback(baseConfig);
+                config = config
+                    .WithFallback(baseConfig)
+                    .WithFallback(AkkatectureClusteringDefaultSettings.DefaultConfig());
                 var actorSystem = ActorSystem.Create(clustername, config);
-                StartUserAccountClusterProxy(actorSystem);
+                StartUserAccountCluster(actorSystem);
             }
 
             Console.WriteLine("Akkatecture.Examples.Workers Running");
