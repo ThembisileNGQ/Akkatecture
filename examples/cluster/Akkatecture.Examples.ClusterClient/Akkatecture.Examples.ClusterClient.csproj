@@ -10,4 +10,10 @@
     <ProjectReference Include="..\..\simple\Akkatecture.Examples.UserAccount\Akkatecture.Examples.UserAccount.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="client.conf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  
 </Project>
