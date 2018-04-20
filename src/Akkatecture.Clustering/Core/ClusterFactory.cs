@@ -17,8 +17,7 @@ namespace Akkatecture.Clustering.Core
         where TIdentity : IIdentity
     {
         public static IActorRef StartAggregateCluster(ActorSystem actorSystem, int numberOfShards = 12)
-        {
-
+        { 
             var clusterSharding = ClusterSharding.Get(actorSystem);
             var clusterShardingSettings = clusterSharding.Settings;
 
@@ -36,7 +35,7 @@ namespace Akkatecture.Clustering.Core
             return shardRef;
         }
         
-        public static IActorRef StartAggregateClusterProxy(ActorSystem actorSystem, string roleName, int numberOfShards = 12)
+        public static IActorRef StartAggregateClusterProxy(ActorSystem actorSystem, string clusterRoleName, int numberOfShards = 12)
         {
             var clusterSharding = ClusterSharding.Get(actorSystem);
 
@@ -44,7 +43,7 @@ namespace Akkatecture.Clustering.Core
 
             var shardRef = clusterSharding.StartProxy(
                 typeof(TAggregateManager).Name,
-                roleName,
+                clusterRoleName,
                 ShardIdentityExtractors
                     .AggregateIdentityExtractor<TAggregate, TIdentity>,
                 shardResolver.AggregateShardResolver<TAggregate, TIdentity>
@@ -85,7 +84,7 @@ namespace Akkatecture.Clustering.Core
             return shardRef;
         }
 
-        public static IActorRef StartAggregateClusterProxy(ActorSystem actorSystem, string roleName, int numberOfShards = 12)
+        public static IActorRef StartAggregateClusterProxy(ActorSystem actorSystem, string clusterRoleName, int numberOfShards = 12)
         {
             if (typeof(TAggregateSagaManager) != typeof(AggregateSagaManager<,,,>))
             {
@@ -97,7 +96,7 @@ namespace Akkatecture.Clustering.Core
 
             var shardRef = clusterSharding.StartProxy(
                 typeof(TAggregateSagaManager).Name,
-                roleName,
+                clusterRoleName,
                 ShardIdentityExtractors
                     .AggregateSagaIdentityExtractor<TAggregateSagaManager, TAggregateSaga, TIdentity, TSagaLocator>,
                 shardResolver.AggregateSagaShardResolver<TAggregateSagaManager, TAggregateSaga, TIdentity, TSagaLocator>

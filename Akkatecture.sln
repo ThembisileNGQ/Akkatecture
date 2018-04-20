@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Examples.UserAc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Examples.UserAccount.Application", "examples\simple\Akkatecture.Examples.UserAccount.Application\Akkatecture.Examples.UserAccount.Application.csproj", "{2D58822C-DE63-43C6-A50A-384128D22548}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.Examples.ClusterClient", "examples\cluster\Akkatecture.Examples.ClusterClient\Akkatecture.Examples.ClusterClient.csproj", "{5513AA4C-5E65-41CC-84AF-6C6003B54F60}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,10 @@ Global
 		{2D58822C-DE63-43C6-A50A-384128D22548}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D58822C-DE63-43C6-A50A-384128D22548}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D58822C-DE63-43C6-A50A-384128D22548}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5513AA4C-5E65-41CC-84AF-6C6003B54F60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5513AA4C-5E65-41CC-84AF-6C6003B54F60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5513AA4C-5E65-41CC-84AF-6C6003B54F60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5513AA4C-5E65-41CC-84AF-6C6003B54F60}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,6 +88,7 @@ Global
 		{DD833121-B2AD-4F2E-A12E-B1B28714817A} = {F39AA664-CAE8-4592-9173-8D03CABA1C07}
 		{8D9E347F-26AA-40E6-931B-763DE99F2B01} = {090ECC2F-5647-4B15-ABDF-2E1B44439626}
 		{2D58822C-DE63-43C6-A50A-384128D22548} = {090ECC2F-5647-4B15-ABDF-2E1B44439626}
+		{5513AA4C-5E65-41CC-84AF-6C6003B54F60} = {F39AA664-CAE8-4592-9173-8D03CABA1C07}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F5A40806-ED71-4286-A37C-BE0364FA29A6}

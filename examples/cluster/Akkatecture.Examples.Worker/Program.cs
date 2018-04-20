@@ -17,10 +17,9 @@ namespace Akkatecture.Examples.Worker
             var path = Environment.CurrentDirectory;
             var configPath = Path.Combine(path, "worker.conf");
             var baseConfig = ConfigurationFactory.ParseString(File.ReadAllText(configPath));
+            var amountOfWorkers = 10;
 
-            
-
-            foreach (var worker in Enumerable.Range(1,2))
+            foreach (var worker in Enumerable.Range(1, amountOfWorkers+1))
             {
                 var config = ConfigurationFactory.ParseString($"akka.remote.dot-netty.tcp.port = 600{worker}");
                 config = config
@@ -28,6 +27,7 @@ namespace Akkatecture.Examples.Worker
                     .WithFallback(AkkatectureClusteringDefaultSettings.DefaultConfig());
                 var clustername = config.GetString("akka.cluster.name");
                 var actorSystem = ActorSystem.Create(clustername, config);
+
                 StartUserAccountCluster(actorSystem);
             }
 
@@ -44,11 +44,6 @@ namespace Akkatecture.Examples.Worker
             var cluster = ClusterFactory<UserAccountAggregateManager, UserAccountAggregate, UserAccountId>
                 .StartAggregateCluster(actorSystem);
         }
-
-        public static void StartUserAccountClusterProxy(ActorSystem actorSystem)
-        {
-            var clusterProxy = ClusterFactory<UserAccountAggregateManager, UserAccountAggregate, UserAccountId>
-                .StartAggregateClusterProxy(actorSystem,"worker");
-        }
+        
     }
 }

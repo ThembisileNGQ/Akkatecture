@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using Akka.Actor;
-using Akka.Cluster.Sharding;
 using Akka.Configuration;
 using Akkatecture.Clustering.Configuration;
 
