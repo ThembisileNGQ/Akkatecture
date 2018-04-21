@@ -3,7 +3,7 @@
 
 # Akkatecture
 
-A CQRS+ES Toolkit for akka.net. Fully optimised around using tell() and akka.net's event stream pub sub mechanism. All written in .NET Core (netstandard 2.0).
+Akkatecture is a cqrs and event sourcing toolbox for akka.net. Fully optimised around using akka's tell() and event stream pub sub mechanism for event propegation. In .NET Core (targeting netstandard 2.0).
 
 ### Features
 
@@ -18,7 +18,8 @@ A CQRS+ES Toolkit for akka.net. Fully optimised around using tell() and akka.net
 
 * **[Cluster](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster):** A more involved sample that shows you how to do distributed aggregates using clustering. Read the [readme](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster/README.md) for the sample for a good overview of the example.
 
-* **[Test Example](https://github.com/Lutando/Akkatecture/tree/master/test/Akkatecture.TestHelpers/Aggregates):** The test examples found in the Akkatecture.TestHelpers project is there to provide assistance when doing testing for Akkatecture. There is a simple aggregate with a simple aggregate saga, and these are used to do simple black box style testing on Akkatecture using akka.net's TestKit.
+* **[Test Example](https://github.com/Lutando/Akkatecture/tree/master/test/Akkatecture.TestHelpers/Aggregates):** The test examples found in the Akkatecture.TestHelpers project is there to provide assistance when doing testing for Akkatecture. There is a simple domain modelled that includes an aggregate with a simple aggregate saga, and these are used to do simple black box style testing on Akkatecture using akka.net's TestKit.
+
 
 **Note:** This example is part of the Akkatecture simple example project, so checkout [the
 code](https://github.com/Lutando/Akkatecture/blob/master/examples/Akkatecture.Examples.UserAccount.Application/Program.cs#L13) and give it a run.
@@ -43,16 +44,16 @@ aggregateManager.Tell(changeNameCommand);
 
 ### Assumptions About Akkatecture Users
 
-You should have a good enough grasp of domain driven design, cqrs, and event sourcing.
-It also helps wildly to be familiar with actor systems/akka.net and the extensibility points that akka gives you through hocon configuration.
+You should have a comfortable grasp of domain driven design, cqrs, and event sourcing concepts.
+It would also be benefitial for you to be familiar with actor systems, akka.net, and the extensibility points that akka gives you through hocon configuration.
 
 ### Status of Akkatecture
 
-Akkatecture is still in development. The goal of this projects first version is to provide you with the neccassary building blocks to build out your own cqrs/es solution without having to think of the dirty primitives. Akkatecture is still extensible by standard Akka methods (hocon) so do feel free to apply those extension points where necassary.
+Akkatecture is still in development. The goal of this projects first version is to provide you with the neccassary building blocks to build out your own cqrs and event sourced application without having to think of the primitives. Akkatecture is still extensible by standard akka methods (hocon) so do feel free to apply those extension points where necassary.
 
 ### Useful Resources for Akka and DDD, CQRS, and ES
 
-There are many different opinions and best practices when it comes to building out DDD based solutions. Here are a few articles and resources that can give you a good foundational grounding on the concepts used extensively in this project. Feel free
+There are many different opinions and best practices when it comes to building out ddd based solutions. Here are a few articles and resources that can give you a good foundational grounding on the concepts used extensively in this project.
 
 #### Domain-Driven Design
 
@@ -61,7 +62,7 @@ There are many different opinions and best practices when it comes to building o
 
  - [CQRS Journey by Microsoft](https://msdn.microsoft.com/en-us/library/jj554200.aspx)
    published by Microsoft
- - [An In-Depth Look At CQRS](http://blog.sapiensworks.com/post/2015/09/01/In-Depth-CQRS/)
+ - [An In-Depth Look At CQRS](https://blog.sapiensworks.com/post/2015/09/01/In-Depth-CQRS)
    by Mike Mogosanu
  - [CQRS, Task Based UIs, Event Sourcing agh!](http://codebetter.com/gregyoung/2010/02/16/cqrs-task-based-uis-event-sourcing-agh/)
    by Greg Young
@@ -71,7 +72,7 @@ There are many different opinions and best practices when it comes to building o
    by Gabriel Schenker
 #### Eventual consistency
 
- - [How To Ensure Idempotency In An Eventual Consistent DDD/CQRS Application](http://blog.sapiensworks.com/post/2015/08/26/How-To-Ensure-Idempotency)
+ - [How To Ensure Idempotency In An Eventual Consistent DDD/CQRS Application](https://blog.sapiensworks.com/post/2015/08/26/How-To-Ensure-Idempotency)
    by Mike Mogosanu
 #### Video Content
 
@@ -79,10 +80,9 @@ There are many different opinions and best practices when it comes to building o
 - [An Introduction to CQRS and Event Sourcing Patterns](https://www.youtube.com/watch?v=9a1PqwFrMP0&t=2042s) by Mathew McLoughling
 - [The Future of Distributed Programming in .NET](https://youtu.be/ozelpjr9SXE) by Aaron Stannard
 
-
 ## Motivations
 
-Doing domain driven design in a distributed scenario is quite tricky. And even more so when you add CQRS and event sourcing style mechanics to your business domain. Akka gives you powerful ways to co-ordinate and organise your business rules by using actors and message passing, which can be done by sending messages through location transparent addresses (or references). The major benefits of using akka.net is that we can isolate our domain models into actors where it makes sense.
+Doing domain driven design in a distributed scenario is quite tricky. And even more so when you add cqrs and event sourcing style mechanics to your business domain. Akka gives you powerful ways to co-ordinate and organise your business rules by using actors and message passing, which can be done by sending messages through location transparent addresses (or references). The major benefits of using akka.net is that we can isolate our domain models into actors where it makes sense.
 
 Akkatecture gives you a set of semi-opinionated generic constructs that you can use to wire up your application so that you can focus on your main task, modelling and codifying your business domain.
 
