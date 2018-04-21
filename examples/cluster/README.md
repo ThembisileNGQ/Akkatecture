@@ -12,7 +12,7 @@ The worker is where all the real work is done. The worker is responsible for rou
 
 ## [Seed](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster/Akkatecture.Examples.Seed)
 
-The seed or seed node is only responsible for akka service discovery. Its only purpose is to exist at a well known location so that nodes within the actor system can effectively discover each other through the seed node. It is important that the seed does no work that can potentially disrupt its service level. In this sample the seeds address is [127.0.0.1:6000](https://github.com/Lutando/Akkatecture/blob/6dc8653e324931e61097a8f2dd48916706b16743/examples/cluster/Akkatecture.Examples.Seed/seed.conf#L6).
+The seed or seed node is only responsible for akka service discovery. Its only purpose is to exist at a well known location so that nodes within the actor system can effectively discover each other through the seed node. It is important that the seed does no work that can potentially disrupt its service level. In this sample the seeds address is 127.0.0.1:6000, the 10 workers are addressed from 127.0.0.1:6001-6011, and the console client is on 127.0.0.6100.
 
 ### Description
 
@@ -20,4 +20,4 @@ This sample uses the same domain model as the one found in the [simple](https://
 
 If you take a look at the hocon configurations for the [client](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster/Akkatecture.Examples.ClusterClient/client.conf), the [worker](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster/Akkatecture.Examples.Worker/worker.conf), and the [seed](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster/Akkatecture.Examples.Seed/seed.conf), you will see that they all point to the same well known address that tells the actor system to use that address to initiate cluster gossip, and thus to establish the clustered network of actor systems. Each of the projects use the default akkatecture hocon configuration as a fallback configuration because this configuration has akkatecture opinionated "sane" defaults.
 
-The sample is as easy as running all three projects at the same time. To interact with the domain just press enter on the clients console window, resulting in random commands being created, which are then fed through the cluster proxy that will serialize, deserialize, and route the commands to the necessary aggregate.
+The sample is as easy as running all three projects at the same time. To interact with the domain just press enter on the clients console window, resulting in random commands being created, which are then fed through the cluster proxy that will serialize, deserialize, and route the commands to the necessary aggregate. Pressing Q on any of the 

@@ -16,9 +16,9 @@ A CQRS+ES Toolkit for akka.net. Fully optimised around using tell() and akka.net
 
 * **[Simple](https://github.com/Lutando/Akkatecture/tree/master/examples/simple):** A simple console based example that shows the most simple example of how to create an aggregate and issue commands to it.
 
-* **[Cluster](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster):** A more involved sample that shows you how to do distributed aggregates using clustering. Read the [README](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster/README.md) for the sample for a good overview of the sample.
+* **[Cluster](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster):** A more involved sample that shows you how to do distributed aggregates using clustering. Read the [readme](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster/README.md) for the sample for a good overview of the example.
 
-* **[Test Example](https://github.com/Lutando/Akkatecture/tree/master/test/Akkatecture.TestHelpers/Aggregates):** The test examples found in the Akkatecture.TestHelpers project is there to provide assistance when doing testing for Akkatecture. There is a simple aggregate with a simple aggregate saga, and these are used to do simple black box style testing on Akkatecture using Akka.NET's TestKit.
+* **[Test Example](https://github.com/Lutando/Akkatecture/tree/master/test/Akkatecture.TestHelpers/Aggregates):** The test examples found in the Akkatecture.TestHelpers project is there to provide assistance when doing testing for Akkatecture. There is a simple aggregate with a simple aggregate saga, and these are used to do simple black box style testing on Akkatecture using akka.net's TestKit.
 
 **Note:** This example is part of the Akkatecture simple example project, so checkout [the
 code](https://github.com/Lutando/Akkatecture/blob/master/examples/Akkatecture.Examples.UserAccount.Application/Program.cs#L13) and give it a run.
