@@ -13,11 +13,14 @@ A CQRS+ES Toolkit for Akka.NET. Fully optimised around using Tell() and Akka's e
 
 ### Examples
 
-* **[Simple](https://github.com/Lutando/Akkatecture/tree/master/examples):** A simple console based example that shows the most simple example of how to create an aggregate and issue commands to it.
+* **[Simple](https://github.com/Lutando/Akkatecture/tree/master/examples/simple):** A simple console based example that shows the most simple example of how to create an aggregate and issue commands to it.
+
+* **[Cluster](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster):** A more involved sample that shows you how to do distributed aggregates using clustering. Read the [README](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster/README.md) for the sample for a good overview of the sample.
+
 * **[Test Example](https://github.com/Lutando/Akkatecture/tree/master/test/Akkatecture.TestHelpers/Aggregates):** The test examples found in the Akkatecture.TestHelpers project is there to provide assistance when doing testing for Akkatecture. There is a simple aggregate with a simple aggregate saga, and these are used to do simple black box style testing on Akkatecture using Akka.NET's TestKit.
 
-**Note:** This example is part of the Akkatecture simple example project, so [checkout](https://github.com/Lutando/Akkatecture/blob/master/examples/Akkatecture.Examples.UserAccount.Application/Program.cs#L13) the
-code and give it a run.
+**Note:** This example is part of the Akkatecture simple example project, so checkout [the
+code](https://github.com/Lutando/Akkatecture/blob/master/examples/Akkatecture.Examples.UserAccount.Application/Program.cs#L13) and give it a run.
 ```csharp
 //Create actor system
 var system = ActorSystem.Create("useraccount-example");
@@ -76,10 +79,6 @@ Doing domain driven design in a distributed scenario is quite tricky. And even m
 Akkatecture gives you a set of semi-opinionated generic constructs that you can use to wire up your application so that you can focus on your main task, modelling and codifying your business domain.
 
 Akka.net gives us a wealth of good APIs out of the box that can be used to build entire systems out of. It also has a decent ecosystem and community for support. I also am of the opinion that commands translate well semantically in actor systems since you are telling the actor what you want, and the actor might or might not "respond" with a fact or a bag of facts relating to what that command produced in context of that aggregate.
-
-### Personal Motivations
-
-I find the lack of good domain driven design frameworks and libraries for akka.net quite sad. There are a few out there if you look hard enough but they fail in one or two aspects that I find really important. I really like the APIs that ReceiveActors and ReceivePersistentActors expose as opposed to their base variants. I find the APIs to be far more cleaner and geared towards a better functional programming paradigm, which can lead to code that is more readable, testable, and maintainable. Although nothing is perfect. Akkatecture tries to make your domain semi-declarative and at least highly readable and maintainable. 
 
 ## Acknowledgements
 
