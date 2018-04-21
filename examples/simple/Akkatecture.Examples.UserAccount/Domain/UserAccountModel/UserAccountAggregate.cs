@@ -18,7 +18,6 @@ namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel
             //recovery from persistent event source
             Recover<UserAccountCreatedEvent>(Recover);
             Recover<UserAccountNameChangedEvent>(Recover);
-            Recover<SnapshotOffer>(Recover);
         }
         
         public bool Execute(CreateUserAccountCommand command)

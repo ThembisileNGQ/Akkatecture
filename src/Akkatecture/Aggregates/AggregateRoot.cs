@@ -70,6 +70,7 @@ namespace Akkatecture.Aggregates
             Register(State);
 
             Recover<DomainEvent<TAggregate, TIdentity, IAggregateEvent<TAggregate, TIdentity>>>(Recover);
+            
         }
         
         
@@ -209,6 +210,12 @@ namespace Akkatecture.Aggregates
 
                 ApplyEvent(e);
             }
+        }
+
+        protected override void Unhandled(object message)
+        {
+            Logger.Info($"Aggregate with Id '{Id?.Value} has received an unhandled message {message.GetType().PrettyPrint()}'");
+            base.Unhandled(message);
         }
 
         protected Action<IAggregateEvent> GetEventApplyMethods<TAggregateEvent>(TAggregateEvent aggregateEvent)
