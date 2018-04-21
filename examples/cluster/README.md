@@ -16,7 +16,7 @@ The seed or seed node is only responsible for akka service discovery. Its only p
 
 ### Description
 
-This sample uses the same domain model (UserAccountAggregate) as the one found in the [simple](https://github.com/Lutando/Akkatecture/tree/master/examples/simple/Akkatecture.Examples.UserAccount) sample.
+This sample uses the same domain model as the one found in the [simple](https://github.com/Lutando/Akkatecture/tree/master/examples/simple/Akkatecture.Examples.UserAccount) sample.
 
 If you take a look at the hocon configurations for the [client](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster/Akkatecture.Examples.ClusterClient/client.conf), the [worker](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster/Akkatecture.Examples.Worker/worker.conf), and the [seed](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster/Akkatecture.Examples.Seed/seed.conf), you will see that they all point to the same well known address that tells the actor system to use that address to initiate cluster gossip, and thus to establish the clustered network of actor systems. Each of the projects use the default akkatecture hocon configuration as a fallback configuration because this configuration has akkatecture opinionated "sane" defaults.
 
