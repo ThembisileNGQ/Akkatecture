@@ -12,9 +12,9 @@ The worker is where all the real work is done. The worker is responsible for rou
 
 ## [Seed](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster/Akkatecture.Examples.Seed)
 
-The seed or seed node is only responsible for akka service discovery. Its only purpose is to exist at a well known location so that nodes within the actor system can effectively discover each other through the seed node. It is important that the seed does no work that can potentially disrupt its service level. In this sample the seeds address is [127.0.0.1:6000](https://github.com/Lutando/Akkatecture/blob/6dc8653e324931e61097a8f2dd48916706b16743/examples/cluster/Akkatecture.Examples.Seed/seed.conf#L6)
+The seed or seed node is only responsible for akka service discovery. Its only purpose is to exist at a well known location so that nodes within the actor system can effectively discover each other through the seed node. It is important that the seed does no work that can potentially disrupt its service level. In this sample the seeds address is [127.0.0.1:6000](https://github.com/Lutando/Akkatecture/blob/6dc8653e324931e61097a8f2dd48916706b16743/examples/cluster/Akkatecture.Examples.Seed/seed.conf#L6).
 
-### Sample
+### Description
 
 This sample uses the same domain model (UserAccountAggregate) as the one found in the [simple](https://github.com/Lutando/Akkatecture/tree/master/examples/simple/Akkatecture.Examples.UserAccount) sample.
 
