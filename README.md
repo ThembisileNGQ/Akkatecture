@@ -5,6 +5,8 @@
 
 Akkatecture is a cqrs and event sourcing toolbox for akka.net. Fully optimised around using akka's tell() and event stream pub sub mechanism for event propegation. In .net core (targeting netstandard 2.0).
 
+Go ahead and take a look at [our documentation](http://localhost:8000/docs/getting-started), go over [some concepts](http://localhost:8000/docs/primitives), and read the [tips and tricks](http://localhost:8000/docs/tips-and-tricks).
+
 ### Features
 
 * **Distributed:** Backed by akka.net's persistent actors, cqrs and event sourcing is easy to build out with Akkatecture.
@@ -52,14 +54,14 @@ It would also be benefitial for you to be familiar with actor systems, akka.net,
 
 Akkatecture is still in development. The goal of this projects first version is to provide you with the neccassary building blocks to build out your own cqrs and event sourced application without having to think of the primitives. Akkatecture is still extensible by standard akka methods (hocon) so do feel free to apply those extension points where necassary.
 
-### Useful Resources for Akka and DDD, CQRS, and ES
+### Useful Resources
 
 There are many different opinions and best practices when it comes to building out ddd based solutions. Here are a few articles and resources that can give you a good foundational grounding on the concepts used extensively in this project.
 
 #### Domain-Driven Design
 
  - [Domain-Driven Design Reference](https://domainlanguage.com/ddd/reference/) by Eric Evans
-#### General CQRS+ES
+#### CQRS & Event sourcing
 
  - [CQRS Journey by Microsoft](https://msdn.microsoft.com/en-us/library/jj554200.aspx)
    published by Microsoft
