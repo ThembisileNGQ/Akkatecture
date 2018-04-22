@@ -1,16 +1,17 @@
 
-<a href="https://akkatecture.github.io/"><img src="https://raw.githubusercontent.com/Lutando/Akkatecture/master/logo.svg?sanitize=true" width="100%" height="250"></a>
+<a href="https://akkatecture.github.io/"><img src="https://raw.githubusercontent.com/Lutando/Akkatecture/master/logo.svg?sanitize=true" width="100%" height="200"></a>
 
 # Akkatecture
 
-Akkatecture is a cqrs and event sourcing toolbox for akka.net. Fully optimised around using akka's tell() and event stream pub sub mechanism for event propegation. In .NET Core (targeting netstandard 2.0).
+Akkatecture is a cqrs and event sourcing toolbox for akka.net. Fully optimised around using akka's tell() and event stream pub sub mechanism for event propegation. In .net core (targeting netstandard 2.0).
 
 ### Features
 
-* **Distributed:** Backed by Akka.NET's persistent actors, CQRS/ES is easy to build out with Akkatecture.
-* **Message based:** For high levels of message throughput and processing Akkatecture [does not Ask, it tells](http://bartoszsypytkowski.com/dont-ask-tell-2/).
-* **Event sourced** By design.
+* **Distributed:** Backed by akka.net's persistent actors, cqrs and event sourcing is easy to build out with Akkatecture.
+* **Message based:** For high levels of message throughput and processing Akkatecture [does not ask, it tells](http://bartoszsypytkowski.com/dont-ask-tell-2/).
+* **Event sourced** By design, aggregate roots derive their state by replaying persisted events.
 * **Highly scalable** Actors with their thread safe and distributed nature gives us this plus point.
+* **Configurable** Through akka.net's hocon configuration.
 
 ### Examples
 

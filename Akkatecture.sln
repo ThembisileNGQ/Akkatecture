@@ -14,12 +14,18 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{7522402D-176E-4305-A68B-F3FFBFD38158}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "simple", "simple", "{090ECC2F-5647-4B15-ABDF-2E1B44439626}"
+ProjectSection(SolutionItems) = preProject
+	examples\simple\README.md = examples\simple\README.md
+EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.TestHelpers", "test\Akkatecture.TestHelpers\Akkatecture.TestHelpers.csproj", "{6543746C-F5D4-4F64-9C51-4470C4623428}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Clustering", "src\Akkatecture.Clustering\Akkatecture.Clustering.csproj", "{8281381F-C7AD-41C0-8566-D3C2873B6FD6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cluster", "cluster", "{F39AA664-CAE8-4592-9173-8D03CABA1C07}"
+ProjectSection(SolutionItems) = preProject
+	examples\cluster\README.md = examples\cluster\README.md
+EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Examples.Seed", "examples\cluster\Akkatecture.Examples.Seed\Akkatecture.Examples.Seed.csproj", "{BEAC89B6-9B71-4BF6-9B3A-4193DE028F7A}"
 EndProject
