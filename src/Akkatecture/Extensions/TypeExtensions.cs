@@ -140,6 +140,8 @@ namespace Akkatecture.Extensions
             where TAggregate : IAggregateRoot<TIdentity>
             where TIdentity : IIdentity
         {
+            //TODO needs to be more generic than this, DomainEventSubscriptions may
+            //Come from multiple different Aggregates.
             var aggregateEventType = typeof(IAggregateEvent<TAggregate, TIdentity>);
 
             var interfaces = type

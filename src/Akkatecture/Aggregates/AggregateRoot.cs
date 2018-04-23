@@ -69,7 +69,7 @@ namespace Akkatecture.Aggregates
             PersistenceId = id.Value;
             Register(State);
 
-            Recover<DomainEvent<TAggregate, TIdentity, IAggregateEvent<TAggregate, TIdentity>>>(Recover);
+            //Recover<DomainEvent<TAggregate, TIdentity, IAggregateEvent<TAggregate, TIdentity>>>(Recover);
             
         }
         
