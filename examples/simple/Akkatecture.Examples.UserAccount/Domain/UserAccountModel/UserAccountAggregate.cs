@@ -48,8 +48,7 @@ namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel
         {
             if (!IsNew)
             {
-                Emit(new UserAccountNameChangedEvent(name));
-                
+                Emit(new UserAccountNameChangedEvent(name));   
             }
             else
             {

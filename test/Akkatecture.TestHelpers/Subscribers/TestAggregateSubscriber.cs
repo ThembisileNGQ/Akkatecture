@@ -6,7 +6,7 @@ using Akkatecture.TestHelpers.Aggregates.Events;
 
 namespace Akkatecture.TestHelpers.Subscribers
 {
-    public class TestAggregateSubscriber : DomainEventSubscriber<TestAggregate,TestAggregateId,AggregateEvent<TestAggregate, TestAggregateId>>,
+    public class TestAggregateSubscriber : DomainEventSubscriber,
         ISubscribeTo<TestAggregate,TestAggregateId,TestCreatedEvent>
     {
 
