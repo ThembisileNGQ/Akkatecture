@@ -10,9 +10,9 @@
     <Company>Lutando Ngqakaza</Company>
     <Copyright>Copyright (c) Lutando Ngqakaza 2018 - 2018</Copyright>
     <Description>
-      A Tell(), Don't Ask() first CQRS and ES toolkit for Akka.NET
+      a cqrs and event sourcing toolbox for akka.net
     </Description>
-    <PackageTags>Akka CQRS ES EventSourcing</PackageTags>
+    <PackageTags>akka cqrs es eventsourcing</PackageTags>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/Lutando/Akkatecture</RepositoryUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/Lutando/Akkatecture/master/LICENSE</PackageLicenseUrl>
@@ -23,5 +23,8 @@
     <PackageReference Include="Akka" Version="1.3.5" />
     <PackageReference Include="Akka.Persistence" Version="1.3.5" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\reference.conf" />
   </ItemGroup>
 </Project>

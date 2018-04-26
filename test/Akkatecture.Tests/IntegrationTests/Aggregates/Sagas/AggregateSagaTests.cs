@@ -17,7 +17,7 @@ namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
     {
         private const string Category = "Sagas";
         public AggregateSagaTests()
-            : base(Configuration.Config)
+            : base(TestHelpers.Akka.Configuration.Config)
         {
             
         }

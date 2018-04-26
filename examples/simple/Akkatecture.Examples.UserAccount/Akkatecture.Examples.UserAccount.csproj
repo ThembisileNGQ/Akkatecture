@@ -13,7 +13,7 @@
     <Description>
       The domain project for the simple Akkatecture "Hello world" example
     </Description>
-    <PackageTags>Akka CQRS ES EventSourcing</PackageTags>
+    <PackageTags>akka cqrs es eventsourcing</PackageTags>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/Lutando/Akkatecture</RepositoryUrl>
       <PackageLicenseUrl>https://raw.githubusercontent.com/Lutando/Akkatecture/master/LICENSE</PackageLicenseUrl>

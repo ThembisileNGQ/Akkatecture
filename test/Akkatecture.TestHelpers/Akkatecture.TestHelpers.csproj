@@ -13,7 +13,7 @@
         Akkatecture.TestHelpers project holds all the necassary helper classes and
         methods to make the actual tests easier to maintain and read.
     </Description>
-    <PackageTags>Akka CQRS ES EventSourcing</PackageTags>
+    <PackageTags>akka cqrs es eventsourcing</PackageTags>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/Lutando/Akkatecture</RepositoryUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/Lutando/Akkatecture/master/LICENSE</PackageLicenseUrl>

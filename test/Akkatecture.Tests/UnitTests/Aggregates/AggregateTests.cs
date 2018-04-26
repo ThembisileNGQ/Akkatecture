@@ -18,7 +18,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         private const string Category = "Aggregates";
 
         public AggregateTests()
-            : base(Configuration.Config)
+            : base(TestHelpers.Akka.Configuration.Config)
         {
             
         }

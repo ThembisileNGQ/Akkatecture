@@ -2,7 +2,7 @@
 using FluentAssertions;
 using Xunit;
 
-namespace Akkatecture.Tests.UnitTests.Clustering.Configuration
+namespace Akkatecture.Tests.UnitTests.Configuration
 {
     public class ClusteringDefaultSettingsTests
     {
@@ -11,9 +11,9 @@ namespace Akkatecture.Tests.UnitTests.Clustering.Configuration
         {
             var config = AkkatectureClusteringDefaultSettings.DefaultConfig();
 
-            var value = config.GetString("akkatecture.test-value");
+            var value = config.GetString("akka.cluster.name");
 
-            value.Should().Be("foo bar");
+            value.Should().Be("akkatecture");
         }
     }
 }

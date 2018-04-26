@@ -11,9 +11,9 @@
     <Company>Lutando Ngqakaza</Company>
     <Copyright>Copyright (c) Lutando Ngqakaza 2018 - 2018</Copyright>
     <Description>
-      Akkatectures unit and integration test project.
+      Akkatecture's unit and integration test project.
     </Description>
-    <PackageTags>Akka CQRS ES EventSourcing</PackageTags>
+    <PackageTags>akka cqrs es eventsourcing</PackageTags>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/Lutando/Akkatecture</RepositoryUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/Lutando/Akkatecture/master/LICENSE</PackageLicenseUrl>

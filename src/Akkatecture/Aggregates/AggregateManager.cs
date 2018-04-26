@@ -1,28 +1,20 @@
 ﻿using System;
 using Akka.Actor;
 using Akka.Event;
+using Akka.Persistence;
 using Akkatecture.Commands;
 using Akkatecture.Core;
 using Akkatecture.Extensions;
 
 namespace Akkatecture.Aggregates
 {
-    public abstract class AggregateManager<TAggregate, TIdentity, TCommand> : AggregateManager<TAggregate, TIdentity,
-        TCommand, AggregateState<TAggregate, TIdentity, IEventApplier<TAggregate, TIdentity>>>
-        where TAggregate : AggregateRoot<TAggregate, TIdentity, AggregateState<TAggregate, TIdentity, IEventApplier<TAggregate, TIdentity>>>
-        where TIdentity : IIdentity
-        where TCommand : class, ICommand<TAggregate, TIdentity>
-    {
-        
-    }
-
-    public abstract class AggregateManager<TAggregate, TIdentity, TCommand, TState> :  ReceiveActor, IAggregateManager<TAggregate, TIdentity>
-        where TAggregate : AggregateRoot<TAggregate, TIdentity, TState>
-        where TState : AggregateState<TAggregate, TIdentity, IEventApplier<TAggregate, TIdentity>>
+    public abstract class AggregateManager<TAggregate, TIdentity, TCommand> :  ReceiveActor, IAggregateManager<TAggregate, TIdentity>
+        where TAggregate : ReceivePersistentActor, IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
         where TCommand : class, ICommand<TAggregate,TIdentity>
     {
         protected ILoggingAdapter Logger { get; set; }
+        protected virtual Func<DeadLetter, bool> DeadLetterHandler => Handle;
 
         protected AggregateManager()
         {
@@ -33,14 +25,7 @@ namespace Akkatecture.Aggregates
             Receive<TCommand>(Dispatch);
             Receive<Terminated>(Terminate);
             
-            Receive<DeadLetter>(
-                x => x.Message is TCommand && (x.Message as TCommand).AggregateId.GetType() == typeof(TIdentity),
-                x =>
-                {
-                    var command = x.Message as TCommand;
-                    
-                    ReDispatch(command);
-                });
+            Receive<DeadLetter>(DeadLetterHandler);
              
         }
 
@@ -54,6 +39,7 @@ namespace Akkatecture.Aggregates
 
             return true;
         }
+
         
         protected virtual bool ReDispatch(TCommand command)
         {
@@ -66,7 +52,19 @@ namespace Akkatecture.Aggregates
             return true;
         }
 
+        protected bool Handle(DeadLetter deadLetter)
+        {
+            if (deadLetter.Message is TCommand &&
+                (deadLetter.Message as TCommand).AggregateId.GetType() == typeof(TIdentity))
+            {
+                var command = deadLetter.Message as TCommand;
 
+                ReDispatch(command);
+            }
+
+            return true;
+
+        }
 
         protected virtual bool Terminate(Terminated message)
         {
@@ -106,27 +104,6 @@ namespace Akkatecture.Aggregates
                     return Directive.Restart;
                 });
         }
-
-        protected new void Become(Action action)
-        {
-            Logger.Warning($"{GetType().PrettyPrint()} Has called Become() which is not supported in Akkatecture.");
-        }
-        
-        protected new void Become(Receive receive)
-        {
-            Logger.Warning($"{GetType().PrettyPrint()} Has called Become() which is not supported in Akkatecture.");
-        }
-        
-        protected new void BecomeStacked(Action action)
-        {
-            Logger.Warning($"{GetType().PrettyPrint()} Has called Become() which is not supported in Akkatecture.");
-        }
-        
-        protected new void Become(UntypedReceive untypedReceive)
-        {
-            Logger.Warning($"{GetType().PrettyPrint()} Has called Become() which is not supported in Akkatecture.");
-        }
-        
         
     }
 }

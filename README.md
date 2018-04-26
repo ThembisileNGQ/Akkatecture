@@ -95,7 +95,7 @@ Akka.net gives us a wealth of good APIs out of the box that can be used to build
 
 - [Akka.NET](https://github.com/akkadotnet/akka.net) - The project which AKkatecture builds ontop of, without akka.net, Akkatecture wouldnt exist.
 - [EventFlow](https://github.com/eventflow/EventFlow) - Where Akkatecture draws most of its API surface inspiration from. A large amount of the CQRS/ES/DDD primitives come from that project, and have been adapted to work in the akka eco system.
-- [Nact](https://nact.io/) - For giving us basis to write our [documentation](https://akkatecture.github.io).
+- [Nact](https://nact.io/) - For giving us basis to write our [documentation](https://akkatecture.github.io). Powered by [gatsbyjs](https://www.gatsbyjs.org/)
 
 ## License
 

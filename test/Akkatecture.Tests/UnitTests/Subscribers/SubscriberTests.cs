@@ -16,7 +16,7 @@ namespace Akkatecture.Tests.UnitTests.Subscribers
         private const string Category = "Subscribers";
 
         public SubscriberTests()
-            :base(Configuration.Config)
+            :base(TestHelpers.Akka.Configuration.Config)
         {
             
         }

@@ -8,17 +8,6 @@ using Akkatecture.Extensions;
 
 namespace Akkatecture.Aggregates
 {
-
-    public abstract class AggregateRoot<TAggregate, TIdentity> : AggregateRoot<TAggregate, TIdentity, AggregateState<TAggregate, TIdentity, IEventApplier<TAggregate, TIdentity>>>
-        where TAggregate : AggregateRoot<TAggregate, TIdentity>
-        where TIdentity : IIdentity
-    {
-        protected AggregateRoot(TIdentity id)
-            : base(id)
-        {
-        }
-    }
-
     public abstract class AggregateRoot<TAggregate, TIdentity, TAggregateState> : ReceivePersistentActor, IAggregateRoot<TIdentity>
         where TAggregate : AggregateRoot<TAggregate, TIdentity, TAggregateState>
         where TAggregateState : AggregateState<TAggregate,TIdentity, IEventApplier<TAggregate,TIdentity>>
@@ -26,6 +15,7 @@ namespace Akkatecture.Aggregates
     {
         private static readonly IReadOnlyDictionary<Type, Action<TAggregateState, IAggregateEvent>> ApplyMethodsFromState;
         private static readonly IAggregateName AggregateName = typeof(TAggregate).GetAggregateName();
+        
         public TAggregateState State { get; protected set; }
         private CircularBuffer<ISourceId> _previousSourceIds = new CircularBuffer<ISourceId>(10);
         protected ILoggingAdapter Logger { get; set; }
@@ -35,11 +25,13 @@ namespace Akkatecture.Aggregates
         public TIdentity Id { get; }
         public long Version { get; protected set; }
         public bool IsNew => Version <= 0;
-        
+        public AggregateRootSettings Settings { get; private set; }
         static AggregateRoot()
         {
             ApplyMethodsFromState = typeof(TAggregateState)
                 .GetAggregateStateEventApplyMethods<TAggregate, TIdentity, TAggregateState>();
+
+
         }
 
         protected AggregateRoot(TIdentity id)
@@ -64,13 +56,18 @@ namespace Akkatecture.Aggregates
                 }
                 
             }
-
+            var config = Context.System.Settings.Config;
+            Settings = new AggregateRootSettings(config);
             Id = id;
             PersistenceId = id.Value;
             Register(State);
 
-            //Recover<DomainEvent<TAggregate, TIdentity, IAggregateEvent<TAggregate, TIdentity>>>(Recover);
-            
+            if (Settings.UseDefaultEventRecover)
+                Recover<DomainEvent<TAggregate, TIdentity, IAggregateEvent<TAggregate, TIdentity>>>(Recover);
+
+            if (Settings.UseDefaultSnapshotRecover)
+                Recover<SnapshotOffer>(Recover);
+
         }
         
         
