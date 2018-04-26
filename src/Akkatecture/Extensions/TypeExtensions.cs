@@ -160,10 +160,33 @@ namespace Akkatecture.Extensions
 
             return domainEventTypes;
         }
+        
+        internal static IReadOnlyList<Type> GetDomainEventSubscriberSubscriptionTypes(this Type type)
+        {
+            //TODO
+            //Check generic arguments for sanity
+            //add checks for iaggregateroot
+            //add checks for iidentity
+            //add checks for iaggregatevent
+
+            var interfaces = type
+                .GetTypeInfo()
+                .GetInterfaces()
+                .Select(i => i.GetTypeInfo())
+                .ToList();
+            var domainEventTypes = interfaces
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISubscribeTo<,,>))
+                .Select(i =>   typeof(DomainEvent<,,>).MakeGenericType(i.GetGenericArguments()[0],i.GetGenericArguments()[1],i.GetGenericArguments()[2]))
+                .ToList();
+            
+
+            return domainEventTypes;
+        }
 
         internal static IReadOnlyList<Type> GetSagaStartEventSubscriptionTypes(this Type type)
         {
             //TODO
+            //Check generic arguments for sanity
             //add checks for iaggregateroot
             //add checks for iidentity
             //add checks for iaggregatevent

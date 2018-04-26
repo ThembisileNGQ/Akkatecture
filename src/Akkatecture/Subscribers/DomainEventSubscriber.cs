@@ -5,17 +5,14 @@ using Akkatecture.Extensions;
 
 namespace Akkatecture.Subscribers
 {
-    public abstract class DomainEventSubscriber<TAggregate, TIdentity, TEvent> : ReceiveActor
-        where TAggregate : IAggregateRoot<TIdentity>
-        where TIdentity : IIdentity
-        where TEvent : IAggregateEvent<TAggregate, TIdentity>
+    public abstract class DomainEventSubscriber : ReceiveActor
     {
         protected DomainEventSubscriber()
         {
             
             var subscriptionTypes =
                 GetType()
-                .GetDomainEventSubscriberSubscriptionTypes<TAggregate, TIdentity>(); 
+                        .GetDomainEventSubscriberSubscriptionTypes(); 
             
             foreach (var type in subscriptionTypes)
             {
