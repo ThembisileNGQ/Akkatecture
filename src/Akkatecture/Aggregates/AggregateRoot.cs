@@ -25,7 +25,7 @@ namespace Akkatecture.Aggregates
         public TIdentity Id { get; }
         public long Version { get; protected set; }
         public bool IsNew => Version <= 0;
-        public AggregateRootSettings Settings { get; private set; }
+        public AggregateRootSettings Settings { get; }
         static AggregateRoot()
         {
             ApplyMethodsFromState = typeof(TAggregateState)

@@ -52,7 +52,7 @@ It would also be benefitial for you to be familiar with actor systems, akka.net,
 
 ### Status of Akkatecture
 
-Akkatecture is still in development. The goal of this projects first version is to provide you with the neccassary building blocks to build out your own cqrs and event sourced application without having to think of the primitives. Akkatecture is still extensible by standard akka methods (hocon) so do feel free to apply those extension points where necassary.
+Akkatecture is still in development. The goal of this projects first version is to provide you with the neccassary building blocks to build out your own cqrs and event sourced application without having to think of the primitives.
 
 ### Useful Resources
 

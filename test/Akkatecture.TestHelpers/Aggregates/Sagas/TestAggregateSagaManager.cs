@@ -15,8 +15,8 @@ namespace Akkatecture.TestHelpers.Aggregates.Sagas
         public TestAggregateSagaManager(Expression<Func<TestSaga>> sagaFactory)
             : base(sagaFactory)
         {
-            ReceiveAsync<DomainEvent<TestAggregate, TestAggregateId, TestSentEvent>>(Handle);
-            ReceiveAsync<DomainEvent<TestAggregate, TestAggregateId, TestReceivedEvent>>(Handle);
+            ReceiveAsync<IDomainEvent<TestAggregate, TestAggregateId, TestSentEvent>>(Handle);
+            ReceiveAsync<IDomainEvent<TestAggregate, TestAggregateId, TestReceivedEvent>>(Handle);
         }
 
         public Task Handle(IDomainEvent<TestAggregate, TestAggregateId, TestSentEvent> domainEvent)

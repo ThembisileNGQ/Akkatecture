@@ -136,12 +136,11 @@ namespace Akkatecture.Extensions
                     mi => ReflectionHelper.CompileMethodInvocation<Action<TAggregateState, IAggregateEvent>>(type, "Apply", mi.GetParameters()[0].ParameterType));
         }
 
+        
         internal static IReadOnlyList<Type> GetDomainEventSubscriberSubscriptionTypes<TAggregate, TIdentity>(this Type type)
             where TAggregate : IAggregateRoot<TIdentity>
             where TIdentity : IIdentity
         {
-            //TODO needs to be more generic than this, DomainEventSubscriptions may
-            //Come from multiple different Aggregates.
             var aggregateEventType = typeof(IAggregateEvent<TAggregate, TIdentity>);
 
             var interfaces = type
@@ -155,7 +154,7 @@ namespace Akkatecture.Extensions
                 .Select(i => i.GetGenericArguments()[2])
                 .ToList();
             var domainEventTypes = aggregateEventSubscriptionTypes
-                .Select(t => typeof(DomainEvent<,,>).MakeGenericType(typeof(TAggregate), typeof(TIdentity), t))
+                .Select(t => typeof(IDomainEvent<,,>).MakeGenericType(typeof(TAggregate), typeof(TIdentity), t))
                 .ToList();
 
             return domainEventTypes;
@@ -176,7 +175,7 @@ namespace Akkatecture.Extensions
                 .ToList();
             var domainEventTypes = interfaces
                 .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISubscribeTo<,,>))
-                .Select(i =>   typeof(DomainEvent<,,>).MakeGenericType(i.GetGenericArguments()[0],i.GetGenericArguments()[1],i.GetGenericArguments()[2]))
+                .Select(i =>   typeof(IDomainEvent<,,>).MakeGenericType(i.GetGenericArguments()[0],i.GetGenericArguments()[1],i.GetGenericArguments()[2]))
                 .ToList();
             
 
@@ -198,7 +197,7 @@ namespace Akkatecture.Extensions
                 .ToList();
             var domainEventTypes = interfaces
                 .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISagaIsStartedBy<,,>))
-                .Select(t => typeof(DomainEvent<,,>).MakeGenericType(t.GetGenericArguments()[0],
+                .Select(t => typeof(IDomainEvent<,,>).MakeGenericType(t.GetGenericArguments()[0],
                     t.GetGenericArguments()[1], t.GetGenericArguments()[2]))
                 .ToList();
 
@@ -219,12 +218,27 @@ namespace Akkatecture.Extensions
                 .ToList();
             var domainEventTypes = interfaces
                 .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISagaHandles<,,>))
-                .Select(t => typeof(DomainEvent<,,>).MakeGenericType(t.GetGenericArguments()[0],
+                .Select(t => typeof(IDomainEvent<,,>).MakeGenericType(t.GetGenericArguments()[0],
                     t.GetGenericArguments()[1], t.GetGenericArguments()[2]))
                     .ToList();
 
             return domainEventTypes;
             
+        }
+
+        internal static Type GetBaseType(this Type type, string name)
+        {
+            var currentType = type;
+
+            while (currentType != null)
+            {
+                if (currentType.Name.Contains(name))
+                {
+                    return currentType;
+                }
+                currentType = currentType.BaseType;
+            }
+            return type;
         }
 
     }
