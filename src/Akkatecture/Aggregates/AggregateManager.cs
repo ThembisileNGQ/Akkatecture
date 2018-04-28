@@ -1,5 +1,6 @@
 ﻿using System;
 using Akka.Actor;
+using Akka.Configuration;
 using Akka.Event;
 using Akka.Persistence;
 using Akkatecture.Commands;
@@ -14,18 +15,23 @@ namespace Akkatecture.Aggregates
         where TCommand : class, ICommand<TAggregate,TIdentity>
     {
         protected ILoggingAdapter Logger { get; set; }
-        protected virtual Func<DeadLetter, bool> DeadLetterHandler => Handle;
+        protected Func<DeadLetter, bool> DeadLetterHandler => Handle;
+        public AggregateManagerSettings Settings { get; }
 
         protected AggregateManager()
         {
             Logger = Context.GetLogger();
-
-            Context.System.EventStream.Subscribe(Self, typeof(DeadLetter));
+            Settings = new AggregateManagerSettings(Context.System.Settings.Config);
             
             Receive<TCommand>(Dispatch);
             Receive<Terminated>(Terminate);
+
+            if (Settings.HandleDeadLetters)
+            {
+                Context.System.EventStream.Subscribe(Self, typeof(DeadLetter));
+                Receive<DeadLetter>(DeadLetterHandler);
+            }
             
-            Receive<DeadLetter>(DeadLetterHandler);
              
         }
 

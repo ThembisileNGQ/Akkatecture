@@ -56,8 +56,8 @@ namespace Akkatecture.Aggregates
                 }
                 
             }
-            var config = Context.System.Settings.Config;
-            Settings = new AggregateRootSettings(config);
+            
+            Settings = new AggregateRootSettings(Context.System.Settings.Config);
             Id = id;
             PersistenceId = id.Value;
             Register(State);

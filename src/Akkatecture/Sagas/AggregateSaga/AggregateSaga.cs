@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Akka.Event;
 using Akka.Persistence;
 using Akkatecture.Aggregates;
@@ -18,7 +19,8 @@ namespace Akkatecture.Sagas.AggregateSaga
         private static readonly IAggregateName AggregateName = typeof(TAggregateSaga).GetSagaName();
         private CircularBuffer<ISourceId> _previousSourceIds = new CircularBuffer<ISourceId>(10);
         public override string PersistenceId { get; } = Context.Self.Path.Name;
-        protected ILoggingAdapter Logger { get; set; }
+        public AggregateSagaSettings Settings { get; }
+        protected ILoggingAdapter Logger { get; }
         public TSagaState State { get; protected set; }
         public TIdentity Id { get; }
         public IAggregateName Name => AggregateName;
@@ -34,6 +36,7 @@ namespace Akkatecture.Sagas.AggregateSaga
         protected AggregateSaga()
         {
             Logger = Context.GetLogger();
+            Settings = new AggregateSagaSettings(Context.System.Settings.Config);
             var idValue = Context.Self.Path.Name;
             PersistenceId = Context.Self.Path.Name;
             Id = (TIdentity) Activator.CreateInstance(typeof(TIdentity), idValue);
@@ -61,6 +64,11 @@ namespace Akkatecture.Sagas.AggregateSaga
                     Logger.Warning($"Unable to activate State for {GetType()}");
                 }
 
+            }
+
+            if (Settings.AutoReceive)
+            {
+                
             }
             
             Register(State);

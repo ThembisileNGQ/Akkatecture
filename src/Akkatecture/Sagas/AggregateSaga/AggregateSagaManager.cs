@@ -1,21 +1,24 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices.ComTypes;
+using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Event;
+using Akka.Persistence;
 using Akkatecture.Aggregates;
 using Akkatecture.Extensions;
 
 namespace Akkatecture.Sagas.AggregateSaga
 {
-    public abstract class AggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator, TSagaState> : ReceiveActor, IAggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator>
+    public abstract class AggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator> : ReceiveActor, IAggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator>
         where TIdentity : SagaId<TIdentity>
-        where TSagaLocator : ISagaLocator<TIdentity>
-        where TSagaState : SagaState<TAggregateSaga, TIdentity, IEventApplier<TAggregateSaga, TIdentity>>
-        where TAggregateSaga : AggregateSaga<TAggregateSaga, TIdentity, TSagaState>
+        where TSagaLocator : class, ISagaLocator<TIdentity>
+        where TAggregateSaga : ReceivePersistentActor, IAggregateSaga<TIdentity>
     {
-        protected ILoggingAdapter Logger { get; set; }
+        protected ILoggingAdapter Logger { get; }
         public Expression<Func<TAggregateSaga>> SagaFactory { get; }
         protected TSagaLocator SagaLocator { get; }
+        public AggregateSagaManagerSettings Settings { get; }
 
         protected AggregateSagaManager(Expression<Func<TAggregateSaga>> sagaFactory, bool autoSubscribe = true)
         {
@@ -26,8 +29,9 @@ namespace Akkatecture.Sagas.AggregateSaga
             SagaLocator = (TSagaLocator)Activator.CreateInstance(typeof(TSagaLocator));
 
             SagaFactory = sagaFactory;
+            Settings = new AggregateSagaManagerSettings(Context.System.Settings.Config);
 
-            if (autoSubscribe)
+            if (autoSubscribe && Settings.AutoSubscribe)
             {
                 var startedBySubscriptionTypes =
                     GetType()
@@ -47,7 +51,20 @@ namespace Akkatecture.Sagas.AggregateSaga
                     Context.System.EventStream.Subscribe(Self, type);
                 }
             }
+
+            if (Settings.AutoSpawnOnReceive)
+            {
+                ReceiveAsync<IDomainEvent>(Handle);
+            }
             
+        }
+        
+        protected virtual Task Handle(IDomainEvent domainEvent)
+        {
+            var sagaId = SagaLocator.LocateSaga(domainEvent);
+            var saga = FindOrSpawn(sagaId);
+            saga.Tell(domainEvent,Sender);
+            return Task.CompletedTask;
         }
 
         protected virtual bool Terminate(Terminated message)

@@ -86,9 +86,9 @@ namespace Akkatecture.Clustering.Core
 
         public static IActorRef StartAggregateClusterProxy(ActorSystem actorSystem, string clusterRoleName, int numberOfShards = 12)
         {
-            if (typeof(TAggregateSagaManager) != typeof(AggregateSagaManager<,,,>))
+            if (typeof(TAggregateSagaManager) != typeof(AggregateSagaManager<,,>))
             {
-                throw new ArgumentException($"{typeof(TAggregateSagaManager).PrettyPrint()} is not a {typeof(AggregateSagaManager<,,,>).PrettyPrint()}");
+                throw new ArgumentException($"{typeof(TAggregateSagaManager).PrettyPrint()} is not a {typeof(AggregateSagaManager<,,>).PrettyPrint()}");
             }
             var clusterSharding = ClusterSharding.Get(actorSystem);
 

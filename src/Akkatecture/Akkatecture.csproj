@@ -10,7 +10,7 @@
     <Company>Lutando Ngqakaza</Company>
     <Copyright>Copyright (c) Lutando Ngqakaza 2018 - 2018</Copyright>
     <Description>
-      a cqrs and event sourcing toolbox for akka.net
+      a cqrs and event sourcing framework for akka.net
     </Description>
     <PackageTags>akka cqrs es eventsourcing</PackageTags>
     <RepositoryType>git</RepositoryType>

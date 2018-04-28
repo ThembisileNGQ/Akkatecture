@@ -8,15 +8,15 @@ using Akkatecture.TestHelpers.Aggregates.Events;
 
 namespace Akkatecture.TestHelpers.Aggregates.Sagas
 {
-    public class TestAggregateSagaManager : AggregateSagaManager<TestSaga,TestSagaId,TestSagaLocator, TestSagaState>,
+    public class TestAggregateSagaManager : AggregateSagaManager<TestSaga,TestSagaId,TestSagaLocator>,
         ISagaIsStartedBy<TestAggregate,TestAggregateId,TestSentEvent>,
         ISagaHandles<TestAggregate, TestAggregateId, TestReceivedEvent>
     {
         public TestAggregateSagaManager(Expression<Func<TestSaga>> sagaFactory)
             : base(sagaFactory)
         {
-            ReceiveAsync<IDomainEvent<TestAggregate, TestAggregateId, TestSentEvent>>(Handle);
-            ReceiveAsync<IDomainEvent<TestAggregate, TestAggregateId, TestReceivedEvent>>(Handle);
+            //ReceiveAsync<IDomainEvent<TestAggregate, TestAggregateId, TestSentEvent>>(Handle);
+            //ReceiveAsync<IDomainEvent<TestAggregate, TestAggregateId, TestReceivedEvent>>(Handle);
         }
 
         public Task Handle(IDomainEvent<TestAggregate, TestAggregateId, TestSentEvent> domainEvent)

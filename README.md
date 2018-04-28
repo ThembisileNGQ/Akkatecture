@@ -3,7 +3,7 @@
 
 # Akkatecture
 
-Akkatecture is a cqrs and event sourcing toolbox for akka.net. Fully optimised around using akka's tell() and event stream pub sub mechanism for event propegation. In .net core (targeting netstandard 2.0).
+Akkatecture is a cqrs and event sourcing framework for akka.net. Fully optimised around using akka's tell() and event stream pub sub mechanism for event propegation. In .net core (targeting netstandard 2.0).
 
 Go ahead and take a look at [our documentation](http://akkatecture.github.io/docs/getting-started), go over [some concepts](http://akkatecture.github.io/docs/primitives), and read the [tips and tricks](http://akkatecture.github.io/docs/tips-and-tricks).
 
@@ -53,6 +53,11 @@ It would also be benefitial for you to be familiar with actor systems, akka.net,
 ### Status of Akkatecture
 
 Akkatecture is still in development. The goal of this projects first version is to provide you with the neccassary building blocks to build out your own cqrs and event sourced application without having to think of the primitives.
+
+akkatecture is currently missing these crucial features
+- event upgrading.
+- typed actor references.
+- clustered deployment helpers.
 
 ### Useful Resources
 

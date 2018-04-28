@@ -13,37 +13,32 @@ namespace Akkatecture.Subscribers
     {
         public DomainEventSubscriberSettings Settings { get; }
 
-        private readonly Type Type;
-
-        
 
         protected DomainEventSubscriber()
         {
-            var config = Context.System.Settings.Config;
-            Settings = new DomainEventSubscriberSettings(config);
-            Type = GetType();
+            Settings = new DomainEventSubscriberSettings(Context.System.Settings.Config);
+            
+            var type = GetType();
 
             if (Settings.AutoSubscribe)
             {
                 var subscriptionTypes =
-                    Type
+                    type
                         .GetDomainEventSubscriberSubscriptionTypes();
 
-                foreach (var type in subscriptionTypes)
+                foreach (var subscriptionType in subscriptionTypes)
                 {
-                    Context.System.EventStream.Subscribe(Self, type);
+                    Context.System.EventStream.Subscribe(Self, subscriptionType);
                 }
             }
-
-
 
             if (Settings.AutoReceive)
             {
                 var subscriptionTypes =
-                    Type
+                    type
                         .GetDomainEventSubscriberSubscriptionTypes();
 
-                var methods = Type
+                var methods = type
                     .GetTypeInfo()
                     .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                     .Where(mi =>
@@ -58,7 +53,7 @@ namespace Akkatecture.Subscribers
                         mi => mi);
 
 
-                var method = Type
+                var method = type
                     .GetBaseType("ReceiveActor")
                     .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                     .Where(mi =>
