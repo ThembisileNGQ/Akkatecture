@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq.Expressions;
-using System.Reflection;
 using Akka.Actor;
 using Akka.Cluster.Sharding;
 using Akkatecture.Aggregates;
+using Akkatecture.Clustering.Dispatchers;
 using Akkatecture.Core;
 using Akkatecture.Extensions;
 using Akkatecture.Sagas;
@@ -58,9 +58,9 @@ namespace Akkatecture.Clustering.Core
         where TAggregateSagaManager : ActorBase, IAggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator>
         where TAggregateSaga : IAggregateSaga<TIdentity>
         where TIdentity : SagaId<TIdentity>
-        where TSagaLocator : ISagaLocator<TIdentity>
+        where TSagaLocator : class, ISagaLocator<TIdentity>
     {
-        public static IActorRef StartAggregateSagaCluster(ActorSystem actorSystem, Expression<Func<TAggregateSaga>> sagaFactory, int numberOfShards = 12)
+        public static IActorRef StartAggregateSagaCluster(ActorSystem actorSystem, Expression<Func<TAggregateSaga>> sagaFactory, string clusterRoleName, int numberOfShards = 12)
         {
             if (sagaFactory == null)
             {
@@ -74,17 +74,21 @@ namespace Akkatecture.Clustering.Core
 
             var shardRef = clusterSharding.Start(
                 typeof(TAggregateSagaManager).Name,
-                Props.Create<TAggregateSagaManager>(sagaFactory),
+                Props.Create<TAggregateSagaManager>(sagaFactory,false),
                 clusterShardingSettings,
                 ShardIdentityExtractors
                     .AggregateSagaIdentityExtractor<TAggregateSagaManager, TAggregateSaga, TIdentity, TSagaLocator>,
                 shardResolver.AggregateSagaShardResolver<TAggregateSagaManager, TAggregateSaga, TIdentity, TSagaLocator>
             );
 
+            actorSystem.ActorOf(Props.Create(() =>
+                new ShardedAggregateSagaDispatcher<TAggregateSagaManager, TAggregateSaga, TIdentity, TSagaLocator>(
+                    clusterRoleName, numberOfShards)));
+
             return shardRef;
         }
 
-        public static IActorRef StartAggregateClusterProxy(ActorSystem actorSystem, string clusterRoleName, int numberOfShards = 12)
+        public static IActorRef StartAggregateSagaClusterProxy(ActorSystem actorSystem, string clusterRoleName, int numberOfShards = 12)
         {
             if (typeof(TAggregateSagaManager) != typeof(AggregateSagaManager<,,>))
             {

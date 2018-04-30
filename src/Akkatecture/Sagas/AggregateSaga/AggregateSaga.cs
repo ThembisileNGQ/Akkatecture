@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Akka.Event;
 using Akka.Persistence;
 using Akkatecture.Aggregates;
@@ -68,10 +70,61 @@ namespace Akkatecture.Sagas.AggregateSaga
 
             if (Settings.AutoReceive)
             {
-                
+                var type = GetType();
+
+                var subscriptionTypes =
+                    type
+                        .GetSagaEventSubscriptionTypes();
+
+                var methods = type
+                    .GetTypeInfo()
+                    .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                    .Where(mi =>
+                    {
+                        if (mi.Name != "Handle") return false;
+                        var parameters = mi.GetParameters();
+                        return
+                            parameters.Length == 1;
+                    })
+                    .ToDictionary(
+                        mi => mi.GetParameters()[0].ParameterType,
+                        mi => mi);
+
+
+                var method = type
+                    .GetBaseType("ReceivePersistentActor")
+                    .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                    .Where(mi =>
+                    {
+                        if (mi.Name != "CommandAsync") return false;
+                        var parameters = mi.GetParameters();
+                        return
+                            parameters.Length == 2
+                            && parameters[0].ParameterType.Name.Contains("Func");
+                    })
+                    .First();
+
+                foreach (var subscriptionType in subscriptionTypes)
+                {
+                    var funcType = typeof(Func<,>).MakeGenericType(subscriptionType, typeof(Task));
+                    var subscriptionFunction = Delegate.CreateDelegate(funcType, this, methods[subscriptionType]);
+                    var actorReceiveMethod = method.MakeGenericMethod(subscriptionType);
+
+                    actorReceiveMethod.Invoke(this, new[] { subscriptionFunction, null });
+                }
             }
             
             Register(State);
+
+            if (Settings.UseDefaultEventRecover)
+            {
+                Recover<DomainEvent<TAggregateSaga, TIdentity, IAggregateEvent<TAggregateSaga, TIdentity>>>(Recover);
+                Recover<IAggregateEvent<TAggregateSaga, TIdentity>>(Recover);
+            }
+                
+
+            if (Settings.UseDefaultSnapshotRecover)
+                Recover<SnapshotOffer>(Recover);
 
         }
 
@@ -222,6 +275,24 @@ namespace Akkatecture.Sagas.AggregateSaga
             catch (Exception exception)
             {
                 Logger.Error($"Recovering with event of type [{aggregateEvent.GetType().PrettyPrint()}] caused an exception {exception.GetType().PrettyPrint()}");
+                return false;
+            }
+
+            return true;
+        }
+
+        protected virtual bool Recover(IDomainEvent<TAggregateSaga, TIdentity, IAggregateEvent<TAggregateSaga, TIdentity>> domainEvent)
+        {
+            try
+            {
+
+                //TODO event upcasting goes here
+                Logger.Debug($"Recovering with event of type [{domainEvent.GetType().PrettyPrint()}] ");
+                ApplyEvent(domainEvent.AggregateEvent);
+            }
+            catch (Exception exception)
+            {
+                Logger.Error($"Recovering with event of type [{domainEvent.GetType().PrettyPrint()}] caused an exception {exception.GetType().PrettyPrint()}");
                 return false;
             }
 

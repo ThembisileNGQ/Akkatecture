@@ -182,10 +182,9 @@ namespace Akkatecture.Extensions
             return domainEventTypes;
         }
 
-        internal static IReadOnlyList<Type> GetSagaStartEventSubscriptionTypes(this Type type)
+        internal static IReadOnlyList<Type> GetSagaEventSubscriptionTypes(this Type type)
         {
             //TODO
-            //Check generic arguments for sanity
             //add checks for iaggregateroot
             //add checks for iidentity
             //add checks for iaggregatevent
@@ -195,35 +194,22 @@ namespace Akkatecture.Extensions
                 .GetInterfaces()
                 .Select(i => i.GetTypeInfo())
                 .ToList();
-            var domainEventTypes = interfaces
+
+            var handleEventTypes = interfaces
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISagaHandles<,,>))
+                .Select(t => typeof(IDomainEvent<,,>).MakeGenericType(t.GetGenericArguments()[0],
+                    t.GetGenericArguments()[1], t.GetGenericArguments()[2]))
+                .ToList();
+
+            var startedByEventTypes = interfaces
                 .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISagaIsStartedBy<,,>))
                 .Select(t => typeof(IDomainEvent<,,>).MakeGenericType(t.GetGenericArguments()[0],
                     t.GetGenericArguments()[1], t.GetGenericArguments()[2]))
                 .ToList();
-
-            return domainEventTypes;
-        }
-
-        internal static IReadOnlyList<Type> GetSagaHandleEventSubscriptionTypes(this Type type)
-        {
-            //TODO
-            //add checks for iaggregateroot
-            //add checks for iidentity
-            //add checks for iaggregatevent
-
-            var interfaces = type
-                .GetTypeInfo()
-                .GetInterfaces()
-                .Select(i => i.GetTypeInfo())
-                .ToList();
-            var domainEventTypes = interfaces
-                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISagaHandles<,,>))
-                .Select(t => typeof(IDomainEvent<,,>).MakeGenericType(t.GetGenericArguments()[0],
-                    t.GetGenericArguments()[1], t.GetGenericArguments()[2]))
-                    .ToList();
-
-            return domainEventTypes;
             
+            startedByEventTypes.AddRange(handleEventTypes);
+
+            return startedByEventTypes;
         }
 
         internal static Type GetBaseType(this Type type, string name)

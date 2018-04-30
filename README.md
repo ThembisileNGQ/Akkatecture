@@ -1,11 +1,11 @@
 
-<a href="https://akkatecture.github.io/"><img src="https://raw.githubusercontent.com/Lutando/Akkatecture/master/logo.svg?sanitize=true" width="100%" height="200"></a>
+<a href="https://akkatecture.net/"><img src="https://raw.githubusercontent.com/Lutando/Akkatecture/master/logo.svg?sanitize=true" width="100%" height="200"></a>
 
 # Akkatecture
 
 Akkatecture is a cqrs and event sourcing framework for akka.net. Fully optimised around using akka's tell() and event stream pub sub mechanism for event propegation. In .net core (targeting netstandard 2.0).
 
-Go ahead and take a look at [our documentation](http://akkatecture.github.io/docs/getting-started), go over [some concepts](http://akkatecture.github.io/docs/primitives), and read the [tips and tricks](http://akkatecture.github.io/docs/tips-and-tricks).
+Go ahead and take a look at [our documentation](http://akkatecture.net/docs/getting-started), go over [some concepts](http://akkatecture.net/docs/primitives), and read the [tips and tricks](http://akkatecture.net/docs/tips-and-tricks).
 
 ### Features
 
@@ -54,10 +54,9 @@ It would also be benefitial for you to be familiar with actor systems, akka.net,
 
 Akkatecture is still in development. The goal of this projects first version is to provide you with the neccassary building blocks to build out your own cqrs and event sourced application without having to think of the primitives.
 
-akkatecture is currently missing these crucial features
+akkatecture is currently missing these crucial features:
 - event upgrading.
 - typed actor references.
-- clustered deployment helpers.
 
 ### Useful Resources
 
@@ -100,7 +99,7 @@ Akka.net gives us a wealth of good APIs out of the box that can be used to build
 
 - [Akka.NET](https://github.com/akkadotnet/akka.net) - The project which AKkatecture builds ontop of, without akka.net, Akkatecture wouldnt exist.
 - [EventFlow](https://github.com/eventflow/EventFlow) - Where Akkatecture draws most of its API surface inspiration from. A large amount of the CQRS/ES/DDD primitives come from that project, and have been adapted to work in the akka eco system.
-- [Nact](https://nact.io/) - For giving us basis to write our [documentation](https://akkatecture.github.io). Powered by [gatsbyjs](https://www.gatsbyjs.org/)
+- [Nact](https://nact.io/) - For giving us basis to write our [documentation](https://akkatecture.net). Powered by [gatsbyjs](https://www.gatsbyjs.org/).
 
 ## License
 

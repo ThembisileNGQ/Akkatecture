@@ -6,6 +6,7 @@ namespace Akkatecture.Aggregates
     public class AggregateManagerSettings
     {
         public readonly bool HandleDeadLetters;
+        public readonly bool AutoDispatchOnReceive;
 
         public AggregateManagerSettings(Config config)
         {
@@ -13,6 +14,7 @@ namespace Akkatecture.Aggregates
             aggregateManagerConfig = aggregateManagerConfig.GetConfig("akkatecture.aggregate-manager");
 
             HandleDeadLetters = aggregateManagerConfig.GetBoolean("handle-deadletters");
+            AutoDispatchOnReceive = aggregateManagerConfig.GetBoolean("auto-dispatch-on-receive");
         }
     }
 }

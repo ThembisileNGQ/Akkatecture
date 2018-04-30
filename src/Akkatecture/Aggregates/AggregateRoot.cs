@@ -64,6 +64,7 @@ namespace Akkatecture.Aggregates
 
             if (Settings.UseDefaultEventRecover)
                 Recover<DomainEvent<TAggregate, TIdentity, IAggregateEvent<TAggregate, TIdentity>>>(Recover);
+                Recover<IAggregateEvent<TAggregate, TIdentity>>(Recover);
 
             if (Settings.UseDefaultSnapshotRecover)
                 Recover<SnapshotOffer>(Recover);
@@ -262,7 +263,6 @@ namespace Akkatecture.Aggregates
         {
             try
             {
-
                 //TODO event upcasting goes here
                 Logger.Debug($"Recovering with event of type [{aggregateEvent.GetType().PrettyPrint()}] ");
                 ApplyEvent(aggregateEvent);

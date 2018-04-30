@@ -1,5 +1,7 @@
-﻿using Akka.Actor;
+﻿using System.Threading.Tasks;
+using Akka.Actor;
 using Akkatecture.Aggregates;
+using Akkatecture.Sagas;
 using Akkatecture.Sagas.AggregateSaga;
 using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Events;
@@ -7,25 +9,20 @@ using Akkatecture.TestHelpers.Aggregates.Sagas.Events;
 
 namespace Akkatecture.TestHelpers.Aggregates.Sagas
 {
-    public class TestSaga : AggregateSaga<TestSaga,TestSagaId,TestSagaState>
+    public class TestSaga : AggregateSaga<TestSaga,TestSagaId,TestSagaState>,
+        ISagaIsStartedBy<TestAggregate, TestAggregateId, TestSentEvent>,
+        ISagaHandles<TestAggregate, TestAggregateId, TestReceivedEvent>
     {
         private IActorRef TestAggregateManager { get; }
         public TestSaga(IActorRef testAggregateManager)
         {
             TestAggregateManager = testAggregateManager;
-
-            //Saga "Commands"
-            Command<DomainEvent<TestAggregate, TestAggregateId, TestSentEvent>>(Handle);
-            Command<DomainEvent<TestAggregate, TestAggregateId, TestReceivedEvent>>(Handle);
+            
+            //Test Probe Command
             Command<EmitTestSagaState>(Handle);
-
-            //Recovery
-            Recover<TestSagaCompletedEvent>(Recover);
-            Recover<TestSagaTransactionCompletedEvent>(Recover);
-            Recover<TestSagaCompletedEvent>(Recover);
         }
 
-        private bool Handle(DomainEvent<TestAggregate, TestAggregateId, TestSentEvent> domainEvent)
+        public Task Handle(IDomainEvent<TestAggregate, TestAggregateId, TestSentEvent> domainEvent)
         {
             if (IsNew)
             {
@@ -36,20 +33,19 @@ namespace Akkatecture.TestHelpers.Aggregates.Sagas
 
                 TestAggregateManager.Tell(command);
 
-                return true;
             }
-            return false;
+            return Task.CompletedTask;
         }
 
-        private bool Handle(DomainEvent<TestAggregate, TestAggregateId, TestReceivedEvent> domainEvent)
+        public Task Handle(IDomainEvent<TestAggregate, TestAggregateId, TestReceivedEvent> domainEvent)
         {
             if (!IsNew)
             {
                 Emit(new TestSagaTransactionCompletedEvent());
                 Self.Tell(new EmitTestSagaState());
-                return true;
+
             }
-            return false;
+            return Task.CompletedTask;
         }
 
         private bool Handle(EmitTestSagaState testCommmand)

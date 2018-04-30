@@ -10,14 +10,9 @@ namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel
         public UserAccountAggregate(UserAccountId id)
             : base(id)
         {
-
             //command handler registration
             Command<CreateUserAccountCommand>(Execute);
             Command<UserAccountChangeNameCommand>(Execute);
-
-            //recovery from persistent event source
-            Recover<UserAccountCreatedEvent>(Recover);
-            Recover<UserAccountNameChangedEvent>(Recover);
         }
         
         public bool Execute(CreateUserAccountCommand command)

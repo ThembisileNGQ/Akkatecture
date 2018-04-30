@@ -23,8 +23,10 @@ namespace Akkatecture.Aggregates
             Logger = Context.GetLogger();
             Settings = new AggregateManagerSettings(Context.System.Settings.Config);
             
-            Receive<TCommand>(Dispatch);
             Receive<Terminated>(Terminate);
+
+            if(Settings.AutoDispatchOnReceive)
+                Receive<TCommand>(Dispatch);
 
             if (Settings.HandleDeadLetters)
             {

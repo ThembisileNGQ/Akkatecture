@@ -3,8 +3,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Akka.Actor;
-using Akkatecture.Aggregates;
-using Akkatecture.Core;
 using Akkatecture.Extensions;
 
 namespace Akkatecture.Subscribers
@@ -60,7 +58,6 @@ namespace Akkatecture.Subscribers
                     {
                         if (mi.Name != "ReceiveAsync") return false;
                         var parameters = mi.GetParameters();
-                        var o = parameters[0].ParameterType;
                         return
                             parameters.Length == 2
                             && parameters[0].ParameterType.Name.Contains("Func");

@@ -15,24 +15,17 @@ namespace Akkatecture.TestHelpers.Aggregates
             : base(aggregateId)
         {
             TestErrors = 0;
-
-
+            
             //Aggregate Commands
             Command<CreateTestCommand>(Execute);
             Command<AddTestCommand>(Execute);
             Command<GiveTestCommand>(Execute);
             Command<ReceiveTestCommand>(Execute);
 
-            //Aggregate Test Commands
+            //Aggregate Test Probe Commands
             Command<PoisonTestAggregateCommand>(Execute);
             Command<PublishTestStateCommand>(Execute);         
             Command<TestDomainErrorCommand>(Execute);
-
-            //Recovery
-            Recover<TestAddedEvent>(Recover);
-            Recover<TestReceivedEvent>(Recover);
-            Recover<TestSentEvent>(Recover);
-            Recover<TestCreatedEvent>(Recover);
         }
 
         private bool Execute(CreateTestCommand command)

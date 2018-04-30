@@ -31,20 +31,13 @@ namespace Akkatecture.Sagas.AggregateSaga
             SagaFactory = sagaFactory;
             Settings = new AggregateSagaManagerSettings(Context.System.Settings.Config);
 
+            var sagaType = typeof(TAggregateSaga);
+
             if (autoSubscribe && Settings.AutoSubscribe)
             {
-                var startedBySubscriptionTypes =
-                    GetType()
-                        .GetSagaStartEventSubscriptionTypes();
-
-                foreach (var type in startedBySubscriptionTypes)
-                {
-                    Context.System.EventStream.Subscribe(Self, type);
-                }
-
                 var sagaHandlesSubscriptionTypes =
-                    GetType()
-                        .GetSagaHandleEventSubscriptionTypes();
+                    sagaType
+                        .GetSagaEventSubscriptionTypes();
 
                 foreach (var type in sagaHandlesSubscriptionTypes)
                 {
