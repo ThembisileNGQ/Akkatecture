@@ -7,6 +7,7 @@ Akkatecture is a cqrs and event sourcing framework for akka.net. Fully optimised
 
 Go ahead and take a look at [our documentation](http://akkatecture.net/docs/getting-started), go over [some concepts](http://akkatecture.net/docs/primitives), and read the [tips and tricks](http://akkatecture.net/docs/tips-and-tricks).
 
+
 ### Features
 
 * **Distributed:** Backed by akka.net's persistent actors, cqrs and event sourcing is easy to build out with Akkatecture.
@@ -57,6 +58,10 @@ Akkatecture is still in development. The goal of this projects first version is 
 akkatecture is currently missing these crucial features:
 - event upgrading.
 - typed actor references.
+
+### Contributing
+
+Akkatecture's documentation source is [here](https://github.com/Akkatecture/Documentation), if you have any suggestions or improvements that can be made to them.
 
 ### Useful Resources
 
