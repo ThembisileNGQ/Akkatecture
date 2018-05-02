@@ -14,18 +14,18 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{7522402D-176E-4305-A68B-F3FFBFD38158}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "simple", "simple", "{090ECC2F-5647-4B15-ABDF-2E1B44439626}"
-ProjectSection(SolutionItems) = preProject
-	examples\simple\README.md = examples\simple\README.md
-EndProjectSection
+	ProjectSection(SolutionItems) = preProject
+		examples\simple\README.md = examples\simple\README.md
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.TestHelpers", "test\Akkatecture.TestHelpers\Akkatecture.TestHelpers.csproj", "{6543746C-F5D4-4F64-9C51-4470C4623428}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Clustering", "src\Akkatecture.Clustering\Akkatecture.Clustering.csproj", "{8281381F-C7AD-41C0-8566-D3C2873B6FD6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cluster", "cluster", "{F39AA664-CAE8-4592-9173-8D03CABA1C07}"
-ProjectSection(SolutionItems) = preProject
-	examples\cluster\README.md = examples\cluster\README.md
-EndProjectSection
+	ProjectSection(SolutionItems) = preProject
+		examples\cluster\README.md = examples\cluster\README.md
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Examples.Seed", "examples\cluster\Akkatecture.Examples.Seed\Akkatecture.Examples.Seed.csproj", "{BEAC89B6-9B71-4BF6-9B3A-4193DE028F7A}"
 EndProject
@@ -35,7 +35,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Examples.UserAc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Examples.UserAccount.Application", "examples\simple\Akkatecture.Examples.UserAccount.Application\Akkatecture.Examples.UserAccount.Application.csproj", "{2D58822C-DE63-43C6-A50A-384128D22548}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.Examples.ClusterClient", "examples\cluster\Akkatecture.Examples.ClusterClient\Akkatecture.Examples.ClusterClient.csproj", "{5513AA4C-5E65-41CC-84AF-6C6003B54F60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Examples.ClusterClient", "examples\cluster\Akkatecture.Examples.ClusterClient\Akkatecture.Examples.ClusterClient.csproj", "{5513AA4C-5E65-41CC-84AF-6C6003B54F60}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "walkthrough", "walkthrough", "{114EF159-E6C3-43AC-A6C4-7248AC39B6AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.Walkthrough.Domain", "examples\walkthrough\Akkatecture.Walkthrough.Domain\Akkatecture.Walkthrough.Domain.csproj", "{B9F45061-8C53-4F90-ACC3-6A03728F5D1E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.Walkthrough.Application", "examples\walkthrough\Akkatecture.Walkthrough.Application\Akkatecture.Walkthrough.Application.csproj", "{1349C01A-9C7F-48FA-A651-2C24F5E8A130}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,6 +85,14 @@ Global
 		{5513AA4C-5E65-41CC-84AF-6C6003B54F60}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5513AA4C-5E65-41CC-84AF-6C6003B54F60}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5513AA4C-5E65-41CC-84AF-6C6003B54F60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9F45061-8C53-4F90-ACC3-6A03728F5D1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9F45061-8C53-4F90-ACC3-6A03728F5D1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9F45061-8C53-4F90-ACC3-6A03728F5D1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9F45061-8C53-4F90-ACC3-6A03728F5D1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1349C01A-9C7F-48FA-A651-2C24F5E8A130}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1349C01A-9C7F-48FA-A651-2C24F5E8A130}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1349C01A-9C7F-48FA-A651-2C24F5E8A130}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1349C01A-9C7F-48FA-A651-2C24F5E8A130}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -95,6 +109,9 @@ Global
 		{8D9E347F-26AA-40E6-931B-763DE99F2B01} = {090ECC2F-5647-4B15-ABDF-2E1B44439626}
 		{2D58822C-DE63-43C6-A50A-384128D22548} = {090ECC2F-5647-4B15-ABDF-2E1B44439626}
 		{5513AA4C-5E65-41CC-84AF-6C6003B54F60} = {F39AA664-CAE8-4592-9173-8D03CABA1C07}
+		{114EF159-E6C3-43AC-A6C4-7248AC39B6AE} = {7522402D-176E-4305-A68B-F3FFBFD38158}
+		{B9F45061-8C53-4F90-ACC3-6A03728F5D1E} = {114EF159-E6C3-43AC-A6C4-7248AC39B6AE}
+		{1349C01A-9C7F-48FA-A651-2C24F5E8A130} = {114EF159-E6C3-43AC-A6C4-7248AC39B6AE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F5A40806-ED71-4286-A37C-BE0364FA29A6}
