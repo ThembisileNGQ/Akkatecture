@@ -15,20 +15,20 @@ namespace Akkatecture.TestHelpers.Specifications
                 _limit = limit;
             }
 
-            protected override IEnumerable<string> IsNotSatisfiedBecause(int obj)
+            protected override IEnumerable<string> IsNotSatisfiedBecause(int account)
             {
-                if (obj <= _limit)
+                if (account <= _limit)
                 {
-                    yield return $"{obj} is less or equal than {_limit}";
+                    yield return $"{account} is less or equal than {_limit}";
                 }
             }
         }
 
         public class IsTrueSpecification : Specification<bool>
         {
-            protected override IEnumerable<string> IsNotSatisfiedBecause(bool obj)
+            protected override IEnumerable<string> IsNotSatisfiedBecause(bool account)
             {
-                if (!obj)
+                if (!account)
                 {
                     yield return "Its false!";
                 }

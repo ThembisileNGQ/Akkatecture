@@ -22,9 +22,9 @@ namespace Akkatecture.Specifications.Provided
             return _string.Value;
         }
 
-        protected override IEnumerable<string> IsNotSatisfiedBecause(T obj)
+        protected override IEnumerable<string> IsNotSatisfiedBecause(T account)
         {
-            if (!_predicate(obj))
+            if (!_predicate(account))
             {
                 yield return $"'{_string.Value}' is not satisfied";
             }

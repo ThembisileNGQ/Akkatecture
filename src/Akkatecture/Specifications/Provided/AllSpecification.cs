@@ -18,9 +18,9 @@ namespace Akkatecture.Specifications.Provided
             _specifications = specificationList;
         }
 
-        protected override IEnumerable<string> IsNotSatisfiedBecause(T obj)
+        protected override IEnumerable<string> IsNotSatisfiedBecause(T account)
         {
-            return _specifications.SelectMany(s => s.WhyIsNotSatisfiedBy(obj));
+            return _specifications.SelectMany(s => s.WhyIsNotSatisfiedBy(account));
         }
     }
 }

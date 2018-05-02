@@ -17,10 +17,10 @@ namespace Akkatecture.Specifications.Provided
             _specification2 = specification2 ?? throw new ArgumentNullException(nameof(specification2));
         }
 
-        protected override IEnumerable<string> IsNotSatisfiedBecause(T obj)
+        protected override IEnumerable<string> IsNotSatisfiedBecause(T account)
         {
-            var reasons1 = _specification1.WhyIsNotSatisfiedBy(obj).ToList();
-            var reasons2 = _specification2.WhyIsNotSatisfiedBy(obj).ToList();
+            var reasons1 = _specification1.WhyIsNotSatisfiedBy(account).ToList();
+            var reasons2 = _specification2.WhyIsNotSatisfiedBy(account).ToList();
 
             if (!reasons1.Any() || !reasons2.Any())
             {

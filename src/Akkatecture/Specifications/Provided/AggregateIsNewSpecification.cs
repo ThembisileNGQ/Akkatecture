@@ -5,11 +5,11 @@ namespace Akkatecture.Specifications.Provided
 {
     public class AggregateIsNewSpecification : Specification<IAggregateRoot>
     {
-        protected override IEnumerable<string> IsNotSatisfiedBecause(IAggregateRoot obj)
+        protected override IEnumerable<string> IsNotSatisfiedBecause(IAggregateRoot account)
         {
-            if (!obj.IsNew)
+            if (!account.IsNew)
             {
-                yield return $"'{obj.Name}' with ID '{obj.GetIdentity()}' is not new";
+                yield return $"'{account.Name}' with ID '{account.GetIdentity()}' is not new";
             }
         }
     }
