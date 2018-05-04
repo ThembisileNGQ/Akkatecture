@@ -1,24 +1,21 @@
 ﻿using System;
 using Akkatecture.Commands;
-using Akkatecture.Walkthrough.Domain.Model.Account.ValueObjects;
+using Akkatecture.Walkthrough.Domain.Model.Account.Entities;
 
 namespace Akkatecture.Walkthrough.Domain.Model.Account.Commands
 {
     public class ReceiveMoneyCommand : Command<Account,AccountId>
     {
-        public AccountId SenderId { get; }
-        public Money Amount { get; }
+        public Transaction Transaction { get; }
         
         public ReceiveMoneyCommand(
             AccountId aggregateId, 
-            AccountId senderId,
-            Money amount) 
+            Transaction transaction) 
             : base(aggregateId) 
         {
-            if(amount == null) throw new ArgumentNullException(nameof(amount));
+            if(transaction == null) throw new ArgumentNullException(nameof(transaction));
 
-            Amount = amount;
-            SenderId = senderId;
+            Transaction = transaction;
         }
     }
 }

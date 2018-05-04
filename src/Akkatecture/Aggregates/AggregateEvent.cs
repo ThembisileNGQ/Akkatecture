@@ -1,4 +1,9 @@
-﻿using Akkatecture.Core;
+﻿// The MIT License (MIT)
+// Copyright (c) 2018 Lutando Ngqakaza
+// https://github.com/Lutando/Akkatecture
+// See LICENSE in the project root for license information.
+
+using Akkatecture.Core;
 using Akkatecture.Extensions;
 
 namespace Akkatecture.Aggregates

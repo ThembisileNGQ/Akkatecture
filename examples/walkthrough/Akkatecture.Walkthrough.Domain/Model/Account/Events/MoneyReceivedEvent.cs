@@ -1,19 +1,17 @@
 ﻿using Akkatecture.Aggregates;
 using Akkatecture.Events;
-using Akkatecture.Walkthrough.Domain.Model.Account.ValueObjects;
+using Akkatecture.Walkthrough.Domain.Model.Account.Entities;
 
 namespace Akkatecture.Walkthrough.Domain.Model.Account.Events
 {
     [EventVersion("MoneyReceived", 1)]
     public class MoneyReceivedEvent : AggregateEvent<Account,AccountId> 
     {
-        public Money Amount { get;  }
-        public AccountId SenderId { get; }
-        
-        public MoneyReceivedEvent(AccountId senderId, Money amount)
+        public Transaction Transaction { get; }
+
+        public MoneyReceivedEvent(Transaction transaction)
         {
-            Amount = amount;
-            SenderId = senderId;
-        } 
+            Transaction = transaction;
+        }
     }
 }

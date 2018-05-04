@@ -19,7 +19,7 @@ namespace Akkatecture.Walkthrough.Domain.Model.Account
 
         public void Apply(MoneySentEvent aggregateEvent) 
         {
-            Balance -= aggregateEvent.Amount;
+            Balance -= aggregateEvent.Transaction.Amount;
         }
 
         public void Apply(FeesDeductedEvent aggregateEvent) 
@@ -29,7 +29,7 @@ namespace Akkatecture.Walkthrough.Domain.Model.Account
 
         public void Apply(MoneyReceivedEvent aggregateEvent) 
         {
-            Balance += aggregateEvent.Amount;
+            Balance += aggregateEvent.Transaction.Amount;
         }
     }
 }

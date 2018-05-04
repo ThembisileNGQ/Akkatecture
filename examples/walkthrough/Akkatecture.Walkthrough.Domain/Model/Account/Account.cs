@@ -40,7 +40,8 @@ namespace Akkatecture.Walkthrough.Domain.Model.Account
             
             if(andSpec.IsSatisfiedBy(this))
             {
-                var sentEvent = new MoneySentEvent(command.ReceiverId, command.Amount);
+                
+                var sentEvent = new MoneySentEvent(command.Transaction);
                 Emit(sentEvent);
 
                 var feeEvent = new FeesDeductedEvent(new Money(0.25m));
@@ -52,7 +53,7 @@ namespace Akkatecture.Walkthrough.Domain.Model.Account
         
         public bool Execute(ReceiveMoneyCommand command)
         {
-            var moneyReceived = new MoneyReceivedEvent(command.SenderId,command.Amount);
+            var moneyReceived = new MoneyReceivedEvent(command.Transaction);
 
             Emit(moneyReceived);
             return true;
