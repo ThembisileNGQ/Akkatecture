@@ -410,7 +410,6 @@
           </e>
         </e>
       </e>
-      <e p="travis.yml" t="Include" />
     </e>
   </component>
 </project>

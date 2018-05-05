@@ -7,4 +7,4 @@ install:
 
 script:
  - dotnet build
- - dotnet test test/Akkatecture.Tests.csproj
+ - dotnet test test/Akkatecture.Tests/Akkatecture.Tests.csproj
