@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e3449c92-4557-4131-91b9-2009add1934d" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/appveyor.yml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/travis.yml" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Akkatecture/.idea/contentModel.xml" afterPath="$PROJECT_DIR$/.idea/.idea.Akkatecture/.idea/contentModel.xml" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Akkatecture/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/.idea.Akkatecture/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/Akkatecture.sln" afterPath="$PROJECT_DIR$/Akkatecture.sln" />
-    </list>
+    <list default="true" id="e3449c92-4557-4131-91b9-2009add1934d" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -537,12 +531,12 @@
       <workItem from="1525287320215" duration="2845000" />
       <workItem from="1525294291319" duration="312000" />
       <workItem from="1525499970925" duration="3877000" />
-      <workItem from="1525523418115" duration="3839000" />
+      <workItem from="1525523418115" duration="3893000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="103377000" />
+    <option name="totallyTimeSpent" value="103431000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
