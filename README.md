@@ -12,13 +12,18 @@ Go ahead and take a look at [our documentation](http://akkatecture.net/docs/gett
 
 * **Distributed:** Backed by akka.net's persistent actors, cqrs and event sourcing is easy to build out with Akkatecture.
 * **Message based:** For high levels of message throughput and processing Akkatecture [does not ask, it tells](http://bartoszsypytkowski.com/dont-ask-tell-2/).
-* **Event sourced** By design, aggregate roots derive their state by replaying persisted events.
-* **Highly scalable** Actors with their thread safe and distributed nature gives us this plus point.
-* **Configurable** Through akka.net's hocon configuration.
+* **Event sourced:** By design, aggregate roots derive their state by replaying persisted events.
+* **Highly scalable:** Actors with their thread safe and distributed nature gives us this plus point.
+* **Configurable:** Through akka.net's hocon configuration.
 
 ### Examples
 
+Akkatecture comes with a few examples on how to best use it:
+
 * **[Simple](https://github.com/Lutando/Akkatecture/tree/master/examples/simple):** A simple console based example that shows the most simple example of how to create an aggregate and issue commands to it.
+
+* **[Walkthrough](https://github.com/Lutando/Akkatecture/tree/master/examples/walkthrough):** Tutorial style sample based on the walkthrough in the Akkatecture documentation. The walkthrough proposes domain that should be modelled based on some business requirements. The walkthrough goes step by step covering all the primitives and features covered in Akkatecture to give you an understanding of the framework. The beginning of the walkthrough in the documentation can be found [here](https://akkatecture.net/docs/walkthrough-introduction).
+
 
 * **[Cluster](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster):** A more involved sample that shows you how to do distributed aggregates using clustering. Read the [readme](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster/README.md) for the sample for a good overview of the example.
 

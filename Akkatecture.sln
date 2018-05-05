@@ -38,6 +38,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Examples.ClusterClient", "examples\cluster\Akkatecture.Examples.ClusterClient\Akkatecture.Examples.ClusterClient.csproj", "{5513AA4C-5E65-41CC-84AF-6C6003B54F60}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "walkthrough", "walkthrough", "{114EF159-E6C3-43AC-A6C4-7248AC39B6AE}"
+ProjectSection(SolutionItems) = preProject
+	examples\walkthrough\README.md = examples\walkthrough\README.md
+EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.Walkthrough.Domain", "examples\walkthrough\Akkatecture.Walkthrough.Domain\Akkatecture.Walkthrough.Domain.csproj", "{B9F45061-8C53-4F90-ACC3-6A03728F5D1E}"
 EndProject

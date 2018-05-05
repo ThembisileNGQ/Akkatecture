@@ -29,7 +29,7 @@ namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
             var probe = CreateTestActor("probeActor");
             Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestSaga, TestSagaId, TestSagaStartedEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
-            var aggregateSagaManager = Sys.ActorOf(Props.Create(() => new TestAggregateSagaManager(() => new TestSaga(aggregateManager))), "test-sagaaggregatemanager");
+            var aggregateSagaManager = Sys.ActorOf(Props.Create(() => new TestSagaManager(() => new TestSaga(aggregateManager))), "test-sagaaggregatemanager");
             
             var senderAggregateId = TestAggregateId.New;
             var senderCreateAggregateCommand = new CreateTestCommand(senderAggregateId);
