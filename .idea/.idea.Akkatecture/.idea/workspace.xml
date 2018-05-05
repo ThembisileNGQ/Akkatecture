@@ -100,7 +100,7 @@
         <entry file="file://$PROJECT_DIR$/appveyor.yml">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="67">
-              <caret line="8" column="29" lean-forward="true" selection-start-line="8" selection-start-column="29" selection-end-line="8" selection-end-column="29" />
+              <caret line="8" column="29" lean-forward="false" selection-start-line="8" selection-start-column="29" selection-end-line="8" selection-end-column="29" />
               <folding />
             </state>
           </provider>
@@ -528,12 +528,12 @@
       <workItem from="1525287320215" duration="2845000" />
       <workItem from="1525294291319" duration="312000" />
       <workItem from="1525499970925" duration="3877000" />
-      <workItem from="1525523418115" duration="5086000" />
+      <workItem from="1525523418115" duration="5230000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="104624000" />
+    <option name="totallyTimeSpent" value="104768000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1131,7 +1131,7 @@
     <entry file="file://$PROJECT_DIR$/appveyor.yml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="67">
-          <caret line="8" column="29" lean-forward="true" selection-start-line="8" selection-start-column="29" selection-end-line="8" selection-end-column="29" />
+          <caret line="8" column="29" lean-forward="false" selection-start-line="8" selection-start-column="29" selection-end-line="8" selection-end-column="29" />
           <folding />
         </state>
       </provider>
