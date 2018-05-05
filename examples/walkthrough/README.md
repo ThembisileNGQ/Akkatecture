@@ -4,7 +4,7 @@ This is the sample that shows the completed result of the [walkthrough](https://
 
 # Akkatecture.Walkthrough.Domain
 
-This is the domain of the sample which follows from the walkthrough tutorial
+This is the domain of the sample which follows from the walkthrough tutorial.
 
 ### Commands
 * **OpenNewAccountCommand** - Command for creating a new bank account.

@@ -13,6 +13,7 @@ namespace Akkatecture.Walkthrough.Domain.Model.Account.Commands
             : base(aggregateId)
         {
             if(transaction == null) throw new ArgumentNullException(nameof(transaction));
+            if (transaction.Sender != AggregateId) throw new ArgumentException("Sender should be AggregateId");
 
             Transaction = transaction;
         }
