@@ -46,6 +46,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.Walkthrough.Dom
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.Walkthrough.Application", "examples\walkthrough\Akkatecture.Walkthrough.Application\Akkatecture.Walkthrough.Application.csproj", "{1349C01A-9C7F-48FA-A651-2C24F5E8A130}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{8C65E1C0-6979-410B-A5BF-B1AF40A1C660}"
+ProjectSection(SolutionItems) = preProject
+	appveyor.yml = appveyor.yml
+	travis.yml = travis.yml
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

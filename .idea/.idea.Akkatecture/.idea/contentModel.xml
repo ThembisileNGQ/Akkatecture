@@ -7,6 +7,8 @@
     <e p="$USER_HOME$/Library/Caches/Rider2017.3/resharper-host/local/Transient/ReSharperHost/v11/SolutionCaches/_Akkatecture.-1074952078.00" t="ExcludeRecursive" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p="Akkatecture.sln" t="IncludeFlat" />
+      <e p="appveyor.yml" t="Include" />
+      <e p="build" t="Include" />
       <e p="examples" t="Include">
         <e p="cluster" t="Include">
           <e p="Akkatecture.Examples.ClusterClient" t="IncludeRecursive">
@@ -408,6 +410,7 @@
           </e>
         </e>
       </e>
+      <e p="travis.yml" t="Include" />
     </e>
   </component>
 </project>

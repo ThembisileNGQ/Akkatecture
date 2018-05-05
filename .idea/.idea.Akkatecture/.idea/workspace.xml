@@ -2,21 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e3449c92-4557-4131-91b9-2009add1934d" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/.idea.Akkatecture/.idea/contentModel.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/.idea.Akkatecture/.idea/indexLayout.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/.idea.Akkatecture/.idea/modules.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/.idea.Akkatecture/.idea/runConfigurations/Akkatecture_Example_ClusterClient.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/.idea.Akkatecture/.idea/runConfigurations/Akkatecture_Example_Seed.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/.idea.Akkatecture/.idea/runConfigurations/Akkatecture_Example_Worker.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/.idea.Akkatecture/.idea/runConfigurations/Akkatecture_Examples_SeedWorkerCluster.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/.idea.Akkatecture/.idea/runConfigurations/Akkatecture_Examples_UserAccount_Application.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/.idea.Akkatecture/.idea/vcs.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/.idea.Akkatecture/.idea/workspace.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/.idea.Akkatecture/riderModule.iml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/examples/walkthrough/Akkatecture.Walkthrough.Domain/Subscribers/RevenueSubscriber.cs" />
-      <change beforePath="$PROJECT_DIR$/examples/walkthrough/Akkatecture.Walkthrough.Application/Program.cs" afterPath="$PROJECT_DIR$/examples/walkthrough/Akkatecture.Walkthrough.Application/Program.cs" />
-      <change beforePath="$PROJECT_DIR$/examples/walkthrough/Akkatecture.Walkthrough.Domain/Model/Account/Commands/TransferMoneyCommand.cs" afterPath="$PROJECT_DIR$/examples/walkthrough/Akkatecture.Walkthrough.Domain/Model/Account/Commands/TransferMoneyCommand.cs" />
-      <change beforePath="$PROJECT_DIR$/examples/walkthrough/README.md" afterPath="$PROJECT_DIR$/examples/walkthrough/README.md" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/appveyor.yml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/travis.yml" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Akkatecture/.idea/contentModel.xml" afterPath="$PROJECT_DIR$/.idea/.idea.Akkatecture/.idea/contentModel.xml" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Akkatecture/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/.idea.Akkatecture/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/Akkatecture.sln" afterPath="$PROJECT_DIR$/Akkatecture.sln" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -91,11 +81,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MoneyTransferSaga.cs" pinned="false" current-in-tab="true">
+      <file leaf-file-name="MoneyTransferSaga.cs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/examples/walkthrough/Akkatecture.Walkthrough.Domain/Sagas/MoneyTransfer/MoneyTransferSaga.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="45" column="16" lean-forward="false" selection-start-line="45" selection-start-column="16" selection-end-line="45" selection-end-column="16" />
+            <state relative-caret-position="125">
+              <caret line="23" column="36" lean-forward="false" selection-start-line="23" selection-start-column="36" selection-end-line="23" selection-end-column="36" />
               <folding>
                 <marker date="1525502191195" expanded="false" signature="6:451" ph="..." />
                 <marker date="1525502191195" expanded="true" signature="513:2034" ph="{...}" />
@@ -106,6 +96,26 @@
                 <marker date="1525502191195" expanded="true" signature="1725:2026" ph="{...}" />
                 <marker date="1525502191195" expanded="true" signature="1841:1964" ph="{...}" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="appveyor.yml" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/appveyor.yml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="299">
+              <caret line="20" column="76" lean-forward="false" selection-start-line="20" selection-start-column="76" selection-end-line="20" selection-end-column="76" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="travis.yml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/travis.yml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="135">
+              <caret line="9" column="31" lean-forward="false" selection-start-line="9" selection-start-column="31" selection-end-line="9" selection-end-column="31" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -334,8 +344,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/Akkatecture/Specifications/Provided/NotSpecification.cs" />
-        <option value="$PROJECT_DIR$/src/Akkatecture/Specifications/Provided/OrSpecification.cs" />
         <option value="$PROJECT_DIR$/src/Akkatecture/Extensions/SpecificationExtensions.cs" />
         <option value="$PROJECT_DIR$/test/Akkatecture.TestHelpers/Specifications/TestSpecifications.cs" />
         <option value="$PROJECT_DIR$/test/Akkatecture.Tests/UnitTests/Specifications/ProvidedSpecificationsTests.cs" />
@@ -385,6 +393,8 @@
         <option value="$PROJECT_DIR$/examples/walkthrough/Akkatecture.Walkthrough.Domain/Model/Account/Commands/TransferMoneyCommand.cs" />
         <option value="$PROJECT_DIR$/examples/walkthrough/Akkatecture.Walkthrough.Domain/Subscribers/RevenueSubscriber.cs" />
         <option value="$PROJECT_DIR$/examples/walkthrough/Akkatecture.Walkthrough.Application/Program.cs" />
+        <option value="$PROJECT_DIR$/travis.yml" />
+        <option value="$PROJECT_DIR$/appveyor.yml" />
       </list>
     </option>
   </component>
@@ -427,73 +437,7 @@
             <path>
               <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
               <item name="Akkatecture (11 projects)" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="examples" type="977d5f41:SolutionExplorerNodeRider" />
-            </path>
-            <path>
-              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
-              <item name="Akkatecture (11 projects)" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="examples" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="simple" type="977d5f41:SolutionExplorerNodeRider" />
-            </path>
-            <path>
-              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
-              <item name="Akkatecture (11 projects)" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="examples" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="walkthrough" type="977d5f41:SolutionExplorerNodeRider" />
-            </path>
-            <path>
-              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
-              <item name="Akkatecture (11 projects)" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="examples" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="walkthrough" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="Akkatecture.Walkthrough.Application" type="977d5f41:SolutionExplorerNodeRider" />
-            </path>
-            <path>
-              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
-              <item name="Akkatecture (11 projects)" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="examples" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="walkthrough" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="Akkatecture.Walkthrough.Domain" type="977d5f41:SolutionExplorerNodeRider" />
-            </path>
-            <path>
-              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
-              <item name="Akkatecture (11 projects)" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="examples" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="walkthrough" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="Akkatecture.Walkthrough.Domain" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="Model" type="977d5f41:SolutionExplorerNodeRider" />
-            </path>
-            <path>
-              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
-              <item name="Akkatecture (11 projects)" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="examples" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="walkthrough" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="Akkatecture.Walkthrough.Domain" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="Model" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="Account" type="977d5f41:SolutionExplorerNodeRider" />
-            </path>
-            <path>
-              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
-              <item name="Akkatecture (11 projects)" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="src" type="977d5f41:SolutionExplorerNodeRider" />
-            </path>
-            <path>
-              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
-              <item name="Akkatecture (11 projects)" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="test" type="977d5f41:SolutionExplorerNodeRider" />
-            </path>
-            <path>
-              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
-              <item name="Akkatecture (11 projects)" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="test" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="Akkatecture.TestHelpers" type="977d5f41:SolutionExplorerNodeRider" />
-            </path>
-            <path>
-              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
-              <item name="Akkatecture (11 projects)" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="test" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="Akkatecture.TestHelpers" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="Subscribers" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="build" type="977d5f41:SolutionExplorerNodeRider" />
             </path>
           </expand>
           <select />
@@ -507,6 +451,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="restartRequiresConfirmation" value="false" />
+    <property name="com.intellij.ide.scratch.LRUPopupBuilder$2/Languages" value="TEXT" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -592,12 +537,12 @@
       <workItem from="1525287320215" duration="2845000" />
       <workItem from="1525294291319" duration="312000" />
       <workItem from="1525499970925" duration="3877000" />
-      <workItem from="1525523418115" duration="2483000" />
+      <workItem from="1525523418115" duration="3839000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="102021000" />
+    <option name="totallyTimeSpent" value="103377000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -703,27 +648,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/Akkatecture/Aggregates/AggregateRoot.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="13" column="29" lean-forward="false" selection-start-line="13" selection-start-column="29" selection-end-line="13" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Akkatecture/Core/IIdentity.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="21" lean-forward="false" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Akkatecture.Clustering/Dispatchers/ShardedAggregateSagaDispatcher.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test/Akkatecture.TestHelpers/Aggregates/Sagas/TestSaga.cs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
@@ -1180,10 +1104,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/examples/walkthrough/Akkatecture.Walkthrough.Domain/Sagas/MoneyTransfer/MoneyTransferSaga.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="45" column="16" lean-forward="false" selection-start-line="45" selection-start-column="16" selection-end-line="45" selection-end-column="16" />
+        <state relative-caret-position="125">
+          <caret line="23" column="36" lean-forward="false" selection-start-line="23" selection-start-column="36" selection-end-line="23" selection-end-column="36" />
           <folding>
             <marker date="1525502191195" expanded="false" signature="6:451" ph="..." />
             <marker date="1525502191195" expanded="true" signature="513:2034" ph="{...}" />
@@ -1194,6 +1126,22 @@
             <marker date="1525502191195" expanded="true" signature="1725:2026" ph="{...}" />
             <marker date="1525502191195" expanded="true" signature="1841:1964" ph="{...}" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/travis.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="31" lean-forward="false" selection-start-line="9" selection-start-column="31" selection-end-line="9" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/appveyor.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="299">
+          <caret line="20" column="76" lean-forward="false" selection-start-line="20" selection-start-column="76" selection-end-line="20" selection-end-column="76" />
+          <folding />
         </state>
       </provider>
     </entry>
