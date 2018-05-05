@@ -1,6 +1,7 @@
 
 <a href="https://akkatecture.net/"><img src="https://raw.githubusercontent.com/Lutando/Akkatecture/master/logo.svg?sanitize=true" width="100%" height="200"></a>
-
+[![Build Status](https://travis-ci.org/Lutando/Akkatecture.svg?branch=master)](https://travis-ci.org/Lutando/Akkatecture)
+[![we are reactive](https://img.shields.io/badge/we_are-reactive-blue.svg?style=flat-square)](https://www.reactivemanifesto.org/)
 # Akkatecture
 
 Akkatecture is a cqrs and event sourcing framework for akka.net. Fully optimised around using akka's tell() and event stream pub sub mechanism for event propegation. In .net core (targeting netstandard 2.0).

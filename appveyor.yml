@@ -4,7 +4,7 @@ image: Visual Studio 2017
 configuration: Release
 dotnet_csproj:
   patch: true
-  file: '**\*.csproj'
+  file: 'src\Akkatecture\Akkatecture.csproj'
   version: '{version}'
   package_version: '{version}'
   assembly_version: '{version}'
