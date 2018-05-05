@@ -4,7 +4,7 @@
 [![we are reactive](https://img.shields.io/badge/we_are-reactive-blue.svg?style=flat-square)](https://www.reactivemanifesto.org/)
 # Akkatecture
 
-Akkatecture is a cqrs and event sourcing framework for akka.net. Fully optimised around using akka's tell() and event stream pub sub mechanism for event propegation. In .net core (targeting netstandard 2.0).
+Akkatecture is a cqrs and event sourcing framework for akka.net. Fully optimised around using akkas non-thread-blocking message passing and event stream pub sub mechanism for event propagation. All in .net core (targeting netstandard 2.0).
 
 Go ahead and take a look at [our documentation](http://akkatecture.net/docs/getting-started), go over [some concepts](http://akkatecture.net/docs/primitives), and read the [tips and tricks](http://akkatecture.net/docs/tips-and-tricks).
 
