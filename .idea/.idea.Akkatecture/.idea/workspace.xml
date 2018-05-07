@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e3449c92-4557-4131-91b9-2009add1934d" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Akkatecture/.idea/contentModel.xml" afterPath="$PROJECT_DIR$/.idea/.idea.Akkatecture/.idea/contentModel.xml" />
       <change beforePath="$PROJECT_DIR$/appveyor.yml" afterPath="$PROJECT_DIR$/appveyor.yml" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -96,8 +97,8 @@
       <file leaf-file-name="appveyor.yml" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/appveyor.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="22" column="17" lean-forward="false" selection-start-line="22" selection-start-column="17" selection-end-line="22" selection-end-column="17" />
+            <state relative-caret-position="390">
+              <caret line="26" column="18" lean-forward="false" selection-start-line="26" selection-start-column="18" selection-end-line="26" selection-end-column="18" />
               <folding />
             </state>
           </provider>
@@ -551,12 +552,12 @@
       <workItem from="1525294291319" duration="312000" />
       <workItem from="1525499970925" duration="3877000" />
       <workItem from="1525523418115" duration="5313000" />
-      <workItem from="1525712625588" duration="4396000" />
+      <workItem from="1525712625588" duration="4766000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="109247000" />
+    <option name="totallyTimeSpent" value="109617000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1070,8 +1071,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/appveyor.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="22" column="17" lean-forward="false" selection-start-line="22" selection-start-column="17" selection-end-line="22" selection-end-column="17" />
+        <state relative-caret-position="390">
+          <caret line="26" column="18" lean-forward="false" selection-start-line="26" selection-start-column="18" selection-end-line="26" selection-end-column="18" />
           <folding />
         </state>
       </provider>

@@ -273,6 +273,11 @@
             <e p="DomainEventSubscriberSettings.cs" t="Include" />
             <e p="ISubscribeTo.cs" t="Include" />
           </e>
+          <e p="thing" t="Include">
+            <e p="dong" t="Include">
+              <e p="Akkatecture.1.0.4.nupkg" t="Include" />
+            </e>
+          </e>
           <e p="ValueObjects" t="Include">
             <e p="ISingleValueObject.cs" t="Include" />
             <e p="SingleValueObject.cs" t="Include" />

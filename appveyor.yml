@@ -15,8 +15,8 @@ build_script:
 - cmd: dotnet restore ./src/Akkatecture.Clustering/Akkatecture.Clustering.csproj
 - cmd: dotnet build ./src/Akkatecture/Akkatecture.csproj -c Release
 - cmd: dotnet build ./src/Akkatecture.Clustering/Akkatecture.Clustering.csproj -c Release
-- cmd: dotnet pack ./src/Akkatecture/Akkatecture.csproj --output ./packageoutput/akkatecture
-- cmd: dotnet pack ./src/Akkatecture.Clustering/Akkatecture.Clustering.csproj --output ./packageoutput/akkatectureclustering
+- cmd: dotnet pack ./src/Akkatecture/Akkatecture.csproj --output packageoutput/akkatecture/
+- cmd: dotnet pack ./src/Akkatecture.Clustering/Akkatecture.Clustering.csproj --output packageoutput/akkatectureclustering/
 test_script:
 - cmd: dotnet test ./test/Akkatecture.Tests/Akkatecture.Tests.csproj
 deploy:
@@ -25,7 +25,6 @@ deploy:
     secure: jNtt/O0YdM+cKFiPbqv5EXIgbXlvGzXR45WLJdEWdhIwKTUCoGr44lmUkVY9xigd
   on:
     branch: master
-  artifact: ./src/Akkatecture/packageoutput/akkatecture/Akkatecture.\*.\*.\*.nupkg
 - provider: GitHub
   tag: v$(appveyor_build_version)
   release: v$(appveyor_build_version)
