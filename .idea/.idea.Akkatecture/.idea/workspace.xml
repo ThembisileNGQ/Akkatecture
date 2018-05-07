@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e3449c92-4557-4131-91b9-2009add1934d" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Akkatecture/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/.idea.Akkatecture/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/appveyor.yml" afterPath="$PROJECT_DIR$/appveyor.yml" />
       <change beforePath="$PROJECT_DIR$/src/Akkatecture/Akkatecture.csproj" afterPath="$PROJECT_DIR$/src/Akkatecture/Akkatecture.csproj" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -93,21 +95,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="appveyor.yml" pinned="false" current-in-tab="false">
+      <file leaf-file-name="appveyor.yml" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/appveyor.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="22" column="7" lean-forward="false" selection-start-line="22" selection-start-column="7" selection-end-line="22" selection-end-column="7" />
+            <state relative-caret-position="555">
+              <caret line="37" column="18" lean-forward="false" selection-start-line="37" selection-start-column="18" selection-end-line="37" selection-end-column="18" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Akkatecture.csproj" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Akkatecture.csproj" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Akkatecture/Akkatecture.csproj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45">
-              <caret line="3" column="18" lean-forward="false" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
+            <state relative-caret-position="75">
+              <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
               <folding />
             </state>
           </provider>
@@ -395,8 +397,8 @@
         <option value="$PROJECT_DIR$/examples/walkthrough/Akkatecture.Walkthrough.Domain/Subscribers/RevenueSubscriber.cs" />
         <option value="$PROJECT_DIR$/examples/walkthrough/Akkatecture.Walkthrough.Application/Program.cs" />
         <option value="$PROJECT_DIR$/travis.yml" />
-        <option value="$PROJECT_DIR$/appveyor.yml" />
         <option value="$PROJECT_DIR$/src/Akkatecture/Akkatecture.csproj" />
+        <option value="$PROJECT_DIR$/appveyor.yml" />
       </list>
     </option>
   </component>
@@ -436,6 +438,11 @@
             <path>
               <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
               <item name="Akkatecture (11 projects)" type="977d5f41:SolutionExplorerNodeRider" />
+            </path>
+            <path>
+              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
+              <item name="Akkatecture (11 projects)" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="build" type="977d5f41:SolutionExplorerNodeRider" />
             </path>
             <path>
               <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
@@ -546,12 +553,12 @@
       <workItem from="1525294291319" duration="312000" />
       <workItem from="1525499970925" duration="3877000" />
       <workItem from="1525523418115" duration="5313000" />
-      <workItem from="1525712625588" duration="398000" />
+      <workItem from="1525712625588" duration="1267000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="105249000" />
+    <option name="totallyTimeSpent" value="106118000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1055,18 +1062,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/appveyor.yml">
+    <entry file="file://$PROJECT_DIR$/src/Akkatecture/Akkatecture.csproj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="22" column="7" lean-forward="false" selection-start-line="22" selection-start-column="7" selection-end-line="22" selection-end-column="7" />
+        <state relative-caret-position="75">
+          <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Akkatecture/Akkatecture.csproj">
+    <entry file="file://$PROJECT_DIR$/appveyor.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="18" lean-forward="false" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
+        <state relative-caret-position="555">
+          <caret line="37" column="18" lean-forward="false" selection-start-line="37" selection-start-column="18" selection-end-line="37" selection-end-column="18" />
           <folding />
         </state>
       </provider>
