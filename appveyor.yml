@@ -1,20 +1,26 @@
-version: 0.1.{build}
+version: 0.0.{build}
 skip_tags: true
 image: Visual Studio 2017
 configuration: Release
 dotnet_csproj:
   patch: true
-  file: 'src\Akkatecture\Akkatecture.csproj'
+  file: './src/Akkatecture/Akkatecture.csproj'
   version: '{version}'
   package_version: '{version}'
   assembly_version: '{version}'
   file_version: '{version}'
   informational_version: '{version}'
 before_build:
-- cmd: nuget restore
+- cmd: dotnet restore ./src/Akkatecture/Akkatecture.csproj
+- cmd: dotnet restore ./src/Akkatecture.Clustering/Akkatecture.Clustering.csproj
 build:
+- cmd: dotnet build ./src/Akkatecture/Akkatecture.csproj -c Release
+- cmd: dotnet build ./src/Akkatecture.Clustering/Akkatecture.Clustering.csproj -c Release
   publish_nuget: true
   verbosity: minimal
+test_script:
+- cmd: dotnet build ./test/Akkatecture.Tests/Akkatecture.Tests.csproj
+- cmd: %xunit20%\xunit.console ./test/Akkatecture.Tests/bin/Debug/netcoreapp2.0/Akkatecture.Tests.dll
 deploy:
 - provider: NuGet
   api_key:
@@ -26,6 +32,6 @@ deploy:
   release: v$(appveyor_build_version)
   auth_token:
     secure: dgHvp6cRuN111wnt2rANR25qfklalE+m06hxhy7XbFRkoGjW46h9mu8wxqsaTPHj
-  artifact: /.*\.nupkg/
+  artifact: /src/*/bin/Release/*\.nupkg/
   on:
     branch: master

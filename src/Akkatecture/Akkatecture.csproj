@@ -2,8 +2,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
-    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <Title>Akkatecture</Title>
     <Authors>Lutando Ngqakaza</Authors>
@@ -18,6 +18,10 @@
     <PackageLicenseUrl>https://raw.githubusercontent.com/Lutando/Akkatecture/master/LICENSE</PackageLicenseUrl>
     <NeutralLanguage>en-GB</NeutralLanguage>
     <PackageReleaseNotes>Externally Updated</PackageReleaseNotes>
+    <NeutralLanguage>en</NeutralLanguage>
+    <RepositoryUrl>https://github.com/Lutando/Akkatecture</RepositoryUrl>
+    <PackageIconUrl>https://akkatecture.net/logos/logo-512.png</PackageIconUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Akka" Version="1.3.5" />
