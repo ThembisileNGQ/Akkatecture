@@ -21,7 +21,7 @@ test_script:
 - cmd: dotnet test ./test/Akkatecture.Tests/Akkatecture.Tests.csproj
 deploy:
 - provider: NuGet
-  artifact: ./packageoutput/akkatecture/Akkatecture.{version}.nupkg
+  artifact: ./packageoutput/akkatecture/Akkatecture.*.nupkg
   api_key:
     secure: jNtt/O0YdM+cKFiPbqv5EXIgbXlvGzXR45WLJdEWdhIwKTUCoGr44lmUkVY9xigd
   on:
