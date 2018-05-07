@@ -2,7 +2,9 @@
 <a href="https://akkatecture.net/"><img src="https://raw.githubusercontent.com/Lutando/Akkatecture/master/logo.svg?sanitize=true" width="100%" height="200"></a>
 [![Build Status](https://travis-ci.org/Lutando/Akkatecture.svg?branch=master)](https://travis-ci.org/Lutando/Akkatecture)
 [![Build status](https://ci.appveyor.com/api/projects/status/cxdg8eyk7d5nmqgj?svg=true)](https://ci.appveyor.com/project/Lutando/akkatecture)
+[![Nuget Package](https://img.shields.io/nuget/v/Akkatecture.svg?style=flat)](https://www.nuget.org/packages/Akkatecture/)
 [![we are reactive](https://img.shields.io/badge/we_are-reactive-blue.svg?style=flat-square)](https://www.reactivemanifesto.org/)
+
 
 # Akkatecture
 

@@ -29,7 +29,7 @@ deploy:
 - provider: GitHub
   tag: v$(appveyor_build_version)
   release: v$(appveyor_build_version)
-  artifact: ./src/Akkatecture/packageoutput/akkatecture/Akkatecture.*.nupkg
+  artifact: ./src/Akkatecture/packageoutput/akkatecture/*.nupkg
   auth_token:
     secure: dgHvp6cRuN111wnt2rANR25qfklalE+m06hxhy7XbFRkoGjW46h9mu8wxqsaTPHj
   on:
