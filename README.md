@@ -13,7 +13,7 @@ Go ahead and take a look at [our documentation](http://akkatecture.net/docs/gett
 
 ### Features
 
-* **Distributed:** Backed by akka.net's persistent actors, cqrs and event sourcing is easy to build out with Akkatecture.
+* **Distributed:** Backed by akka.net's actor system. Akkatecture enjoys the benefits of a reasonable distributed computing computation model.
 * **Message based:** For high levels of message throughput and processing Akkatecture [does not ask, it tells](http://bartoszsypytkowski.com/dont-ask-tell-2/).
 * **Event sourced:** By design, aggregate roots derive their state by replaying persisted events.
 * **Highly scalable:** Actors with their thread safe and distributed nature gives us this plus point.
