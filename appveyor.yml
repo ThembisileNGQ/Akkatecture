@@ -20,7 +20,7 @@ build:
   verbosity: minimal
 test_script:
 - cmd: dotnet build ./test/Akkatecture.Tests/Akkatecture.Tests.csproj
-- cmd: %xunit20%\xunit.console ./test/Akkatecture.Tests/bin/Debug/netcoreapp2.0/Akkatecture.Tests.dll
+- cmd: xunit20\xunit.console ./test/Akkatecture.Tests/bin/Debug/netcoreapp2.0/Akkatecture.Tests.dll
 deploy:
 - provider: NuGet
   api_key:
