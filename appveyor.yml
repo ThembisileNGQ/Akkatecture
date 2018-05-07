@@ -13,13 +13,11 @@ dotnet_csproj:
 before_build:
 - cmd: dotnet restore ./src/Akkatecture/Akkatecture.csproj
 - cmd: dotnet restore ./src/Akkatecture.Clustering/Akkatecture.Clustering.csproj
-build:
 - cmd: dotnet build ./src/Akkatecture/Akkatecture.csproj -c Release
 - cmd: dotnet build ./src/Akkatecture.Clustering/Akkatecture.Clustering.csproj -c Release
+after_build:
 - cmd: dotnet pack ./src/Akkatecture/Akkatecture.csproj --output packageoutput/akkatecture
 - cmd: dotnet pack ./src/Akkatecture.Clustering/Akkatecture.Clustering.csproj --output packageoutput/akkatectureclustering
-  publish_nuget: true
-  verbosity: minimal
 test_script:
 - cmd: dotnet build ./test/Akkatecture.Tests/Akkatecture.Tests.csproj
 - cmd: xunit20/xunit.console ./test/Akkatecture.Tests/bin/Debug/netcoreapp2.0/Akkatecture.Tests.dll
