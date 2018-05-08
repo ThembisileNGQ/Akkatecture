@@ -22,7 +22,7 @@ test_script:
 artifacts:
 - path: \src\Akkatecture\packageoutput\akkatecture\**\*.nupkg
   name: akkatecture
-- path: \src\Akkatecture\packageoutput\akkatectureclustering\**\*.nupkg
+- path: \src\Akkatecture.Clustering\packageoutput\akkatectureclustering\**\*.nupkg
   name: akkatectureclustering
 deploy:
 - provider: NuGet
