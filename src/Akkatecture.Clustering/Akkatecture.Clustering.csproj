@@ -1,9 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <Version>0.0.0</Version>
+    <PackageVersion>0.0.0</PackageVersion>
+    <AssemblyVersion>0.0.0</AssemblyVersion>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
-    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <Title>Akkatecture.Clustering</Title>
     <Authors>Lutando Ngqakaza</Authors>
@@ -12,12 +15,13 @@
     <Description>
       a cqrs and event sourcing framework for akka.net
     </Description>
-    <PackageTags>akka cqrs es eventsourcing</PackageTags>
+    <PackageTags>akka cqrs es eventsourcing clustering</PackageTags>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/Lutando/Akkatecture</RepositoryUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/Lutando/Akkatecture/master/LICENSE</PackageLicenseUrl>
     <NeutralLanguage>en-GB</NeutralLanguage>
     <PackageReleaseNotes>Externally Updated</PackageReleaseNotes>
+    <PackageIconUrl>https://akkatecture.net/logos/logo-512.png</PackageIconUrl>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Akka.Cluster" Version="1.3.5" />

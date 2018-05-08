@@ -303,7 +303,13 @@
           <e p="Extentions" t="Include">
             <e p="TypeExtensions.cs" t="Include" />
           </e>
-          <e p="obj" t="ExcludeRecursive" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Debug" t="Include">
+              <e p="netcoreapp2.0" t="Include">
+                <e p="Akkatecture.Clustering.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
         </e>
       </e>
       <e p="test" t="Include">
