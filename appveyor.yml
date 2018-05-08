@@ -31,6 +31,12 @@ deploy:
   on:
     branch: master
   artifact: akkatecture
+- provider: NuGet
+  api_key:
+    secure: 8k6x/+D9myin3NcqvffoD/G3S02aNxY8cQpD3Yspu71V0jbnk1wajcsI8+KYN7Sh
+  on:
+    branch: master
+  artifact: akkatectureclustering
 - provider: GitHub
   tag: v$(appveyor_build_version)
   release: v$(appveyor_build_version)
