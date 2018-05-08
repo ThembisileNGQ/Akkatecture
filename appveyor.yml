@@ -38,8 +38,8 @@ deploy:
     branch: master
   artifact: akkatectureclustering
 - provider: GitHub
-  tag: v$(appveyor_build_version)
-  release: v$(appveyor_build_version)
+  tag: $(appveyor_build_version)
+  release: $(appveyor_build_version)
   auth_token:
     secure: dgHvp6cRuN111wnt2rANR25qfklalE+m06hxhy7XbFRkoGjW46h9mu8wxqsaTPHj
   on:

@@ -336,15 +336,5 @@ namespace Akkatecture.Aggregates
             return $"{GetType().PrettyPrint()} v{Version}";
         }
         
-        protected new void Become(Action action)
-        {
-            Logger.Warning($"{GetType().PrettyPrint()} Has called Become() which is not supported in Akkatecture.");
-        }
-        
-        protected new void BecomeStacked(Action action)
-        {
-            Logger.Warning($"{GetType().PrettyPrint()} Has called Become() which is not supported in Akkatecture.");
-        }
-        
     }
 }
