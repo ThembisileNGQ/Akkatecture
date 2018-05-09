@@ -66,7 +66,7 @@ It would also be benefitial for you to be familiar with actor systems, akka.net,
 Akkatecture is still in development. The goal of this projects first version is to provide you with the neccassary building blocks to build out your own cqrs and event sourced application without having to think of the primitives.
 
 akkatecture is currently missing these crucial features:
-- event upgrading.
+- aggregate state snapshotting.
 - typed actor references.
 
 ### Contributing
