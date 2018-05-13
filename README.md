@@ -19,7 +19,7 @@ Go ahead and take a look at [our documentation](http://akkatecture.net/docs/gett
 ### Features
 
 * **Distributed:** Backed by akka.net's actor model. Akkatecture enjoys the benefits of a good distributed computing computation model.
-* **Message based:** For high levels of processing throughput Akkatecture [does not ask, it tells](http://bartoszsypytkowski.com/dont-ask-tell-2/).
+* **Message based:** Making it highly scalable by being reactive from message passing, Akkatecture [does not ask, it tells](http://bartoszsypytkowski.com/dont-ask-tell-2/).
 * **Event sourced:** By design, aggregate roots derive their state by replaying persisted events.
 * **Highly scalable:** Work proceeds interactively and concurrently, overlapping in time.
 * **Configurable:** Through akka.net's hocon configuration, you will be able to configure every aspect of your application.
