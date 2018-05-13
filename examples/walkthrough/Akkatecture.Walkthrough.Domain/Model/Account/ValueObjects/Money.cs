@@ -22,5 +22,10 @@ namespace Akkatecture.Walkthrough.Domain.Model.Account.ValueObjects
         {
             return new Money(m1.Value - m2.Value);
         }
+
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
     }
 }
