@@ -25,6 +25,7 @@ artifacts:
 - path: \src\Akkatecture.Clustering\packageoutput\akkatectureclustering\**\*.nupkg
   name: akkatectureclustering
 deploy:
+# master deployment to release
 - provider: NuGet
   api_key:
     secure: jNtt/O0YdM+cKFiPbqv5EXIgbXlvGzXR45WLJdEWdhIwKTUCoGr44lmUkVY9xigd
