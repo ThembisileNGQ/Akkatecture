@@ -120,6 +120,7 @@ namespace Akkatecture.Sagas.AggregateSaga
             {
                 Recover<DomainEvent<TAggregateSaga, TIdentity, IAggregateEvent<TAggregateSaga, TIdentity>>>(Recover);
                 Recover<IAggregateEvent<TAggregateSaga, TIdentity>>(Recover);
+                Recover<RecoveryCompleted>(Recover);
             }
                 
 
@@ -315,6 +316,11 @@ namespace Akkatecture.Sagas.AggregateSaga
             return true;
         }
 
+        protected virtual bool Recover(RecoveryCompleted recoveryCompleted)
+        {
+            
+            return true;
+        }
         protected void SetSourceIdHistory(int count)
         {
             _previousSourceIds = new CircularBuffer<ISourceId>(count);

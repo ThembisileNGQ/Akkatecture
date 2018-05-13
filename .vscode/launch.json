@@ -29,10 +29,46 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": ".NET Core Attach",
+            "name": "Akkatecture.Examples.ClusterClient",
             "type": "coreclr",
-            "request": "attach",
-            "processId": "${command:pickProcess}"
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/examples/cluster/Akkatecture.Examples.ClusterClient/bin/Debug/netcoreapp2.0/Akkatecture.Examples.ClusterClient.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/examples/cluster/Akkatecture.Examples.ClusterClient",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "Akkatecture.Examples.Seed",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/examples/cluster/Akkatecture.Examples.Seed/bin/Debug/netcoreapp2.0/Akkatecture.Examples.Seed.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/examples/cluster/Akkatecture.Examples.Seed",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "Akkatecture.Examples.Worker",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/examples/cluster/Akkatecture.Examples.Worker/bin/Debug/netcoreapp2.0/Akkatecture.Examples.Worker.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/examples/cluster/Akkatecture.Examples.Worker",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
         }
+    ],
+    "compounds": [
+        {
+            "name": "Akkatecture.Examples.SeedWorkerCluster",
+            "configurations": ["Akkatecture.Examples.Seed", "Akkatecture.Examples.Worker", "Akkatecture.Examples.ClusterClient"]
+        } 
     ]
 }

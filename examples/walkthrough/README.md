@@ -21,3 +21,5 @@ This is the domain of the sample which follows from the walkthrough tutorial.
 
 # Akkatecture.Walkthrough.Application
 
+
+> to run the application in jetbrains rider or visual studio code, run the `Akkatecture.Walkthrough.Application` configuration in the IDE.
