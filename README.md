@@ -61,8 +61,8 @@ aggregateManager.Tell(changeNameCommand);
 
 ### Assumptions About Akkatecture Developers
 
-You should have some expirience in domain driven design, cqrs, and event sourcing.
-It would also be benefitial for you to be familiar with actor systems, akka.net, and the extensibility points that akka gives you through hocon configuration. However if you follow the walkthrough on the documentation website you will be acquinted with many akka.net concepts.
+It would be ideal if you have some expirience in domain driven design, cqrs, and event sourcing.
+It would also be beneficial for you to be familiar with actor systems, akka.net, and the extensibility points that akka gives you through hocon configuration. However, if you follow the [walkthrough](https://akkatecture.net/docs/walkthrough-introduction) you will be acquinted with many akka.net concepts.
 
 ### Status of Akkatecture
 
@@ -110,9 +110,9 @@ There are many different opinions and best practices when it comes to building o
 
 Doing domain driven design in a distributed scenario is quite tricky. And even more so when you add cqrs and event sourcing style mechanics to your business domain. Akka gives you powerful ways to co-ordinate and organise your business rules by using actors and message passing, which can be done by sending messages through location transparent addresses (or references). The major benefits of using akka.net is that we can isolate our domain models into actors where it makes sense.
 
-Akkatecture gives you a set of semi-opinionated generic constructs that you can use to wire up your application so that you can focus on your main task, modelling and codifying your business domain.
+Akkatecture gives you a set of opinionated generic constructs that you can use to wire up your application so that you can focus on your main task, modelling and codifying your business domain.
 
-Akka.net gives us a wealth of good APIs out of the box that can be used to build entire systems out of. It also has a decent ecosystem and [community](https://gitter.im/akkadotnet/akka.net) for support. Akkatecture is also of the opinion that commands translate well semantically in actor systems since commands are telling the actor instance what your intent is, and then it is up to the actor to process the intent as it sees fit, this notion fits well into CQRS because that is basically what a command handler is for, it is to process command intent.
+Akka.net gives us a wealth of good APIs out of the box that can be used to build entire systems out of. It also has a decent ecosystem and [community](https://gitter.im/akkadotnet/akka.net) for support. Akkatecture is also of the opinion that commands translate well semantically in actor systems since telling commands is a form of message passing that fits well into the actor model paradigm.
 
 ## Acknowledgements
 
