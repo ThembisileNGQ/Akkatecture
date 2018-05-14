@@ -23,51 +23,63 @@ namespace Akkatecture.Walkthrough.Application
             //Create actor system
             var system = ActorSystem.Create("bank-system");
 
+            //Create aggregate manager for accounts
             var aggregateManager = system.ActorOf(Props.Create(() => new AccountManager()),"account-manager");
             
             //Create revenue repository
-            RevenueRepository = system.ActorOf(Props.Create(() => new RevenueRepository()),"revenue-repository");
+            var revenueRepository = system.ActorOf(Props.Create(() => new RevenueRepository()),"revenue-repository");
             
-            //Create subscriber for revenue
+            //Create subscriber for revenue repository
             system.ActorOf(Props.Create(() => new RevenueSubscriber(RevenueRepository)),"revenue-subscriber");
             
-            //Create saga manager
+            //Create saga manager for money transfer
             system.ActorOf(Props.Create(() =>
                 new MoneyTransferSagaManager(() => new MoneyTransferSaga(aggregateManager))),"moneytransfer-saga");
             
             AccountManager = aggregateManager;
+            RevenueRepository = revenueRepository;
         }
         
         public static void Main(string[] args)
         {
+            //initialize actor system
             CreateActorSystem();
             
+            //create send receiver identifiers
             var senderId = AccountId.New;
             var receiverId = AccountId.New;
 
+            //create mock opening balances
             var senderOpeningBalance = new Money(509.23m);
             var receiverOpeningBalance = new Money(30.45m);
             
+            //create commands for opening the sender and receiver accounts
             var openSenderAccountCommand = new OpenNewAccountCommand(senderId, senderOpeningBalance);
             var openReceiverAccountCommand = new OpenNewAccountCommand(receiverId, receiverOpeningBalance);
             
+            //send the command to be handled by the account aggregate
             AccountManager.Tell(openReceiverAccountCommand);
             AccountManager.Tell(openSenderAccountCommand);
             
+            //create command to initiate money transfer
             var amountToSend = new Money(125.23m);
             var transaction = new Transaction(senderId, receiverId, amountToSend);
             var transferMoneyCommand = new TransferMoneyCommand(senderId,transaction);
             
+            //send the command to initiate the money transfer
             AccountManager.Tell(transferMoneyCommand);
 
+            //fake 'wait' to let the saga process the chain of events
             Task.Delay(TimeSpan.FromSeconds(1)).Wait();
             Console.WriteLine("Walkthrough operations complete.\n\n");
             Console.WriteLine("Press Enter to get the revenue:");
             
             Console.ReadLine();
 
+            //get the revenue stored in the repository
             var revenue = RevenueRepository.Ask<RevenueReadModel>(new GetRevenueQuery(), TimeSpan.FromMilliseconds(500)).Result;
 
+            //print the results
             Console.WriteLine($"The Revenue is: {revenue.Revenue.Value}.");
             Console.WriteLine($"From: {revenue.Transactions} transaction(s).");
             

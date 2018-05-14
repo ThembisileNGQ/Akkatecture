@@ -70,6 +70,7 @@ Akkatecture is still in development. The goal of this projects first version is 
 
 akkatecture is currently missing these crucial features:
 - aggregate state snapshotting.
+- persisting event metadata.
 - typed actor references.
 
 ### Contributing

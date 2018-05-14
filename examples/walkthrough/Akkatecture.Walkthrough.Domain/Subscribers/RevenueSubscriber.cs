@@ -4,7 +4,6 @@ using Akkatecture.Aggregates;
 using Akkatecture.Subscribers;
 using Akkatecture.Walkthrough.Domain.Model.Account;
 using Akkatecture.Walkthrough.Domain.Model.Account.Events;
-using Akkatecture.Walkthrough.Domain.Model.Account.ValueObjects;
 using Akkatecture.Walkthrough.Domain.Repositories.Revenue.Commands;
 
 namespace Akkatecture.Walkthrough.Domain.Subscribers
