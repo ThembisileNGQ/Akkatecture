@@ -117,6 +117,20 @@
                 </e>
               </e>
             </e>
+            <e p="Repositories" t="Include">
+              <e p="Revenue" t="Include">
+                <e p="Commands" t="Include">
+                  <e p="AddRevenueCommand.cs" t="Include" />
+                </e>
+                <e p="Queries" t="Include">
+                  <e p="GetRevenueQuery.cs" t="Include" />
+                </e>
+                <e p="ReadModels" t="Include">
+                  <e p="RevenueReadModel.cs" t="Include" />
+                </e>
+                <e p="RevenueRepository.cs" t="Include" />
+              </e>
+            </e>
             <e p="Sagas" t="Include">
               <e p="MoneyTransfer" t="Include">
                 <e p="Events" t="Include">

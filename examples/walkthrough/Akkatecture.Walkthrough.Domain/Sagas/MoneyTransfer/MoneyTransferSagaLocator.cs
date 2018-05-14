@@ -15,10 +15,12 @@ namespace Akkatecture.Walkthrough.Domain.Sagas.MoneyTransfer
             {
                 case MoneySentEvent evt:
                     return new MoneyTransferSagaId($"{LocatorIdPrefix}-{evt.Transaction.Id}");
+
                 case MoneyReceivedEvent evt:
                     return new MoneyTransferSagaId($"{LocatorIdPrefix}-{evt.Transaction.Id}");
+
                 default:
-                    throw new ArgumentNullException(nameof(domainEvent));
+                    throw new ArgumentException(nameof(domainEvent));
             }
         }
     }

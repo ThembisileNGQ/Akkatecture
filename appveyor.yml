@@ -1,4 +1,7 @@
-version: 0.0.{build}
+version: 0.1.{build}
+branches:
+  only:
+  - master
 skip_tags: true
 image: Visual Studio 2017
 configuration: Release

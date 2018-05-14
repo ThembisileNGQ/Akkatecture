@@ -16,3 +16,11 @@ This is the domain of the sample which is a basic model of user accounts, it sup
 # Akkatecture.Examples.Application
 
 This is the console application that creates the actor system and interfaces with it. First an aggregate manager is created, this aggregate manager is responsible for creating the aggregate actors beneath it, it is also responsible for supervising these actors and for routing messages to the appropriate aggregates. After this is done, a command for aggregate creation is made, and then the command is pushed through the aggregate manager, then a second command is done that pushed a change name command to the same aggregate that was previously created. Run the code to see how it works.
+
+### Description
+
+In this sample, we instantiate the actor system and the various domain entities required for it to work. The domain entity required to 
+initialize this, is the `UserAccountAggregateManager`. We then interface with the domain by telling the manager to create user accounts 
+by instantiating and telling it a `CreateUserAccountCommand`.
+
+> to run the application in jetbrains rider or visual studio code, run the `Akkatecture.Examples.UserAccount.Application` configuration in the IDE.

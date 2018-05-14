@@ -1,5 +1,7 @@
 
 <a href="https://akkatecture.net/"><img src="https://raw.githubusercontent.com/Lutando/Akkatecture/master/logo.svg?sanitize=true" width="100%" height="200"></a>
+
+
 [![Build Status](https://travis-ci.org/Lutando/Akkatecture.svg?branch=master)](https://travis-ci.org/Lutando/Akkatecture)
 [![Build status](https://ci.appveyor.com/api/projects/status/cxdg8eyk7d5nmqgj?svg=true)](https://ci.appveyor.com/project/Lutando/akkatecture)
 [![Nuget Package](https://img.shields.io/nuget/v/Akkatecture.svg?style=flat)](https://www.nuget.org/packages/Akkatecture/)
@@ -16,11 +18,11 @@ Go ahead and take a look at [our documentation](http://akkatecture.net/docs/gett
 
 ### Features
 
-* **Distributed:** Backed by akka.net's actor system. Akkatecture enjoys the benefits of a reasonable distributed computing computation model.
-* **Message based:** For high levels of message throughput and processing Akkatecture [does not ask, it tells](http://bartoszsypytkowski.com/dont-ask-tell-2/).
+* **Distributed:** Backed by akka.net's actor model. Akkatecture enjoys the benefits of a good distributed computing computation model.
+* **Message based:** Making it highly scalable by being reactive from message passing, Akkatecture [does not ask, it tells](http://bartoszsypytkowski.com/dont-ask-tell-2/).
 * **Event sourced:** By design, aggregate roots derive their state by replaying persisted events.
-* **Highly scalable:** Actors with their thread safe and distributed nature gives us this plus point.
-* **Configurable:** Through akka.net's hocon configuration.
+* **Highly scalable:** Work proceeds interactively and concurrently, overlapping in time.
+* **Configurable:** Through akka.net's hocon configuration, you will be able to configure every aspect of your application.
 
 ### Examples
 
@@ -33,7 +35,7 @@ Akkatecture comes with a few examples on how to best use it:
 
 * **[Cluster](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster):** A more involved sample that shows you how to do distributed aggregates using clustering. Read the [readme](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster/README.md) for the sample for a good overview of the example.
 
-* **[Test Example](https://github.com/Lutando/Akkatecture/tree/master/test/Akkatecture.TestHelpers/Aggregates):** The test examples found in the Akkatecture.TestHelpers project is there to provide assistance when doing testing for Akkatecture. There is a simple domain modelled that includes an aggregate with a simple aggregate saga, and these are used to do simple black box style testing on Akkatecture using akka.net's TestKit.
+* **[Tests](https://github.com/Lutando/Akkatecture/tree/master/test/Akkatecture.TestHelpers/Aggregates):** The test examples found in the Akkatecture.TestHelpers project is there to provide assistance when doing testing for Akkatecture. There is a simple domain modelled that includes an aggregate with a simple aggregate saga, and these are used to do simple black box style testing on Akkatecture using akka.net's TestKit.
 
 
 **Note:** This example is part of the Akkatecture simple example project, so checkout [the
@@ -57,10 +59,10 @@ var changeNameCommand = new UserAccountChangeNameCommand(aggregateId, "foo bar b
 aggregateManager.Tell(changeNameCommand);
 ```
 
-### Assumptions About Akkatecture Users
+### Assumptions About Akkatecture Developers
 
-You should have a comfortable grasp of domain driven design, cqrs, and event sourcing concepts.
-It would also be benefitial for you to be familiar with actor systems, akka.net, and the extensibility points that akka gives you through hocon configuration.
+It would be ideal if you have some expirience in domain driven design, cqrs, and event sourcing.
+It would also be beneficial for you to be familiar with actor systems, akka.net, and the extensibility points that akka gives you through hocon configuration. However, if you follow the [walkthrough](https://akkatecture.net/docs/walkthrough-introduction) you will be acquinted with many akka.net concepts.
 
 ### Status of Akkatecture
 
@@ -68,6 +70,7 @@ Akkatecture is still in development. The goal of this projects first version is 
 
 akkatecture is currently missing these crucial features:
 - aggregate state snapshotting.
+- persisting event metadata.
 - typed actor references.
 
 ### Contributing
@@ -107,9 +110,9 @@ There are many different opinions and best practices when it comes to building o
 
 Doing domain driven design in a distributed scenario is quite tricky. And even more so when you add cqrs and event sourcing style mechanics to your business domain. Akka gives you powerful ways to co-ordinate and organise your business rules by using actors and message passing, which can be done by sending messages through location transparent addresses (or references). The major benefits of using akka.net is that we can isolate our domain models into actors where it makes sense.
 
-Akkatecture gives you a set of semi-opinionated generic constructs that you can use to wire up your application so that you can focus on your main task, modelling and codifying your business domain.
+Akkatecture gives you a set of opinionated generic constructs that you can use to wire up your application so that you can focus on your main task, modelling and codifying your business domain.
 
-Akka.net gives us a wealth of good APIs out of the box that can be used to build entire systems out of. It also has a decent ecosystem and community for support. I also am of the opinion that commands translate well semantically in actor systems since you are telling the actor what you want, and the actor might or might not "respond" with a fact or a bag of facts relating to what that command produced in context of that aggregate.
+Akka.net gives us a wealth of good APIs out of the box that can be used to build entire systems out of. It also has a decent ecosystem and [community](https://gitter.im/akkadotnet/akka.net) for support. Akkatecture is also of the opinion that commands translate well semantically in actor systems since telling commands is a form of message passing that fits well into the actor model paradigm.
 
 ## Acknowledgements
 
