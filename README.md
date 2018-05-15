@@ -72,6 +72,7 @@ akkatecture is currently missing these crucial features:
 - aggregate state snapshotting.
 - persisting event metadata.
 - typed actor references.
+- schedueled jobs.
 
 ### Contributing
 
