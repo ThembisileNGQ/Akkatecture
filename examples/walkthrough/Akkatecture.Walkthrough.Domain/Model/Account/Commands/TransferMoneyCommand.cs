@@ -36,7 +36,7 @@ namespace Akkatecture.Walkthrough.Domain.Model.Account.Commands
             : base(aggregateId)
         {
             if(transaction == null) throw new ArgumentNullException(nameof(transaction));
-            if (transaction.Sender != AggregateId) throw new ArgumentException("Sender should be AggregateId");
+            if (transaction.Sender != AggregateId) throw new ArgumentException($"{nameof(Transaction.Sender)} should be the same as {nameof(AggregateId)}.");
 
             Transaction = transaction;
         }

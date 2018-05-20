@@ -40,8 +40,8 @@ namespace Akkatecture.Walkthrough.Domain.Model.Account
             Command<TransferMoneyCommand>(Execute);
             Command<ReceiveMoneyCommand>(Execute);
         }
-        
-        public bool Execute(OpenNewAccountCommand command)
+
+        private bool Execute(OpenNewAccountCommand command)
         {
             //this spec is part of Akkatecture
             var spec = new AggregateIsNewSpecification();
@@ -54,7 +54,7 @@ namespace Akkatecture.Walkthrough.Domain.Model.Account
             return true;
         }
         
-        public bool Execute(TransferMoneyCommand command)
+        private bool Execute(TransferMoneyCommand command)
         {
             var balanceSpec = new EnoughBalanceAmountSpecification();
             var minimumTransferSpec = new MinimumTransferAmountSpecification();
@@ -74,7 +74,7 @@ namespace Akkatecture.Walkthrough.Domain.Model.Account
             return true;
         }
         
-        public bool Execute(ReceiveMoneyCommand command)
+        private bool Execute(ReceiveMoneyCommand command)
         {
             var moneyReceived = new MoneyReceivedEvent(command.Transaction);
 

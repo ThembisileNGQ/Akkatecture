@@ -32,8 +32,7 @@ namespace Akkatecture.Walkthrough.Domain.Model.Account.Entities
     {
         public TransactionId(string value)
             : base(value)
-        {
-            
+        {            
         }
     }
 }

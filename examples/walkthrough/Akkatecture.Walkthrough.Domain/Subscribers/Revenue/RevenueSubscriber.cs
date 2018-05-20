@@ -29,7 +29,7 @@ using Akkatecture.Walkthrough.Domain.Model.Account;
 using Akkatecture.Walkthrough.Domain.Model.Account.Events;
 using Akkatecture.Walkthrough.Domain.Repositories.Revenue.Commands;
 
-namespace Akkatecture.Walkthrough.Domain.Subscribers
+namespace Akkatecture.Walkthrough.Domain.Subscribers.Revenue
 {
     public class RevenueSubscriber : DomainEventSubscriber,
          ISubscribeTo<Account,AccountId,FeesDeductedEvent>

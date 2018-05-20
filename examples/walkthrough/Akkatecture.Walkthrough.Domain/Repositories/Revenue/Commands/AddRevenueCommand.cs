@@ -21,6 +21,7 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
 using Akkatecture.Walkthrough.Domain.Model.Account.ValueObjects;
 
 namespace Akkatecture.Walkthrough.Domain.Repositories.Revenue.Commands
@@ -31,6 +32,8 @@ namespace Akkatecture.Walkthrough.Domain.Repositories.Revenue.Commands
 
         public AddRevenueCommand(Money amountToAdd)
         {
+            if(amountToAdd == null) throw new ArgumentNullException(nameof(amountToAdd));
+            
             AmountToAdd = amountToAdd;
         }
     }

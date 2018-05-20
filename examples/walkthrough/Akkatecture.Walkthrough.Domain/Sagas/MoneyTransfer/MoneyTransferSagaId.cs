@@ -29,8 +29,7 @@ namespace Akkatecture.Walkthrough.Domain.Sagas.MoneyTransfer
     {
         public MoneyTransferSagaId(string value)
             : base(value)
-        {
-            
+        {           
         }
     }
 }

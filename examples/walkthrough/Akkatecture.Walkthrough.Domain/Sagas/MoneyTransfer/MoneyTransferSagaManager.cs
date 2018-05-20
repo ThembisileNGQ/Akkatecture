@@ -31,8 +31,7 @@ namespace Akkatecture.Walkthrough.Domain.Sagas.MoneyTransfer
     {
         public MoneyTransferSagaManager(Expression<Func<MoneyTransferSaga>> factory)
             : base(factory)
-        {
-            
+        {        
         }
     }
 }

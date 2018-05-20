@@ -39,6 +39,7 @@ namespace Akkatecture.Walkthrough.Domain.Model.Account.Entities
             if (sender == null) throw new ArgumentNullException(nameof(sender));
             if (receiver == null) throw new ArgumentNullException(nameof(receiver));
             if(amount == null) throw new ArgumentNullException(nameof(amount));
+            if(sender == receiver) throw new ArgumentException($"{nameof(Sender)} should be the same as {nameof(Receiver)}.");
 
             Sender = sender;
             Receiver = receiver;
