@@ -85,7 +85,7 @@ namespace Akkatecture.Examples.Worker
         public static void StartUserAccountCluster(ActorSystem actorSystem)
         {
             ClusterFactory<UserAccountAggregateManager, UserAccountAggregate, UserAccountId>
-                .StartAggregateCluster(actorSystem);
+                .StartClusteredAggregate(actorSystem);
         }
         
     }
