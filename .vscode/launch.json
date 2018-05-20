@@ -5,13 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Akkatecture.Examples.UserAccount.Application",
+            "name": "Akkatecture.Examples.Application",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/examples/simple/Akkatecture.Examples.UserAccount.Application/bin/Debug/netcoreapp2.0/Akkatecture.Examples.UserAccount.Application.dll",
+            "program": "${workspaceFolder}/examples/simple/Akkatecture.Examples.Application/bin/Debug/netcoreapp2.0/Akkatecture.Examples.Application.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/examples/simple/Akkatecture.Examples.UserAccount.Application",
+            "cwd": "${workspaceFolder}/examples/simple/Akkatecture.Examples.Application",
             "console": "integratedTerminal",
             "stopAtEntry": false,
             "internalConsoleOptions": "openOnSessionStart"
