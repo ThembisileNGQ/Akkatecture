@@ -22,6 +22,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Globalization;
 using Akkatecture.ValueObjects;
 using Newtonsoft.Json;
 
@@ -48,7 +49,7 @@ namespace Akkatecture.Walkthrough.Domain.Model.Account.ValueObjects
 
         public override string ToString()
         {
-            return Value.ToString();
+            return Value.ToString(CultureInfo.InvariantCulture);
         }
     }
 }

@@ -21,12 +21,11 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using Akka.Persistence;
 using Akkatecture.Aggregates;
-using Akkatecture.Examples.UserAccount.Domain.UserAccountModel.Commands;
-using Akkatecture.Examples.UserAccount.Domain.UserAccountModel.Events;
+using Akkatecture.Examples.Domain.Model.UserAccount.Commands;
+using Akkatecture.Examples.Domain.Model.UserAccount.Events;
 
-namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel
+namespace Akkatecture.Examples.Domain.Model.UserAccount
 {
     public class UserAccountAggregate : AggregateRoot<UserAccountAggregate,UserAccountId,UserAccountState>
     {

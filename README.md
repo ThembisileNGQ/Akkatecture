@@ -39,7 +39,7 @@ Akkatecture comes with a few examples on how to best use it:
 
 
 **Note:** This example is part of the Akkatecture simple example project, so checkout [the
-code](https://github.com/Lutando/Akkatecture/blob/master/examples/simple/Akkatecture.Examples.UserAccount.Application/Program.cs#L13) and give it a run.
+code](https://github.com/Lutando/Akkatecture/blob/master/examples/simple/Akkatecture.Examples.Application/Program.cs#L13) and give it a run.
 ```csharp
 //Create actor system
 var system = ActorSystem.Create("useraccount-example");

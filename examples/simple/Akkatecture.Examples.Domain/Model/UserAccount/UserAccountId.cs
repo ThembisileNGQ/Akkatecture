@@ -21,37 +21,19 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
-using Akka.Actor;
-using Akkatecture.Examples.UserAccount.Domain.UserAccountModel;
-using Akkatecture.Examples.UserAccount.Domain.UserAccountModel.Commands;
+using Akkatecture.Core;
+using Akkatecture.ValueObjects;
+using Newtonsoft.Json;
 
-namespace Akkatecture.Examples.UserAccount.Application
+namespace Akkatecture.Examples.Domain.Model.UserAccount
 {
-    public class Program
+    [JsonConverter(typeof(SingleValueObjectConverter))]
+    public class UserAccountId : Identity<UserAccountId>
     {
-        public static void Main(string[] args)
+        public UserAccountId(string value)
+            : base(value)
         {
-            //Create actor system
-            var system = ActorSystem.Create("useraccount-example");
-
-            //Create supervising aggregate manager for UserAccount aggregate root actors
-            var aggregateManager = system.ActorOf(Props.Create(() => new UserAccountAggregateManager()));
-
-            //Build create user account aggregate command
-            var aggregateId = UserAccountId.New;
-            var createUserAccountCommand = new CreateUserAccountCommand(aggregateId, "foo bar");
             
-            //Send command, this is equivalent to command.publish() in other cqrs frameworks
-            aggregateManager.Tell(createUserAccountCommand);
-            
-            var changeNameCommand = new UserAccountChangeNameCommand(aggregateId, "foo bar baz");
-            aggregateManager.Tell(changeNameCommand);
-                        
-            //block end of program
-            Console.ReadLine();
         }
-
-       
     }
 }

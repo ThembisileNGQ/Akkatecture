@@ -31,11 +31,14 @@ namespace Akkatecture.Walkthrough.Domain.Repositories.Revenue
 {
     public class RevenueRepository : ReceiveActor
     {
-        public Money Revenue { get; private set; } = new Money(0.00m);
-        public int Transactions { get; private set; } = 0;
+        public Money Revenue { get; private set; }
+        public int Transactions { get; private set; }
 
         public RevenueRepository()
         {
+            Transactions = 0;
+            Revenue = new Money(0.00m);
+            
             Receive<AddRevenueCommand>(Handle);
             Receive<GetRevenueQuery>(Handle);
         }

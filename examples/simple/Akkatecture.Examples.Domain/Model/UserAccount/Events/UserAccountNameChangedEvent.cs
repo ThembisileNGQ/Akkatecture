@@ -24,13 +24,13 @@
 using Akkatecture.Aggregates;
 using Akkatecture.Events;
 
-namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel.Events
+namespace Akkatecture.Examples.Domain.Model.UserAccount.Events
 {
-    [EventVersion("UserAccountCreated", 1)]
-    public class UserAccountCreatedEvent : AggregateEvent<UserAccountAggregate, UserAccountId>
+    [EventVersion("UserAccountNameChanged", 1)]
+    public class UserAccountNameChangedEvent : AggregateEvent<UserAccountAggregate, UserAccountId>
     {
         public string Name { get; }
-        public UserAccountCreatedEvent(string name)
+        public UserAccountNameChangedEvent(string name)
         {
             Name = name;
         }

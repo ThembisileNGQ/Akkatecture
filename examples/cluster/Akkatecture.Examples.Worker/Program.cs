@@ -26,11 +26,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Akka.Actor;
-using Akka.Cluster.Sharding;
 using Akka.Configuration;
 using Akkatecture.Clustering.Configuration;
 using Akkatecture.Clustering.Core;
-using Akkatecture.Examples.UserAccount.Domain.UserAccountModel;
+using Akkatecture.Examples.Domain.Model.UserAccount;
 
 namespace Akkatecture.Examples.Worker
 {
@@ -85,7 +84,7 @@ namespace Akkatecture.Examples.Worker
 
         public static void StartUserAccountCluster(ActorSystem actorSystem)
         {
-            var cluster = ClusterFactory<UserAccountAggregateManager, UserAccountAggregate, UserAccountId>
+            ClusterFactory<UserAccountAggregateManager, UserAccountAggregate, UserAccountId>
                 .StartAggregateCluster(actorSystem);
         }
         

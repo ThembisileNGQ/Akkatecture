@@ -21,18 +21,20 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using Akkatecture.Aggregates;
-using Akkatecture.Events;
+using Akkatecture.Commands;
 
-namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel.Events
+namespace Akkatecture.Examples.Domain.Model.UserAccount.Commands
 {
-    [EventVersion("UserAccountNameChanged", 1)]
-    public class UserAccountNameChangedEvent : AggregateEvent<UserAccountAggregate, UserAccountId>
+    public class CreateUserAccountCommand : Command<UserAccountAggregate, UserAccountId>
     {
         public string Name { get; }
-        public UserAccountNameChangedEvent(string name)
+        public CreateUserAccountCommand(
+            UserAccountId aggregateId,
+            string name)
+            : base(aggregateId)
         {
             Name = name;
         }
     }
+    
 }

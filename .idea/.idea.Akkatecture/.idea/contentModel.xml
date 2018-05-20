@@ -35,11 +35,17 @@
           <e p="README.md" t="Include" />
         </e>
         <e p="simple" t="Include">
-          <e p="Akkatecture.Examples.UserAccount" t="IncludeRecursive">
-            <e p="Akkatecture.Examples.UserAccount.csproj" t="IncludeRecursive" />
+          <e p="Akkatecture.Examples.Application" t="IncludeRecursive">
+            <e p="Akkatecture.Examples.Application.csproj" t="IncludeRecursive" />
             <e p="bin" t="ExcludeRecursive" />
-            <e p="Domain" t="Include">
-              <e p="UserAccountModel" t="Include">
+            <e p="obj" t="ExcludeRecursive" />
+            <e p="Program.cs" t="Include" />
+          </e>
+          <e p="Akkatecture.Examples.Domain" t="IncludeRecursive">
+            <e p="Akkatecture.Examples.Domain.csproj" t="IncludeRecursive" />
+            <e p="bin" t="ExcludeRecursive" />
+            <e p="Model" t="Include">
+              <e p="UserAccount" t="Include">
                 <e p="Commands" t="Include">
                   <e p="CreateUserAccountCommand.cs" t="Include" />
                   <e p="UserAccountChangeNameCommand.cs" t="Include" />
@@ -55,12 +61,6 @@
               </e>
             </e>
             <e p="obj" t="ExcludeRecursive" />
-          </e>
-          <e p="Akkatecture.Examples.UserAccount.Application" t="IncludeRecursive">
-            <e p="Akkatecture.Examples.UserAccount.Application.csproj" t="IncludeRecursive" />
-            <e p="bin" t="ExcludeRecursive" />
-            <e p="obj" t="ExcludeRecursive" />
-            <e p="Program.cs" t="Include" />
           </e>
           <e p="README.md" t="Include" />
         </e>

@@ -23,18 +23,17 @@
 
 using Akkatecture.Commands;
 
-namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel.Commands
+namespace Akkatecture.Examples.Domain.Model.UserAccount.Commands
 {
-    public class CreateUserAccountCommand : Command<UserAccountAggregate, UserAccountId>
+    public class UserAccountChangeNameCommand : Command<UserAccountAggregate, UserAccountId>
     {
         public string Name { get; }
-        public CreateUserAccountCommand(
-            UserAccountId aggregateId,
+        public UserAccountChangeNameCommand(
+            UserAccountId aggreagateId,
             string name)
-            : base(aggregateId)
+            : base(aggreagateId)
         {
             Name = name;
         }
     }
-    
 }

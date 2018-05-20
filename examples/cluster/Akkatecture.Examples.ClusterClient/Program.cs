@@ -27,8 +27,8 @@ using Akka.Actor;
 using Akka.Configuration;
 using Akkatecture.Clustering.Configuration;
 using Akkatecture.Clustering.Core;
-using Akkatecture.Examples.UserAccount.Domain.UserAccountModel;
-using Akkatecture.Examples.UserAccount.Domain.UserAccountModel.Commands;
+using Akkatecture.Examples.Domain.Model.UserAccount;
+using Akkatecture.Examples.Domain.Model.UserAccount.Commands;
 
 namespace Akkatecture.Examples.ClusterClient
 {

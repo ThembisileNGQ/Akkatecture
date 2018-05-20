@@ -22,9 +22,9 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using Akkatecture.Aggregates;
-using Akkatecture.Examples.UserAccount.Domain.UserAccountModel.Events;
+using Akkatecture.Examples.Domain.Model.UserAccount.Events;
 
-namespace Akkatecture.Examples.UserAccount.Domain.UserAccountModel
+namespace Akkatecture.Examples.Domain.Model.UserAccount
 {
     public class UserAccountState : AggregateState<UserAccountAggregate,UserAccountId>,
         IApply<UserAccountCreatedEvent>,
