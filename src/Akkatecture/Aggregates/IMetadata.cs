@@ -41,6 +41,8 @@ namespace Akkatecture.Aggregates
         long TimestampEpoch { get; }
         long AggregateSequenceNumber { get; }
         string AggregateId { get; }
+        string CorrelationId { get; }
+        string CausationId { get; }
 
         IMetadata CloneWith(params KeyValuePair<string, string>[] keyValuePairs);
         IMetadata CloneWith(IEnumerable<KeyValuePair<string, string>> keyValuePairs);

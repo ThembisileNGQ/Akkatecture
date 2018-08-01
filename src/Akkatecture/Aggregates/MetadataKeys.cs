@@ -39,5 +39,7 @@ namespace Akkatecture.Aggregates
         public const string AggregateName = "aggregate_name";
         public const string AggregateId = "aggregate_id";
         public const string SourceId = "source_id";
+        public const string CorrelationId = "correlation_id";
+        public const string CausationId = "cause_id";
     }
 }

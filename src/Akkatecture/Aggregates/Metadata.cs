@@ -107,6 +107,20 @@ namespace Akkatecture.Aggregates
             get { return GetMetadataValue(MetadataKeys.AggregateId); }
             set { Add(MetadataKeys.AggregateId, value); }
         }
+        
+        [JsonIgnore]
+        public string CorrelationId
+        {
+            get { return GetMetadataValue(MetadataKeys.CorrelationId); }
+            set { Add(MetadataKeys.CorrelationId, value); }
+        }
+        
+        [JsonIgnore]
+        public string CausationId
+        {
+            get { return GetMetadataValue(MetadataKeys.CausationId); }
+            set { Add(MetadataKeys.CausationId, value); }
+        }
 
         [JsonIgnore]
         public IEventId EventId
