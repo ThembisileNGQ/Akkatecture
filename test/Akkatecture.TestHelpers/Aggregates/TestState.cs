@@ -23,7 +23,6 @@
 
 using System.Collections.Generic;
 using Akkatecture.Aggregates;
-using Akkatecture.Extensions;
 using Akkatecture.TestHelpers.Aggregates.Entities;
 using Akkatecture.TestHelpers.Aggregates.Events;
 

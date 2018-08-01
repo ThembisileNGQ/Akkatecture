@@ -23,7 +23,6 @@
 
 using System;
 using System.Linq.Expressions;
-using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Event;

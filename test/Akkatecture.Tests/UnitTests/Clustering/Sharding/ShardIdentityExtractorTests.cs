@@ -28,7 +28,7 @@ using Akkatecture.TestHelpers.Aggregates.Commands;
 using FluentAssertions;
 using Xunit;
 
-namespace Akkatecture.Tests.UnitTests.Clustering
+namespace Akkatecture.Tests.UnitTests.Clustering.Sharding
 {
     public class ShardIdentityExtractorTests
     {

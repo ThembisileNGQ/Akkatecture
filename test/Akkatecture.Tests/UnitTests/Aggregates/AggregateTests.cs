@@ -30,7 +30,6 @@ using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Entities;
 using Akkatecture.TestHelpers.Aggregates.Events;
 using Akkatecture.TestHelpers.Aggregates.Events.Signals;
-using Akkatecture.TestHelpers.Akka;
 using Xunit;
 
 namespace Akkatecture.Tests.UnitTests.Aggregates

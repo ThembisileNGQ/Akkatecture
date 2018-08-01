@@ -30,7 +30,6 @@ using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Entities;
 using Akkatecture.TestHelpers.Aggregates.Sagas;
 using Akkatecture.TestHelpers.Aggregates.Sagas.Events;
-using Akkatecture.TestHelpers.Akka;
 using Xunit;
 
 namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
@@ -52,7 +51,7 @@ namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
             var probe = CreateTestActor("probeActor");
             Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestSaga, TestSagaId, TestSagaStartedEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
-            var aggregateSagaManager = Sys.ActorOf(Props.Create(() => new TestSagaManager(() => new TestSaga(aggregateManager))), "test-sagaaggregatemanager");
+            Sys.ActorOf(Props.Create(() => new TestSagaManager(() => new TestSaga(aggregateManager))), "test-sagaaggregatemanager");
             
             var senderAggregateId = TestAggregateId.New;
             var senderCreateAggregateCommand = new CreateTestCommand(senderAggregateId);

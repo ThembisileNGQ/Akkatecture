@@ -49,7 +49,7 @@ namespace Akkatecture.Tests.UnitTests.Subscribers
         {
             var probe = CreateTestActor("probeActor");
             Sys.EventStream.Subscribe(probe, typeof(TestSubscribedEventHandled<TestCreatedEvent>));
-            var aggregateSubscriber = Sys.ActorOf(Props.Create(() => new TestAggregateSubscriber()), "test-subscriber");        
+            Sys.ActorOf(Props.Create(() => new TestAggregateSubscriber()), "test-subscriber");        
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
             
             var aggregateId = TestAggregateId.New;
