@@ -115,7 +115,8 @@ namespace Akkatecture.Core
                 yield return $"Identity '{value}' of type '{typeof(T).PrettyPrint()}' does not follow the syntax '[NAME]-[GUID]' in lower case";
         }
 
-        protected Identity(string value) : base(value)
+        protected Identity(string value) 
+            : base(value)
         {
             var validationErrors = Validate(value).ToList();
             if (validationErrors.Any())

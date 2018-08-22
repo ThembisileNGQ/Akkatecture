@@ -68,7 +68,7 @@ namespace Akkatecture.Sagas.AggregateSaga
             Logger = Context.GetLogger();
             Settings = new AggregateSagaSettings(Context.System.Settings.Config);
             var idValue = Context.Self.Path.Name;
-            PersistenceId = Context.Self.Path.Name;
+            PersistenceId = idValue;
             Id = (TIdentity) Activator.CreateInstance(typeof(TIdentity), idValue);
 
             if (Id == null)
@@ -109,8 +109,11 @@ namespace Akkatecture.Sagas.AggregateSaga
                     .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                     .Where(mi =>
                     {
-                        if (mi.Name != "Handle") return false;
+                        if (mi.Name != "Handle")
+                            return false;
+
                         var parameters = mi.GetParameters();
+
                         return
                             parameters.Length == 1;
                     })
