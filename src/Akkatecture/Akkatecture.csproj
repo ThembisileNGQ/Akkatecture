@@ -15,7 +15,7 @@
     <Description>
       a cqrs and event sourcing framework for akka.net
     </Description>
-    <PackageTags>akka cqrs es eventsourcing</PackageTags>
+    <PackageTags>akka cqrs es eventsourcing actors microservices actor-model</PackageTags>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/Lutando/Akkatecture</RepositoryUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/Lutando/Akkatecture/master/LICENSE</PackageLicenseUrl>

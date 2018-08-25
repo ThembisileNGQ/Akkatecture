@@ -165,6 +165,7 @@
             <e p="AggregateRoot.cs" t="Include" />
             <e p="AggregateRootSettings.cs" t="Include" />
             <e p="AggregateState.cs" t="Include" />
+            <e p="CommittedEvent.cs" t="Include" />
             <e p="DomainEvent.cs" t="Include" />
             <e p="EventId.cs" t="Include" />
             <e p="IAggregateEvent.cs" t="Include" />
@@ -172,6 +173,7 @@
             <e p="IAggregateName.cs" t="Include" />
             <e p="IAggregateRoot.cs" t="Include" />
             <e p="IApply.cs" t="Include" />
+            <e p="ICommittedEvent.cs" t="Include" />
             <e p="IDomainEvent.cs" t="Include" />
             <e p="IEmit.cs" t="Include" />
             <e p="IEventApplier.cs" t="Include" />

@@ -92,7 +92,8 @@ namespace Akkatecture.Aggregates
             if (Settings.UseDefaultEventRecover)
             {
                 Recover<DomainEvent<TAggregate, TIdentity, IAggregateEvent<TAggregate, TIdentity>>>(Recover);
-                Recover<IAggregateEvent<TAggregate, TIdentity>>(Recover);
+                Recover<CommittedEvent<IAggregateEvent<TAggregate, TIdentity>>>(Recover);
+                //Recover<CommittedEvent<IAggregateEvent<TAggregate,TIdentity>>(Recover);
                 Recover<RecoveryCompleted>(Recover);
             }
                 
@@ -143,8 +144,11 @@ namespace Akkatecture.Aggregates
             }
             
             var aggregateApplyMethod = GetEventApplyMethods(aggregateEvent);
-
-            Persist(aggregateEvent, aggregateApplyMethod);
+            
+            var committedEvent = new CommittedEvent<TAggregateEvent>(aggregateEvent,eventMetadata);
+            
+            //Persist(committedEvent, aggregateApplyMethod);
+            Persist(committedEvent, ApplyCommittedEvents);
 
             Logger.Info($"[{Name}] With Id={Id} Commited [{typeof(TAggregateEvent).PrettyPrint()}]");
 
@@ -153,6 +157,14 @@ namespace Akkatecture.Aggregates
             var domainEvent = new DomainEvent<TAggregate,TIdentity,TAggregateEvent>(aggregateEvent,eventMetadata,now,Id,Version);
 
             Publish(domainEvent);
+        }
+
+        protected void  ApplyCommittedEvents<TAggregateEvent>(CommittedEvent<TAggregateEvent> committedEvent)
+            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+        {
+            var applyMethods = GetEventApplyMethods(committedEvent.AggregateEvent);
+            applyMethods(committedEvent.AggregateEvent);
+
         }
         
         protected virtual void Signal<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
@@ -264,6 +276,7 @@ namespace Akkatecture.Aggregates
             return aggregateApplyMethod;
         }
 
+        
         protected Action<IAggregateEvent> GetDomainEventApplyMethods<TDomainEvent, TAggregateEvent>(TDomainEvent domainEvent)
             where TDomainEvent : IDomainEvent<TAggregate,TIdentity,TAggregateEvent>
             where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
@@ -290,6 +303,24 @@ namespace Akkatecture.Aggregates
             Version++;
         }
 
+        protected virtual bool Recover(CommittedEvent<IAggregateEvent<TAggregate,TIdentity>> committedEvent)
+        {
+            try
+            {
+                //TODO event upcasting goes here
+                Logger.Debug($"Recovering with event of type [{committedEvent.GetType().PrettyPrint()}] ");
+                ApplyEvent(committedEvent.AggregateEvent);
+            }
+            catch(Exception exception)
+            {
+                Logger.Error($"Recovering with event of type [{committedEvent.GetType().PrettyPrint()}] caused an exception {exception.GetType().PrettyPrint()}");
+                return false;
+            }
+
+            return true;
+        }
+        
+        /*[Obsolete]
         protected virtual bool Recover(IAggregateEvent<TAggregate, TIdentity> aggregateEvent)
         {
             try
@@ -305,7 +336,7 @@ namespace Akkatecture.Aggregates
             }
 
             return true;
-        }
+        }*/
 
         protected virtual bool Recover(IDomainEvent<TAggregate, TIdentity, IAggregateEvent<TAggregate,TIdentity>> domainEvent)
         {
