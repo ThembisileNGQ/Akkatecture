@@ -48,6 +48,7 @@ namespace Akkatecture.Examples.Worker
             //Create several workers with each worker port will be 6001, 6002,...
             var actorSystems = new List<ActorSystem>();
             foreach (var worker in Enumerable.Range(1, amountOfWorkers+1))
+            //foreach (var worker in Enumerable.Range(1, 1))
             {
                 //Create worker with port 600X
                 var config = ConfigurationFactory.ParseString($"akka.remote.dot-netty.tcp.port = 600{worker}");
