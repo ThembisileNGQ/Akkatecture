@@ -263,7 +263,6 @@
             <e p="ISagaId.cs" t="Include" />
             <e p="ISagaIsStartedBy.cs" t="Include" />
             <e p="ISagaLocator.cs" t="Include" />
-            <e p="ISagaManages.cs" t="Include" />
             <e p="ISagaName.cs" t="Include" />
             <e p="ISagaState.cs" t="Include" />
             <e p="Saga.cs" t="Include" />

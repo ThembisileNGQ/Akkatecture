@@ -42,11 +42,11 @@ namespace Akkatecture.Aggregates
     {
         private static readonly IReadOnlyDictionary<Type, Action<TAggregateState, IAggregateEvent>> ApplyMethodsFromState;
         private static readonly IAggregateName AggregateName = typeof(TAggregate).GetAggregateName();
-        
+        private readonly List<IEventApplier<TAggregate, TIdentity>> _eventAppliers = new List<IEventApplier<TAggregate, TIdentity>>();
+        private readonly Dictionary<Type, Action<object>> _eventHandlers = new Dictionary<Type, Action<object>>();
         public TAggregateState State { get; protected set; }
         private CircularBuffer<ISourceId> _previousSourceIds = new CircularBuffer<ISourceId>(10);
         protected ILoggingAdapter Logger { get; set; }
-
         public IAggregateName Name => AggregateName;
         public override string PersistenceId { get; }
         public TIdentity Id { get; }
@@ -91,9 +91,7 @@ namespace Akkatecture.Aggregates
 
             if (Settings.UseDefaultEventRecover)
             {
-                Recover<DomainEvent<TAggregate, TIdentity, IAggregateEvent<TAggregate, TIdentity>>>(Recover);
-                Recover<CommittedEvent<IAggregateEvent<TAggregate, TIdentity>>>(Recover);
-                //Recover<CommittedEvent<IAggregateEvent<TAggregate,TIdentity>>(Recover);
+                Recover<ICommittedEvent<TAggregate, TIdentity, IAggregateEvent<TAggregate, TIdentity>>>(Recover);
                 Recover<RecoveryCompleted>(Recover);
             }
                 
@@ -102,8 +100,7 @@ namespace Akkatecture.Aggregates
                 Recover<SnapshotOffer>(Recover);
 
         }
-        
-        
+
         protected void SetSourceIdHistory(int count)
         {
             _previousSourceIds = new CircularBuffer<ISourceId>(count);
@@ -143,11 +140,9 @@ namespace Akkatecture.Aggregates
                 eventMetadata.AddRange(metadata);
             }
             
-            var aggregateApplyMethod = GetEventApplyMethods(aggregateEvent);
             
-            var committedEvent = new CommittedEvent<TAggregateEvent>(aggregateEvent,eventMetadata);
+            var committedEvent = new CommittedEvent<TAggregate, TIdentity, TAggregateEvent>(Id,aggregateEvent,eventMetadata);
             
-            //Persist(committedEvent, aggregateApplyMethod);
             Persist(committedEvent, ApplyCommittedEvents);
 
             Logger.Info($"[{Name}] With Id={Id} Commited [{typeof(TAggregateEvent).PrettyPrint()}]");
@@ -159,7 +154,7 @@ namespace Akkatecture.Aggregates
             Publish(domainEvent);
         }
 
-        protected void  ApplyCommittedEvents<TAggregateEvent>(CommittedEvent<TAggregateEvent> committedEvent)
+        protected void  ApplyCommittedEvents<TAggregateEvent>(ICommittedEvent<TAggregate, TIdentity, TAggregateEvent> committedEvent)
             where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
         {
             var applyMethods = GetEventApplyMethods(committedEvent.AggregateEvent);
@@ -303,53 +298,16 @@ namespace Akkatecture.Aggregates
             Version++;
         }
 
-        protected virtual bool Recover(CommittedEvent<IAggregateEvent<TAggregate,TIdentity>> committedEvent)
+        protected virtual bool Recover(ICommittedEvent<TAggregate, TIdentity, IAggregateEvent<TAggregate, TIdentity>> committedEvent)
         {
             try
             {
-                //TODO event upcasting goes here
                 Logger.Debug($"Recovering with event of type [{committedEvent.GetType().PrettyPrint()}] ");
                 ApplyEvent(committedEvent.AggregateEvent);
             }
             catch(Exception exception)
             {
                 Logger.Error($"Recovering with event of type [{committedEvent.GetType().PrettyPrint()}] caused an exception {exception.GetType().PrettyPrint()}");
-                return false;
-            }
-
-            return true;
-        }
-        
-        /*[Obsolete]
-        protected virtual bool Recover(IAggregateEvent<TAggregate, TIdentity> aggregateEvent)
-        {
-            try
-            {
-                //TODO event upcasting goes here
-                Logger.Debug($"Recovering with event of type [{aggregateEvent.GetType().PrettyPrint()}] ");
-                ApplyEvent(aggregateEvent);
-            }
-            catch(Exception exception)
-            {
-                Logger.Error($"Recovering with event of type [{aggregateEvent.GetType().PrettyPrint()}] caused an exception {exception.GetType().PrettyPrint()}");
-                return false;
-            }
-
-            return true;
-        }*/
-
-        protected virtual bool Recover(IDomainEvent<TAggregate, TIdentity, IAggregateEvent<TAggregate,TIdentity>> domainEvent)
-        {
-            try
-            {
-
-                //TODO event upcasting goes here
-                Logger.Debug($"Recovering with event of type [{domainEvent.GetType().PrettyPrint()}] ");
-                ApplyEvent(domainEvent.AggregateEvent);
-            }
-            catch (Exception exception)
-            {
-                Logger.Error($"Recovering with event of type [{domainEvent.GetType().PrettyPrint()}] caused an exception {exception.GetType().PrettyPrint()}");
                 return false;
             }
 
@@ -380,7 +338,6 @@ namespace Akkatecture.Aggregates
             return true;
         }
 
-        private readonly Dictionary<Type, Action<object>> _eventHandlers = new Dictionary<Type, Action<object>>();
         protected void Register<TAggregateEvent>(Action<TAggregateEvent> handler)
             where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
         {
@@ -391,8 +348,6 @@ namespace Akkatecture.Aggregates
             }
             _eventHandlers[eventType] = e => handler((TAggregateEvent)e);
         }
-
-        private readonly List<IEventApplier<TAggregate, TIdentity>> _eventAppliers = new List<IEventApplier<TAggregate, TIdentity>>();
 
         protected void Register(IEventApplier<TAggregate, TIdentity> eventApplier)
         {
