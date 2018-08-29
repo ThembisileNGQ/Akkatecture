@@ -32,14 +32,14 @@ using Akkatecture.Extensions;
 
 namespace Akkatecture.Aggregates
 {
-    public abstract class
-        AggregateState<TAggregate, TIdentity> : AggregateState<TAggregate, TIdentity,
+    public abstract class AggregateState<TAggregate, TIdentity> : AggregateState<TAggregate, TIdentity,
             IEventApplier<TAggregate, TIdentity>>
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
     {
         
     }
+    
     public abstract class AggregateState<TAggregate, TIdentity, TEventApplier> : IEventApplier<TAggregate, TIdentity>
         where TEventApplier : class, IEventApplier<TAggregate, TIdentity>
         where TAggregate : IAggregateRoot<TIdentity>

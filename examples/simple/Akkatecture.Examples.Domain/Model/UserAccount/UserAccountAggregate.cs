@@ -57,7 +57,7 @@ namespace Akkatecture.Examples.Domain.Model.UserAccount
             }
             else
             {
-                //signal domain error
+                
             }
         }
 

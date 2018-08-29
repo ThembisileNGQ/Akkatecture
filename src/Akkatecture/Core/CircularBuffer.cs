@@ -48,7 +48,9 @@ namespace Akkatecture.Core
             _end = 0;
         }
 
-        public CircularBuffer(int capacity, params T[] items)
+        public CircularBuffer(
+            int capacity, 
+            params T[] items)
             : this(capacity)
         {
             if (items.Length > capacity) throw new ArgumentException(nameof(capacity));

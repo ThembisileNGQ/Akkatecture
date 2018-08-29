@@ -42,7 +42,9 @@ namespace Akkatecture.Commands
         public TSourceIdentity SourceId { get; }
         public TIdentity AggregateId { get; }
 
-        protected Command(TIdentity aggregateId, TSourceIdentity sourceId)
+        protected Command(
+            TIdentity aggregateId,
+            TSourceIdentity sourceId)
         {
             if (aggregateId == null) throw new ArgumentNullException(nameof(aggregateId));
             if (sourceId == null) throw new ArgumentNullException(nameof(sourceId));
@@ -63,12 +65,16 @@ namespace Akkatecture.Commands
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
     {
-        protected Command(TIdentity aggregateId)
-            : this(aggregateId, CommandId.New)
+        protected Command(
+            TIdentity aggregateId)
+            : this(aggregateId, 
+                CommandId.New)
         {
         }
 
-        protected Command(TIdentity aggregateId, ISourceId sourceId)
+        protected Command(
+            TIdentity aggregateId, 
+            ISourceId sourceId)
             : base(aggregateId, sourceId)
         {
         }

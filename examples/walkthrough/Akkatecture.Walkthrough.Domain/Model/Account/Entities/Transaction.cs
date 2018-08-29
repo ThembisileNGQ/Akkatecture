@@ -33,7 +33,11 @@ namespace Akkatecture.Walkthrough.Domain.Model.Account.Entities
         public AccountId Receiver { get; }
         public Money Amount { get; }
         
-        public Transaction(TransactionId entityId, AccountId sender, AccountId receiver, Money amount)
+        public Transaction(
+            TransactionId entityId,
+            AccountId sender,
+            AccountId receiver, 
+            Money amount)
             : base(entityId)
         {
             if (sender == null) throw new ArgumentNullException(nameof(sender));
@@ -46,7 +50,10 @@ namespace Akkatecture.Walkthrough.Domain.Model.Account.Entities
             Amount = amount;
         }
 
-        public Transaction(AccountId sender, AccountId receiver, Money amount)
+        public Transaction(
+            AccountId sender,
+            AccountId receiver,
+            Money amount)
             :this(TransactionId.New,sender,receiver,amount)
         {  
         }

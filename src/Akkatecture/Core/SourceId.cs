@@ -34,7 +34,8 @@ namespace Akkatecture.Core
     {
         public static ISourceId New => new SourceId(Guid.NewGuid().ToString("D"));
 
-        public SourceId(string value) : base(value)
+        public SourceId(string value) 
+            : base(value)
         {
             if (string.IsNullOrEmpty(value)) throw new ArgumentNullException(nameof(value));
         }

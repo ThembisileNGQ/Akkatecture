@@ -31,7 +31,8 @@ namespace Akkatecture.Commands
 {
     public class CommandId : Identity<CommandId>, ICommandId
     {
-        public CommandId(string value) : base(value)
+        public CommandId(string value) 
+            : base(value)
         {
         }
     }

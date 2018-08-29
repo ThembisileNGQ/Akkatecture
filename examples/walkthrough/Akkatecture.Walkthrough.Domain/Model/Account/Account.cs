@@ -63,7 +63,6 @@ namespace Akkatecture.Walkthrough.Domain.Model.Account
             
             if(andSpec.IsSatisfiedBy(this))
             {
-                
                 var sentEvent = new MoneySentEvent(command.Transaction);
                 Emit(sentEvent);
 

@@ -34,9 +34,12 @@ namespace Akkatecture.Events
         AttributeTargets.Class,
         AllowMultiple = true
     )]
+    
     public class EventVersionAttribute : VersionedTypeAttribute
     {
-        public EventVersionAttribute(string name, int version)
+        public EventVersionAttribute(
+            string name, 
+            int version)
             : base(name, version)
         {
         }
