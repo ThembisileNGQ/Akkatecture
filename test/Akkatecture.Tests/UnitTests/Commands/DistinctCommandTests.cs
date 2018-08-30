@@ -25,17 +25,25 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
+using System.Collections.Generic;
+using Akkatecture.Commands;
+using Akkatecture.Extensions;
+using Akkatecture.TestHelpers.Aggregates;
+using FluentAssertions;
+using Xunit;
+
 namespace Akkatecture.Tests.UnitTests.Commands
 {
     public class DistinctCommandTests
     {
-        /*[Theory]
-        [InlineData("test-4b1e7b48-18f1-4215-91d9-903cffdab3d8", 1, "command-40867fe4-94da-59e4-9bb5-e532f6565751")]
-        [InlineData("test-4b1e7b48-18f1-4215-91d9-903cffdab3d8", 2, "command-df0e238e-676b-500e-b962-76fcef97768a")]
-        [InlineData("test-6a2a04bd-bbc8-44ac-80ac-b0ca56897bc0", 2, "command-0455a861-bc9e-56c5-b7b9-5c14671db8b2")]
+        [Theory]
+        [InlineData("testaggregate-4b1e7b48-18f1-4215-91d9-903cffdab3d8", 1, "command-c3918596-b704-5e6a-9bfc-9876b359f0f0")]
+        [InlineData("testaggregate-4b1e7b48-18f1-4215-91d9-903cffdab3d8", 2, "command-2fc95416-f301-581d-8173-6624677ac172")]
+        [InlineData("testaggregate-6a2a04bd-bbc8-44ac-80ac-b0ca56897bc0", 2, "command-a123dc1f-781b-558c-8740-4fb4d2f3b018")]
         public void Arguments(string aggregateId, int magicNumber, string expectedSouceId)
         {
-            var testId = TestId.With(aggregateId);
+            var testId = TestAggregateId.With(aggregateId);
             var command = new MyDistinctCommand(testId, magicNumber);
 
             var sourceId = command.SourceId;
@@ -43,13 +51,14 @@ namespace Akkatecture.Tests.UnitTests.Commands
             sourceId.Value.Should().Be(expectedSouceId);
         }
 
-        public class MyDistinctCommand : DistinctCommand<TestAggregate, TestId>
+        public class MyDistinctCommand : DistinctCommand<TestAggregate, TestAggregateId>
         {
             public int MagicNumber { get; }
 
             public MyDistinctCommand(
-                TestId aggregateId,
-                int magicNumber) : base(aggregateId)
+                TestAggregateId aggregateId,
+                int magicNumber) 
+                : base(aggregateId)
             {
                 MagicNumber = magicNumber;
             }
@@ -59,6 +68,6 @@ namespace Akkatecture.Tests.UnitTests.Commands
                 yield return BitConverter.GetBytes(MagicNumber);
                 yield return AggregateId.GetBytes();
             }
-        }*/
+        }
     }
 }

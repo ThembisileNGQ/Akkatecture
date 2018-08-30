@@ -39,7 +39,9 @@ namespace Akkatecture.Clustering.Core
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
     {
-        public static IActorRef StartClusteredAggregate(ActorSystem actorSystem, int numberOfShards = 12)
+        public static IActorRef StartClusteredAggregate(
+            ActorSystem actorSystem,
+            int numberOfShards = 12)
         { 
             var clusterSharding = ClusterSharding.Get(actorSystem);
             var clusterShardingSettings = clusterSharding.Settings;
@@ -58,7 +60,10 @@ namespace Akkatecture.Clustering.Core
             return shardRef;
         }
         
-        public static IActorRef StartAggregateClusterProxy(ActorSystem actorSystem, string clusterRoleName, int numberOfShards = 12)
+        public static IActorRef StartAggregateClusterProxy(
+            ActorSystem actorSystem,
+            string clusterRoleName,
+            int numberOfShards = 12)
         {
             var clusterSharding = ClusterSharding.Get(actorSystem);
 
@@ -83,7 +88,11 @@ namespace Akkatecture.Clustering.Core
         where TIdentity : SagaId<TIdentity>
         where TSagaLocator : class, ISagaLocator<TIdentity>
     {
-        public static IActorRef StartClusteredAggregateSaga(ActorSystem actorSystem, Expression<Func<TAggregateSaga>> sagaFactory, string clusterRoleName, int numberOfShards = 12)
+        public static IActorRef StartClusteredAggregateSaga(
+            ActorSystem actorSystem,
+            Expression<Func<TAggregateSaga>> sagaFactory,
+            string clusterRoleName,
+            int numberOfShards = 12)
         {
             if (sagaFactory == null)
             {
@@ -111,7 +120,10 @@ namespace Akkatecture.Clustering.Core
             return shardRef;
         }
 
-        public static IActorRef StartAggregateSagaClusterProxy(ActorSystem actorSystem, string clusterRoleName, int numberOfShards = 12)
+        public static IActorRef StartAggregateSagaClusterProxy(
+            ActorSystem actorSystem,
+            string clusterRoleName,
+            int numberOfShards = 12)
         {
             if (typeof(TAggregateSagaManager) != typeof(AggregateSagaManager<,,>))
             {

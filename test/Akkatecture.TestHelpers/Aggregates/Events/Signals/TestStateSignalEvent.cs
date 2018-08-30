@@ -31,7 +31,10 @@ namespace Akkatecture.TestHelpers.Aggregates.Events.Signals
         public long LastSequenceNr { get; }
         public long Version { get; }
 
-        public TestStateSignalEvent(TestState state, long lastSequenceNr, long version)
+        public TestStateSignalEvent(
+            TestState state,
+            long lastSequenceNr,
+            long version)
         {
             State = state;
             LastSequenceNr = lastSequenceNr;

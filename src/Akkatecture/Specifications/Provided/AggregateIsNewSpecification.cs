@@ -32,11 +32,11 @@ namespace Akkatecture.Specifications.Provided
 {
     public class AggregateIsNewSpecification : Specification<IAggregateRoot>
     {
-        protected override IEnumerable<string> IsNotSatisfiedBecause(IAggregateRoot account)
+        protected override IEnumerable<string> IsNotSatisfiedBecause(IAggregateRoot aggregate)
         {
-            if (!account.IsNew)
+            if (!aggregate.IsNew)
             {
-                yield return $"'{account.Name}' with ID '{account.GetIdentity()}' is not new";
+                yield return $"'{aggregate.Name}' with ID '{aggregate.GetIdentity()}' is not new";
             }
         }
     }

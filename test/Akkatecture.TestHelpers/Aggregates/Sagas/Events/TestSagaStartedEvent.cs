@@ -32,7 +32,10 @@ namespace Akkatecture.TestHelpers.Aggregates.Sagas.Events
         public TestAggregateId Receiver { get; }
         public Test SentTest { get; }
 
-        public TestSagaStartedEvent(TestAggregateId sender, TestAggregateId receiver, Test sentTest)
+        public TestSagaStartedEvent(
+            TestAggregateId sender,
+            TestAggregateId receiver,
+            Test sentTest)
         {
             Sender = sender;
             Receiver = receiver;

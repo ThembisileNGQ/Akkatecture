@@ -32,7 +32,9 @@ namespace Akkatecture.TestHelpers.Aggregates.Events
     {
         public Test Test { get; }
         public TestAggregateId SenderAggregateId { get; }
-        public TestReceivedEvent(TestAggregateId senderAggregateId, Test test)
+        public TestReceivedEvent(
+            TestAggregateId senderAggregateId,
+            Test test)
         {
             Test = test;
             SenderAggregateId = senderAggregateId;

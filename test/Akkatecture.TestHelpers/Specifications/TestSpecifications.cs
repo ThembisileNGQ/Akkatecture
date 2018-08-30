@@ -32,8 +32,7 @@ namespace Akkatecture.TestHelpers.Specifications
         {
             private readonly int _limit;
 
-            public IsAboveSpecification(
-                int limit)
+            public IsAboveSpecification(int limit)
             {
                 _limit = limit;
             }

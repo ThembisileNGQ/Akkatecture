@@ -31,7 +31,7 @@ namespace Akkatecture.Sagas.AggregateSaga
         
     }
 
-    public interface IAggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator>
+    public interface IAggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator> : IAggregateSagaManager
         where TAggregateSaga : IAggregateSaga<TIdentity>
         where TIdentity : SagaId<TIdentity>
         where TSagaLocator : ISagaLocator<TIdentity>
