@@ -36,6 +36,8 @@ namespace Akkatecture.Aggregates
         where TIdentity : IIdentity
         where TCommand : class, ICommand<TAggregate, TIdentity>
     {
+        protected ILoggingAdapter Logger { get; set; }
+        protected Func<DeadLetter, bool> DeadLetterHandler => Handle;
         public AggregateManagerSettings Settings { get; }
 
         protected AggregateManager()
@@ -46,35 +48,58 @@ namespace Akkatecture.Aggregates
             Receive<Terminated>(Terminate);
 
             if(Settings.AutoDispatchOnReceive)
-            {
                 Receive<TCommand>(Dispatch);
-            }
 
             if(Settings.HandleDeadLetters)
             {
                 Context.System.EventStream.Subscribe(Self, typeof(DeadLetter));
-                Receive(DeadLetterHandler);
+                Receive<DeadLetter>(DeadLetterHandler);
             }
-        }
 
-        protected Func<DeadLetter, bool> DeadLetterHandler => this.Handle;
-        protected ILoggingAdapter Logger { get; set; }
 
-        protected virtual IActorRef CreateAggregate(TIdentity aggregateId)
-        {
-            var aggregateRef = Context.ActorOf(Props.Create<TAggregate>(aggregateId), aggregateId.Value);
-            Context.Watch(aggregateRef);
-            return aggregateRef;
         }
 
         protected virtual bool Dispatch(TCommand command)
         {
-            this.Logger.Info($"{GetType().PrettyPrint()} received {command.GetType().PrettyPrint()}");
+            Logger.Info($"{GetType().PrettyPrint()} received {command.GetType().PrettyPrint()}");
 
             var aggregateRef = FindOrCreate(command.AggregateId);
 
             aggregateRef.Forward(command);
 
+            return true;
+        }
+
+
+        protected virtual bool ReDispatch(TCommand command)
+        {
+            Logger.Info($"{GetType().PrettyPrint()} as dead letter {command.GetType().PrettyPrint()}");
+
+            var aggregateRef = FindOrCreate(command.AggregateId);
+
+            aggregateRef.Forward(command);
+
+            return true;
+        }
+
+        protected bool Handle(DeadLetter deadLetter)
+        {
+            if(deadLetter.Message is TCommand &&
+                (deadLetter.Message as TCommand).AggregateId.GetType() == typeof(TIdentity))
+            {
+                var command = deadLetter.Message as TCommand;
+
+                ReDispatch(command);
+            }
+
+            return true;
+
+        }
+
+        protected virtual bool Terminate(Terminated message)
+        {
+            Logger.Warning($"{typeof(TAggregate).PrettyPrint()}: {message.ActorRef.Path} has terminated.");
+            Context.Unwatch(message.ActorRef);
             return true;
         }
 
@@ -90,28 +115,11 @@ namespace Akkatecture.Aggregates
             return aggregate;
         }
 
-        protected bool Handle(DeadLetter deadLetter)
+        protected virtual IActorRef CreateAggregate(TIdentity aggregateId)
         {
-            if(deadLetter.Message is TCommand &&
-                (deadLetter.Message as TCommand).AggregateId.GetType() == typeof(TIdentity))
-            {
-                var command = deadLetter.Message as TCommand;
-
-                ReDispatch(command);
-            }
-
-            return true;
-        }
-
-        protected virtual bool ReDispatch(TCommand command)
-        {
-            this.Logger.Info($"{GetType().PrettyPrint()} as dead letter {command.GetType().PrettyPrint()}");
-
-            var aggregateRef = FindOrCreate(command.AggregateId);
-
-            aggregateRef.Tell(command);
-
-            return true;
+            var aggregateRef = Context.ActorOf(Props.Create<TAggregate>(aggregateId), aggregateId.Value);
+            Context.Watch(aggregateRef);
+            return aggregateRef;
         }
 
         protected override SupervisorStrategy SupervisorStrategy()
@@ -121,16 +129,11 @@ namespace Akkatecture.Aggregates
                 withinTimeMilliseconds: 3000,
                 localOnlyDecider: x =>
                 {
+
                     Logger.Warning($"[{GetType().PrettyPrint()}] Exception={x.ToString()} to be decided.");
                     return Directive.Restart;
                 });
         }
 
-        protected virtual bool Terminate(Terminated message)
-        {
-            Logger.Warning($"{typeof(TAggregate).PrettyPrint()}: {message.ActorRef.Path} has terminated.");
-            Context.Unwatch(message.ActorRef);
-            return true;
-        }
     }
 }
