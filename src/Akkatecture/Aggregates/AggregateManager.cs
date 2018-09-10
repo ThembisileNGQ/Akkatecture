@@ -1,16 +1,25 @@
-﻿// The MIT License (MIT) // Copyright (c) 2018 Lutando Ngqakaza
-// https://github.com/Lutando/Akkatecture // Permission is hereby granted, free of charge, to any
-// person obtaining a copy of this software and associated documentation files (the "Software"), to
-// deal in the Software without restriction, including without limitation the rights to use, copy,
-// modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the following conditions: // The
-// above copyright notice and this permission notice shall be included in all copies or substantial
-// portions of the Software. // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
+﻿// The MIT License (MIT)
+//
+// Copyright (c) 2018 Lutando Ngqakaza
+// https://github.com/Lutando/Akkatecture 
+// 
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of
+// this software and associated documentation files (the "Software"), to deal in
+// the Software without restriction, including without limitation the rights to
+// use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+// the Software, and to permit persons to whom the Software is furnished to do so,
+// subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+// FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+// COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+// CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
 using Akka.Actor;
@@ -31,20 +40,20 @@ namespace Akkatecture.Aggregates
 
         protected AggregateManager()
         {
-            this.Logger = Context.GetLogger();
-            this.Settings = new AggregateManagerSettings(Context.System.Settings.Config);
+            Logger = Context.GetLogger();
+            Settings = new AggregateManagerSettings(Context.System.Settings.Config);
 
-            this.Receive<Terminated>(this.Terminate);
+            Receive<Terminated>(Terminate);
 
-            if(this.Settings.AutoDispatchOnReceive)
+            if(Settings.AutoDispatchOnReceive)
             {
-                this.Receive<TCommand>(this.Dispatch);
+                Receive<TCommand>(Dispatch);
             }
 
-            if(this.Settings.HandleDeadLetters)
+            if(Settings.HandleDeadLetters)
             {
-                Context.System.EventStream.Subscribe(this.Self, typeof(DeadLetter));
-                this.Receive(this.DeadLetterHandler);
+                Context.System.EventStream.Subscribe(Self, typeof(DeadLetter));
+                Receive(DeadLetterHandler);
             }
         }
 
@@ -60,9 +69,9 @@ namespace Akkatecture.Aggregates
 
         protected virtual bool Dispatch(TCommand command)
         {
-            this.Logger.Info($"{this.GetType().PrettyPrint()} received {command.GetType().PrettyPrint()}");
+            this.Logger.Info($"{GetType().PrettyPrint()} received {command.GetType().PrettyPrint()}");
 
-            var aggregateRef = this.FindOrCreate(command.AggregateId);
+            var aggregateRef = FindOrCreate(command.AggregateId);
 
             aggregateRef.Forward(command);
 
@@ -75,7 +84,7 @@ namespace Akkatecture.Aggregates
 
             if(Equals(aggregate, ActorRefs.Nobody))
             {
-                aggregate = this.CreateAggregate(aggregateId);
+                aggregate = CreateAggregate(aggregateId);
             }
 
             return aggregate;
@@ -88,7 +97,7 @@ namespace Akkatecture.Aggregates
             {
                 var command = deadLetter.Message as TCommand;
 
-                this.ReDispatch(command);
+                ReDispatch(command);
             }
 
             return true;
@@ -96,9 +105,9 @@ namespace Akkatecture.Aggregates
 
         protected virtual bool ReDispatch(TCommand command)
         {
-            this.Logger.Info($"{this.GetType().PrettyPrint()} as dead letter {command.GetType().PrettyPrint()}");
+            this.Logger.Info($"{GetType().PrettyPrint()} as dead letter {command.GetType().PrettyPrint()}");
 
-            var aggregateRef = this.FindOrCreate(command.AggregateId);
+            var aggregateRef = FindOrCreate(command.AggregateId);
 
             aggregateRef.Tell(command);
 
@@ -112,14 +121,14 @@ namespace Akkatecture.Aggregates
                 withinTimeMilliseconds: 3000,
                 localOnlyDecider: x =>
                 {
-                    this.Logger.Warning($"[{this.GetType().PrettyPrint()}] Exception={x.ToString()} to be decided.");
+                    Logger.Warning($"[{GetType().PrettyPrint()}] Exception={x.ToString()} to be decided.");
                     return Directive.Restart;
                 });
         }
 
         protected virtual bool Terminate(Terminated message)
         {
-            this.Logger.Warning($"{typeof(TAggregate).PrettyPrint()}: {message.ActorRef.Path} has terminated.");
+            Logger.Warning($"{typeof(TAggregate).PrettyPrint()}: {message.ActorRef.Path} has terminated.");
             Context.Unwatch(message.ActorRef);
             return true;
         }
