@@ -31,10 +31,10 @@ using Akkatecture.Extensions;
 
 namespace Akkatecture.Aggregates
 {
-    public abstract class AggregateManager<TAggregate, TIdentity, TCommand> :  ReceiveActor, IAggregateManager<TAggregate, TIdentity>
+    public abstract class AggregateManager<TAggregate, TIdentity, TCommand> : ReceiveActor, IAggregateManager<TAggregate, TIdentity>
         where TAggregate : ReceivePersistentActor, IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
-        where TCommand : class, ICommand<TAggregate,TIdentity>
+        where TCommand : class, ICommand<TAggregate, TIdentity>
     {
         protected ILoggingAdapter Logger { get; set; }
         protected Func<DeadLetter, bool> DeadLetterHandler => Handle;
@@ -44,13 +44,13 @@ namespace Akkatecture.Aggregates
         {
             Logger = Context.GetLogger();
             Settings = new AggregateManagerSettings(Context.System.Settings.Config);
-            
+
             Receive<Terminated>(Terminate);
 
             if(Settings.AutoDispatchOnReceive)
                 Receive<TCommand>(Dispatch);
 
-            if (Settings.HandleDeadLetters)
+            if(Settings.HandleDeadLetters)
             {
                 Context.System.EventStream.Subscribe(Self, typeof(DeadLetter));
                 Receive<DeadLetter>(DeadLetterHandler);
@@ -64,26 +64,26 @@ namespace Akkatecture.Aggregates
 
             var aggregateRef = FindOrCreate(command.AggregateId);
 
-            aggregateRef.Tell(command);
+            aggregateRef.Forward(command);
 
             return true;
         }
 
-        
+
         protected virtual bool ReDispatch(TCommand command)
         {
             Logger.Info($"{GetType().PrettyPrint()} as dead letter {command.GetType().PrettyPrint()}");
 
             var aggregateRef = FindOrCreate(command.AggregateId);
 
-            aggregateRef.Tell(command);
+            aggregateRef.Forward(command);
 
             return true;
         }
 
         protected bool Handle(DeadLetter deadLetter)
         {
-            if (deadLetter.Message is TCommand &&
+            if(deadLetter.Message is TCommand &&
                 (deadLetter.Message as TCommand).AggregateId.GetType() == typeof(TIdentity))
             {
                 var command = deadLetter.Message as TCommand;
@@ -106,9 +106,9 @@ namespace Akkatecture.Aggregates
         {
             var aggregate = Context.Child(aggregateId);
 
-            if (Equals(aggregate,ActorRefs.Nobody))
+            if(Equals(aggregate, ActorRefs.Nobody))
             {
-                aggregate = CreateAggregate(aggregateId);      
+                aggregate = CreateAggregate(aggregateId);
             }
 
             return aggregate;
@@ -116,7 +116,7 @@ namespace Akkatecture.Aggregates
 
         protected virtual IActorRef CreateAggregate(TIdentity aggregateId)
         {
-            var aggregateRef = Context.ActorOf(Props.Create<TAggregate>(aggregateId),aggregateId.Value);
+            var aggregateRef = Context.ActorOf(Props.Create<TAggregate>(aggregateId), aggregateId.Value);
             Context.Watch(aggregateRef);
             return aggregateRef;
         }
@@ -133,6 +133,6 @@ namespace Akkatecture.Aggregates
                     return Directive.Restart;
                 });
         }
-        
+
     }
 }
