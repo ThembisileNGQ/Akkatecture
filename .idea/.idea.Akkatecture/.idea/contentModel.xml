@@ -215,7 +215,10 @@
             <e p="SourceId.cs" t="Include" />
             <e p="VersionedTypes" t="Include">
               <e p="IVersionedType.cs" t="Include" />
+              <e p="IVersionedTypeDefinitionService.cs" t="Include" />
               <e p="VersionedTypeAttribute.cs" t="Include" />
+              <e p="VersionedTypeDefinition.cs" t="Include" />
+              <e p="VersionedTypeDefinitionService.cs" t="Include" />
             </e>
           </e>
           <e p="Entities" t="Include">
@@ -223,7 +226,10 @@
             <e p="IEntity.cs" t="Include" />
           </e>
           <e p="Events" t="Include">
+            <e p="EventDefinition.cs" t="Include" />
+            <e p="EventDefinitionService.cs" t="Include" />
             <e p="EventVersionAttribute.cs" t="Include" />
+            <e p="IEventDefinitionService.cs" t="Include" />
           </e>
           <e p="Exceptions" t="Include">
             <e p="MetadataKeyNotFoundException.cs" t="Include" />
