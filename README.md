@@ -2,13 +2,9 @@
 <a href="https://akkatecture.net/"><img src="https://raw.githubusercontent.com/Lutando/Akkatecture/master/logo.svg?sanitize=true" width="100%" height="200"></a>
 
 
-[![Nuget Package](https://img.shields.io/nuget/v/Akkatecture.svg?style=flat)](https://www.nuget.org/packages/Akkatecture/)
-[![Come Chat](https://img.shields.io/discord/440517592545755137.svg)](https://akkatecture.net/community)
-[![we are reactive](https://img.shields.io/badge/we_are-reactive-blue.svg?style=flat)](https://www.reactivemanifesto.org/)
-
-| **master** | [![Build status](https://dev.azure.com/lutando/Akkatecture/_apis/build/status/Akkatecture%20Master%20CI)](https://dev.azure.com/lutando/Akkatecture/_build/latest?definitionId=2) |
-|--------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **dev**    | [![Build status](https://dev.azure.com/lutando/Akkatecture/_apis/build/status/Akkatecture%20Development%20CI)](https://dev.azure.com/lutando/Akkatecture/_build/latest?definitionId=1) |
+| nuget                                                                                                                      |                                                                                       master                                                                                      |                                                                                           dev                                                                                          |                                                   chat                                                   | who are we?                                                                                                                |
+|----------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------:|----------------------------------------------------------------------------------------------------------------------------|
+| [![Nuget Package](https://img.shields.io/nuget/v/Akkatecture.svg?style=flat)](https://www.nuget.org/packages/Akkatecture/) | [![Build status](https://dev.azure.com/lutando/Akkatecture/_apis/build/status/Akkatecture%20Master%20CI)](https://dev.azure.com/lutando/Akkatecture/_build/latest?definitionId=2) | [![Build status](https://dev.azure.com/lutando/Akkatecture/_apis/build/status/Akkatecture%20Development%20CI)](https://dev.azure.com/lutando/Akkatecture/_build/latest?definitionId=1) | [![Come Chat](https://img.shields.io/discord/440517592545755137.svg)](https://akkatecture.net/community) | [![we are reactive](https://img.shields.io/badge/we_are-reactive-blue.svg?style=flat)](https://www.reactivemanifesto.org/) |
 
 
 # Akkatecture
