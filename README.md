@@ -8,7 +8,7 @@
 
 | **master** | [![Build status](https://dev.azure.com/lutando/Akkatecture/_apis/build/status/Akkatecture%20Master%20CI)](https://dev.azure.com/lutando/Akkatecture/_build/latest?definitionId=2) |
 |--------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **dev**    | [![Build status](https://dev.azure.com/lutando/Akkatecture/_apis/build/status/Akkatecture%20Master%20CI)](https://dev.azure.com/lutando/Akkatecture/_build/latest?definitionId=1) |
+| **dev**    | [![Build status](https://dev.azure.com/lutando/Akkatecture/_apis/build/status/Akkatecture%20Development%20CI)](https://dev.azure.com/lutando/Akkatecture/_build/latest?definitionId=1) |
 
 
 # Akkatecture
