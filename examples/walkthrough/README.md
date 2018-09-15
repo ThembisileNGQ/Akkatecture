@@ -1,6 +1,6 @@
 # Akkatecture Walkthrough Sample
 
-This is the sample that shows the completed result of the [walkthrough](https://akkatecture.net/docs/walkthrough-introduction).
+This is the sample that shows the completed result of the [walkthrough](https://akkatecture.net/docs/walkthrough-introduction) exercise..
 
 ## Akkatecture.Walkthrough.Domain
 
