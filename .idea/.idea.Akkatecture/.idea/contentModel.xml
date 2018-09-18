@@ -183,9 +183,8 @@
             <e p="MetadataKeys.cs" t="Include" />
           </e>
           <e p="Akka" t="Include">
-            <e p="AkkatectureReceiveActor.cs" t="Include" />
-            <e p="IAkkatectureActor.cs" t="Include" />
-            <e p="Typings.cs" t="Include" />
+            <e p="ActorRefOfT.cs" t="Include" />
+            <e p="IActorRefOfT.cs" t="Include" />
           </e>
           <e p="Akkatecture.csproj" t="IncludeRecursive" />
           <e p="bin" t="ExcludeRecursive" />
@@ -240,6 +239,7 @@
             <e p="ActorContextExtensions.cs" t="Include" />
             <e p="DateTimeOffsetExtensions.cs" t="Include" />
             <e p="IdentityExtensions.cs" t="Include" />
+            <e p="ServiceCollectionExtensions.cs" t="Include" />
             <e p="SourceIdExtensions.cs" t="Include" />
             <e p="SpecificationExtensions.cs" t="Include" />
             <e p="TypeExtensions.cs" t="Include" />
