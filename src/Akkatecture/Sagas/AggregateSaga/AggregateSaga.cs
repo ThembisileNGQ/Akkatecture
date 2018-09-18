@@ -299,8 +299,6 @@ namespace Akkatecture.Sagas.AggregateSaga
         {
             try
             {
-
-                //TODO event upcasting goes here
                 Logger.Debug($"Recovering with event of type [{aggregateEvent.GetType().PrettyPrint()}] ");
                 ApplyEvent(aggregateEvent);
             }
@@ -317,8 +315,6 @@ namespace Akkatecture.Sagas.AggregateSaga
         {
             try
             {
-
-                //TODO event upcasting goes here
                 Logger.Debug($"Recovering with event of type [{domainEvent.GetType().PrettyPrint()}] ");
                 ApplyEvent(domainEvent.AggregateEvent);
             }
