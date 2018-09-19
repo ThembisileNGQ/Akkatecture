@@ -60,6 +60,28 @@ namespace Akkatecture.Clustering.Core
             return shardRef;
         }
         
+        public static IActorRef StartClusteredAggregate(
+            ActorSystem actorSystem,
+            Expression<Func<TAggregateManager>> aggregateManagerFactory,
+            int numberOfShards = 12)
+        { 
+            var clusterSharding = ClusterSharding.Get(actorSystem);
+            var clusterShardingSettings = clusterSharding.Settings;
+
+            var shardResolver = new ShardResolvers(numberOfShards);
+
+            var shardRef = clusterSharding.Start(
+                typeof(TAggregateManager).Name,
+                Props.Create<TAggregateManager>(aggregateManagerFactory),
+                clusterShardingSettings,
+                ShardIdentityExtractors
+                    .AggregateIdentityExtractor<TAggregate, TIdentity>,
+                shardResolver.AggregateShardResolver<TAggregate, TIdentity>
+            );
+
+            return shardRef;
+        }
+        
         public static IActorRef StartAggregateClusterProxy(
             ActorSystem actorSystem,
             string clusterRoleName,

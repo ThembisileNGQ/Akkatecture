@@ -200,6 +200,11 @@
           </e>
           <e p="Configuration" t="Include">
             <e p="AkkatectureDefaultSettings.cs" t="Include" />
+            <e p="DependancyInjection" t="Include">
+              <e p="AkkatectureBuilder.cs" t="Include" />
+              <e p="AkkatectureServiceCollectionExtensions.cs" t="Include" />
+              <e p="IAkkatectureBuilder.cs" t="Include" />
+            </e>
             <e p="reference.conf" t="Include" />
           </e>
           <e p="Core" t="Include">
@@ -239,7 +244,6 @@
             <e p="ActorContextExtensions.cs" t="Include" />
             <e p="DateTimeOffsetExtensions.cs" t="Include" />
             <e p="IdentityExtensions.cs" t="Include" />
-            <e p="ServiceCollectionExtensions.cs" t="Include" />
             <e p="SourceIdExtensions.cs" t="Include" />
             <e p="SpecificationExtensions.cs" t="Include" />
             <e p="TypeExtensions.cs" t="Include" />
@@ -309,6 +313,9 @@
           <e p="Configuration" t="Include">
             <e p="AkkatectureClusteringDefaultSettings.cs" t="Include" />
             <e p="default.conf" t="Include" />
+            <e p="DependancyInjection" t="Include">
+              <e p="AkkatectureServiceCollectionExtensions.cs" t="Include" />
+            </e>
           </e>
           <e p="Core" t="Include">
             <e p="ClusterFactory.cs" t="Include" />

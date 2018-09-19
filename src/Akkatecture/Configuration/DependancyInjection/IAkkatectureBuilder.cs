@@ -22,11 +22,13 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using Akka.Actor;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Akkatecture.Akka
+namespace Akkatecture.Configuration.DependancyInjection
 {
-    public interface IActorRef<T> : IActorRef
+    public interface IAkkatectureBuilder
     {
-        
+        IServiceCollection Services { get; }
+        ActorSystem ActorSystem { get; }
     }
 }
