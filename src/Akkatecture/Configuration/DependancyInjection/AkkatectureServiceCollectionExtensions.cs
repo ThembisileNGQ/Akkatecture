@@ -28,6 +28,8 @@ using Akkatecture.Aggregates;
 using Akkatecture.Akka;
 using Akkatecture.Configuration.DependancyInjection;
 using Akkatecture.Core;
+using Akkatecture.Sagas;
+using Akkatecture.Sagas.AggregateSaga;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -66,6 +68,17 @@ namespace Microsoft.Extensions.DependencyInjection
             var actorRef = new ActorRefOfT<TAggregateManager>(aggregateManager);
 
             builder.Services.AddSingleton<IActorRef<TAggregateManager>>(actorRef);
+            return builder;
+        }
+
+        public static IAkkatectureBuilder AddSagaManager<TAggregateSagaManager, TAggregateSaga, TIdentity, TSagaLocator>(
+            this IAkkatectureBuilder builder, Expression<Func<TAggregateSaga>> sagaFactory)
+            where TAggregateSagaManager : ActorBase, IAggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator>
+            where TAggregateSaga : IAggregateSaga<TIdentity>
+            where TIdentity : SagaId<TIdentity>
+            where TSagaLocator : class, ISagaLocator<TIdentity>
+        {
+            builder.ActorSystem.ActorOf(Props.Create<TAggregateSagaManager>(sagaFactory));
             return builder;
         }
     }
