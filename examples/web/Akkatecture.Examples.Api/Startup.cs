@@ -18,10 +18,15 @@ namespace Akkatecture.Examples.Api
         
         public void ConfigureServices(IServiceCollection services)
         {
+            ConfigureActorSystem(services);
+            
             services
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+        }
 
+        public void ConfigureActorSystem(IServiceCollection services)
+        {
             services
                 .AddAkkatecture(ActorSystem.Create("api-system"))
                 .AddAggregateManager<ResourceManager, Resource, ResourceId>();

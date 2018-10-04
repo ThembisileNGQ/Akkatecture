@@ -41,7 +41,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IServiceCollection services,
             ActorSystem actorSystem)
         {
-            
+            services.AddSingleton<ActorSystem>(actorSystem);
             return new AkkatectureBuilder(services,actorSystem);
         }
         
@@ -54,6 +54,16 @@ namespace Microsoft.Extensions.DependencyInjection
             var aggregateManager = builder.ActorSystem.ActorOf(Props.Create<TAggregateManager>());
             var actorRef = new ActorRefOfT<TAggregateManager>(aggregateManager);
 
+            builder.Services.AddSingleton<IActorRef<TAggregateManager>>(actorRef);
+            return builder;
+        }
+
+        public static IAkkatectureBuilder AddAggregateManager<TAggregateManager>(
+            this IAkkatectureBuilder builder,
+            IActorRef aggregateManagerRef)
+            where TAggregateManager : ReceiveActor, IAggregateManager
+        {
+            var actorRef = new ActorRefOfT<TAggregateManager>(aggregateManagerRef);
             builder.Services.AddSingleton<IActorRef<TAggregateManager>>(actorRef);
             return builder;
         }
@@ -78,8 +88,25 @@ namespace Microsoft.Extensions.DependencyInjection
             where TIdentity : SagaId<TIdentity>
             where TSagaLocator : class, ISagaLocator<TIdentity>
         {
-            builder.ActorSystem.ActorOf(Props.Create<TAggregateSagaManager>(sagaFactory));
+            var sagaManager = builder.ActorSystem.ActorOf(Props.Create<TAggregateSagaManager>(sagaFactory));
+            var actorRef = new ActorRefOfT<TAggregateSagaManager>(sagaManager);
+
+            builder.Services.AddSingleton<IActorRef<TAggregateSagaManager>>(actorRef);
             return builder;
         }
+        
+        public static IAkkatectureBuilder AddSagaManager<TAggregateSagaManager, TAggregateSaga, TIdentity, TSagaLocator>(
+            this IAkkatectureBuilder builder, IActorRef sagaManagerRef)
+            where TAggregateSagaManager : ActorBase, IAggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator>
+            where TAggregateSaga : IAggregateSaga<TIdentity>
+            where TIdentity : SagaId<TIdentity>
+            where TSagaLocator : class, ISagaLocator<TIdentity>
+        {
+            var actorRef = new ActorRefOfT<TAggregateSagaManager>(sagaManagerRef);
+
+            builder.Services.AddSingleton<IActorRef<TAggregateSagaManager>>(actorRef);
+            return builder;
+        }
+        
     }
 }
