@@ -152,6 +152,40 @@
           </e>
           <e p="README.md" t="Include" />
         </e>
+        <e p="web" t="Include">
+          <e p="Akkatecture.Examples.Api" t="IncludeRecursive">
+            <e p="Akkatecture.Examples.Api.csproj" t="IncludeRecursive" />
+            <e p="bin" t="ExcludeRecursive" />
+            <e p="Controllers" t="Include">
+              <e p="ResourceController.cs" t="Include" />
+            </e>
+            <e p="Domain" t="Include">
+              <e p="Aggregates" t="Include">
+                <e p="Resource" t="Include">
+                  <e p="Commands" t="Include" />
+                  <e p="Events" t="Include" />
+                  <e p="Resource.cs" t="Include" />
+                  <e p="ResourceId.cs" t="Include" />
+                  <e p="ResourceManager.cs" t="Include" />
+                  <e p="ResourceState.cs" t="Include" />
+                </e>
+              </e>
+            </e>
+            <e p="obj" t="ExcludeRecursive">
+              <e p="Debug" t="Include">
+                <e p="netcoreapp2.1" t="Include">
+                  <e p="Akkatecture.Examples.Api.AssemblyInfo.cs" t="Include" />
+                </e>
+              </e>
+            </e>
+            <e p="Program.cs" t="Include" />
+            <e p="Properties" t="Include">
+              <e p="launchSettings.json" t="Include" />
+            </e>
+            <e p="Startup.cs" t="Include" />
+            <e p="wwwroot" t="Include" />
+          </e>
+        </e>
       </e>
       <e p="packages" t="ExcludeRecursive" />
       <e p="src" t="Include">
@@ -200,6 +234,11 @@
           </e>
           <e p="Configuration" t="Include">
             <e p="AkkatectureDefaultSettings.cs" t="Include" />
+            <e p="DependancyInjection" t="Include">
+              <e p="AkkatectureBuilder.cs" t="Include" />
+              <e p="AkkatectureServiceCollectionExtensions.cs" t="Include" />
+              <e p="IAkkatectureBuilder.cs" t="Include" />
+            </e>
             <e p="reference.conf" t="Include" />
           </e>
           <e p="Core" t="Include">
@@ -239,7 +278,6 @@
             <e p="ActorContextExtensions.cs" t="Include" />
             <e p="DateTimeOffsetExtensions.cs" t="Include" />
             <e p="IdentityExtensions.cs" t="Include" />
-            <e p="ServiceCollectionExtensions.cs" t="Include" />
             <e p="SourceIdExtensions.cs" t="Include" />
             <e p="SpecificationExtensions.cs" t="Include" />
             <e p="TypeExtensions.cs" t="Include" />
@@ -309,6 +347,9 @@
           <e p="Configuration" t="Include">
             <e p="AkkatectureClusteringDefaultSettings.cs" t="Include" />
             <e p="default.conf" t="Include" />
+            <e p="DependancyInjection" t="Include">
+              <e p="AkkatectureServiceCollectionExtensions.cs" t="Include" />
+            </e>
           </e>
           <e p="Core" t="Include">
             <e p="ClusterFactory.cs" t="Include" />
