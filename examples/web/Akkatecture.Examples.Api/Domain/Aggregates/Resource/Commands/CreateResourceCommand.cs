@@ -21,27 +21,44 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System.Collections.Generic;
 using Akka.Actor;
-using Akka.Actor.Internal;
-using Akka.Dispatch;
+using Akkatecture.Aggregates.ExecutionResults;
+using Akkatecture.Commands;
+using Akkatecture.Examples.Api.Domain.Aggregates.Resource.Events;
 
-namespace Akkatecture.Akka
+namespace Akkatecture.Examples.Api.Domain.Aggregates.Resource.Commands
 {
-    public interface IActorRef<T> : IInternalActorRef
+    public class CreateResourceCommand : Command<Resource, ResourceId>
     {
-    }
-    
-    public class Repointable : RepointableActorRef
-    {
-        public Repointable(
-            ActorSystemImpl system,
-            Props props, 
-            MessageDispatcher dispatcher,
-            MailboxType mailboxType,
-            IInternalActorRef supervisor,
-            ActorPath path) 
-            : base(system, props, dispatcher, mailboxType, supervisor, path)
+        public CreateResourceCommand(ResourceId aggregateId)
+            : base(aggregateId)
         {
+            
+        }
+    }
+
+    public class CreateResourceCommandHandler : CommandHandler<Resource, ResourceId, CreateResourceCommand>
+    {
+        public override void Handle(
+            Resource aggregate,
+            IActorContext context,
+            CreateResourceCommand command)
+        {
+            if (aggregate.IsNew)
+            {
+                var aggregateEvent = new ResourceCreatedEvent();
+                aggregate.Emit(aggregateEvent);
+
+
+                var executionResult = new SuccessExecutionResult();
+                context.Sender.Tell(executionResult);
+            }
+            else
+            {
+                var executionResult = new FailedExecutionResult(new List<string> {"aggregate is already created"});
+                context.Sender.Tell(executionResult);
+            }
         }
     }
 }

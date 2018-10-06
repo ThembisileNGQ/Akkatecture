@@ -25,38 +25,48 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using Akka.Actor;
+using Akka.Event;
+using Akka.Persistence;
 using Akkatecture.Aggregates;
+using Akkatecture.Aggregates.ExecutionResults;
 using Akkatecture.Core;
+using Akkatecture.Extensions;
 
 namespace Akkatecture.Commands
 {
     public abstract class CommandHandler<TAggregate, TIdentity,TResult,TCommand> :
         ICommandHandler<TAggregate, TIdentity,TResult, TCommand>
-        where TAggregate : IAggregateRoot<TIdentity>
+        where TAggregate : ReceivePersistentActor, IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
         where TCommand : ICommand<TAggregate, TIdentity>
     {
         public abstract TResult HandleCommand(
             TAggregate aggregate,
+            IActorContext context,
             TCommand command);
     }
 
     public abstract class CommandHandler<TAggregate, TIdentity, TCommand> :
         CommandHandler<TAggregate, TIdentity,bool,TCommand>
-        where TAggregate : IAggregateRoot<TIdentity>
+        where TAggregate : ReceivePersistentActor, IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
         where TCommand : ICommand<TAggregate, TIdentity>
     {
         public override bool HandleCommand(
             TAggregate aggregate,
+            IActorContext context,
             TCommand command)
         {
-            Handle(aggregate, command);
+            var logger = context.GetLogger();
+            Handle(aggregate, context, command);
+            logger.Info($"{command.GetType().PrettyPrint()} handled in {GetType().PrettyPrint()}");
             return true;
         }
 
-        public abstract bool Handle(
+        public abstract void Handle(
             TAggregate aggregate,
+            IActorContext context,
             TCommand command);
     }
 }

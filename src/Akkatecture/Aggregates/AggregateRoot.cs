@@ -112,7 +112,7 @@ namespace Akkatecture.Aggregates
 
         
 
-        protected virtual void Emit<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
+        public virtual void Emit<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
             where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
         {
             if (aggregateEvent == null)
@@ -356,6 +356,11 @@ namespace Akkatecture.Aggregates
         public override string ToString()
         {
             return $"{GetType().PrettyPrint()} v{Version}";
+        }
+
+        protected void Command<TCommand, TCommandHandler>()
+        {
+            
         }
         
     }

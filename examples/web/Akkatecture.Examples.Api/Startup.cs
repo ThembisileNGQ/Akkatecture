@@ -1,5 +1,8 @@
 ﻿using Akka.Actor;
 using Akkatecture.Examples.Api.Domain.Aggregates.Resource;
+using Akkatecture.Examples.Api.Domain.Repositories.Operations;
+using Akkatecture.Examples.Api.Domain.Repositories.Resources;
+using Akkatecture.Examples.Api.Domain.Sagas;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -18,29 +21,51 @@ namespace Akkatecture.Examples.Api
         
         public void ConfigureServices(IServiceCollection services)
         {
-            ConfigureActorSystem(services);
+            ConfigureActors(services);
             
             services
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services
+                .AddTransient<IQueryResources, ResourcesQueryHandler>()
+                .AddTransient<IQueryOperations, OperationsQueryHandler>();
         }
 
-        public void ConfigureActorSystem(IServiceCollection services)
+        public void ConfigureActors(IServiceCollection services)
         {
+            var actorSystem = ActorSystem.Create("api-system");
+            var aggregateManager = actorSystem.ActorOf(Props.Create(() => new ResourceManager()),"resource-manager");
+            var sagaManager =
+                actorSystem.ActorOf(
+                    Props.Create(() => new ResourceCreationSagaManager(() => new ResourceCreationSaga())),
+                    "resourcecreation-sagamanager");
+            var resourceStorage = actorSystem.ActorOf(Props.Create(() => new ResourcesStorageHandler()), "resource-storagehandler");
+            var operationStorage = actorSystem.ActorOf(Props.Create(() => new OperationsStorageHandler()), "operation-storagehandler");
+
             services
-                .AddAkkatecture(ActorSystem.Create("api-system"))
-                .AddAggregateManager<ResourceManager, Resource, ResourceId>();
+                .AddAkkatecture(actorSystem)
+                .AddAggregateManager<ResourceManager>(aggregateManager)
+                .AddSagaManager<ResourceCreationSagaManager,ResourceCreationSaga,ResourceCreationSagaId,ResourceCreationSagaLocator>(sagaManager)
+                .AddActorReference<ResourcesStorageHandler>(resourceStorage)
+                .AddActorReference<OperationsStorageHandler>(operationStorage);
         }
 
         
         public void Configure(
             IApplicationBuilder app,
-            IHostingEnvironment env,
-            ILoggerFactory loggerFactory,
-            IApplicationLifetime lifetime)
+            ILoggerFactory loggerFactory)
         {
 
-            app.UseMvc();
+            app.Map("/api", api =>
+            {
+                api.UseMvc(routes =>
+                {
+                    routes.MapRoute(
+                        name: "default",
+                        template: "{controller}/{action}");
+                });
+            });
             
             
             var logger = loggerFactory.CreateLogger<Startup>();

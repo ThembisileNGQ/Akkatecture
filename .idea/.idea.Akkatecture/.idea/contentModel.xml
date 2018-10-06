@@ -157,18 +157,53 @@
             <e p="Akkatecture.Examples.Api.csproj" t="IncludeRecursive" />
             <e p="bin" t="ExcludeRecursive" />
             <e p="Controllers" t="Include">
-              <e p="ResourceController.cs" t="Include" />
+              <e p="BaseController.cs" t="Include" />
+              <e p="Models" t="Include">
+                <e p="ResourceResponseModel.cs" t="Include" />
+              </e>
+              <e p="OperationsController.cs" t="Include" />
+              <e p="ResourcesController.cs" t="Include" />
             </e>
             <e p="Domain" t="Include">
               <e p="Aggregates" t="Include">
                 <e p="Resource" t="Include">
-                  <e p="Commands" t="Include" />
-                  <e p="Events" t="Include" />
+                  <e p="Commands" t="Include">
+                    <e p="CreateResourceCommand.cs" t="Include" />
+                  </e>
+                  <e p="Events" t="Include">
+                    <e p="ResourceCreatedEvent.cs" t="Include" />
+                  </e>
                   <e p="Resource.cs" t="Include" />
                   <e p="ResourceId.cs" t="Include" />
                   <e p="ResourceManager.cs" t="Include" />
                   <e p="ResourceState.cs" t="Include" />
                 </e>
+              </e>
+              <e p="Repositories" t="Include">
+                <e p="Operations" t="Include">
+                  <e p="IQueryOperations.cs" t="Include" />
+                  <e p="OperationsQueryHandler.cs" t="Include" />
+                  <e p="OperationsReadModel.cs" t="Include" />
+                  <e p="OperationsStorageHandler.cs" t="Include" />
+                </e>
+                <e p="Resources" t="Include">
+                  <e p="IQueryResources.cs" t="Include" />
+                  <e p="ResourcesQueryHandler.cs" t="Include" />
+                  <e p="ResourcesReadModel.cs" t="Include" />
+                  <e p="ResourcesStorageHandler.cs" t="Include" />
+                </e>
+              </e>
+              <e p="Sagas" t="Include">
+                <e p="Events" t="Include">
+                  <e p="ResourceCreationEndedEvent.cs" t="Include" />
+                  <e p="ResourceCreationProgressEvent.cs" t="Include" />
+                  <e p="ResourceCreationStartedEvent.cs" t="Include" />
+                </e>
+                <e p="ResourceCreationSaga.cs" t="Include" />
+                <e p="ResourceCreationSagaId.cs" t="Include" />
+                <e p="ResourceCreationSagaLocator.cs" t="Include" />
+                <e p="ResourceCreationSagaManager.cs" t="Include" />
+                <e p="ResourceCreationSagaState.cs" t="Include" />
               </e>
             </e>
             <e p="obj" t="ExcludeRecursive">
@@ -202,6 +237,12 @@
             <e p="CommittedEvent.cs" t="Include" />
             <e p="DomainEvent.cs" t="Include" />
             <e p="EventId.cs" t="Include" />
+            <e p="ExecutionResults" t="Include">
+              <e p="ExecutionResult.cs" t="Include" />
+              <e p="FailedExecutionResult.cs" t="Include" />
+              <e p="IExecutionResult.cs" t="Include" />
+              <e p="SuccessExecutionResult.cs" t="Include" />
+            </e>
             <e p="IAggregateEvent.cs" t="Include" />
             <e p="IAggregateManager.cs" t="Include" />
             <e p="IAggregateName.cs" t="Include" />

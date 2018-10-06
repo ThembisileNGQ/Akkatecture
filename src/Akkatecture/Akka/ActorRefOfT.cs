@@ -21,20 +21,30 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
+using System.Collections.Generic;
 using Akka.Actor;
+using Akka.Dispatch.SysMsg;
 using Akka.Util;
 
 namespace Akkatecture.Akka
 {
     public class ActorRefOfT<T> : IActorRef<T>
     {
-        public IActorRef ActorRef { get; }
+        public RepointableActorRef ActorRef { get; }
         public ActorPath Path { get; }
-        
+        public bool IsLocal { get; }
+        public IInternalActorRef Parent { get; }
+        public IActorRefProvider Provider { get; }
+        public bool IsTerminated { get; }
         public ActorRefOfT(IActorRef actorRef)
         {
-            ActorRef = actorRef;
+            ActorRef = actorRef as RepointableActorRef;
             Path = actorRef.Path;
+            IsLocal = ActorRef.IsLocal;
+            Parent = ActorRef.Parent;
+            Provider = ActorRef.Provider;
+            IsTerminated = ActorRef.IsTerminated;
         }
 
         public void Tell(object message, IActorRef sender)
@@ -60,6 +70,46 @@ namespace Akkatecture.Akka
         public int CompareTo(object obj)
         {
             return ActorRef.CompareTo(obj);
+        }
+
+        public IActorRef GetChild(IEnumerable<string> name)
+        {
+            return ActorRef.GetChild(name);
+        }
+
+        public void Resume(Exception causedByFailure = null)
+        {
+            ActorRef.Resume(causedByFailure);
+        }
+
+        public void Start()
+        {
+            ActorRef.Start();
+        }
+
+        public void Stop()
+        {
+            ActorRef.Stop();
+        }
+
+        public void Restart(Exception cause)
+        {
+            ActorRef.Restart(cause);
+        }
+
+        public void Suspend()
+        {
+            ActorRef.Suspend();
+        }
+
+        public void SendSystemMessage(ISystemMessage message, IActorRef sender)
+        {
+            ActorRef.SendSystemMessage(message);
+        }
+
+        public void SendSystemMessage(ISystemMessage message)
+        {
+            ActorRef.SendSystemMessage(message);
         }
 
     }

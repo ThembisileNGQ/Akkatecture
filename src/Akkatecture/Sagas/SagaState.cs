@@ -31,7 +31,7 @@ using Akkatecture.Aggregates;
 using Akkatecture.Extensions;
 
 namespace Akkatecture.Sagas
-{
+{   
     public abstract class SagaState<TSaga, TIdentity, TEventApplier> : ISagaState<TIdentity>, IEventApplier<TSaga, TIdentity>
         where TEventApplier : class, IEventApplier<TSaga, TIdentity>
         where TSaga : IAggregateRoot<TIdentity>

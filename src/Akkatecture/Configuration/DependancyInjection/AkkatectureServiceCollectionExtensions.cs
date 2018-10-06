@@ -64,6 +64,7 @@ namespace Microsoft.Extensions.DependencyInjection
             where TAggregateManager : ReceiveActor, IAggregateManager
         {
             var actorRef = new ActorRefOfT<TAggregateManager>(aggregateManagerRef);
+            //var actorRef = aggregateManagerRef as IActorRef<TAggregateManager>;
             builder.Services.AddSingleton<IActorRef<TAggregateManager>>(actorRef);
             return builder;
         }
@@ -105,6 +106,17 @@ namespace Microsoft.Extensions.DependencyInjection
             var actorRef = new ActorRefOfT<TAggregateSagaManager>(sagaManagerRef);
 
             builder.Services.AddSingleton<IActorRef<TAggregateSagaManager>>(actorRef);
+            return builder;
+        }
+        
+        
+        public static IAkkatectureBuilder AddActorReference<TActor>(
+            this IAkkatectureBuilder builder, IActorRef actorReference)
+            where TActor : ActorBase
+        {
+            var actorRef = new ActorRefOfT<TActor>(actorReference);
+
+            builder.Services.AddSingleton<IActorRef<TActor>>(actorRef);
             return builder;
         }
         

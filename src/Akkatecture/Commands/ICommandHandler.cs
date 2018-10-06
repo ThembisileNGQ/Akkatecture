@@ -25,6 +25,7 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using Akka.Actor;
 using Akkatecture.Aggregates;
 using Akkatecture.Core;
 
@@ -39,6 +40,6 @@ namespace Akkatecture.Commands
         where TIdentity : IIdentity
         where TCommand : ICommand<TAggregate, TIdentity>
     {
-        TResult HandleCommand(TAggregate aggregate, TCommand command);
+        TResult HandleCommand(TAggregate aggregate, IActorContext context, TCommand command);
     }
 }

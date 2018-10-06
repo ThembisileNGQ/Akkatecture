@@ -21,27 +21,17 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using Akka.Actor;
-using Akka.Actor.Internal;
-using Akka.Dispatch;
+using Akkatecture.Aggregates;
+using Akkatecture.Events;
 
-namespace Akkatecture.Akka
+namespace Akkatecture.Examples.Api.Domain.Aggregates.Resource.Events
 {
-    public interface IActorRef<T> : IInternalActorRef
+    [EventVersion("ResourceCreated", 1)]
+    public class ResourceCreatedEvent : AggregateEvent<Resource, ResourceId>
     {
-    }
-    
-    public class Repointable : RepointableActorRef
-    {
-        public Repointable(
-            ActorSystemImpl system,
-            Props props, 
-            MessageDispatcher dispatcher,
-            MailboxType mailboxType,
-            IInternalActorRef supervisor,
-            ActorPath path) 
-            : base(system, props, dispatcher, mailboxType, supervisor, path)
+        public ResourceCreatedEvent()
         {
+            
         }
     }
 }
