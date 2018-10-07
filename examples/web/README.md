@@ -32,7 +32,7 @@ public void ConfigureServices(IServiceCollection services)
 
 ```
 
-Then you can inject that `IActorRef<T>` into any dependancy
+Then you can inject that `IActorRef<T>` into any dependancy:
 
 ```
 public class MyService : IMyService
@@ -46,9 +46,11 @@ public class MyService : IMyService
 }
 ```
 
-### Api
+Now that we know how to setup our actor system, within the aspnet core di container, we can go onto seeing how we can model long running stepwise processes from an API design standpoint.
 
-The Api has the following endpoints
+### Api Reference
+
+The Api has the following endpoints:
 
 **Resources**
 
@@ -62,7 +64,7 @@ The resources are the aggregates that we will create.
 
 **Operations**
 
-The operations represent the long running operations of creating a `resource`.
+The operations represent the sagas / long running operations of creating a `resource`.
 
 `GET api/operations`
 
