@@ -21,37 +21,30 @@ namespace Akkatecture.Examples.Api
         
         public void ConfigureServices(IServiceCollection services)
         {
-            ConfigureActors(services);
+            var actorSystem = ActorSystem.Create("api-system");
+            var aggregateManager = actorSystem.ActorOf(Props.Create(() => new ResourceManager()),"resource-manager");
+            var sagaManager = actorSystem.ActorOf(Props.Create(() => new ResourceCreationSagaManager(() => new ResourceCreationSaga())),"resourcecreation-sagamanager");
+            var resourceStorage = actorSystem.ActorOf(Props.Create(() => new ResourcesStorageHandler()), "resource-storagehandler");
+            var operationStorage = actorSystem.ActorOf(Props.Create(() => new OperationsStorageHandler()), "operation-storagehandler");
+
+            // Add Actors to DI as IActorRef<T>
+            services
+                .AddAkkatecture(actorSystem)
+                .AddActorReference<ResourceManager>(aggregateManager)
+                .AddActorReference<ResourceCreationSagaManager>(sagaManager)
+                .AddActorReference<ResourcesStorageHandler>(resourceStorage)
+                .AddActorReference<OperationsStorageHandler>(operationStorage);
             
             services
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            // Add Read Side 
             services
                 .AddTransient<IQueryResources, ResourcesQueryHandler>()
                 .AddTransient<IQueryOperations, OperationsQueryHandler>();
         }
 
-        public void ConfigureActors(IServiceCollection services)
-        {
-            var actorSystem = ActorSystem.Create("api-system");
-            var aggregateManager = actorSystem.ActorOf(Props.Create(() => new ResourceManager()),"resource-manager");
-            var sagaManager =
-                actorSystem.ActorOf(
-                    Props.Create(() => new ResourceCreationSagaManager(() => new ResourceCreationSaga())),
-                    "resourcecreation-sagamanager");
-            var resourceStorage = actorSystem.ActorOf(Props.Create(() => new ResourcesStorageHandler()), "resource-storagehandler");
-            var operationStorage = actorSystem.ActorOf(Props.Create(() => new OperationsStorageHandler()), "operation-storagehandler");
-
-            services
-                .AddAkkatecture(actorSystem)
-                .AddAggregateManager<ResourceManager>(aggregateManager)
-                .AddSagaManager<ResourceCreationSagaManager,ResourceCreationSaga,ResourceCreationSagaId,ResourceCreationSagaLocator>(sagaManager)
-                .AddActorReference<ResourcesStorageHandler>(resourceStorage)
-                .AddActorReference<OperationsStorageHandler>(operationStorage);
-        }
-
-        
         public void Configure(
             IApplicationBuilder app,
             ILoggerFactory loggerFactory)

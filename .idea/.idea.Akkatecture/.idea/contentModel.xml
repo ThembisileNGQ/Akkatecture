@@ -218,8 +218,11 @@
               <e p="launchSettings.json" t="Include" />
             </e>
             <e p="Startup.cs" t="Include" />
-            <e p="wwwroot" t="Include" />
           </e>
+          <e p="Postman" t="Include" />
+          <e p="PostmanCollection/Akkatecture.Api.Example.postman_collection.json" t="Include" />
+          <e p="PostmanCollection/Akkatecture.Api.Example.postman_environment.json" t="Include" />
+          <e p="README.md" t="Include" />
         </e>
       </e>
       <e p="packages" t="ExcludeRecursive" />

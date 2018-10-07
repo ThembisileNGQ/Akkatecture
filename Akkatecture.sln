@@ -52,8 +52,17 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.Examples.Domain", "examples\simple\Akkatecture.Examples.Domain\Akkatecture.Examples.Domain.csproj", "{C104C065-D0CE-42C0-9C43-D8F17ECEA0A0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "web", "web", "{2B7C892D-01E8-4FE5-A8BB-BBF130A42904}"
+ProjectSection(SolutionItems) = preProject
+	examples\web\README.md = examples\web\README.md
+EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.Examples.Api", "examples\web\Akkatecture.Examples.Api\Akkatecture.Examples.Api.csproj", "{6A69FDC5-7A8D-4FB8-874A-484F68FBEA7A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "postman", "postman", "{8811113F-775E-4371-8E71-942BD50844A6}"
+ProjectSection(SolutionItems) = preProject
+	examples\web\PostmanCollection\Akkatecture.Api.Example.postman_collection.json = examples\web\PostmanCollection\Akkatecture.Api.Example.postman_collection.json
+	examples\web\PostmanCollection\Akkatecture.Api.Example.postman_environment.json = examples\web\PostmanCollection\Akkatecture.Api.Example.postman_environment.json
+EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -130,6 +139,7 @@ Global
 		{C104C065-D0CE-42C0-9C43-D8F17ECEA0A0} = {090ECC2F-5647-4B15-ABDF-2E1B44439626}
 		{2B7C892D-01E8-4FE5-A8BB-BBF130A42904} = {7522402D-176E-4305-A68B-F3FFBFD38158}
 		{6A69FDC5-7A8D-4FB8-874A-484F68FBEA7A} = {2B7C892D-01E8-4FE5-A8BB-BBF130A42904}
+		{8811113F-775E-4371-8E71-942BD50844A6} = {2B7C892D-01E8-4FE5-A8BB-BBF130A42904}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F5A40806-ED71-4286-A37C-BE0364FA29A6}

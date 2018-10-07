@@ -5,7 +5,7 @@ using Akkatecture.Sagas;
 
 namespace Akkatecture.Examples.Api.Domain.Sagas
 {
-    public class ResourceCreationSagaState : SagaState<ResourceCreationSaga,ResourceCreationSagaId,IEventApplier<ResourceCreationSaga, ResourceCreationSagaId>>,
+    public class ResourceCreationSagaState : SagaState<ResourceCreationSaga, ResourceCreationSagaId, IEventApplier<ResourceCreationSaga, ResourceCreationSagaId>>,
         IApply<ResourceCreationStartedEvent>,
         IApply<ResourceCreationProgressEvent>,
         IApply<ResourceCreationEndedEvent>

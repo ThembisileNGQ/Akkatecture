@@ -30,18 +30,4 @@ namespace Akkatecture.Akka
     public interface IActorRef<T> : IInternalActorRef
     {
     }
-    
-    public class Repointable : RepointableActorRef
-    {
-        public Repointable(
-            ActorSystemImpl system,
-            Props props, 
-            MessageDispatcher dispatcher,
-            MailboxType mailboxType,
-            IInternalActorRef supervisor,
-            ActorPath path) 
-            : base(system, props, dispatcher, mailboxType, supervisor, path)
-        {
-        }
-    }
 }

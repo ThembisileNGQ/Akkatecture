@@ -1,0 +1,123 @@
+{
+	"info": {
+		"_postman_id": "6b6f422f-f9bc-427e-a789-58704628d00a",
+		"name": "Akkatecture Api Example",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Resources",
+			"description": "",
+			"item": [
+				{
+					"name": "Resources [202] - Create Resource",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "9644379f-228c-43fa-8cf6-6561427ce425",
+								"type": "text/javascript",
+								"exec": [
+									"var body = pm.response.json();",
+									"",
+									"pm.test('should be 202', () => {",
+									"    pm.response.to.have.status(202);",
+									"    pm.environment.set(\"OperationId\", body.operationId);",
+									"});",
+									"",
+									"pm.test('should have location header', () => {",
+									"    pm.response.to.have.header(\"Location\");",
+									"});",
+									"",
+									"pm.test('should have content location header', () => {",
+									"    pm.response.to.have.header(\"Content-Location\");",
+									"})",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{ApiUrl}}/api/resources",
+							"host": [
+								"{{ApiUrl}}"
+							],
+							"path": [
+								"api",
+								"resources"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Resources [200] - Get All",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{ApiUrl}}api/resources",
+							"host": [
+								"{{ApiUrl}}api"
+							],
+							"path": [
+								"resources"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Operations",
+			"description": "",
+			"item": [
+				{
+					"name": "Operations [200] - Get By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{ApiUrl}}/api/operations/{{OperationId}}",
+							"host": [
+								"{{ApiUrl}}"
+							],
+							"path": [
+								"api",
+								"operations",
+								"{{OperationId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Operations [200] - Get All",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{ApiUrl}}/api/operations",
+							"host": [
+								"{{ApiUrl}}"
+							],
+							"path": [
+								"api",
+								"operations"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

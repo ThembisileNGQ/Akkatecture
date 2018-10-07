@@ -28,18 +28,19 @@ namespace Akkatecture.Examples.Api.Controllers
         public async Task<IActionResult> PostResource()
         {
             var resourceId = ResourceId.New;
+            var id = resourceId.GetGuid();
             var command = new CreateResourceCommand(resourceId);
 
             var result = await _resourceManager.Ask<IExecutionResult>(command);
 
             if (result.IsSuccess)
             {
-                var location = new Uri($"{GetAbsoluteUri(HttpContext)}/api/operations/{resourceId.GetGuid()}");
-                var contentLocation = new Uri($"{GetAbsoluteUri(HttpContext)}/api/resources/{resourceId.GetGuid()}");
+                var location = new Uri($"{GetAbsoluteUri(HttpContext)}/api/operations/{id}");
+                var contentLocation = new Uri($"{GetAbsoluteUri(HttpContext)}/api/resources/{id}");
                 HttpContext.Response.Headers.Add("Location", location.ToString());
                 HttpContext.Response.Headers.Add("Content-Location", contentLocation.ToString());
                 
-                return Accepted(new ResourceResponseModel{ Id = resourceId.GetGuid()});
+                return Accepted(new ResourceResponseModel(id,id));
             }
             else
             {
@@ -62,6 +63,7 @@ namespace Akkatecture.Examples.Api.Controllers
 
             return Ok(resources);
         }
+        
 
     }
 }

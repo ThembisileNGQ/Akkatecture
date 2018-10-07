@@ -31,8 +31,13 @@ namespace Akkatecture.Examples.Api.Domain.Repositories.Operations
             var query = new GetOperationsQuery();
             
             var result = await _operationStorageHandler.Ask<List<OperationsReadModel>>(query);
+
+            var sortedResult = result
+                .OrderBy(x => x.Percentage)
+                .ThenBy(x => x.StartedAt)
+                .ToList();
             
-            return result;
+            return sortedResult;
         }
     }
 
