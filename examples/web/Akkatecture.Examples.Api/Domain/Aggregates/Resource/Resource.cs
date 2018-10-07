@@ -8,8 +8,7 @@ namespace Akkatecture.Examples.Api.Domain.Aggregates.Resource
         public Resource(ResourceId id)
             : base(id)
         {
-            var handler = new CreateResourceCommandHandler();
-            Command<CreateResourceCommand>(x => handler.HandleCommand(this, Context, x));
+            Command<CreateResourceCommand, CreateResourceCommandHandler>();
         }
     }
 }
