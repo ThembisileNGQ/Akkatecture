@@ -22,29 +22,24 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Akkatecture.Aggregates;
+using Akkatecture.Examples.Api.Domain.Aggregates.Resource.Events;
+using Akkatecture.Sagas;
 
-namespace Akkatecture.Examples.Api
+namespace Akkatecture.Examples.Api.Domain.Sagas
 {
-    public class Program
+    public class ResourceCreationSagaLocator : ISagaLocator<ResourceCreationSagaId>
     {
-        public static void Main(string[] args)
+        public const string LocatorIdPrefix = "resourcecreation";
+        public ResourceCreationSagaId LocateSaga(IDomainEvent domainEvent)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            switch (domainEvent.GetAggregateEvent())
+            {
+                case ResourceCreatedEvent evt:
+                    return new ResourceCreationSagaId($"{LocatorIdPrefix}-{domainEvent.GetIdentity()}");
+                default:
+                    throw new ArgumentException(nameof(domainEvent));
+            }
         }
-
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost
-                .CreateDefaultBuilder(args)
-                .UseKestrel()
-                .UseUrls("http://*:5001")
-                .UseStartup<Startup>();
     }
 }

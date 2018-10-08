@@ -22,29 +22,36 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Akkatecture.Examples.Api
+namespace Akkatecture.Examples.Api.Controllers
 {
-    public class Program
+    public class BaseController : Controller
     {
-        public static void Main(string[] args)
+        public static string GetAbsoluteUri(HttpContext context)
         {
-            CreateWebHostBuilder(args).Build().Run();
-        }
+            var request = context.Request;
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost
-                .CreateDefaultBuilder(args)
-                .UseKestrel()
-                .UseUrls("http://*:5001")
-                .UseStartup<Startup>();
+            var host = request.Host.ToUriComponent();
+            var scheme = request.Scheme;
+
+            if (!(host.Contains("localhost") || host.Contains("127.0.0.1")))
+            {
+                scheme = "https";
+            }
+
+            return String.Concat(
+                scheme,
+                "://",
+                request.Host.ToUriComponent());
+        }
+        
+        [NonAction]
+        protected IActionResult SeeOther(Uri location)
+        {
+            HttpContext.Response.GetTypedHeaders().Location = location;
+            return StatusCode(StatusCodes.Status303SeeOther);
+        }
     }
 }

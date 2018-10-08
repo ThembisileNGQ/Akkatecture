@@ -21,30 +21,17 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Akkatecture.Aggregates;
+using Akkatecture.Events;
 
-namespace Akkatecture.Examples.Api
+namespace Akkatecture.Examples.Api.Domain.Aggregates.Resource.Events
 {
-    public class Program
+    [EventVersion("ResourceCreated", 1)]
+    public class ResourceCreatedEvent : AggregateEvent<Resource, ResourceId>
     {
-        public static void Main(string[] args)
+        public ResourceCreatedEvent()
         {
-            CreateWebHostBuilder(args).Build().Run();
+            
         }
-
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost
-                .CreateDefaultBuilder(args)
-                .UseKestrel()
-                .UseUrls("http://*:5001")
-                .UseStartup<Startup>();
     }
 }

@@ -22,11 +22,12 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using Akka.Actor;
+using Akka.Actor.Internal;
+using Akka.Dispatch;
 
 namespace Akkatecture.Akka
 {
-    public interface IActorRef<T> : IActorRef
+    public interface IActorRef<T> : IInternalActorRef
     {
-        
     }
 }

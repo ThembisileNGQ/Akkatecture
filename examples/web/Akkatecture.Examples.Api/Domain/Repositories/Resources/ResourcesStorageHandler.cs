@@ -21,30 +21,38 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Akkatecture.Aggregates;
+using Akkatecture.Examples.Api.Domain.Sagas;
+using Akkatecture.Examples.Api.Domain.Sagas.Events;
+using Akkatecture.Subscribers;
 
-namespace Akkatecture.Examples.Api
+namespace Akkatecture.Examples.Api.Domain.Repositories.Resources
 {
-    public class Program
+    public class ResourcesStorageHandler : DomainEventSubscriber,
+        ISubscribeTo<ResourceCreationSaga,ResourceCreationSagaId,ResourceCreationEndedEvent>
     {
-        public static void Main(string[] args)
+        public List<ResourcesReadModel> Resources = new List<ResourcesReadModel>();
+
+        public ResourcesStorageHandler()
         {
-            CreateWebHostBuilder(args).Build().Run();
+            Receive<GetResourcesQuery>(Handle);
+        }
+        
+        public Task Handle(IDomainEvent<ResourceCreationSaga, ResourceCreationSagaId, ResourceCreationEndedEvent> domainEvent)
+        {
+            var readModel = new ResourcesReadModel(domainEvent.AggregateEvent.ResourceId.GetGuid(),domainEvent.AggregateEvent.Elapsed,domainEvent.AggregateEvent.EndedAt);
+            
+            Resources.Add(readModel);
+            
+            return Task.CompletedTask;
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost
-                .CreateDefaultBuilder(args)
-                .UseKestrel()
-                .UseUrls("http://*:5001")
-                .UseStartup<Startup>();
+        public bool Handle(GetResourcesQuery query)
+        {
+            Sender.Tell(Resources,Self);
+            return true;
+        }
     }
 }

@@ -22,29 +22,24 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Akkatecture.Examples.Api.Domain.Aggregates.Resource;
 
-namespace Akkatecture.Examples.Api
+namespace Akkatecture.Examples.Api.Domain.Repositories.Resources
 {
-    public class Program
+    public class ResourcesReadModel
     {
-        public static void Main(string[] args)
-        {
-            CreateWebHostBuilder(args).Build().Run();
-        }
+        public Guid Id { get; }
+        public double ElapsedTimeToCreation { get; }
+        public DateTime CreatedAt { get; }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost
-                .CreateDefaultBuilder(args)
-                .UseKestrel()
-                .UseUrls("http://*:5001")
-                .UseStartup<Startup>();
+        public ResourcesReadModel(
+            Guid id,
+            double elapsedTimeToCreation,
+            DateTime createdAt)
+        {
+            Id = id;
+            ElapsedTimeToCreation = elapsedTimeToCreation;
+            CreatedAt = createdAt;
+        }
     }
 }

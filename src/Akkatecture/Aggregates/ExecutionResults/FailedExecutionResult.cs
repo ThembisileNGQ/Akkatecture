@@ -1,5 +1,9 @@
 ﻿// The MIT License (MIT)
 //
+// Copyright (c) 2015-2018 Rasmus Mikkelsen
+// Copyright (c) 2015-2018 eBay Software Foundation
+// Modified from original source https://github.com/eventflow/EventFlow
+//
 // Copyright (c) 2018 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
 // 
@@ -21,30 +25,28 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
-namespace Akkatecture.Examples.Api
+namespace Akkatecture.Aggregates.ExecutionResults
 {
-    public class Program
+    public class FailedExecutionResult : ExecutionResult
     {
-        public static void Main(string[] args)
-        {
-            CreateWebHostBuilder(args).Build().Run();
-        }
+        public IReadOnlyCollection<string> Errors { get; }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost
-                .CreateDefaultBuilder(args)
-                .UseKestrel()
-                .UseUrls("http://*:5001")
-                .UseStartup<Startup>();
+        public FailedExecutionResult(
+            IEnumerable<string> errors)
+        {
+            Errors = (errors ?? Enumerable.Empty<string>()).ToList();
+        }
+            
+        public override bool IsSuccess { get; } = false;
+
+        public override string ToString()
+        {
+            return Errors.Any()
+                ? $"Failed execution due to: {string.Join(", ", Errors)}"
+                : "Failed execution";
+        }
     }
 }

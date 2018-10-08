@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Akka.Event;
 using Akka.Persistence;
+using Akkatecture.Commands;
 using Akkatecture.Core;
 using Akkatecture.Extensions;
 
@@ -78,7 +79,7 @@ namespace Akkatecture.Aggregates
                 }
                 catch
                 {
-                    Logger.Warning($"Unable to activate State for {GetType()}");
+                    Logger.Error($"Unable to activate State for {GetType()}");
                 }
                 
             }
@@ -112,7 +113,7 @@ namespace Akkatecture.Aggregates
 
         
 
-        protected virtual void Emit<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
+        public virtual void Emit<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
             where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
         {
             if (aggregateEvent == null)
@@ -356,6 +357,22 @@ namespace Akkatecture.Aggregates
         public override string ToString()
         {
             return $"{GetType().PrettyPrint()} v{Version}";
+        }
+
+        protected void Command<TCommand, TCommandHandler>(Predicate<TCommand> shouldHandle = null)
+            where TCommand : ICommand<TAggregate, TIdentity>
+            where TCommandHandler : CommandHandler<TAggregate, TIdentity, TCommand>
+        {
+            try
+            {
+                var handler = (TCommandHandler) Activator.CreateInstance(typeof(TCommandHandler));
+                Command<TCommand>(x => handler.HandleCommand(this as TAggregate, Context, x),shouldHandle);
+            }
+            catch
+            {
+                Logger.Error($"Unable to Activate CommandHandler {typeof(TCommandHandler).PrettyPrint()} for {typeof(TAggregate).PrettyPrint()}");
+            }
+            
         }
         
     }

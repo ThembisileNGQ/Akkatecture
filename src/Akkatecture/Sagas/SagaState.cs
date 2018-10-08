@@ -31,7 +31,7 @@ using Akkatecture.Aggregates;
 using Akkatecture.Extensions;
 
 namespace Akkatecture.Sagas
-{
+{   
     public abstract class SagaState<TSaga, TIdentity, TEventApplier> : ISagaState<TIdentity>, IEventApplier<TSaga, TIdentity>
         where TEventApplier : class, IEventApplier<TSaga, TIdentity>
         where TSaga : IAggregateRoot<TIdentity>
@@ -39,7 +39,7 @@ namespace Akkatecture.Sagas
     {
         private static readonly IReadOnlyDictionary<Type, Action<TEventApplier, IAggregateEvent>> ApplyMethods;
         public SagaStatus Status { get; private set; }
-        public Dictionary<SagaStatus, DateTimeOffset> SagaTimes { get; } = new Dictionary<SagaStatus, DateTimeOffset>();
+        public Dictionary<SagaStatus, DateTimeOffset> SagaTimes { get; } 
 
         static SagaState()
         {
@@ -49,7 +49,7 @@ namespace Akkatecture.Sagas
 
         protected SagaState()
         {
-
+            SagaTimes = new Dictionary<SagaStatus, DateTimeOffset>();
             Status = SagaStatus.NotStarted;
             StopWatch();
 

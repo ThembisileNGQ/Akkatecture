@@ -21,30 +21,35 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Akkatecture.Aggregates;
+using Akkatecture.Examples.Api.Domain.Aggregates.Resource.Events;
+using Akkatecture.Examples.Api.Domain.Sagas.Events;
+using Akkatecture.Sagas;
 
-namespace Akkatecture.Examples.Api
+namespace Akkatecture.Examples.Api.Domain.Sagas
 {
-    public class Program
+    public class ResourceCreationSagaState : SagaState<ResourceCreationSaga, ResourceCreationSagaId, IEventApplier<ResourceCreationSaga, ResourceCreationSagaId>>,
+        IApply<ResourceCreationStartedEvent>,
+        IApply<ResourceCreationProgressEvent>,
+        IApply<ResourceCreationEndedEvent>
     {
-        public static void Main(string[] args)
+        public int Progress { get; private set; }
+        
+        public void Apply(ResourceCreationStartedEvent aggregateEvent)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            Progress = 0;
+            Start();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost
-                .CreateDefaultBuilder(args)
-                .UseKestrel()
-                .UseUrls("http://*:5001")
-                .UseStartup<Startup>();
+        public void Apply(ResourceCreationProgressEvent aggregateEvent)
+        {
+            Progress = aggregateEvent.Progress;
+        }
+
+        public void Apply(ResourceCreationEndedEvent aggregateEvent)
+        {
+            Progress = 100;
+            Complete();
+        }
     }
 }

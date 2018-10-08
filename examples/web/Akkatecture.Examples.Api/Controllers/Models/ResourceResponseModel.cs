@@ -22,29 +22,20 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
-namespace Akkatecture.Examples.Api
+namespace Akkatecture.Examples.Api.Controllers.Models
 {
-    public class Program
+    public class ResourceResponseModel
     {
-        public static void Main(string[] args)
-        {
-            CreateWebHostBuilder(args).Build().Run();
-        }
+        public Guid Id { get; }
+        public Guid OperationId { get; }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost
-                .CreateDefaultBuilder(args)
-                .UseKestrel()
-                .UseUrls("http://*:5001")
-                .UseStartup<Startup>();
+        public ResourceResponseModel(
+            Guid id,
+            Guid operationId)
+        {
+            Id = id;
+            OperationId = operationId;
+        }
     }
 }

@@ -22,29 +22,45 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Akkatecture.Examples.Api.Domain.Repositories.Operations;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Akkatecture.Examples.Api
+namespace Akkatecture.Examples.Api.Controllers
 {
-    public class Program
+    public class OperationsController : BaseController
     {
-        public static void Main(string[] args)
+        private readonly IQueryOperations _operationQuery;
+        
+        public OperationsController(
+            IQueryOperations operationQuery)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            _operationQuery = operationQuery; 
         }
+        
+        [HttpGet("operations")]
+        public async Task<IActionResult> GetResources()
+        {
+            var operations = await _operationQuery.FindAll();
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost
-                .CreateDefaultBuilder(args)
-                .UseKestrel()
-                .UseUrls("http://*:5001")
-                .UseStartup<Startup>();
+            return Ok(operations);
+        }
+        
+        [HttpGet("operations/{id:Guid}")]
+        public async Task<IActionResult> GetResources([FromRoute]Guid id)
+        {
+            var operation = await _operationQuery.Find(id);
+
+            if (operation == null)
+                return NotFound();
+
+            if (operation.Percentage == 100)
+            {
+                var uri = new Uri($"{GetAbsoluteUri(HttpContext)}/api/resources/{id}");
+                return SeeOther(uri);
+            }
+
+            return Ok(operation);
+        }
     }
 }

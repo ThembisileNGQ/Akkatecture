@@ -21,30 +21,44 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Akka.Actor;
+using Akkatecture.Aggregates.ExecutionResults;
+using Akkatecture.Commands;
+using Akkatecture.Examples.Api.Domain.Aggregates.Resource.Events;
 
-namespace Akkatecture.Examples.Api
+namespace Akkatecture.Examples.Api.Domain.Aggregates.Resource.Commands
 {
-    public class Program
+    public class CreateResourceCommand : Command<Resource, ResourceId>
     {
-        public static void Main(string[] args)
+        public CreateResourceCommand(ResourceId aggregateId)
+            : base(aggregateId)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            
         }
+    }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost
-                .CreateDefaultBuilder(args)
-                .UseKestrel()
-                .UseUrls("http://*:5001")
-                .UseStartup<Startup>();
+    public class CreateResourceCommandHandler : CommandHandler<Resource, ResourceId, CreateResourceCommand>
+    {
+        public override void Handle(
+            Resource aggregate,
+            IActorContext context,
+            CreateResourceCommand command)
+        {
+            if (aggregate.IsNew)
+            {
+                var aggregateEvent = new ResourceCreatedEvent();
+                aggregate.Emit(aggregateEvent);
+
+
+                var executionResult = new SuccessExecutionResult();
+                context.Sender.Tell(executionResult);
+            }
+            else
+            {
+                var executionResult = new FailedExecutionResult(new List<string> {"aggregate is already created"});
+                context.Sender.Tell(executionResult);
+            }
+        }
     }
 }

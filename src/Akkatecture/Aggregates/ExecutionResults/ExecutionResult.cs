@@ -1,5 +1,9 @@
 ﻿// The MIT License (MIT)
 //
+// Copyright (c) 2015-2018 Rasmus Mikkelsen
+// Copyright (c) 2015-2018 eBay Software Foundation
+// Modified from original source https://github.com/eventflow/EventFlow
+//
 // Copyright (c) 2018 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
 // 
@@ -21,30 +25,26 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
-namespace Akkatecture.Examples.Api
+namespace Akkatecture.Aggregates.ExecutionResults
 {
-    public class Program
+    public abstract class ExecutionResult : IExecutionResult
     {
-        public static void Main(string[] args)
-        {
-            CreateWebHostBuilder(args).Build().Run();
-        }
+        private static readonly IExecutionResult SuccessResult = new SuccessExecutionResult();
+        private static readonly IExecutionResult FailedResult = new FailedExecutionResult(Enumerable.Empty<string>());
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost
-                .CreateDefaultBuilder(args)
-                .UseKestrel()
-                .UseUrls("http://*:5001")
-                .UseStartup<Startup>();
+        public static IExecutionResult Success() => SuccessResult;
+        public static IExecutionResult Failed() => FailedResult;
+        public static IExecutionResult Failed(IEnumerable<string> errors) => new FailedExecutionResult(errors);
+        public static IExecutionResult Failed(params string[] errors) => new FailedExecutionResult(errors);
+
+        public abstract bool IsSuccess { get; }
+
+        public override string ToString()
+        {
+            return $"ExecutionResult - IsSuccess:{IsSuccess}";
+        }
     }
 }

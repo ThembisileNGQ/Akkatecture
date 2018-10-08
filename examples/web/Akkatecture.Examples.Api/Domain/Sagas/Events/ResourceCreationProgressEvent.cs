@@ -22,29 +22,28 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Akkatecture.Aggregates;
+using Akkatecture.Examples.Api.Domain.Aggregates.Resource;
 
-namespace Akkatecture.Examples.Api
+namespace Akkatecture.Examples.Api.Domain.Sagas.Events
 {
-    public class Program
+    public class ResourceCreationProgressEvent : AggregateEvent<ResourceCreationSaga, ResourceCreationSagaId>
     {
-        public static void Main(string[] args)
-        {
-            CreateWebHostBuilder(args).Build().Run();
-        }
+        public ResourceId ResourceId { get; }
+        public int Progress { get; }
+        public int Elapsed { get; }
+        public DateTime UpdatedAt { get; }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost
-                .CreateDefaultBuilder(args)
-                .UseKestrel()
-                .UseUrls("http://*:5001")
-                .UseStartup<Startup>();
+        public ResourceCreationProgressEvent(
+            ResourceId resourceId,
+            int progress,
+            int elapsed,
+            DateTime updatedAt)
+        {
+            ResourceId = resourceId;
+            Progress = progress;
+            Elapsed = elapsed;
+            UpdatedAt = updatedAt;
+        }
     }
 }

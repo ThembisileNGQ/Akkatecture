@@ -22,29 +22,29 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
-namespace Akkatecture.Examples.Api
+namespace Akkatecture.Examples.Api.Domain.Repositories.Operations
 {
-    public class Program
+    public class OperationsReadModel
     {
-        public static void Main(string[] args)
-        {
-            CreateWebHostBuilder(args).Build().Run();
-        }
+        public Guid Id { get; }
+        public int Percentage { get; }
+        public int Elapsed { get; }
+        public string Status => Percentage < 100 ? "Running" : "Finished";
+        public DateTime StartedAt { get; }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost
-                .CreateDefaultBuilder(args)
-                .UseKestrel()
-                .UseUrls("http://*:5001")
-                .UseStartup<Startup>();
+        public OperationsReadModel(
+            Guid id,
+            int percentage,
+            int elapsed,
+            DateTime startedAt)
+        {
+            Id = id;
+            Percentage = percentage;
+            Elapsed = elapsed;
+            StartedAt = startedAt;
+        }
     }
+    
+    
 }
