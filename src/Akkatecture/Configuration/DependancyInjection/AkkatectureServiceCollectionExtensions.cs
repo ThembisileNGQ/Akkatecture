@@ -21,16 +21,9 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
-using System.Linq.Expressions;
 using Akka.Actor;
-using Akkatecture.Aggregates;
 using Akkatecture.Akka;
 using Akkatecture.Configuration.DependancyInjection;
-using Akkatecture.Core;
-using Akkatecture.Sagas;
-using Akkatecture.Sagas.AggregateSaga;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -50,9 +43,9 @@ namespace Microsoft.Extensions.DependencyInjection
             this IAkkatectureBuilder builder, IActorRef actorReference)
             where TActor : ActorBase
         {
-            var actorRef = new ActorRefOfT<TActor>(actorReference);
+            var actorRef = new ActorRefProvider<TActor>(actorReference);
 
-            builder.Services.AddSingleton<IActorRef<TActor>>(actorRef);
+            builder.Services.AddSingleton<ActorRefProvider<TActor>>(actorRef);
             return builder;
         }
         

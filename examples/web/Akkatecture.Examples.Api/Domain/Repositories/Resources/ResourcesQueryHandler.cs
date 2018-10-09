@@ -32,10 +32,10 @@ namespace Akkatecture.Examples.Api.Domain.Repositories.Resources
 {
     public class ResourcesQueryHandler : IQueryResources
     {
-        private readonly IActorRef<ResourcesStorageHandler> _resourceStorageHandler;
+        private readonly ActorRefProvider<ResourcesStorageHandler> _resourceStorageHandler;
         
         public ResourcesQueryHandler(
-            IActorRef<ResourcesStorageHandler> resourceStorageHandler)
+            ActorRefProvider<ResourcesStorageHandler> resourceStorageHandler)
         {
             _resourceStorageHandler = resourceStorageHandler;
         }

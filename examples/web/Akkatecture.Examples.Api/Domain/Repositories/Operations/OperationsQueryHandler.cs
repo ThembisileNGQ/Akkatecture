@@ -25,16 +25,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Akka.Actor;
 using Akkatecture.Akka;
 
 namespace Akkatecture.Examples.Api.Domain.Repositories.Operations
 {
     public class OperationsQueryHandler : IQueryOperations
     {
-        private readonly IActorRef<OperationsStorageHandler> _operationStorageHandler;
+        private readonly ActorRefProvider<OperationsStorageHandler> _operationStorageHandler;
         public OperationsQueryHandler(
-                IActorRef<OperationsStorageHandler> operationStorageHandler)
+            ActorRefProvider<OperationsStorageHandler> operationStorageHandler)
         {
             _operationStorageHandler = operationStorageHandler;
         }

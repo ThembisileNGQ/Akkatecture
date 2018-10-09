@@ -23,24 +23,23 @@
 
 using System;
 using System.Threading.Tasks;
-using Akka.Actor;
 using Akkatecture.Aggregates.ExecutionResults;
 using Akkatecture.Akka;
 using Akkatecture.Examples.Api.Controllers.Models;
 using Akkatecture.Examples.Api.Domain.Aggregates.Resource;
 using Akkatecture.Examples.Api.Domain.Aggregates.Resource.Commands;
 using Akkatecture.Examples.Api.Domain.Repositories.Resources;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Akkatecture.Examples.Api.Controllers
 {
     public class ResourceController : BaseController
     {
-        private readonly IActorRef<ResourceManager> _resourceManager;
+        private readonly ActorRefProvider<ResourceManager> _resourceManager;
+
         private readonly IQueryResources _resourceQuery;
         public ResourceController(
-            IActorRef<ResourceManager> resourceManager,
+            ActorRefProvider<ResourceManager> resourceManager,
             IQueryResources resourceQuery)
         {
             _resourceManager = resourceManager;
