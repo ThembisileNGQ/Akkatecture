@@ -1,8 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Akkatecture.Examples.SeedWorkerCluster" type="CompoundRunConfigurationType" factoryName="Compound Run Configuration">
-    <toRun type="DotNetProject" name="Akkatecture.Example.ClusterClient" />
-    <toRun type="DotNetProject" name="Akkatecture.Example.Seed" />
-    <toRun type="DotNetProject" name="Akkatecture.Example.Worker" />
-    <method />
-  </configuration>
-</component>
