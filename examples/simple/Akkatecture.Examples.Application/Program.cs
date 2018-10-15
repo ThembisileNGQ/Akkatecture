@@ -23,6 +23,7 @@
 
 using System;
 using Akka.Actor;
+using Akka.Routing;
 using Akkatecture.Examples.Domain.Model.UserAccount;
 using Akkatecture.Examples.Domain.Model.UserAccount.Commands;
 
@@ -32,8 +33,24 @@ namespace Akkatecture.Examples.Application
     {
         public static void Main(string[] args)
         {
+            var cfg = @"
+    
+    akka.persistence.journal.inmem {
+
+    event-adapters {
+        
+        color-tagger  = ""Akkatecture.Events.AggregateEventTagger, Akkatecture""
+    
+    }
+    
+    event-adapter-bindings = {
+    
+        ""System.Object"" = color-tagger
+    
+    }
+}";
             //Create actor system
-            var system = ActorSystem.Create("useraccount-example");
+            var system = ActorSystem.Create("useraccount-example",cfg);
 
             //Create supervising aggregate manager for UserAccount aggregate root actors
             var aggregateManager = system.ActorOf(Props.Create(() => new UserAccountAggregateManager()));
@@ -44,7 +61,7 @@ namespace Akkatecture.Examples.Application
             
             //Send command, this is equivalent to command.publish() in other cqrs frameworks
             aggregateManager.Tell(createUserAccountCommand);
-            
+
             var changeNameCommand = new UserAccountChangeNameCommand(aggregateId, "foo bar baz");
             aggregateManager.Tell(changeNameCommand);
                         
