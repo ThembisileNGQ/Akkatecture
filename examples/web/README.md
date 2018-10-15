@@ -12,7 +12,7 @@ When using async workflows in your API it becomes more tricky to coordinate long
 
 One of the main issues with `IActorRef` is that people get confused as to how they can inject them into their Aspnet Core application. There are a few approaches to this, one being creating a static class of many `IActorRef` properties, this is how it has been suggested by [petabridge](https://petabridge.com/blog/akkadotnet-aspnet/) (although long ago). [Other community members](https://havret.io/akka-net-asp-net-core) use a clever way of typing the `IActorRef` by injecting a delegate that returns that `IActorRef`. All these approaches are great to be honest, however, I wanted a more idiomatic approach to doing this. 
 
-#### IAkkatectureBuilder and IActorRef<T>
+#### IAkkatectureBuilder and ActorRefProvider<T>
 
 Akkatecture has built in a new IServiceCollection extension method to help you inject your akka.net dependancies. In your `ConfigureServices` method do the following.
 
@@ -32,19 +32,29 @@ public void ConfigureServices(IServiceCollection services)
 
 ```
 
-Then you can inject that `IActorRef<T>` into any dependancy:
+Then you can inject that `ActorRefProvider<T>` into any dependancy:
 
 ```
 public class MyService : IMyService
 {
-    private readonly IActorRef<MyActor> _myActor;
+    private readonly ActorRefProvider<MyActor> _myActor;
 
-    public MyService(IActorRef<MyActor> myActor)
+    public MyService(ActorRefProvider<MyActor> myActor)
     {
         _myActor = myActor;
     }
 }
 ```
+
+And `ActorRefProvider<T>` can be used like any `IActorRef`
+
+```
+public void DoSomething(ActorRefProvider<MyActor> actorRefProvider)
+{
+	actorRefProvider.Tell("Hello");
+}
+```
+
 
 Now that we know how to setup our actor system, within the aspnet core di container, we can go onto seeing how we can model long running stepwise processes from an API design standpoint.
 
