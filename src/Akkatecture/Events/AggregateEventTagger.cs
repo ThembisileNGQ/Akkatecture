@@ -1,5 +1,5 @@
 using Akka.Persistence.Journal;
-using Akkatecture.Aggregates;
+using Akkatecture.Extensions;
 
 namespace Akkatecture.Events
 {
@@ -9,12 +9,18 @@ namespace Akkatecture.Events
 
         public object ToJournal(object evt)
         {
-            if (evt is IAggregateEvent)
+            try
             {
-                return new Tagged(evt, new[] {"AggregateEvent"});
+                var tag = evt.GetType().GetAggregateEventAggregateRootName();
+
+                return new Tagged(evt, new[] {tag.Value});
+            }
+            catch
+            {
+                
             }
 
-            return new Tagged(evt, new[] {"OtherEvent"});
+            return evt;
         }
     }
 }

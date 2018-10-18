@@ -31,7 +31,9 @@ namespace Akkatecture.Walkthrough.Domain.Model.Account.Commands
     {
         public Money OpeningBalance { get; }
         
-        public OpenNewAccountCommand(AccountId aggregateId, Money openingBalance)
+        public OpenNewAccountCommand(
+            AccountId aggregateId,
+            Money openingBalance)
             : base(aggregateId)
         {
             if(openingBalance == null) throw new ArgumentNullException(nameof(openingBalance));

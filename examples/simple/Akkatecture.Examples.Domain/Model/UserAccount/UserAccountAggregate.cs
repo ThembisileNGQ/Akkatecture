@@ -32,7 +32,6 @@ namespace Akkatecture.Examples.Domain.Model.UserAccount
         public UserAccountAggregate(UserAccountId id)
             : base(id)
         {
-            //command handler registration
             Command<CreateUserAccountCommand>(Execute);
             Command<UserAccountChangeNameCommand>(Execute);
         }
@@ -57,7 +56,7 @@ namespace Akkatecture.Examples.Domain.Model.UserAccount
             }
             else
             {
-                
+                //signal domain error, aggregate already exists.
             }
         }
 
@@ -69,7 +68,7 @@ namespace Akkatecture.Examples.Domain.Model.UserAccount
             }
             else
             {
-                //signal domain error
+                //signal domain error, aggregate doesnt exist.
             }
         }
         

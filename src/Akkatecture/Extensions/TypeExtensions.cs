@@ -30,6 +30,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Akkatecture.Aggregates;
 using Akkatecture.Core;
 using Akkatecture.Sagas;
@@ -209,6 +210,25 @@ namespace Akkatecture.Extensions
             return domainEventTypes;
         }
 
+        internal static AggregateName GetAggregateEventAggregateRootName(this Type type)
+        {
+            var interfaces = type
+                .GetTypeInfo()
+                .GetInterfaces()
+                .Select(i => i.GetTypeInfo())
+                .ToList();
+
+            var aggregateEvent = interfaces
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IAggregateEvent<,>))
+                .Select(i => i.GetGenericArguments()[0]).SingleOrDefault();
+            
+            
+            if (aggregateEvent != null)
+                return aggregateEvent.GetAggregateName();
+            
+            throw new ArgumentException(nameof(type));
+        }
+        
         internal static IReadOnlyList<Type> GetSagaEventSubscriptionTypes(this Type type)
         {
             //TODO
