@@ -24,6 +24,7 @@
 using System;
 using Akka.Actor;
 using Akka.Routing;
+using Akkatecture.Configuration;
 using Akkatecture.Examples.Domain.Model.UserAccount;
 using Akkatecture.Examples.Domain.Model.UserAccount.Commands;
 
@@ -33,24 +34,9 @@ namespace Akkatecture.Examples.Application
     {
         public static void Main(string[] args)
         {
-            var cfg = @"
-    
-    akka.persistence.journal.inmem {
-
-    event-adapters {
-        
-        color-tagger  = ""Akkatecture.Events.AggregateEventTagger, Akkatecture""
-    
-    }
-    
-    event-adapter-bindings = {
-    
-        ""System.Object"" = color-tagger
-    
-    }
-}";
+            var conf = AkkatectureDefaultSettings.OpinionatedDefaults();
             //Create actor system
-            var system = ActorSystem.Create("useraccount-example",cfg);
+            var system = ActorSystem.Create("useraccount-example", conf);
 
             //Create supervising aggregate manager for UserAccount aggregate root actors
             var aggregateManager = system.ActorOf(Props.Create(() => new UserAccountAggregateManager()));

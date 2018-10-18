@@ -29,7 +29,11 @@ using Akkatecture.Core;
 
 namespace Akkatecture.Aggregates
 {
-    public interface ICommittedEvent<TAggregate, out TIdentity>
+    public interface ICommittedEvent
+    {
+
+    }
+    public interface ICommittedEvent<TAggregate, out TIdentity> : ICommittedEvent
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
     {

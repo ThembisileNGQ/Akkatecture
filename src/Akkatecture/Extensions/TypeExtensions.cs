@@ -209,24 +209,29 @@ namespace Akkatecture.Extensions
 
             return domainEventTypes;
         }
-
-        internal static AggregateName GetAggregateEventAggregateRootName(this Type type)
+        private static readonly ConcurrentDictionary<Type, AggregateName> AggregateNameCache = new ConcurrentDictionary<Type, AggregateName>();
+        internal static AggregateName GetCommittedEventAggregateRootName(this Type type)
         {
-            var interfaces = type
-                .GetTypeInfo()
-                .GetInterfaces()
-                .Select(i => i.GetTypeInfo())
-                .ToList();
+            return AggregateNameCache.GetOrAdd(
+                type,
+                t =>
+                {
+                    var interfaces = type
+                        .GetTypeInfo()
+                        .GetInterfaces()
+                        .Select(i => i.GetTypeInfo())
+                        .ToList();
 
-            var aggregateEvent = interfaces
-                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IAggregateEvent<,>))
-                .Select(i => i.GetGenericArguments()[0]).SingleOrDefault();
-            
-            
-            if (aggregateEvent != null)
-                return aggregateEvent.GetAggregateName();
-            
-            throw new ArgumentException(nameof(type));
+                    var aggregateEvent = interfaces
+                        .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICommittedEvent<,>))
+                        .Select(i => i.GetGenericArguments()[0]).SingleOrDefault();
+
+
+                    if (aggregateEvent != null)
+                        return aggregateEvent.GetAggregateName();
+
+                    throw new ArgumentException(nameof(type));
+                });
         }
         
         internal static IReadOnlyList<Type> GetSagaEventSubscriptionTypes(this Type type)

@@ -11,16 +11,16 @@ namespace Akkatecture.Events
         {
             try
             {
-                var tag = evt.GetType().GetAggregateEventAggregateRootName();
+                var tag = evt
+                    .GetType()
+                    .GetCommittedEventAggregateRootName();
 
                 return new Tagged(evt, new[] {tag.Value});
             }
             catch
             {
-                
+                return evt;
             }
-
-            return evt;
         }
     }
 }
