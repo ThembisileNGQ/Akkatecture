@@ -44,14 +44,12 @@ namespace Akkatecture.Examples.Application
             
             //Send command, this is equivalent to command.publish() in other cqrs frameworks
             aggregateManager.Tell(createUserAccountCommand);
-            
+
             var changeNameCommand = new UserAccountChangeNameCommand(aggregateId, "foo bar baz");
             aggregateManager.Tell(changeNameCommand);
                         
             //block end of program
             Console.ReadLine();
         }
-
-       
     }
 }

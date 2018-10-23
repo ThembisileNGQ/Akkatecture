@@ -29,4 +29,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Configuration\reference.conf" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\defaults.conf" />
+  </ItemGroup>
 </Project>

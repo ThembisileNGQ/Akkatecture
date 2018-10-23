@@ -41,6 +41,7 @@ namespace Akkatecture.Walkthrough.Application
     {
         public static IActorRef AccountManager { get; set; }
         public static IActorRef RevenueRepository { get; set; }
+        
         public static void CreateActorSystem()
         {
             //Create actor system
