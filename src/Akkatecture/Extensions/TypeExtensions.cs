@@ -30,7 +30,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using Akkatecture.Aggregates;
 using Akkatecture.Core;
 using Akkatecture.Sagas;
@@ -163,30 +162,6 @@ namespace Akkatecture.Extensions
                     mi => mi.GetParameters()[0].ParameterType,
                     mi => ReflectionHelper.CompileMethodInvocation<Action<TAggregateState, IAggregateEvent>>(type, "Apply", mi.GetParameters()[0].ParameterType));
         }
-
-        
-        internal static IReadOnlyList<Type> GetDomainEventSubscriberSubscriptionTypes<TAggregate, TIdentity>(this Type type)
-            where TAggregate : IAggregateRoot<TIdentity>
-            where TIdentity : IIdentity
-        {
-            var aggregateEventType = typeof(IAggregateEvent<TAggregate, TIdentity>);
-
-            var interfaces = type
-                .GetTypeInfo()
-                .GetInterfaces()
-                .Select(i => i.GetTypeInfo())
-                .ToList();
-            var aggregateEventSubscriptionTypes = interfaces
-                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISubscribeTo<,,>))
-                .Where(i => aggregateEventType.GetTypeInfo().IsAssignableFrom(i.GenericTypeArguments[2]))
-                .Select(i => i.GetGenericArguments()[2])
-                .ToList();
-            var domainEventTypes = aggregateEventSubscriptionTypes
-                .Select(t => typeof(IDomainEvent<,,>).MakeGenericType(typeof(TAggregate), typeof(TIdentity), t))
-                .ToList();
-
-            return domainEventTypes;
-        }
         
         internal static IReadOnlyList<Type> GetDomainEventSubscriberSubscriptionTypes(this Type type)
         {
@@ -209,6 +184,7 @@ namespace Akkatecture.Extensions
 
             return domainEventTypes;
         }
+
         private static readonly ConcurrentDictionary<Type, AggregateName> AggregateNameCache = new ConcurrentDictionary<Type, AggregateName>();
         internal static AggregateName GetCommittedEventAggregateRootName(this Type type)
         {

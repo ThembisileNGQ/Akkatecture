@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Akka.Event;
 using Akkatecture.Aggregates;
 using Akkatecture.Core.VersionedTypes;
