@@ -46,7 +46,6 @@ namespace Akkatecture.Sagas.AggregateSaga
         {
             Logger = Context.GetLogger();
 
-            Context.System.EventStream.Subscribe(Self, typeof(DeadLetter));
 
             SagaLocator = (TSagaLocator)Activator.CreateInstance(typeof(TSagaLocator));
 
