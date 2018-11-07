@@ -32,11 +32,19 @@ using Akkatecture.Core;
 
 namespace Akkatecture.Subscribers
 {
+    public interface ISubscribeToAsync<TAggregate, in TIdentity, in TEvent>
+        where TAggregate : IAggregateRoot<TIdentity>
+        where TIdentity : IIdentity
+        where TEvent : IAggregateEvent<TAggregate, TIdentity>
+    {
+        Task HandleAsync(IDomainEvent<TAggregate, TIdentity, TEvent> domainEvent);
+    }
+    
     public interface ISubscribeTo<TAggregate, in TIdentity, in TEvent>
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
         where TEvent : IAggregateEvent<TAggregate, TIdentity>
     {
-        Task Handle(IDomainEvent<TAggregate, TIdentity, TEvent> domainEvent);
+        bool Handle(IDomainEvent<TAggregate, TIdentity, TEvent> domainEvent);
     }
 }

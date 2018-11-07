@@ -37,12 +37,12 @@ namespace Akkatecture.Aggregates
     {
         public TAggregateEvent AggregateEvent { get; }
         public TIdentity AggregateIdentity { get; }
-        public IMetadata Metadata { get; }
+        public Metadata Metadata { get; }
 
         public CommittedEvent(
             TIdentity aggregateIdentity,
             TAggregateEvent aggregateEvent,
-            IMetadata metadata)
+            Metadata metadata)
         {
             if (aggregateEvent == null) throw new ArgumentNullException(nameof(aggregateEvent));
             if (aggregateIdentity == null || string.IsNullOrEmpty(aggregateIdentity.Value)) throw new ArgumentNullException(nameof(aggregateIdentity));

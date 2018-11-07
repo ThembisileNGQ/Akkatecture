@@ -178,7 +178,7 @@ namespace Akkatecture.Extensions
                 .Select(i => i.GetTypeInfo())
                 .ToList();
             var domainEventTypes = interfaces
-                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISubscribeTo<,,>))
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISubscribeToAsync<,,>))
                 .Select(i =>   typeof(IDomainEvent<,,>).MakeGenericType(i.GetGenericArguments()[0],i.GetGenericArguments()[1],i.GetGenericArguments()[2]))
                 .ToList();
             

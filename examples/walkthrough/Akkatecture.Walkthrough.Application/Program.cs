@@ -66,6 +66,7 @@ namespace Akkatecture.Walkthrough.Application
         
         public static void Main(string[] args)
         {
+            
             //initialize actor system
             CreateActorSystem();
             

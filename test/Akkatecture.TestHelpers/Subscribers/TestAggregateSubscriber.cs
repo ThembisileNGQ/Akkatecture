@@ -30,17 +30,17 @@ using Akkatecture.TestHelpers.Aggregates.Events;
 namespace Akkatecture.TestHelpers.Subscribers
 {
     public class TestAggregateSubscriber : DomainEventSubscriber,
-        ISubscribeTo<TestAggregate,TestAggregateId,TestCreatedEvent>,
-        ISubscribeTo<TestAggregate, TestAggregateId, TestAddedEvent>
+        ISubscribeToAsync<TestAggregate,TestAggregateId,TestCreatedEvent>,
+        ISubscribeToAsync<TestAggregate, TestAggregateId, TestAddedEvent>
     {
-        public Task Handle(IDomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent> domainEvent)
+        public Task HandleAsync(IDomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent> domainEvent)
         {
             var handled = new TestSubscribedEventHandled<TestCreatedEvent>(domainEvent.AggregateEvent);
             Context.System.EventStream.Publish(handled);
             return Task.CompletedTask;
         }
         
-        public Task Handle(IDomainEvent<TestAggregate, TestAggregateId, TestAddedEvent> domainEvent)
+        public Task HandleAsync(IDomainEvent<TestAggregate, TestAggregateId, TestAddedEvent> domainEvent)
         {
             return Task.CompletedTask;
         }

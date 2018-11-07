@@ -64,7 +64,7 @@ namespace Akkatecture.Subscribers
                     .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                     .Where(mi =>
                     {
-                        if (mi.Name != "Handle") return false;
+                        if (mi.Name != "HandleAsync") return false;
                         var parameters = mi.GetParameters();
                         return
                             parameters.Length == 1;
@@ -99,6 +99,5 @@ namespace Akkatecture.Subscribers
             }
             
         }
-        
     }
 }
