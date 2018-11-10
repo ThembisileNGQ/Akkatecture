@@ -32,9 +32,9 @@ using Akkatecture.Subscribers;
 namespace Akkatecture.Examples.Api.Domain.Repositories.Operations
 {
     public class OperationsStorageHandler : DomainEventSubscriber,
-        ISubscribeTo<ResourceCreationSaga,ResourceCreationSagaId,ResourceCreationStartedEvent>,
-        ISubscribeTo<ResourceCreationSaga,ResourceCreationSagaId,ResourceCreationProgressEvent>,
-        ISubscribeTo<ResourceCreationSaga,ResourceCreationSagaId,ResourceCreationEndedEvent>
+        ISubscribeToAsync<ResourceCreationSaga,ResourceCreationSagaId,ResourceCreationStartedEvent>,
+        ISubscribeToAsync<ResourceCreationSaga,ResourceCreationSagaId,ResourceCreationProgressEvent>,
+        ISubscribeToAsync<ResourceCreationSaga,ResourceCreationSagaId,ResourceCreationEndedEvent>
     {
         public List<OperationsReadModel> Operations = new List<OperationsReadModel>();
 
@@ -43,7 +43,7 @@ namespace Akkatecture.Examples.Api.Domain.Repositories.Operations
             Receive<GetOperationsQuery>(Handle);
         }
         
-        public Task Handle(IDomainEvent<ResourceCreationSaga, ResourceCreationSagaId, ResourceCreationStartedEvent> domainEvent)
+        public Task HandleAsync(IDomainEvent<ResourceCreationSaga, ResourceCreationSagaId, ResourceCreationStartedEvent> domainEvent)
         {
             var operation = new OperationsReadModel(domainEvent.AggregateEvent.ResourceId.GetGuid(),0,0, domainEvent.AggregateEvent.StartedAt);
             
@@ -51,7 +51,7 @@ namespace Akkatecture.Examples.Api.Domain.Repositories.Operations
             return Task.CompletedTask;
         }
 
-        public Task Handle(IDomainEvent<ResourceCreationSaga, ResourceCreationSagaId, ResourceCreationProgressEvent> domainEvent)
+        public Task HandleAsync(IDomainEvent<ResourceCreationSaga, ResourceCreationSagaId, ResourceCreationProgressEvent> domainEvent)
         {
             var oldOperation = Operations.Single(x => x.Id == domainEvent.AggregateEvent.ResourceId.GetGuid());
             var operation = new OperationsReadModel(domainEvent.AggregateEvent.ResourceId.GetGuid(),domainEvent.AggregateEvent.Progress,domainEvent.AggregateEvent.Elapsed, oldOperation.StartedAt);
@@ -61,7 +61,7 @@ namespace Akkatecture.Examples.Api.Domain.Repositories.Operations
             return Task.CompletedTask;
         }
 
-        public Task Handle(IDomainEvent<ResourceCreationSaga, ResourceCreationSagaId, ResourceCreationEndedEvent> domainEvent)
+        public Task HandleAsync(IDomainEvent<ResourceCreationSaga, ResourceCreationSagaId, ResourceCreationEndedEvent> domainEvent)
         {
             var oldOperation = Operations.Single(x => x.Id == domainEvent.AggregateEvent.ResourceId.GetGuid());
             var operation = new OperationsReadModel(domainEvent.AggregateEvent.ResourceId.GetGuid(),domainEvent.AggregateEvent.Progress,domainEvent.AggregateEvent.Elapsed, oldOperation.StartedAt);

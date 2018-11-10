@@ -32,7 +32,7 @@ using Akkatecture.Walkthrough.Domain.Repositories.Revenue.Commands;
 namespace Akkatecture.Walkthrough.Domain.Subscribers.Revenue
 {
     public class RevenueSubscriber : DomainEventSubscriber,
-         ISubscribeTo<Account,AccountId,FeesDeductedEvent>
+         ISubscribeToAsync<Account,AccountId,FeesDeductedEvent>
     {
         public IActorRef RevenueRepository { get; }
         
@@ -41,7 +41,7 @@ namespace Akkatecture.Walkthrough.Domain.Subscribers.Revenue
             RevenueRepository = revenueRepository;
         }
         
-        public Task Handle(IDomainEvent<Account, AccountId, FeesDeductedEvent> domainEvent)
+        public Task HandleAsync(IDomainEvent<Account, AccountId, FeesDeductedEvent> domainEvent)
         {
             var command = new AddRevenueCommand(domainEvent.AggregateEvent.Amount);
             RevenueRepository.Tell(command);
