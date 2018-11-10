@@ -26,6 +26,7 @@ using Akka.Actor;
 using Akka.TestKit.Xunit2;
 using Akkatecture.TestHelpers.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Commands;
+using Akkatecture.TestHelpers.Aggregates.Entities;
 using Akkatecture.TestHelpers.Aggregates.Events;
 using Akkatecture.TestHelpers.Subscribers;
 using Xunit;
@@ -45,10 +46,10 @@ namespace Akkatecture.Tests.UnitTests.Subscribers
 
         [Fact]
         [Category(Category)]
-        public void Subscriber_ReceivedEvent_FromAggregatesEmit()
+        public void Subscriber_ReceivedAsyncEvent_FromAggregatesEmit()
         {
             var probe = CreateTestActor("probeActor");
-            Sys.EventStream.Subscribe(probe, typeof(TestSubscribedEventHandled<TestCreatedEvent>));
+            Sys.EventStream.Subscribe(probe, typeof(TestAsyncSubscribedEventHandled<TestCreatedEvent>));
             Sys.ActorOf(Props.Create(() => new TestAggregateSubscriber()), "test-subscriber");        
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
             
@@ -56,10 +57,30 @@ namespace Akkatecture.Tests.UnitTests.Subscribers
             var command = new CreateTestCommand(aggregateId);
             aggregateManager.Tell(command);
 
-            ExpectMsg<TestSubscribedEventHandled<TestCreatedEvent>>(x =>
+            ExpectMsg<TestAsyncSubscribedEventHandled<TestCreatedEvent>>(x =>
                 x.AggregateEvent.TestAggregateId == command.AggregateId);
+            
+        }
+        
+        [Fact]
+        [Category(Category)]
+        public void Subscriber_ReceivedEvent_FromAggregatesEmit()
+        {
+            var probe = CreateTestActor("probeActor");
+            Sys.EventStream.Subscribe(probe, typeof(TestSubscribedEventHandled<TestAddedEvent>));
+            Sys.ActorOf(Props.Create(() => new TestAggregateSubscriber()), "test-subscriber");        
+            var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
+            
+            var aggregateId = TestAggregateId.New;
+            var entityId = TestId.New;
+            var entity = new Test(entityId);
+            var command1 = new CreateTestCommand(aggregateId);
+            aggregateManager.Tell(command1);
+            var command2 = new AddTestCommand(aggregateId,entity);
+            aggregateManager.Tell(command2);
 
-
+            ExpectMsg<TestSubscribedEventHandled<TestAddedEvent>>(x =>
+                x.AggregateEvent.Test == command2.Test);
         }
     }
 }

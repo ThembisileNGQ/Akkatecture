@@ -31,21 +31,34 @@ namespace Akkatecture.TestHelpers.Subscribers
 {
     public class TestAggregateSubscriber : DomainEventSubscriber,
         ISubscribeToAsync<TestAggregate,TestAggregateId,TestCreatedEvent>,
-        ISubscribeToAsync<TestAggregate, TestAggregateId, TestAddedEvent>
+        ISubscribeTo<TestAggregate, TestAggregateId, TestAddedEvent>
     {
         public Task HandleAsync(IDomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent> domainEvent)
         {
-            var handled = new TestSubscribedEventHandled<TestCreatedEvent>(domainEvent.AggregateEvent);
+            var handled = new TestAsyncSubscribedEventHandled<TestCreatedEvent>(domainEvent.AggregateEvent);
             Context.System.EventStream.Publish(handled);
             return Task.CompletedTask;
         }
         
-        public Task HandleAsync(IDomainEvent<TestAggregate, TestAggregateId, TestAddedEvent> domainEvent)
+        public bool Handle(IDomainEvent<TestAggregate, TestAggregateId, TestAddedEvent> domainEvent)
         {
-            return Task.CompletedTask;
+            var handled = new TestSubscribedEventHandled<TestAddedEvent>(domainEvent.AggregateEvent);
+            Context.System.EventStream.Publish(handled);
+            
+            return true;
         }
     }
 
+    public class TestAsyncSubscribedEventHandled<TAggregateEvent> 
+    {
+        public TAggregateEvent AggregateEvent { get;}
+
+        public TestAsyncSubscribedEventHandled(TAggregateEvent aggregateEvent)
+        {
+            AggregateEvent = aggregateEvent;
+        }
+    }
+    
     public class TestSubscribedEventHandled<TAggregateEvent> 
     {
         public TAggregateEvent AggregateEvent { get;}
