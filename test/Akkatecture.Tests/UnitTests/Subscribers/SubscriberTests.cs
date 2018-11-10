@@ -46,11 +46,29 @@ namespace Akkatecture.Tests.UnitTests.Subscribers
 
         [Fact]
         [Category(Category)]
+        public void Subscriber_ReceivedEvent_FromAggregatesEmit()
+        {
+            var probe = CreateTestActor("probeActor");
+            Sys.EventStream.Subscribe(probe, typeof(TestSubscribedEventHandled<TestCreatedEvent>));
+            Sys.ActorOf(Props.Create(() => new TestAggregateSubscriber()), "test-subscriber");        
+            var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
+            
+            var aggregateId = TestAggregateId.New;
+            var command = new CreateTestCommand(aggregateId);
+            aggregateManager.Tell(command);
+
+            ExpectMsg<TestSubscribedEventHandled<TestCreatedEvent>>(x =>
+                x.AggregateEvent.TestAggregateId == command.AggregateId);
+            
+        }
+        
+        [Fact]
+        [Category(Category)]
         public void Subscriber_ReceivedAsyncEvent_FromAggregatesEmit()
         {
             var probe = CreateTestActor("probeActor");
             Sys.EventStream.Subscribe(probe, typeof(TestAsyncSubscribedEventHandled<TestCreatedEvent>));
-            Sys.ActorOf(Props.Create(() => new TestAggregateSubscriber()), "test-subscriber");        
+            Sys.ActorOf(Props.Create(() => new TestAsyncAggregateSubscriber()), "test-subscriber");        
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
             
             var aggregateId = TestAggregateId.New;
@@ -59,28 +77,6 @@ namespace Akkatecture.Tests.UnitTests.Subscribers
 
             ExpectMsg<TestAsyncSubscribedEventHandled<TestCreatedEvent>>(x =>
                 x.AggregateEvent.TestAggregateId == command.AggregateId);
-            
-        }
-        
-        [Fact]
-        [Category(Category)]
-        public void Subscriber_ReceivedEvent_FromAggregatesEmit()
-        {
-            var probe = CreateTestActor("probeActor");
-            Sys.EventStream.Subscribe(probe, typeof(TestSubscribedEventHandled<TestAddedEvent>));
-            Sys.ActorOf(Props.Create(() => new TestAggregateSubscriber()), "test-subscriber");        
-            var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
-            
-            var aggregateId = TestAggregateId.New;
-            var entityId = TestId.New;
-            var entity = new Test(entityId);
-            var command1 = new CreateTestCommand(aggregateId);
-            aggregateManager.Tell(command1);
-            var command2 = new AddTestCommand(aggregateId,entity);
-            aggregateManager.Tell(command2);
-
-            ExpectMsg<TestSubscribedEventHandled<TestAddedEvent>>(x =>
-                x.AggregateEvent.Test == command2.Test);
         }
     }
 }
