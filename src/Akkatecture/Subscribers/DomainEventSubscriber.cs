@@ -24,7 +24,6 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Akka.Actor;
 using Akkatecture.Extensions;
