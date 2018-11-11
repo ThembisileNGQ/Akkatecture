@@ -185,7 +185,7 @@ namespace Akkatecture.Extensions
 
             return domainEventTypes;
         }
-        
+
         internal static IReadOnlyList<Type> GetDomainEventSubscriberSubscriptionTypes(this Type type)
         {
             //TODO

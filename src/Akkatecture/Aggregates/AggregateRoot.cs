@@ -143,7 +143,6 @@ namespace Akkatecture.Aggregates
                 eventMetadata.AddRange(metadata);
             }
             
-            
             var committedEvent = new CommittedEvent<TAggregate, TIdentity, TAggregateEvent>(Id,aggregateEvent,eventMetadata);
             
             Persist(committedEvent, ApplyCommittedEvents);
