@@ -45,7 +45,7 @@ namespace Akkatecture.TestHelpers.Aggregates.Sagas
             Command<EmitTestSagaState>(Handle);
         }
 
-        public Task Handle(IDomainEvent<TestAggregate, TestAggregateId, TestSentEvent> domainEvent)
+        public bool Handle(IDomainEvent<TestAggregate, TestAggregateId, TestSentEvent> domainEvent)
         {
             if (IsNew)
             {
@@ -57,10 +57,11 @@ namespace Akkatecture.TestHelpers.Aggregates.Sagas
                 TestAggregateManager.Tell(command);
 
             }
-            return Task.CompletedTask;
+
+            return true;
         }
 
-        public Task Handle(IDomainEvent<TestAggregate, TestAggregateId, TestReceivedEvent> domainEvent)
+        public bool Handle(IDomainEvent<TestAggregate, TestAggregateId, TestReceivedEvent> domainEvent)
         {
             if (!IsNew)
             {
@@ -68,7 +69,7 @@ namespace Akkatecture.TestHelpers.Aggregates.Sagas
                 Self.Tell(new EmitTestSagaState());
 
             }
-            return Task.CompletedTask;
+            return true;
         }
 
         private bool Handle(EmitTestSagaState testCommmand)
@@ -81,4 +82,6 @@ namespace Akkatecture.TestHelpers.Aggregates.Sagas
         {
         }
     }
+    
+    
 }

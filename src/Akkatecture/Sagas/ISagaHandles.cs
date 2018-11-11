@@ -38,6 +38,13 @@ namespace Akkatecture.Sagas
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
     {
+        bool Handle(IDomainEvent<TAggregate, TIdentity, TAggregateEvent> domainEvent);
+    }
+    public interface ISagaHandlesAsync<TAggregate, in TIdentity, in TAggregateEvent> : ISaga
+        where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+        where TAggregate : IAggregateRoot<TIdentity>
+        where TIdentity : IIdentity
+    {
         Task Handle(IDomainEvent<TAggregate, TIdentity, TAggregateEvent> domainEvent);
     }
 }

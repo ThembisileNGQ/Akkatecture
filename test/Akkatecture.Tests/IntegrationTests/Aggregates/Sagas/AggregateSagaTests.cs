@@ -77,7 +77,6 @@ namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
                 x => x.AggregateEvent.Sender.Equals(senderAggregateId)
                     && x.AggregateEvent.Receiver.Equals(receiverAggregateId)
                     && x.AggregateEvent.SentTest.Equals(senderTest));
-
         }
     }
 }

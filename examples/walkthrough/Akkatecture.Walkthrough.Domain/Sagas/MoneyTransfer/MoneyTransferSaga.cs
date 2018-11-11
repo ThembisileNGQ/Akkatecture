@@ -44,7 +44,7 @@ namespace Akkatecture.Walkthrough.Domain.Sagas.MoneyTransfer
         {
             AccountAggregateManager = accountAggregateManager;
         }
-        public Task Handle(IDomainEvent<Account, AccountId, MoneySentEvent> domainEvent)
+        public bool Handle(IDomainEvent<Account, AccountId, MoneySentEvent> domainEvent)
         {
             var isNewSpec = new AggregateIsNewSpecification();
             if (isNewSpec.IsSatisfiedBy(this))
@@ -57,19 +57,19 @@ namespace Akkatecture.Walkthrough.Domain.Sagas.MoneyTransfer
                 
                 Emit(new MoneyTransferStartedEvent(domainEvent.AggregateEvent.Transaction));
             }
-            
-            return Task.CompletedTask;
+
+            return true;
         }
 
-        public Task Handle(IDomainEvent<Account, AccountId, MoneyReceivedEvent> domainEvent)
+        public bool Handle(IDomainEvent<Account, AccountId, MoneyReceivedEvent> domainEvent)
         {
             var spec = new AggregateIsNewSpecification().Not();
             if (spec.IsSatisfiedBy(this))
             {
                 Emit(new MoneyTransferCompletedEvent(domainEvent.AggregateEvent.Transaction));
             }
-            
-            return Task.CompletedTask;
+
+            return true;
         }
     }
 }
