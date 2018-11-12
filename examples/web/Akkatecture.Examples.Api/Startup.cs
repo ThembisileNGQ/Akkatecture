@@ -50,7 +50,7 @@ namespace Akkatecture.Examples.Api
             var resourceStorage = actorSystem.ActorOf(Props.Create(() => new ResourcesStorageHandler()), "resource-storagehandler");
             var operationStorage = actorSystem.ActorOf(Props.Create(() => new OperationsStorageHandler()), "operation-storagehandler");
 
-            // Add Actors to DI as IActorRef<T>
+            // Add Actors to DI as ActorRefProvider<T>
             services
                 .AddAkkatecture(actorSystem)
                 .AddActorReference<ResourceManager>(aggregateManager)
