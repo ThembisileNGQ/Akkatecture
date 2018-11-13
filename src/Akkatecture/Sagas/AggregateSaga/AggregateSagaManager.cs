@@ -46,7 +46,6 @@ namespace Akkatecture.Sagas.AggregateSaga
         {
             Logger = Context.GetLogger();
 
-            Context.System.EventStream.Subscribe(Self, typeof(DeadLetter));
 
             SagaLocator = (TSagaLocator)Activator.CreateInstance(typeof(TSagaLocator));
 
@@ -57,11 +56,20 @@ namespace Akkatecture.Sagas.AggregateSaga
 
             if (autoSubscribe && Settings.AutoSubscribe)
             {
-                var sagaHandlesSubscriptionTypes =
+                var sagaEventSubscriptionTypes =
                     sagaType
                         .GetSagaEventSubscriptionTypes();
 
-                foreach (var type in sagaHandlesSubscriptionTypes)
+                foreach (var type in sagaEventSubscriptionTypes)
+                {
+                    Context.System.EventStream.Subscribe(Self, type);
+                }
+                
+                var asyncSagaEventSubscriptionTypes =
+                    sagaType
+                        .GetAsyncSagaEventSubscriptionTypes();
+
+                foreach (var type in asyncSagaEventSubscriptionTypes)
                 {
                     Context.System.EventStream.Subscribe(Self, type);
                 }
@@ -69,17 +77,17 @@ namespace Akkatecture.Sagas.AggregateSaga
 
             if (Settings.AutoSpawnOnReceive)
             {
-                ReceiveAsync<IDomainEvent>(Handle);
+                Receive<IDomainEvent>(Handle);
             }
             
         }
         
-        protected virtual Task Handle(IDomainEvent domainEvent)
+        protected virtual bool Handle(IDomainEvent domainEvent)
         {
             var sagaId = SagaLocator.LocateSaga(domainEvent);
             var saga = FindOrSpawn(sagaId);
             saga.Tell(domainEvent,Sender);
-            return Task.CompletedTask;
+            return true;
         }
 
         protected virtual bool Terminate(Terminated message)

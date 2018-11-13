@@ -113,8 +113,11 @@ namespace Akkatecture.Aggregates
             return !sourceId.IsNone() && _previousSourceIds.Any(s => s.Value == sourceId.Value);
         }
 
+        public IIdentity GetIdentity()
+        {
+            return Id;
+        }
         
-
         public virtual void Emit<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
             where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
         {
@@ -147,7 +150,6 @@ namespace Akkatecture.Aggregates
             {
                 eventMetadata.AddRange(metadata);
             }
-            
             
             var committedEvent = new CommittedEvent<TAggregate, TIdentity, TAggregateEvent>(Id,aggregateEvent,eventMetadata);
             
@@ -237,11 +239,6 @@ namespace Akkatecture.Aggregates
             Version = domainEvents.Max(e => e.AggregateSequenceNumber);
         }
 
-        public IIdentity GetIdentity()
-        {
-            return Id;
-        }
-
         public void ApplyEvents(IEnumerable<IAggregateEvent> aggregateEvents)
         {
             if (Version > 0)
@@ -282,14 +279,6 @@ namespace Akkatecture.Aggregates
             var aggregateApplyMethod = applyMethod.Bind(State);
 
             return aggregateApplyMethod;
-        }
-
-        
-        protected Action<IAggregateEvent> GetDomainEventApplyMethods<TDomainEvent, TAggregateEvent>(TDomainEvent domainEvent)
-            where TDomainEvent : IDomainEvent<TAggregate,TIdentity,TAggregateEvent>
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
-        {
-            return GetEventApplyMethods(domainEvent.AggregateEvent);
         }
 
         protected virtual void ApplyEvent(IAggregateEvent<TAggregate, TIdentity> aggregateEvent)

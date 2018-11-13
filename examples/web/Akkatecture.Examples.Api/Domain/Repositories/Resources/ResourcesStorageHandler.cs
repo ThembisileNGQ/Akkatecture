@@ -31,7 +31,7 @@ using Akkatecture.Subscribers;
 namespace Akkatecture.Examples.Api.Domain.Repositories.Resources
 {
     public class ResourcesStorageHandler : DomainEventSubscriber,
-        ISubscribeTo<ResourceCreationSaga,ResourceCreationSagaId,ResourceCreationEndedEvent>
+        ISubscribeToAsync<ResourceCreationSaga,ResourceCreationSagaId,ResourceCreationEndedEvent>
     {
         public List<ResourcesReadModel> Resources = new List<ResourcesReadModel>();
 
@@ -40,7 +40,7 @@ namespace Akkatecture.Examples.Api.Domain.Repositories.Resources
             Receive<GetResourcesQuery>(Handle);
         }
         
-        public Task Handle(IDomainEvent<ResourceCreationSaga, ResourceCreationSagaId, ResourceCreationEndedEvent> domainEvent)
+        public Task HandleAsync(IDomainEvent<ResourceCreationSaga, ResourceCreationSagaId, ResourceCreationEndedEvent> domainEvent)
         {
             var readModel = new ResourcesReadModel(domainEvent.AggregateEvent.ResourceId.GetGuid(),domainEvent.AggregateEvent.Elapsed,domainEvent.AggregateEvent.EndedAt);
             

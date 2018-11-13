@@ -30,6 +30,13 @@ using Akkatecture.Core;
 
 namespace Akkatecture.Sagas
 {
+    public interface ISagaIsStartedByAsync<TAggregate, in TIdentity, in TAggregateEvent> : ISagaHandlesAsync<TAggregate, TIdentity, TAggregateEvent>
+        where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+        where TAggregate : IAggregateRoot<TIdentity>
+        where TIdentity : IIdentity
+    {
+    }
+    
     public interface ISagaIsStartedBy<TAggregate, in TIdentity, in TAggregateEvent> : ISagaHandles<TAggregate, TIdentity, TAggregateEvent>
         where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
         where TAggregate : IAggregateRoot<TIdentity>

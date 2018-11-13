@@ -33,19 +33,23 @@ namespace Akkatecture.TestHelpers.Subscribers
         ISubscribeTo<TestAggregate,TestAggregateId,TestCreatedEvent>,
         ISubscribeTo<TestAggregate, TestAggregateId, TestAddedEvent>
     {
-        public Task Handle(IDomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent> domainEvent)
+        public bool Handle(IDomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent> domainEvent)
         {
             var handled = new TestSubscribedEventHandled<TestCreatedEvent>(domainEvent.AggregateEvent);
             Context.System.EventStream.Publish(handled);
-            return Task.CompletedTask;
+            return true;
         }
         
-        public Task Handle(IDomainEvent<TestAggregate, TestAggregateId, TestAddedEvent> domainEvent)
+        public bool Handle(IDomainEvent<TestAggregate, TestAggregateId, TestAddedEvent> domainEvent)
         {
-            return Task.CompletedTask;
+            var handled = new TestSubscribedEventHandled<TestAddedEvent>(domainEvent.AggregateEvent);
+            Context.System.EventStream.Publish(handled);
+            
+            return true;
         }
     }
 
+    
     public class TestSubscribedEventHandled<TAggregateEvent> 
     {
         public TAggregateEvent AggregateEvent { get;}

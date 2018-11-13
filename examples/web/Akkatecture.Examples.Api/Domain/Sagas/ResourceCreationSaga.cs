@@ -33,7 +33,7 @@ using Akkatecture.Sagas.AggregateSaga;
 namespace Akkatecture.Examples.Api.Domain.Sagas
 {
     public class ResourceCreationSaga : AggregateSaga<ResourceCreationSaga, ResourceCreationSagaId, ResourceCreationSagaState>,
-        ISagaIsStartedBy<Resource, ResourceId, ResourceCreatedEvent>
+        ISagaIsStartedByAsync<Resource, ResourceId, ResourceCreatedEvent>
     {
         public async Task Handle(IDomainEvent<Resource, ResourceId, ResourceCreatedEvent> domainEvent)
         {

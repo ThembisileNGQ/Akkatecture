@@ -33,6 +33,8 @@ Akkatecture comes with a few examples on how to best use it:
 
 * **[Cluster](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster):** A more involved sample that shows you how to do distributed aggregates using clustering. Read the [readme](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster/README.md) for the sample for a good overview of the example.
 
+* **[Web](https://github.com/Lutando/Akkatecture/tree/master/examples/web):** This sample shows how to integrate akka into an aspnet core project, specifically how to inject actor references when using akkatecture. Furthermore this project models a long running process that might be run behind a web application or something similar. Read the [readme](https://github.com/Lutando/Akkatecture/tree/master/examples/web/README.md) for more detailed information about the example.
+
 * **[Tests](https://github.com/Lutando/Akkatecture/tree/master/test/Akkatecture.TestHelpers/Aggregates):** The test examples found in the Akkatecture.TestHelpers project is there to provide assistance when doing testing for Akkatecture. There is a simple domain modelled that includes an aggregate with a simple aggregate saga, and these are used to do simple black box style testing on Akkatecture using akka.net's TestKit.
 
 
@@ -68,8 +70,6 @@ Akkatecture is still in development. The goal of this projects first version is 
 
 akkatecture is currently missing these crucial features:
 - aggregate state snapshotting.
-- persisting event metadata.
-- typed actor references.
 - schedueled jobs.
 
 ### Contributing
