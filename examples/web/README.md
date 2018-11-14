@@ -10,7 +10,7 @@ When using async workflows in your API it becomes more tricky to coordinate long
 
 ### Startup
 
-One of the main issues with `IActorRef` is that people get confused as to how they can inject them into their Aspnet Core application. There are a few approaches to this, one being creating a static class of many `IActorRef` properties, this is how it has been suggested by [petabridge](https://petabridge.com/blog/akkadotnet-aspnet/) (although long ago). [Other community members](https://havret.io/akka-net-asp-net-core) use a clever way of typing the `IActorRef` by injecting a delegate that returns that `IActorRef`. All these approaches are great to be honest, however, I wanted a more idiomatic approach to doing this. 
+One of the main issues with `IActorRef` is that people get confused as to how they can inject them into their Aspnet Core application. There are a few approaches to this, one being creating a static class of many `IActorRef` properties, this is how it has been suggested by [petabridge](https://petabridge.com/blog/akkadotnet-aspnet/). [Other community members](https://havret.io/akka-net-asp-net-core) use a clever way of typing the `IActorRef` by injecting a delegate that returns that `IActorRef`. All these approaches are perfectly fine to be honest, Akkatecture has its own way of doing the same thing. 
 
 #### IAkkatectureBuilder and ActorRefProvider<T>
 
