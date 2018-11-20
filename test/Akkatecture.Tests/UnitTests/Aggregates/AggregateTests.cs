@@ -79,9 +79,9 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
                     && x.IdentityType == typeof(TestAggregateId)
                     && x.AggregateType == typeof(TestAggregate)
                     && x.EventType == typeof(TestCreatedEvent)
-                    //&& x.Metadata.EventName == "TestCreated"
+                    && x.Metadata.EventName == "TestCreated"
                     && x.Metadata.AggregateId == aggregateId.Value
-                    //&& x.Metadata.EventVersion == 1
+                    && x.Metadata.EventVersion == 1
                     && x.Metadata.AggregateSequenceNumber == 1);
         }
 

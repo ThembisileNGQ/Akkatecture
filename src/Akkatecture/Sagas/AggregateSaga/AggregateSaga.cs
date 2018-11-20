@@ -36,6 +36,7 @@ using Akka.Event;
 using Akka.Persistence;
 using Akkatecture.Aggregates;
 using Akkatecture.Core;
+using Akkatecture.Events;
 using Akkatecture.Extensions;
 
 namespace Akkatecture.Sagas.AggregateSaga
@@ -51,6 +52,7 @@ namespace Akkatecture.Sagas.AggregateSaga
         public override string PersistenceId { get; } = Context.Self.Path.Name;
         public AggregateSagaSettings Settings { get; }
         protected ILoggingAdapter Logger { get; }
+        protected IEventDefinitionService _eventDefinitionService;
         public TSagaState State { get; protected set; }
         public TIdentity Id { get; }
         public IAggregateName Name => AggregateName;
@@ -114,6 +116,9 @@ namespace Akkatecture.Sagas.AggregateSaga
 
             if (Settings.UseDefaultSnapshotRecover)
                 Recover<SnapshotOffer>(Recover);
+            
+            
+            _eventDefinitionService = new EventDefinitionService(Logger);
 
         }
 
@@ -223,7 +228,8 @@ namespace Akkatecture.Sagas.AggregateSaga
             {
                 throw new ArgumentNullException(nameof(aggregateEvent));
             }
-
+            _eventDefinitionService.Load(typeof(TAggregateEvent));
+            var eventDefinition = _eventDefinitionService.GetDefinition(typeof(TAggregateEvent));
             var aggregateSequenceNumber = Version + 1;
             var eventId = EventId.NewDeterministic(
                 GuidFactories.Deterministic.Namespaces.Events,
@@ -235,7 +241,10 @@ namespace Akkatecture.Sagas.AggregateSaga
                 AggregateSequenceNumber = aggregateSequenceNumber,
                 AggregateName = Name.Value,
                 AggregateId = Id.Value,
-                EventId = eventId
+                EventId = eventId,
+                EventName = eventDefinition.Name,
+                EventVersion = eventDefinition.Version,
+                
             };
             eventMetadata.Add(MetadataKeys.TimestampEpoch, now.ToUnixTime().ToString());
             if (metadata != null)
