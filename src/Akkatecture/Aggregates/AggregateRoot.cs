@@ -45,10 +45,11 @@ namespace Akkatecture.Aggregates
         private static readonly IReadOnlyDictionary<Type, Action<TAggregateState, IAggregateEvent>> ApplyMethodsFromState;
         private static readonly IAggregateName AggregateName = typeof(TAggregate).GetAggregateName();
         private readonly List<IEventApplier<TAggregate, TIdentity>> _eventAppliers = new List<IEventApplier<TAggregate, TIdentity>>();
-        private readonly Dictionary<Type, Action<object>> _eventHandlers = new Dictionary<Type, Action<object>>();  
+        private readonly Dictionary<Type, Action<object>> _eventHandlers = new Dictionary<Type, Action<object>>();
+        
         private CircularBuffer<ISourceId> _previousSourceIds = new CircularBuffer<ISourceId>(10);
         protected ILoggingAdapter Logger { get; }
-        protected EventDefinitionService DefinitionService { get; }
+        protected IEventDefinitionService _eventDefinitionService;
         public TAggregateState State { get; protected set; }
         public IAggregateName Name => AggregateName;
         public override string PersistenceId { get; }
@@ -100,6 +101,8 @@ namespace Akkatecture.Aggregates
 
             if (Settings.UseDefaultSnapshotRecover)
                 Recover<SnapshotOffer>(Recover);
+            
+            _eventDefinitionService = new EventDefinitionService(Logger);
 
         }
 
@@ -125,11 +128,8 @@ namespace Akkatecture.Aggregates
             {
                 throw new ArgumentNullException(nameof(aggregateEvent));
             }
-
-            DefinitionService.Load(typeof(TAggregateEvent));
-
-            var eventDefinition = DefinitionService.GetDefinition(typeof(TAggregateEvent));
-
+            _eventDefinitionService.Load(typeof(TAggregateEvent));
+            var eventDefinition = _eventDefinitionService.GetDefinition(typeof(TAggregateEvent));
             var aggregateSequenceNumber = Version + 1;
             var eventId = EventId.NewDeterministic(
                 GuidFactories.Deterministic.Namespaces.Events,
@@ -179,10 +179,9 @@ namespace Akkatecture.Aggregates
             {
                 throw new ArgumentNullException(nameof(aggregateEvent));
             }
-
-            DefinitionService.Load(typeof(TAggregateEvent));
-
-            var eventDefinition = DefinitionService.GetDefinition(typeof(TAggregateEvent));
+            
+            _eventDefinitionService.Load(typeof(TAggregateEvent));
+            var eventDefinition = _eventDefinitionService.GetDefinition(typeof(TAggregateEvent));
             var aggregateSequenceNumber = Version;
             var eventId = EventId.NewDeterministic(
                 GuidFactories.Deterministic.Namespaces.Events,
