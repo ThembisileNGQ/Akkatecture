@@ -86,7 +86,7 @@ namespace Akkatecture.Aggregates
                 }
                 
             }
-            DefinitionService = new EventDefinitionService(Logger);
+            _eventDefinitionService = new EventDefinitionService(Logger);
             Settings = new AggregateRootSettings(Context.System.Settings.Config);
             Id = id;
             PersistenceId = id.Value;
