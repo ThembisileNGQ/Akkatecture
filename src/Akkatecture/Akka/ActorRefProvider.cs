@@ -51,6 +51,11 @@ namespace Akkatecture.Akka
         {
             provider.ActorRef.Tell(message, sender);
         }
+        
+        public static void Tell(this ActorRefProvider provider, object message)
+        {
+            provider.ActorRef.Tell(message, ActorRefs.NoSender);
+        }
 
         public static Task<object> Ask(this ActorRefProvider provider, object message, TimeSpan? timeout = null)
         {
