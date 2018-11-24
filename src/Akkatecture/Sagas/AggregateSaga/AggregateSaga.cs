@@ -260,7 +260,7 @@ namespace Akkatecture.Sagas.AggregateSaga
 
             Version++;
 
-            var domainEvent = new DomainEvent<TAggregateSaga, TIdentity, TAggregateEvent>(aggregateEvent, eventMetadata, now, Id, Version);
+            var domainEvent = new DomainEvent<TAggregateSaga, TIdentity, TAggregateEvent>(Id, aggregateEvent, eventMetadata, now, Version);
 
             Publish(domainEvent);
         }

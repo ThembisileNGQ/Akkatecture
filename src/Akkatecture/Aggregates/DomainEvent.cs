@@ -40,17 +40,17 @@ namespace Akkatecture.Aggregates
         public Type IdentityType => typeof(TIdentity);
         public Type EventType => typeof(TAggregateEvent);
 
-        public long AggregateSequenceNumber { get; }
-        public TAggregateEvent AggregateEvent { get; }
         public TIdentity AggregateIdentity { get; }
+        public TAggregateEvent AggregateEvent { get; }
+        public long AggregateSequenceNumber { get; }
         public IMetadata Metadata { get; }
         public DateTimeOffset Timestamp { get; }
 
         public DomainEvent(
+            TIdentity aggregateIdentity,
             TAggregateEvent aggregateEvent,
             IMetadata metadata,
             DateTimeOffset timestamp,
-            TIdentity aggregateIdentity,
             long aggregateSequenceNumber)
         {
             if (aggregateEvent == null) throw new ArgumentNullException(nameof(aggregateEvent));

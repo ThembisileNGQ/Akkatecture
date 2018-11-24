@@ -33,6 +33,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Akkatecture.Aggregates;
 using Akkatecture.Core;
+using Akkatecture.Events;
 using Akkatecture.Sagas;
 using Akkatecture.Subscribers;
 
@@ -292,6 +293,47 @@ namespace Akkatecture.Extensions
             startedByEventTypes.AddRange(handleEventTypes);
 
             return startedByEventTypes;
+        }
+        
+        internal static IReadOnlyDictionary<Type, Func<T,IAggregateEvent, IAggregateEvent>> GetAggregateEventUpcastMethods<TAggregate, TIdentity, T>(this Type type)
+            where TAggregate : IAggregateRoot<TIdentity>
+            where TIdentity : IIdentity
+        {
+            var aggregateEventType = typeof(IAggregateEvent<TAggregate, TIdentity>);
+            
+            return type
+                .GetTypeInfo()
+                .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .Where(mi =>
+                {
+                    if (mi.Name != "Upcast") 
+                        return false;
+                    var parameters = mi.GetParameters();
+                    return
+                        parameters.Length == 1 &&
+                        aggregateEventType.GetTypeInfo().IsAssignableFrom(parameters[0].ParameterType);
+                    
+                })
+                .ToDictionary(
+                    //problem might be here
+                    mi => mi.GetParameters()[0].ParameterType,
+                    mi => ReflectionHelper.CompileMethodInvocation<Func<T,IAggregateEvent, IAggregateEvent>>(type, "Upcast", mi.GetParameters()[0].ParameterType));           
+        }
+        
+        internal static IReadOnlyList<Type> GetAggregateEventUpcastTypes(this Type type)
+        {
+            var interfaces = type
+                .GetTypeInfo()
+                .GetInterfaces()
+                .Select(i => i.GetTypeInfo())
+                .ToList();
+            
+            var upcastableEventTypes = interfaces
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IUpcast<,>))
+                .Select(i =>   i.GetGenericArguments()[1])
+                .ToList();
+
+            return upcastableEventTypes;
         }
 
         internal static Type GetBaseType(this Type type, string name)

@@ -151,7 +151,7 @@ namespace Akkatecture.Aggregates
                 eventMetadata.AddRange(metadata);
             }
             
-            var committedEvent = new CommittedEvent<TAggregate, TIdentity, TAggregateEvent>(Id,aggregateEvent,eventMetadata);
+            var committedEvent = new CommittedEvent<TAggregate, TIdentity, TAggregateEvent>(Id, aggregateEvent,eventMetadata,now,Version);
             
             Persist(committedEvent, ApplyCommittedEvents);
 
@@ -159,7 +159,7 @@ namespace Akkatecture.Aggregates
 
             Version++;
                 
-            var domainEvent = new DomainEvent<TAggregate,TIdentity,TAggregateEvent>(aggregateEvent,eventMetadata,now,Id,Version);
+            var domainEvent = new DomainEvent<TAggregate,TIdentity,TAggregateEvent>(Id, aggregateEvent,eventMetadata,now,Version);
 
             Publish(domainEvent);
         }
@@ -206,7 +206,7 @@ namespace Akkatecture.Aggregates
 
             Logger.Info($"[{Name}] With Id={Id} Commited [{typeof(TAggregateEvent).PrettyPrint()}]");
 
-            var domainEvent = new DomainEvent<TAggregate,TIdentity,TAggregateEvent>(aggregateEvent,eventMetadata,now,Id,Version);
+            var domainEvent = new DomainEvent<TAggregate,TIdentity,TAggregateEvent>(Id,aggregateEvent,eventMetadata,now,Version);
 
             Publish(domainEvent);
         }
