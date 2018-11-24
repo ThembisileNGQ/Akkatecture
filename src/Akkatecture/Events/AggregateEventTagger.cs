@@ -6,7 +6,7 @@ namespace Akkatecture.Events
     public class AggregateEventTagger : IWriteEventAdapter
     {
         public string Manifest(object evt) => string.Empty;
-
+        
         public object ToJournal(object evt)
         {
             try
