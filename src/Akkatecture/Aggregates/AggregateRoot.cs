@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Akka.Event;
 using Akka.Persistence;
+using Akka.Persistence.Journal;
 using Akkatecture.Commands;
 using Akkatecture.Core;
 using Akkatecture.Events;
@@ -152,7 +153,6 @@ namespace Akkatecture.Aggregates
             }
             
             var committedEvent = new CommittedEvent<TAggregate, TIdentity, TAggregateEvent>(Id, aggregateEvent,eventMetadata,now,Version);
-            
             Persist(committedEvent, ApplyCommittedEvents);
 
             Logger.Info($"[{Name}] With Id={Id} Commited [{typeof(TAggregateEvent).PrettyPrint()}]");
