@@ -29,9 +29,9 @@ namespace Akkatecture.Examples.Domain.Model.UserAccount.Commands
     {
         public string Name { get; }
         public UserAccountChangeNameCommand(
-            UserAccountId aggreagateId,
+            UserAccountId aggregateId,
             string name)
-            : base(aggreagateId)
+            : base(aggregateId)
         {
             Name = name;
         }

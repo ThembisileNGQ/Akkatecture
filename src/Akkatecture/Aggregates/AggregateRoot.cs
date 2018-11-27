@@ -154,7 +154,7 @@ namespace Akkatecture.Aggregates
             
             var committedEvent = new CommittedEvent<TAggregate, TIdentity, TAggregateEvent>(Id, aggregateEvent,eventMetadata,now,Version);
             Persist(committedEvent, ApplyCommittedEvents);
-
+           
             Logger.Info($"[{Name}] With Id={Id} Commited [{typeof(TAggregateEvent).PrettyPrint()}]");
 
             Version++;
@@ -169,6 +169,16 @@ namespace Akkatecture.Aggregates
         {
             var applyMethods = GetEventApplyMethods(committedEvent.AggregateEvent);
             applyMethods(committedEvent.AggregateEvent);
+
+        }
+        
+        //Experimental
+        protected void  ApplyCommittedEvents<TAggregateEvent>(Tagged committedEvent)
+            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+        {
+            var evt = committedEvent.Payload as IAggregateEvent<TAggregate, TIdentity>;
+            var applyMethods = GetEventApplyMethods(evt);
+            applyMethods(evt);
 
         }
         
@@ -377,4 +387,5 @@ namespace Akkatecture.Aggregates
         }
         
     }
+    
 }
