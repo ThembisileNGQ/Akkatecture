@@ -2,10 +2,10 @@ using Akkatecture.Aggregates;
 
 namespace Akkatecture.Events
 {
-    public interface IUpcast<out TNewerAggregateEvent, in TOlderAggregateEvent>
-        where TOlderAggregateEvent : IAggregateEvent
-        where TNewerAggregateEvent : IAggregateEvent
+    public interface IUpcast<in TFrom, out TTo>
+        where TFrom : IAggregateEvent
+        where TTo : IAggregateEvent
     {
-        TNewerAggregateEvent Upcast(TOlderAggregateEvent aggregateEvent);
+        TTo Upcast(TFrom aggregateEvent);
     }
 }

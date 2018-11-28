@@ -10,6 +10,14 @@ using Akkatecture.Extensions;
 
 namespace Akkatecture.Events
 {
+    public abstract class AggregateEventUpcaster<TAggregate, TIdentity> : AggregateEventUpcaster<TAggregate, TIdentity,
+        IEventUpcaster<TAggregate, TIdentity>>
+        where TAggregate : IAggregateRoot<TIdentity>
+        where TIdentity : IIdentity
+    {
+
+    }
+
     public abstract class AggregateEventUpcaster<TAggregate,TIdentity, TEventUpcaster> : IReadEventAdapter, IEventUpcaster<TAggregate, TIdentity>
         where TEventUpcaster : class, IEventUpcaster<TAggregate, TIdentity>
         where TAggregate : IAggregateRoot<TIdentity>
