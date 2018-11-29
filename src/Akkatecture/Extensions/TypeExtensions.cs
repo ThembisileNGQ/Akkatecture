@@ -328,7 +328,7 @@ namespace Akkatecture.Extensions
             
             var upcastableEventTypes = interfaces
                 .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IUpcast<,>))
-                .Select(i =>   i.GetGenericArguments()[1])
+                .Select(i =>   i.GetGenericArguments()[0])
                 .ToList();
 
             return upcastableEventTypes;

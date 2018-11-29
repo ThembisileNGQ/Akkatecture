@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Akkatecture.Events;
+﻿using Akkatecture.Events;
 
 namespace Akkatecture.TestHelpers.Aggregates.Events.Upcasters
 {

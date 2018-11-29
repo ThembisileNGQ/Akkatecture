@@ -8,8 +8,9 @@ using Akkatecture.TestHelpers.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Entities;
 using Akkatecture.TestHelpers.Aggregates.Events;
 using FluentAssertions;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
 using Xunit;
+using EventId = Akkatecture.Aggregates.EventId;
 
 namespace Akkatecture.Tests.UnitTests.Serialization
 {
