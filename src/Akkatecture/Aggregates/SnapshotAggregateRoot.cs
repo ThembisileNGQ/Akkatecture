@@ -2,10 +2,9 @@ using Akkatecture.Core;
 
 namespace Akkatecture.Aggregates
 {
-    public abstract class SnapshotAggregateRoot<TAggregate, TIdentity, TAggregateState, TSnapshot> : AggregateRoot<TAggregate, TIdentity, TAggregateState>,
-        ISnapshotAggregateRoot<TIdentity, TSnapshot>
-        where TAggregate : SnapshotAggregateRoot<TAggregate, TIdentity,  TAggregateState, TSnapshot>
-        where TAggregateState : AggregateState<TAggregate,TIdentity, IEventApplier<TAggregate,TIdentity>>
+    public abstract class SnapshotAggregateRoot<TAggregate, TIdentity, TAggregateState, TSnapshot> : AggregateRoot<TAggregate, TIdentity, TAggregateState>, ISnapshotHydrater<TAggregate, TIdentity>
+        where TAggregate : SnapshotAggregateRoot<TAggregate, TIdentity, TAggregateState, TSnapshot>
+        where TAggregateState : SnapshotAggregateState<TAggregate, TIdentity, ISnapshotHydrater<TAggregate,TIdentity>>
         where TIdentity : IIdentity
         where TSnapshot : ISnapshot
     {
