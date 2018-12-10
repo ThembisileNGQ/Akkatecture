@@ -2,7 +2,7 @@ using Akkatecture.Core;
 
 namespace Akkatecture.Aggregates
 {
-    public abstract class SnapshotAggregateRoot<TAggregate, TIdentity, TAggregateState, TSnapshot> : AggregateRoot<TAggregate, TIdentity, TAggregateState>, ISnapshotHydrater<TAggregate, TIdentity>
+    public abstract class SnapshotAggregateRoot<TAggregate, TIdentity, TAggregateState, TSnapshot> : AggregateRoot<TAggregate, TIdentity, TAggregateState>
         where TAggregate : SnapshotAggregateRoot<TAggregate, TIdentity, TAggregateState, TSnapshot>
         where TAggregateState : SnapshotAggregateState<TAggregate, TIdentity, ISnapshotHydrater<TAggregate,TIdentity>>
         where TIdentity : IIdentity
@@ -18,6 +18,6 @@ namespace Akkatecture.Aggregates
         {
             SnapshotStrategy = snapshotStrategy;
         }
-        
+
     }
 }

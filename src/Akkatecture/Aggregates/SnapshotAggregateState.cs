@@ -5,7 +5,7 @@ using Akkatecture.Extensions;
 
 namespace Akkatecture.Aggregates
 {
-    public class SnapshotAggregateState<TAggregate, TIdentity, TSnapshotHydrater>  : AggregateState<TAggregate, TIdentity, TSnapshotHydrater>,  ISnapshotHydrater<TAggregate, TIdentity>
+    public class SnapshotAggregateState<TAggregate, TIdentity, TSnapshotHydrater>  : AggregateState<TAggregate, TIdentity, IEventApplier<TAggregate,TIdentity>>,  ISnapshotHydrater<TAggregate, TIdentity>
         where TSnapshotHydrater : class, ISnapshotHydrater<TAggregate, TIdentity>
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
