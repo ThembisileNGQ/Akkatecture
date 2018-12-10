@@ -106,6 +106,8 @@ namespace Akkatecture.Aggregates
             _eventDefinitionService = new EventDefinitionService(Logger);
 
         }
+        
+        public override Recovery Recovery => new Recovery(SnapshotSelectionCriteria.None);
 
         protected void SetSourceIdHistory(int count)
         {
