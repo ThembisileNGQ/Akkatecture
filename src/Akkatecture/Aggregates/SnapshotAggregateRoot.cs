@@ -21,11 +21,15 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
+using System.Threading.Tasks;
+using Akka.Persistence;
 using Akkatecture.Core;
+using Akkatecture.Extensions;
 
 namespace Akkatecture.Aggregates
 {
-    public abstract class SnapshotAggregateRoot<TAggregate, TIdentity, TAggregateState, TSnapshot> : AggregateRoot<TAggregate, TIdentity, TAggregateState>
+    public abstract class SnapshotAggregateRoot<TAggregate, TIdentity, TAggregateState, TSnapshot> : AggregateRoot<TAggregate, TIdentity, TAggregateState>, ISnapshotAggregateRoot<TIdentity, TSnapshot>
         where TAggregate : SnapshotAggregateRoot<TAggregate, TIdentity, TAggregateState, TSnapshot>
         where TAggregateState : SnapshotAggregateState<TAggregate, TIdentity, ISnapshotHydrater<TAggregate,TIdentity>>
         where TIdentity : IIdentity
@@ -40,7 +44,76 @@ namespace Akkatecture.Aggregates
             : base(id)
         {
             SnapshotStrategy = snapshotStrategy;
+
+            if (Settings.UseDefaultSnapshotRecover)
+                Recover<SnapshotOffer>(Recover);
         }
 
+        protected virtual bool Recover(SnapshotOffer aggregateSnapshotOffer)
+        {
+            try
+            {
+                var snapshot = aggregateSnapshotOffer.Snapshot as IAggregateSnapshot<TAggregate,TIdentity>;
+                Version = aggregateSnapshotOffer.Metadata.SequenceNr;
+                State.Hydrate(this as TAggregate, snapshot);
+            }
+            catch (Exception exception)
+            {
+                Logger.Error($"Recovering with snapshot of type [{aggregateSnapshotOffer.Snapshot.GetType().PrettyPrint()}] caused an exception {exception.GetType().PrettyPrint()}");
+
+                return false;
+            }
+
+            return true;
+        }
+
+
+        public override void Emit<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
+        {
+            if (aggregateEvent == null)
+            {
+                throw new ArgumentNullException(nameof(aggregateEvent));
+            }
+            _eventDefinitionService.Load(typeof(TAggregateEvent));
+            var eventDefinition = _eventDefinitionService.GetDefinition(typeof(TAggregateEvent));
+            var aggregateSequenceNumber = Version + 1;
+            var eventId = EventId.NewDeterministic(
+                GuidFactories.Deterministic.Namespaces.Events,
+                $"{Id.Value}-v{aggregateSequenceNumber}");
+            var now = DateTimeOffset.UtcNow;
+            var eventMetadata = new Metadata
+            {
+                Timestamp = now,
+                AggregateSequenceNumber = aggregateSequenceNumber,
+                AggregateName = Name.Value,
+                AggregateId = Id.Value,
+                EventId = eventId,
+                EventName = eventDefinition.Name,
+                EventVersion = eventDefinition.Version
+            };
+            eventMetadata.Add(MetadataKeys.TimestampEpoch, now.ToUnixTime().ToString());
+            if (metadata != null)
+            {
+                eventMetadata.AddRange(metadata);
+            }
+
+            var committedEvent = new CommittedEvent<TAggregate, TIdentity, TAggregateEvent>(Id, aggregateEvent, eventMetadata, now, Version);
+            Persist(committedEvent, ApplyCommittedEvents);
+
+            Logger.Info($"[{Name}] With Id={Id} Commited [{typeof(TAggregateEvent).PrettyPrint()}]");
+
+            Version++;
+
+            var domainEvent = new DomainEvent<TAggregate, TIdentity, TAggregateEvent>(Id, aggregateEvent, eventMetadata, now, Version);
+
+            Publish(domainEvent);
+
+            if (SnapshotStrategy.ShouldCreateSnapshot(this))
+            {
+                //TODO
+            }
+        }
+
+        protected abstract TSnapshot CreateSnapshotAsync();
     }
 }

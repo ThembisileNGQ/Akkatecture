@@ -98,10 +98,7 @@ namespace Akkatecture.Aggregates
                 Recover<ICommittedEvent<TAggregate, TIdentity, IAggregateEvent<TAggregate, TIdentity>>>(Recover);
                 Recover<RecoveryCompleted>(Recover);
             }
-                
-
-            if (Settings.UseDefaultSnapshotRecover)
-                Recover<SnapshotOffer>(Recover);
+            
             
             _eventDefinitionService = new EventDefinitionService(Logger);
 
@@ -326,24 +323,7 @@ namespace Akkatecture.Aggregates
 
             return true;
         }
-
-        protected virtual bool Recover(SnapshotOffer aggregateSnapshotOffer)
-        {
-            try
-            {
-                State = aggregateSnapshotOffer.Snapshot as TAggregateState;
-                Version = LastSequenceNr;
-
-            }
-            catch (Exception exception)
-            {
-                Logger.Error($"Recovering with snapshot of type [{aggregateSnapshotOffer.Snapshot.GetType().PrettyPrint()}] caused an exception {exception.GetType().PrettyPrint()}");
-
-                return false;
-            }
-
-            return true;
-        }
+        
 
         protected virtual bool Recover(RecoveryCompleted recoveryCompleted)
         {
