@@ -26,9 +26,17 @@ using System.Collections.Generic;
 using Akkatecture.Core;
 using Akkatecture.Extensions;
 
-namespace Akkatecture.Aggregates
+namespace Akkatecture.Aggregates.Snapshot
 {
-    public class SnapshotAggregateState<TAggregate, TIdentity, TSnapshotHydrater>  : AggregateState<TAggregate, TIdentity, IEventApplier<TAggregate,TIdentity>>,  ISnapshotHydrater<TAggregate, TIdentity>
+    public abstract class SnapshotAggregateState<TAggregate, TIdentity> : SnapshotAggregateState<TAggregate, TIdentity,
+        ISnapshotHydrater<TAggregate, TIdentity>>
+        where TAggregate : IAggregateRoot<TIdentity>
+        where TIdentity : IIdentity
+    {
+        
+    }
+    
+    public abstract class SnapshotAggregateState<TAggregate, TIdentity, TSnapshotHydrater>  : AggregateState<TAggregate, TIdentity, IEventApplier<TAggregate,TIdentity>>,  ISnapshotHydrater<TAggregate, TIdentity>
         where TSnapshotHydrater : class, ISnapshotHydrater<TAggregate, TIdentity>
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity

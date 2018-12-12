@@ -22,18 +22,30 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Threading.Tasks;
 using Akka.Persistence;
 using Akkatecture.Core;
 using Akkatecture.Extensions;
 
-namespace Akkatecture.Aggregates
+namespace Akkatecture.Aggregates.Snapshot
 {
+    public abstract class SnapshotAggregateRoot<TAggregate, TIdentity, TAggregateState> : SnapshotAggregateRoot<
+        TAggregate, TIdentity, TAggregateState, IAggregateSnapshot<TAggregate, TIdentity>>
+        where TAggregate : SnapshotAggregateRoot<TAggregate, TIdentity, TAggregateState, IAggregateSnapshot<TAggregate, TIdentity>>
+        where TAggregateState : SnapshotAggregateState<TAggregate, TIdentity, ISnapshotHydrater<TAggregate,TIdentity>>
+        where TIdentity : IIdentity
+    {
+        protected SnapshotAggregateRoot(
+            TIdentity id, 
+            ISnapshotStrategy snapshotStrategy) 
+            : base(id, snapshotStrategy)
+        {
+        }
+    }
     public abstract class SnapshotAggregateRoot<TAggregate, TIdentity, TAggregateState, TSnapshot> : AggregateRoot<TAggregate, TIdentity, TAggregateState>, ISnapshotAggregateRoot<TIdentity, TSnapshot>
         where TAggregate : SnapshotAggregateRoot<TAggregate, TIdentity, TAggregateState, TSnapshot>
         where TAggregateState : SnapshotAggregateState<TAggregate, TIdentity, ISnapshotHydrater<TAggregate,TIdentity>>
         where TIdentity : IIdentity
-        where TSnapshot : ISnapshot
+        where TSnapshot : IAggregateSnapshot<TAggregate, TIdentity>
     {
         protected ISnapshotStrategy SnapshotStrategy { get; }
         public int? SnapshotVersion { get; private set; }
@@ -110,10 +122,12 @@ namespace Akkatecture.Aggregates
 
             if (SnapshotStrategy.ShouldCreateSnapshot(this))
             {
-                //TODO
+                var aggregateSnapshot = CreateSnapshot();
+                
+                SaveSnapshot(aggregateSnapshot);
             }
         }
 
-        protected abstract TSnapshot CreateSnapshotAsync();
+        protected abstract TSnapshot CreateSnapshot();
     }
 }

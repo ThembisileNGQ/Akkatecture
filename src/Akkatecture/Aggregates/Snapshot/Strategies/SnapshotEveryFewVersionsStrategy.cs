@@ -21,10 +21,37 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Akkatecture.Aggregates
+namespace Akkatecture.Aggregates.Snapshot.Strategies
 {
-    public interface ISnapshotStrategy
+    public class SnapshotEveryFewVersionsStrategy : ISnapshotStrategy
     {
-        bool ShouldCreateSnapshot(ISnapshotAggregateRoot snapshotAggregateRoot);
+        public const int DefautSnapshotAfterVersions = 50;
+        private readonly int _snapshotAfterVersions;
+
+        public static ISnapshotStrategy Default { get; } = With();
+
+        public static ISnapshotStrategy With(
+            int snapshotAfterVersions = DefautSnapshotAfterVersions)
+        {
+            return new SnapshotEveryFewVersionsStrategy(
+                snapshotAfterVersions);
+        }
+
+        private SnapshotEveryFewVersionsStrategy(
+            int snapshotAfterVersions)
+        {
+            _snapshotAfterVersions = snapshotAfterVersions;
+        }
+
+
+        public bool ShouldCreateSnapshot(ISnapshotAggregateRoot snapshotAggregateRoot)
+        {
+            if (snapshotAggregateRoot.Version % DefautSnapshotAfterVersions == 0 && !snapshotAggregateRoot.IsNew)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }

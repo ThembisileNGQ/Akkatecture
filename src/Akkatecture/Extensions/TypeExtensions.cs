@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Akkatecture.Aggregates;
+using Akkatecture.Aggregates.Snapshot;
 using Akkatecture.Core;
 using Akkatecture.Events;
 using Akkatecture.Sagas;

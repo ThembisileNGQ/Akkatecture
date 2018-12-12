@@ -21,11 +21,18 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Akkatecture.Aggregates
+using Akkatecture.Core;
+using Akkatecture.Core.VersionedTypes;
+
+namespace Akkatecture.Aggregates.Snapshot
 {
-    public interface IHydrate<in TAggregateSnapshot>
-        where TAggregateSnapshot : ISnapshot
+    public interface ISnapshot : IVersionedType
     {
-        void Hyrate(TAggregateSnapshot aggregateEvent);
+    }
+    
+    public interface IAggregateSnapshot<TAggregate, TIdentity> : ISnapshot
+        where TAggregate : IAggregateRoot<TIdentity>
+        where TIdentity : IIdentity
+    {
     }
 }

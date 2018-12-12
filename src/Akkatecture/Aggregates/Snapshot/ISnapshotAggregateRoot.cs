@@ -23,12 +23,16 @@
 
 using Akkatecture.Core;
 
-namespace Akkatecture.Aggregates
+namespace Akkatecture.Aggregates.Snapshot
 {
-    public interface ISnapshotHydrater<TAggregate,TIdentity>  : IEventApplier<TAggregate, TIdentity>
-        where TAggregate : IAggregateRoot<TIdentity>
-        where TIdentity : IIdentity
+    public interface ISnapshotAggregateRoot : IAggregateRoot
     {
-        bool Hydrate(TAggregate aggregate, IAggregateSnapshot<TAggregate, TIdentity> aggregateSnapshot);
+        int? SnapshotVersion { get; }
+    }
+
+    public interface ISnapshotAggregateRoot<out TIdentity, TSnapshot> : ISnapshotAggregateRoot, IAggregateRoot<TIdentity>
+        where TIdentity : IIdentity
+        where TSnapshot : ISnapshot
+    {
     }
 }
