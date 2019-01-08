@@ -44,7 +44,7 @@ namespace Akkatecture.Aggregates.Snapshot.Strategies
         }
 
 
-        public bool ShouldCreateSnapshot(ISnapshotAggregateRoot snapshotAggregateRoot)
+        public bool ShouldCreateSnapshot(IAggregateRoot snapshotAggregateRoot)
         {
             if (snapshotAggregateRoot.Version % DefautSnapshotAfterVersions == 0 && !snapshotAggregateRoot.IsNew)
             {

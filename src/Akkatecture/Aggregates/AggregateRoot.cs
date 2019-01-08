@@ -31,6 +31,8 @@ using System.Linq;
 using Akka.Event;
 using Akka.Persistence;
 using Akka.Persistence.Journal;
+using Akkatecture.Aggregates.Snapshot;
+using Akkatecture.Aggregates.Snapshot.Strategies;
 using Akkatecture.Commands;
 using Akkatecture.Core;
 using Akkatecture.Events;
@@ -40,7 +42,7 @@ namespace Akkatecture.Aggregates
 {
     public abstract class AggregateRoot<TAggregate, TIdentity, TAggregateState> : ReceivePersistentActor, IAggregateRoot<TIdentity>
         where TAggregate : AggregateRoot<TAggregate, TIdentity, TAggregateState>
-        where TAggregateState : AggregateState<TAggregate,TIdentity, IEventApplier<TAggregate,TIdentity>>
+        where TAggregateState : AggregateState<TAggregate,TIdentity, IMessageApplier<TAggregate,TIdentity>>
         where TIdentity : IIdentity
     {
         private static readonly IReadOnlyDictionary<Type, Action<TAggregateState, IAggregateEvent>> ApplyMethodsFromState;
@@ -51,6 +53,8 @@ namespace Akkatecture.Aggregates
         private CircularBuffer<ISourceId> _previousSourceIds = new CircularBuffer<ISourceId>(10);
         protected ILoggingAdapter Logger { get; }
         protected IEventDefinitionService _eventDefinitionService;
+        protected ISnapshotStrategy SnapshotStrategy { get; }
+        public int? SnapshotVersion { get; private set; }
         public TAggregateState State { get; protected set; }
         public IAggregateName Name => AggregateName;
         public override string PersistenceId { get; }
@@ -65,7 +69,8 @@ namespace Akkatecture.Aggregates
                 .GetAggregateStateEventApplyMethods<TAggregate, TIdentity, TAggregateState>();
         }
 
-        protected AggregateRoot(TIdentity id)
+        protected AggregateRoot(TIdentity id,
+            ISnapshotStrategy snapshotStrategy = null)
         {
             Logger = Context.GetLogger();
             if (id == null) throw new ArgumentNullException(nameof(id));
@@ -87,6 +92,18 @@ namespace Akkatecture.Aggregates
                 }
                 
             }
+
+            if (snapshotStrategy == null)
+            {
+                SnapshotStrategy = SnapshotNeverStrategy.Instance;
+            }
+            else
+            {
+                SnapshotStrategy = snapshotStrategy;
+                if (Settings.UseDefaultSnapshotRecover)
+                    Recover<SnapshotOffer>(Recover);
+            }
+            
             _eventDefinitionService = new EventDefinitionService(Logger);
             Settings = new AggregateRootSettings(Context.System.Settings.Config);
             Id = id;
@@ -104,7 +121,6 @@ namespace Akkatecture.Aggregates
 
         }
         
-        public override Recovery Recovery => new Recovery(SnapshotSelectionCriteria.None);
 
         protected void SetSourceIdHistory(int count)
         {
@@ -161,6 +177,20 @@ namespace Akkatecture.Aggregates
             var domainEvent = new DomainEvent<TAggregate,TIdentity,TAggregateEvent>(Id, aggregateEvent,eventMetadata,now,Version);
 
             Publish(domainEvent);
+            
+            
+            if (SnapshotStrategy.ShouldCreateSnapshot(this))
+            {
+                var aggregateSnapshot = CreateSnapshot();
+                if(aggregateSnapshot != null)
+                    SaveSnapshot(aggregateSnapshot);
+            }
+        }
+
+        protected virtual IAggregateSnapshot<TAggregate, TIdentity> CreateSnapshot()
+        {
+            Logger.Info($"[{Name}] With Id={Id} Attempted to Create a Snapshot, override the CreateSnapshot() method to return the snapshot data model.");
+            return null;
         }
 
         protected void  ApplyCommittedEvents<TAggregateEvent>(ICommittedEvent<TAggregate, TIdentity, TAggregateEvent> committedEvent)
@@ -318,6 +348,24 @@ namespace Akkatecture.Aggregates
             catch(Exception exception)
             {
                 Logger.Error($"Recovering with event of type [{committedEvent.GetType().PrettyPrint()}] caused an exception {exception.GetType().PrettyPrint()}");
+                return false;
+            }
+
+            return true;
+        }
+        
+        protected virtual bool Recover(SnapshotOffer aggregateSnapshotOffer)
+        {
+            try
+            {
+                var snapshot = aggregateSnapshotOffer.Snapshot as IAggregateSnapshot<TAggregate,TIdentity>;
+                Version = aggregateSnapshotOffer.Metadata.SequenceNr;
+                State.Hydrate(this as TAggregate, snapshot);
+            }
+            catch (Exception exception)
+            {
+                Logger.Error($"Recovering with snapshot of type [{aggregateSnapshotOffer.Snapshot.GetType().PrettyPrint()}] caused an exception {exception.GetType().PrettyPrint()}");
+
                 return false;
             }
 

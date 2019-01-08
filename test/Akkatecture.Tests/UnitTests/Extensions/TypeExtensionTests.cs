@@ -89,13 +89,13 @@ namespace Akkatecture.Tests.UnitTests.Extensions
         }
 
         public class FooStateWithAttribute : AggregateState<FooAggregateWithAttribute, FooId,
-            IEventApplier<FooAggregateWithAttribute, FooId>>
+            IMessageApplier<FooAggregateWithAttribute, FooId>>
         {
                 
         }
 
         public class FooStateWithOutAttribute : AggregateState<FooAggregateWithOutAttribute, FooId,
-            IEventApplier<FooAggregateWithOutAttribute, FooId>>
+            IMessageApplier<FooAggregateWithOutAttribute, FooId>>
         {
 
         }

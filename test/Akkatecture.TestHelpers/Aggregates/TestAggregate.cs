@@ -23,6 +23,8 @@
 
 using System.Linq;
 using Akkatecture.Aggregates;
+using Akkatecture.Aggregates.Snapshot;
+using Akkatecture.Aggregates.Snapshot.Strategies;
 using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Events;
 using Akkatecture.TestHelpers.Aggregates.Events.Errors;
@@ -35,10 +37,9 @@ namespace Akkatecture.TestHelpers.Aggregates
     {
         public int TestErrors { get; private set; }
         public TestAggregate(TestAggregateId aggregateId)
-            : base(aggregateId)
+            : base(aggregateId, SnapshotEveryFewVersionsStrategy.With(10))
         {
             TestErrors = 0;
-            
             //Aggregate Commands
             Command<CreateTestCommand>(Execute);
             Command<AddTestCommand>(Execute);
@@ -145,6 +146,15 @@ namespace Akkatecture.TestHelpers.Aggregates
             Throw(new TestedErrorEvent(TestErrors));
 
             return true;
+        }
+
+        protected override IAggregateSnapshot<TestAggregate, TestAggregateId> CreateSnapshot()
+        {
+            return new TestSnapshotDataModel
+            {
+                Tests = State.TestCollection.Select(x => new TestSnapshotDataModel.TestDataModel {Id = x.Id.GetGuid()})
+                    .ToList()
+            };
         }
     }
 }

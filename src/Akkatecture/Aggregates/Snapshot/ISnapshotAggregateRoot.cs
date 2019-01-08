@@ -25,7 +25,7 @@ using Akkatecture.Core;
 
 namespace Akkatecture.Aggregates.Snapshot
 {
-    public interface ISnapshotAggregateRoot : IAggregateRoot
+    /*public interface ISnapshotAggregateRoot : IAggregateRoot
     {
         int? SnapshotVersion { get; }
     }
@@ -34,5 +34,5 @@ namespace Akkatecture.Aggregates.Snapshot
         where TIdentity : IIdentity
         where TSnapshot : ISnapshot
     {
-    }
+    }*/
 }

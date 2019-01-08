@@ -55,6 +55,7 @@ namespace Akkatecture.Sagas.AggregateSaga
         protected IEventDefinitionService _eventDefinitionService;
         public TSagaState State { get; protected set; }
         public TIdentity Id { get; }
+        public int? SnapshotVersion { get; private set; }
         public IAggregateName Name => AggregateName;
         public long Version { get; protected set; }
         public bool IsNew => Version <= 0;

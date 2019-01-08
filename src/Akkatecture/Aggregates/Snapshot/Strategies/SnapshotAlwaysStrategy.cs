@@ -25,7 +25,8 @@ namespace Akkatecture.Aggregates.Snapshot.Strategies
 {
     public class SnapshotAlwaysStrategy : ISnapshotStrategy
     {
-        public bool ShouldCreateSnapshot(ISnapshotAggregateRoot snapshotAggregateRoot)
+        public static ISnapshotStrategy Instance = new SnapshotAlwaysStrategy();
+        public bool ShouldCreateSnapshot(IAggregateRoot snapshotAggregateRoot)
         {
             return true;
         }

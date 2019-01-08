@@ -37,6 +37,7 @@ namespace Akkatecture.Aggregates
         long Version { get; }
         
         bool IsNew { get; }
+        int? SnapshotVersion { get; }
         
         bool HasSourceId(ISourceId sourceId);
 

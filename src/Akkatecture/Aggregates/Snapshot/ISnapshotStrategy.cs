@@ -25,6 +25,6 @@ namespace Akkatecture.Aggregates.Snapshot
 {
     public interface ISnapshotStrategy
     {
-        bool ShouldCreateSnapshot(ISnapshotAggregateRoot snapshotAggregateRoot);
+        bool ShouldCreateSnapshot(IAggregateRoot snapshotAggregateRoot);
     }
 }

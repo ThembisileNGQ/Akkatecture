@@ -192,5 +192,40 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
                      && x.AggregateEvent.State.TestCollection.Count == 5);
 
         }
+
+        [Fact]
+        [Category(Category)]
+        public void TestSnapShotting_AfterManyTests_TestStateSignalled()
+        {
+            //State has dictionary with complex key, NewtonSoft hates that
+            var probe = CreateTestActor("probeActor");
+            Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>));
+            var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
+            var aggregateId = TestAggregateId.New;
+
+            
+            var command = new CreateTestCommand(aggregateId);
+            aggregateManager.Tell(command);
+
+            for (var i = 0; i < 5; i++)
+            {
+                var test = new Test(TestId.New);
+                var testCommand = new AddTestCommand(aggregateId, test);
+                aggregateManager.Tell(testCommand);
+            }
+            
+            var poisonCommand = new PoisonTestAggregateCommand(aggregateId);
+            aggregateManager.Tell(poisonCommand);
+
+            var reviveCommand = new PublishTestStateCommand(aggregateId);
+            aggregateManager.Tell(reviveCommand);
+
+
+
+            ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>>(
+                x => x.AggregateEvent.LastSequenceNr == 6
+                     && x.AggregateEvent.Version == 6
+                     && x.AggregateEvent.State.TestCollection.Count == 5);
+        }
     }
 }

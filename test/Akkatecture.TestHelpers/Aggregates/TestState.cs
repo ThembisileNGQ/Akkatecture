@@ -21,8 +21,11 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Akkatecture.Aggregates;
+using Akkatecture.Aggregates.Snapshot;
 using Akkatecture.TestHelpers.Aggregates.Entities;
 using Akkatecture.TestHelpers.Aggregates.Events;
 
@@ -33,13 +36,16 @@ namespace Akkatecture.TestHelpers.Aggregates
         IApply<TestAddedEvent>,
         IApply<TestReceivedEvent>,
         IApply<TestSentEvent>,
-        IApply<TestCreatedEvent>
+        IApply<TestCreatedEvent>,
+        IHydrate<TestSnapshotDataModel>
     {
         public List<Test> TestCollection { get; private set; }
+        public bool FromHydration { get; private set; }
 
         public void Apply(TestCreatedEvent aggregateEvent)
         {
             TestCollection = new List<Test>();
+            FromHydration = false;
         }
         
         public void Apply(TestAddedEvent aggregateEvent)
@@ -56,5 +62,23 @@ namespace Akkatecture.TestHelpers.Aggregates
         {
             TestCollection.RemoveAll(x => x.Id == aggregateEvent.Test.Id);
         }
+        public void Hydrate(TestSnapshotDataModel aggregateSnapshot)
+        {
+            TestCollection = aggregateSnapshot.Tests.Select(x => new Test(TestId.With(x.Id))).ToList();
+            FromHydration = true;
+        }
     }
+    
+    public class TestSnapshotDataModel : IAggregateSnapshot<TestAggregate, TestAggregateId>
+    {
+        public List<TestDataModel> Tests { get; set; }
+        
+        
+        
+        public class TestDataModel
+        {
+            public Guid Id { get; set; }
+        }
+    }
+
 }

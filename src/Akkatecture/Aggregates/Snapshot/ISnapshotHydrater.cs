@@ -25,7 +25,7 @@ using Akkatecture.Core;
 
 namespace Akkatecture.Aggregates.Snapshot
 {
-    public interface ISnapshotHydrater<TAggregate,TIdentity>  : IEventApplier<TAggregate, TIdentity>
+    public interface ISnapshotHydrater<TAggregate,TIdentity> 
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
     {
