@@ -22,6 +22,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System.Linq;
+using Akka.Persistence;
 using Akkatecture.Aggregates;
 using Akkatecture.Aggregates.Snapshot;
 using Akkatecture.Aggregates.Snapshot.Strategies;
@@ -50,6 +51,9 @@ namespace Akkatecture.TestHelpers.Aggregates
             Command<PoisonTestAggregateCommand>(Execute);
             Command<PublishTestStateCommand>(Execute);         
             Command<TestDomainErrorCommand>(Execute);
+
+            Command<SaveSnapshotSuccess>(SnapshotStatus);
+            Command<SaveSnapshotFailure>(SnapshotStatus);
         }
 
         private bool Execute(CreateTestCommand command)
@@ -145,6 +149,18 @@ namespace Akkatecture.TestHelpers.Aggregates
             TestErrors++;
             Throw(new TestedErrorEvent(TestErrors));
 
+            return true;
+        }
+
+        protected override bool SnapshotStatus(SaveSnapshotSuccess snapshotSuccess)
+        {
+            Context.Stop(Self);
+            Context.Parent.Tell(new PublishTestStateCommand(Id), Self);
+            return true;
+        }
+
+        protected override bool SnapshotStatus(SaveSnapshotFailure snapshotFailure)
+        {
             return true;
         }
 

@@ -49,7 +49,6 @@ namespace Akkatecture.Aggregates
         private static readonly IAggregateName AggregateName = typeof(TAggregate).GetAggregateName();
         private readonly List<IEventApplier<TAggregate, TIdentity>> _eventAppliers = new List<IEventApplier<TAggregate, TIdentity>>();
         private readonly Dictionary<Type, Action<object>> _eventHandlers = new Dictionary<Type, Action<object>>();
-        
         private CircularBuffer<ISourceId> _previousSourceIds = new CircularBuffer<ISourceId>(10);
         protected ILoggingAdapter Logger { get; }
         protected IEventDefinitionService _eventDefinitionService;
@@ -61,6 +60,7 @@ namespace Akkatecture.Aggregates
         public TIdentity Id { get; }
         public long Version { get; protected set; }
         public bool IsNew => Version <= 0;
+        public override Recovery Recovery => new Recovery(SnapshotSelectionCriteria.Latest);
         public AggregateRootSettings Settings { get; }
         
         static AggregateRoot()
@@ -210,7 +210,7 @@ namespace Akkatecture.Aggregates
             }
 
         }
-        public override Recovery Recovery => new Recovery(SnapshotSelectionCriteria.Latest);
+        
         //Experimental
         protected void  ApplyCommittedEvents<TAggregateEvent>(Tagged committedEvent)
             where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
@@ -366,6 +366,7 @@ namespace Akkatecture.Aggregates
         
         protected virtual bool Recover(SnapshotOffer aggregateSnapshotOffer)
         {
+            //Check here
             try
             {
                 var snapshot = aggregateSnapshotOffer.Snapshot as IAggregateSnapshot<TAggregate,TIdentity>;

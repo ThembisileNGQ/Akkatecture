@@ -26,7 +26,7 @@ using Akkatecture.Commands;
 
 namespace Akkatecture.TestHelpers.Aggregates
 {
-    public class TestAggregateManager : AggregateManager<TestAggregate, TestAggregateId, Command<TestAggregate, TestAggregateId>>
+    public class  TestAggregateManager : AggregateManager<TestAggregate, TestAggregateId, Command<TestAggregate, TestAggregateId>>
     {
         
     }
