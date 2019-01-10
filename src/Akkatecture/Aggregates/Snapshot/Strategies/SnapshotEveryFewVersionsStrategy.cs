@@ -26,27 +26,27 @@ namespace Akkatecture.Aggregates.Snapshot.Strategies
     public class SnapshotEveryFewVersionsStrategy : ISnapshotStrategy
     {
         public const int DefautSnapshotAfterVersions = 50;
-        private readonly int _snapshotAfterVersions;
+        public int SnapshotAfterVersions { get; }
 
         public static ISnapshotStrategy Default { get; } = With();
 
-        public static ISnapshotStrategy With(
+        public static SnapshotEveryFewVersionsStrategy With(
             int snapshotAfterVersions = DefautSnapshotAfterVersions)
         {
             return new SnapshotEveryFewVersionsStrategy(
                 snapshotAfterVersions);
         }
 
-        private SnapshotEveryFewVersionsStrategy(
+        public SnapshotEveryFewVersionsStrategy(
             int snapshotAfterVersions)
         {
-            _snapshotAfterVersions = snapshotAfterVersions;
+            SnapshotAfterVersions = snapshotAfterVersions;
         }
 
 
         public bool ShouldCreateSnapshot(IAggregateRoot snapshotAggregateRoot)
         {
-            if (snapshotAggregateRoot.Version % DefautSnapshotAfterVersions == 0 && !snapshotAggregateRoot.IsNew)
+            if (snapshotAggregateRoot.Version % SnapshotAfterVersions == 0 && !snapshotAggregateRoot.IsNew)
             {
                 return true;
             }

@@ -207,7 +207,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             var command = new CreateTestCommand(aggregateId);
             aggregateManager.Tell(command);
 
-            for (var i = 0; i < 5; i++)
+            for (var i = 0; i < 10; i++)
             {
                 var test = new Test(TestId.New);
                 var testCommand = new AddTestCommand(aggregateId, test);
@@ -223,9 +223,10 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
 
 
             ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>>(
-                x => x.AggregateEvent.LastSequenceNr == 6
-                     && x.AggregateEvent.Version == 6
-                     && x.AggregateEvent.State.TestCollection.Count == 5);
+                x => x.AggregateEvent.LastSequenceNr == 11
+                     && x.AggregateEvent.Version == 11
+                     && x.AggregateEvent.State.TestCollection.Count == 10
+                     && x.AggregateEvent.State.FromHydration == true, TimeSpan.FromMinutes(1));
         }
     }
 }

@@ -93,23 +93,26 @@ namespace Akkatecture.Aggregates
                 
             }
 
+            _eventDefinitionService = new EventDefinitionService(Logger);
+            Settings = new AggregateRootSettings(Context.System.Settings.Config);
+            Id = id;
+            PersistenceId = id.Value;
+            Register(State);
+            
             if (snapshotStrategy == null)
             {
                 SnapshotStrategy = SnapshotNeverStrategy.Instance;
+                
             }
             else
             {
                 SnapshotStrategy = snapshotStrategy;
                 if (Settings.UseDefaultSnapshotRecover)
                     Recover<SnapshotOffer>(Recover);
-            }
-            
-            _eventDefinitionService = new EventDefinitionService(Logger);
-            Settings = new AggregateRootSettings(Context.System.Settings.Config);
-            Id = id;
-            PersistenceId = id.Value;
-            Register(State);
 
+                Command<SaveSnapshotSuccess>(SnapshotStatus);
+                Command<SaveSnapshotFailure>(SnapshotStatus);
+            }
             if (Settings.UseDefaultEventRecover)
             {
                 Recover<ICommittedEvent<TAggregate, TIdentity, IAggregateEvent<TAggregate, TIdentity>>>(Recover);
@@ -178,13 +181,13 @@ namespace Akkatecture.Aggregates
 
             Publish(domainEvent);
             
-            
-            if (SnapshotStrategy.ShouldCreateSnapshot(this))
+            /*if (SnapshotStrategy.ShouldCreateSnapshot(this))
             {
                 var aggregateSnapshot = CreateSnapshot();
                 if(aggregateSnapshot != null)
                     SaveSnapshot(aggregateSnapshot);
-            }
+            }*/
+            
         }
 
         protected virtual IAggregateSnapshot<TAggregate, TIdentity> CreateSnapshot()
@@ -198,9 +201,16 @@ namespace Akkatecture.Aggregates
         {
             var applyMethods = GetEventApplyMethods(committedEvent.AggregateEvent);
             applyMethods(committedEvent.AggregateEvent);
+            
+            if (SnapshotStrategy.ShouldCreateSnapshot(this))
+            {
+                var aggregateSnapshot = CreateSnapshot();
+                if(aggregateSnapshot != null)
+                    SaveSnapshot(aggregateSnapshot);
+            }
 
         }
-        
+        public override Recovery Recovery => new Recovery(SnapshotSelectionCriteria.Latest);
         //Experimental
         protected void  ApplyCommittedEvents<TAggregateEvent>(Tagged committedEvent)
             where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
@@ -369,6 +379,16 @@ namespace Akkatecture.Aggregates
                 return false;
             }
 
+            return true;
+        }
+
+        protected virtual bool SnapshotStatus(SaveSnapshotSuccess snapshotSuccess)
+        {
+            return true;
+        }
+        
+        protected virtual bool SnapshotStatus(SaveSnapshotFailure snapshotFailure)
+        {
             return true;
         }
         

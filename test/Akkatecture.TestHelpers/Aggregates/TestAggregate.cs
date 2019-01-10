@@ -37,7 +37,7 @@ namespace Akkatecture.TestHelpers.Aggregates
     {
         public int TestErrors { get; private set; }
         public TestAggregate(TestAggregateId aggregateId)
-            : base(aggregateId, SnapshotEveryFewVersionsStrategy.With(10))
+            : base(aggregateId, new SnapshotEveryFewVersionsStrategy(10))
         {
             TestErrors = 0;
             //Aggregate Commands
