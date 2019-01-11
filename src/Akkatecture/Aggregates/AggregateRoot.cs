@@ -46,6 +46,7 @@ namespace Akkatecture.Aggregates
         where TIdentity : IIdentity
     {
         private static readonly IReadOnlyDictionary<Type, Action<TAggregateState, IAggregateEvent>> ApplyMethodsFromState;
+        private static readonly IReadOnlyDictionary<Type, Action<TAggregateState, IAggregateSnapshot>> HydrateMethodsFromState;
         private static readonly IAggregateName AggregateName = typeof(TAggregate).GetAggregateName();
         private readonly List<IEventApplier<TAggregate, TIdentity>> _eventAppliers = new List<IEventApplier<TAggregate, TIdentity>>();
         private readonly Dictionary<Type, Action<object>> _eventHandlers = new Dictionary<Type, Action<object>>();
@@ -67,6 +68,9 @@ namespace Akkatecture.Aggregates
         {
             ApplyMethodsFromState = typeof(TAggregateState)
                 .GetAggregateStateEventApplyMethods<TAggregate, TIdentity, TAggregateState>();
+
+            HydrateMethodsFromState = typeof(TAggregateState)
+                .GetAggregateSnapshotHydrateMethods<TAggregate, TIdentity, TAggregateState>();
         }
 
         protected AggregateRoot(TIdentity id,
@@ -180,14 +184,13 @@ namespace Akkatecture.Aggregates
             var domainEvent = new DomainEvent<TAggregate,TIdentity,TAggregateEvent>(Id, aggregateEvent,eventMetadata,now,Version);
 
             Publish(domainEvent);
-            
-            /*if (SnapshotStrategy.ShouldCreateSnapshot(this))
+
+            if (SnapshotStrategy.ShouldCreateSnapshot(this))
             {
                 var aggregateSnapshot = CreateSnapshot();
-                if(aggregateSnapshot != null)
+                if (aggregateSnapshot != null)
                     SaveSnapshot(aggregateSnapshot);
-            }*/
-            
+            }
         }
 
         protected virtual IAggregateSnapshot<TAggregate, TIdentity> CreateSnapshot()
@@ -202,70 +205,8 @@ namespace Akkatecture.Aggregates
             var applyMethods = GetEventApplyMethods(committedEvent.AggregateEvent);
             applyMethods(committedEvent.AggregateEvent);
             
-            if (SnapshotStrategy.ShouldCreateSnapshot(this))
-            {
-                var aggregateSnapshot = CreateSnapshot();
-                if(aggregateSnapshot != null)
-                    SaveSnapshot(aggregateSnapshot);
-            }
-
         }
         
-        //Experimental
-        protected void  ApplyCommittedEvents<TAggregateEvent>(Tagged committedEvent)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
-        {
-            var evt = committedEvent.Payload as IAggregateEvent<TAggregate, TIdentity>;
-            var applyMethods = GetEventApplyMethods(evt);
-            applyMethods(evt);
-
-        }
-        
-        protected virtual void Signal<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
-        {
-            if (aggregateEvent == null)
-            {
-                throw new ArgumentNullException(nameof(aggregateEvent));
-            }
-            
-            _eventDefinitionService.Load(typeof(TAggregateEvent));
-            var eventDefinition = _eventDefinitionService.GetDefinition(typeof(TAggregateEvent));
-            var aggregateSequenceNumber = Version;
-            var eventId = EventId.NewDeterministic(
-                GuidFactories.Deterministic.Namespaces.Events,
-                $"{Id.Value}-v{aggregateSequenceNumber}");
-            var now = DateTimeOffset.UtcNow;
-            var eventMetadata = new Metadata
-            {
-                Timestamp = now,
-                AggregateSequenceNumber = aggregateSequenceNumber,
-                AggregateName = Name.Value,
-                AggregateId = Id.Value,
-                EventId = eventId,
-                EventName = eventDefinition.Name,
-                EventVersion = eventDefinition.Version
-            };
-
-            eventMetadata.Add(MetadataKeys.TimestampEpoch, now.ToUnixTime().ToString());
-            if (metadata != null)
-            {
-                eventMetadata.AddRange(metadata);
-            }
-
-            Logger.Info($"[{Name}] With Id={Id} Commited [{typeof(TAggregateEvent).PrettyPrint()}]");
-
-            var domainEvent = new DomainEvent<TAggregate,TIdentity,TAggregateEvent>(Id,aggregateEvent,eventMetadata,now,Version);
-
-            Publish(domainEvent);
-        }
-
-        protected virtual void Throw<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
-        {
-            Signal(aggregateEvent,metadata);
-        }
-
         protected virtual void Publish<TEvent>(TEvent aggregateEvent)
         {
             Context.System.EventStream.Publish(aggregateEvent);
@@ -329,6 +270,23 @@ namespace Akkatecture.Aggregates
             return aggregateApplyMethod;
         }
 
+        protected Action<IAggregateSnapshot> GetSnapshotHydrateMethods<TAggregateSnapshot>(TAggregateSnapshot aggregateEvent)
+            where TAggregateSnapshot : IAggregateSnapshot<TAggregate, TIdentity>
+        {
+            var snapshotType = aggregateEvent.GetType();
+
+            Action<TAggregateState, IAggregateSnapshot> hydrateMethod;
+            if (!HydrateMethodsFromState.TryGetValue(snapshotType, out hydrateMethod))
+            {
+                throw new NotImplementedException(
+                    $"Aggregate State '{State.GetType().PrettyPrint()}' does have an 'Apply' method that takes aggregate event '{snapshotType.PrettyPrint()}' as argument");
+            }
+
+            var snapshotHydrateMethod = hydrateMethod.Bind(State);
+
+            return snapshotHydrateMethod;
+        }
+
         protected virtual void ApplyEvent(IAggregateEvent<TAggregate, TIdentity> aggregateEvent)
         {
             var eventType = aggregateEvent.GetType();
@@ -346,6 +304,15 @@ namespace Akkatecture.Aggregates
             eventApplier(aggregateEvent);
 
             Version++;
+        }
+
+        protected virtual void HydrateSnapshot(IAggregateSnapshot<TAggregate, TIdentity> aggregateSnapshot, long version)
+        {
+            var snapshotHydrater = GetSnapshotHydrateMethods(aggregateSnapshot);
+
+            snapshotHydrater(aggregateSnapshot);
+
+            Version = version;
         }
 
         protected virtual bool Recover(ICommittedEvent<TAggregate, TIdentity, IAggregateEvent<TAggregate, TIdentity>> committedEvent)
@@ -370,8 +337,7 @@ namespace Akkatecture.Aggregates
             try
             {
                 var snapshot = aggregateSnapshotOffer.Snapshot as IAggregateSnapshot<TAggregate,TIdentity>;
-                Version = aggregateSnapshotOffer.Metadata.SequenceNr;
-                State.Hydrate(this as TAggregate, snapshot);
+                HydrateSnapshot(snapshot, aggregateSnapshotOffer.Metadata.SequenceNr);
             }
             catch (Exception exception)
             {

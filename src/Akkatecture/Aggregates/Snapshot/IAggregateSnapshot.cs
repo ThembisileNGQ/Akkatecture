@@ -26,11 +26,11 @@ using Akkatecture.Core.VersionedTypes;
 
 namespace Akkatecture.Aggregates.Snapshot
 {
-    public interface ISnapshot : IVersionedType
+    public interface IAggregateSnapshot : IVersionedType
     {
     }
     
-    public interface IAggregateSnapshot<TAggregate, TIdentity> : ISnapshot
+    public interface IAggregateSnapshot<TAggregate, TIdentity> : IAggregateSnapshot
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
     {

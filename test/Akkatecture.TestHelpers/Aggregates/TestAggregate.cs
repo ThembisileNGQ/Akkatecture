@@ -21,20 +21,24 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
 using System.Linq;
 using Akka.Persistence;
 using Akkatecture.Aggregates;
 using Akkatecture.Aggregates.Snapshot;
 using Akkatecture.Aggregates.Snapshot.Strategies;
+using Akkatecture.Core;
+using Akkatecture.Extensions;
 using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Events;
 using Akkatecture.TestHelpers.Aggregates.Events.Errors;
 using Akkatecture.TestHelpers.Aggregates.Events.Signals;
+using Akkatecture.TestHelpers.Aggregates.Snapshots;
 
 namespace Akkatecture.TestHelpers.Aggregates
 {
     [AggregateName("Test")]
-    public class TestAggregate : AggregateRoot<TestAggregate, TestAggregateId, TestState>
+    public class TestAggregate : AggregateRoot<TestAggregate, TestAggregateId, TestAggregateState>
     {
         public int TestErrors { get; private set; }
         public TestAggregate(TestAggregateId aggregateId)
@@ -166,11 +170,56 @@ namespace Akkatecture.TestHelpers.Aggregates
 
         protected override IAggregateSnapshot<TestAggregate, TestAggregateId> CreateSnapshot()
         {
-            return new TestSnapshotDataModel
+            return new TestAggregateSnapshot
             {
-                Tests = State.TestCollection.Select(x => new TestSnapshotDataModel.TestDataModel {Id = x.Id.GetGuid()})
+                Tests = State.TestCollection.Select(x => new TestAggregateSnapshot.TestModel{Id = x.Id.GetGuid()})
                     .ToList()
             };
+        }
+        
+        protected virtual void Signal<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
+            where TAggregateEvent : IAggregateEvent<TestAggregate, TestAggregateId>
+        {
+            if (aggregateEvent == null)
+            {
+                throw new ArgumentNullException(nameof(aggregateEvent));
+            }
+
+            _eventDefinitionService.Load(typeof(TAggregateEvent));
+            var eventDefinition = _eventDefinitionService.GetDefinition(typeof(TAggregateEvent));
+            var aggregateSequenceNumber = Version;
+            var eventId = EventId.NewDeterministic(
+                GuidFactories.Deterministic.Namespaces.Events,
+                $"{Id.Value}-v{aggregateSequenceNumber}");
+            var now = DateTimeOffset.UtcNow;
+            var eventMetadata = new Metadata
+            {
+                Timestamp = now,
+                AggregateSequenceNumber = aggregateSequenceNumber,
+                AggregateName = Name.Value,
+                AggregateId = Id.Value,
+                EventId = eventId,
+                EventName = eventDefinition.Name,
+                EventVersion = eventDefinition.Version
+            };
+
+            eventMetadata.Add(MetadataKeys.TimestampEpoch, now.ToUnixTime().ToString());
+            if (metadata != null)
+            {
+                eventMetadata.AddRange(metadata);
+            }
+
+            Logger.Info($"[{Name}] With Id={Id} Commited [{typeof(TAggregateEvent).PrettyPrint()}]");
+
+            var domainEvent = new DomainEvent<TestAggregate, TestAggregateId, TAggregateEvent>(Id, aggregateEvent, eventMetadata, now, Version);
+
+            Publish(domainEvent);
+        }
+
+        protected virtual void Throw<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
+            where TAggregateEvent : IAggregateEvent<TestAggregate, TestAggregateId>
+        {
+            Signal(aggregateEvent, metadata);
         }
     }
 }

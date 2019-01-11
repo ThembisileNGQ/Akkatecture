@@ -28,16 +28,17 @@ using Akkatecture.Aggregates;
 using Akkatecture.Aggregates.Snapshot;
 using Akkatecture.TestHelpers.Aggregates.Entities;
 using Akkatecture.TestHelpers.Aggregates.Events;
+using Akkatecture.TestHelpers.Aggregates.Snapshots;
 
 namespace Akkatecture.TestHelpers.Aggregates
 {
 
-    public class TestState : AggregateState<TestAggregate, TestAggregateId>,
+    public class TestAggregateState : AggregateState<TestAggregate, TestAggregateId>,
         IApply<TestAddedEvent>,
         IApply<TestReceivedEvent>,
         IApply<TestSentEvent>,
         IApply<TestCreatedEvent>,
-        IHydrate<TestSnapshotDataModel>
+        IHydrate<TestAggregateSnapshot>
     {
         public List<Test> TestCollection { get; private set; }
         public bool FromHydration { get; private set; }
@@ -62,22 +63,10 @@ namespace Akkatecture.TestHelpers.Aggregates
         {
             TestCollection.RemoveAll(x => x.Id == aggregateEvent.Test.Id);
         }
-        public void Hydrate(TestSnapshotDataModel aggregateSnapshot)
+        public void Hydrate(TestAggregateSnapshot aggregateSnapshot)
         {
             TestCollection = aggregateSnapshot.Tests.Select(x => new Test(TestId.With(x.Id))).ToList();
             FromHydration = true;
-        }
-    }
-    
-    public class TestSnapshotDataModel : IAggregateSnapshot<TestAggregate, TestAggregateId>
-    {
-        public List<TestDataModel> Tests { get; set; }
-        
-        
-        
-        public class TestDataModel
-        {
-            public Guid Id { get; set; }
         }
     }
 

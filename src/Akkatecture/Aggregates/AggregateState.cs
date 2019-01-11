@@ -46,7 +46,7 @@ namespace Akkatecture.Aggregates
         where TIdentity : IIdentity
     {
         private static readonly IReadOnlyDictionary<Type, Action<TMessageApplier, IAggregateEvent>> ApplyMethods;
-        private static readonly IReadOnlyDictionary<Type, Action<TMessageApplier, ISnapshot>> HydrateMethods;
+        private static readonly IReadOnlyDictionary<Type, Action<TMessageApplier, IAggregateSnapshot>> HydrateMethods;
 
         static AggregateState()
         {
@@ -85,7 +85,7 @@ namespace Akkatecture.Aggregates
             IAggregateSnapshot<TAggregate, TIdentity> aggregateSnapshot)
         {
             var aggregateEventType = aggregateSnapshot.GetType();
-            Action<TMessageApplier, ISnapshot> hydrater;
+            Action<TMessageApplier, IAggregateSnapshot> hydrater;
 
             if (!HydrateMethods.TryGetValue(aggregateEventType, out hydrater))
             {

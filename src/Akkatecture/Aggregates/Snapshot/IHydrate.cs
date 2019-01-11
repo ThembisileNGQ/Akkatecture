@@ -24,7 +24,7 @@
 namespace Akkatecture.Aggregates.Snapshot
 {
     public interface IHydrate<in TAggregateSnapshot>
-        where TAggregateSnapshot : ISnapshot
+        where TAggregateSnapshot : IAggregateSnapshot
     {
         void Hydrate(TAggregateSnapshot aggregateSnapshot);
     }

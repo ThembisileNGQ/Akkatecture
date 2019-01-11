@@ -103,7 +103,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>>(
                 x => x.AggregateEvent.LastSequenceNr == 1
                      && x.AggregateEvent.Version == 1
-                     && x.AggregateEvent.State.TestCollection.Count == 0);
+                     && x.AggregateEvent.AggregateState.TestCollection.Count == 0);
         }
 
         [Fact]
@@ -189,7 +189,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>>(
                 x => x.AggregateEvent.LastSequenceNr == 6
                      && x.AggregateEvent.Version == 6
-                     && x.AggregateEvent.State.TestCollection.Count == 5);
+                     && x.AggregateEvent.AggregateState.TestCollection.Count == 5);
 
         }
 
@@ -213,19 +213,12 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
                 aggregateManager.Tell(testCommand);
             }
             
-            //var poisonCommand = new PoisonTestAggregateCommand(aggregateId);
-            //aggregateManager.Tell(poisonCommand);
-            //Task.Delay(TimeSpan.FromSeconds(4)).Wait();
-            //var reviveCommand = new PublishTestStateCommand(aggregateId);
-            //aggregateManager.Tell(reviveCommand);
-            
-
 
             ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>>(
                 x => x.AggregateEvent.LastSequenceNr == 11
                      && x.AggregateEvent.Version == 11
-                     && x.AggregateEvent.State.TestCollection.Count == 10
-                     && x.AggregateEvent.State.FromHydration, TimeSpan.FromMinutes(1));
+                     && x.AggregateEvent.AggregateState.TestCollection.Count == 10
+                     && x.AggregateEvent.AggregateState.FromHydration);
         }
     }
 }

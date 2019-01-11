@@ -142,11 +142,11 @@ namespace Akkatecture.Extensions
                     mi => ReflectionHelper.CompileMethodInvocation<Action<T, IAggregateEvent>>(type, "Apply", mi.GetParameters()[0].ParameterType));
         }
         
-        internal static IReadOnlyDictionary<Type, Action<T, ISnapshot>> GetAggregateSnapshotHydrateMethods<TAggregate, TIdentity, T>(this Type type)
+        internal static IReadOnlyDictionary<Type, Action<T, IAggregateSnapshot>> GetAggregateSnapshotHydrateMethods<TAggregate, TIdentity, T>(this Type type)
             where TAggregate : IAggregateRoot<TIdentity>
             where TIdentity : IIdentity
         {
-            var aggregateEventType = typeof(IAggregateSnapshot<TAggregate, TIdentity>);
+            var aggregateSnapshot = typeof(IAggregateSnapshot<TAggregate, TIdentity>);
 
             return type
                 .GetTypeInfo()
@@ -157,11 +157,11 @@ namespace Akkatecture.Extensions
                     var parameters = mi.GetParameters();
                     return
                         parameters.Length == 1 &&
-                        aggregateEventType.GetTypeInfo().IsAssignableFrom(parameters[0].ParameterType);
+                        aggregateSnapshot.GetTypeInfo().IsAssignableFrom(parameters[0].ParameterType);
                 })
                 .ToDictionary(
                     mi => mi.GetParameters()[0].ParameterType,
-                    mi => ReflectionHelper.CompileMethodInvocation<Action<T, ISnapshot>>(type, "Hydrate", mi.GetParameters()[0].ParameterType));
+                    mi => ReflectionHelper.CompileMethodInvocation<Action<T, IAggregateSnapshot>>(type, "Hydrate", mi.GetParameters()[0].ParameterType));
         }
 
         internal static IReadOnlyDictionary<Type, Action<TAggregateState, IAggregateEvent>> GetAggregateStateEventApplyMethods<TAggregate, TIdentity, TAggregateState>(this Type type)
