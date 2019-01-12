@@ -8,7 +8,7 @@
     <Title>Akkatecture</Title>
     <Authors>Lutando Ngqakaza</Authors>
     <Company>Lutando Ngqakaza</Company>
-    <Copyright>Copyright (c) Lutando Ngqakaza 2018 - 2018</Copyright>
+    <Copyright>Copyright (c) Lutando Ngqakaza 2018 - 2019</Copyright>
     <Description>
       a cqrs and event sourcing framework for akka.net
     </Description>

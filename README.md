@@ -50,10 +50,10 @@ var aggregateManager = system.ActorOf(Props.Create(() => new UserAccountAggregat
 //Build create user account aggregate command with name "foo bar"
 var aggregateId = UserAccountId.New;
 var createUserAccountCommand = new CreateUserAccountCommand(aggregateId, "foo bar");
-            
+
 //Send command, this is equivalent to command.publish() in other cqrs frameworks
 aggregateManager.Tell(createUserAccountCommand);
-            
+
 //tell the aggregateManager to change the name of the aggregate root to "foo bar baz"
 var changeNameCommand = new UserAccountChangeNameCommand(aggregateId, "foo bar baz");
 aggregateManager.Tell(changeNameCommand);
@@ -70,7 +70,7 @@ Akkatecture is still in development. The goal of this projects first version is 
 
 akkatecture is currently missing these crucial features:
 - aggregate state snapshotting.
-- schedueled jobs.
+- resumable projections / read models.
 
 ### Contributing
 
@@ -125,7 +125,7 @@ Akka.net gives us a wealth of good APIs out of the box that can be used to build
 ```
 The MIT License (MIT)
 
-Copyright (c) 2018 Lutando Ngqakaza
+Copyright (c) 2018 - 2019 Lutando Ngqakaza
 
 https://github.com/Lutando/Akkatecture
 
