@@ -37,6 +37,7 @@ using Akkatecture.Commands;
 using Akkatecture.Core;
 using Akkatecture.Events;
 using Akkatecture.Extensions;
+using SnapshotMetadata = Akkatecture.Aggregates.Snapshot.SnapshotMetadata;
 
 namespace Akkatecture.Aggregates
 {
@@ -49,10 +50,13 @@ namespace Akkatecture.Aggregates
         private static readonly IReadOnlyDictionary<Type, Action<TAggregateState, IAggregateSnapshot>> HydrateMethodsFromState;
         private static readonly IAggregateName AggregateName = typeof(TAggregate).GetAggregateName();
         private readonly List<IEventApplier<TAggregate, TIdentity>> _eventAppliers = new List<IEventApplier<TAggregate, TIdentity>>();
+        private readonly List<ISnapshotHydrater<TAggregate, TIdentity>> _snapshotHydraters = new List<ISnapshotHydrater<TAggregate, TIdentity>>();
         private readonly Dictionary<Type, Action<object>> _eventHandlers = new Dictionary<Type, Action<object>>();
+        private readonly Dictionary<Type, Action<object>> _snapshotHandlers = new Dictionary<Type, Action<object>>();
         private CircularBuffer<ISourceId> _previousSourceIds = new CircularBuffer<ISourceId>(10);
         protected ILoggingAdapter Logger { get; }
         protected IEventDefinitionService _eventDefinitionService;
+        protected ISnapshotDefinitionService _snapshotDefinitionService;
         protected ISnapshotStrategy SnapshotStrategy { get; }
         public int? SnapshotVersion { get; private set; }
         public TAggregateState State { get; protected set; }
@@ -98,6 +102,7 @@ namespace Akkatecture.Aggregates
             }
 
             _eventDefinitionService = new EventDefinitionService(Logger);
+            _snapshotDefinitionService = new SnapshotDefinitionService(Logger);
             Settings = new AggregateRootSettings(Context.System.Settings.Config);
             Id = id;
             PersistenceId = id.Value;
@@ -123,9 +128,6 @@ namespace Akkatecture.Aggregates
                 Recover<RecoveryCompleted>(Recover);
             }
             
-            
-            _eventDefinitionService = new EventDefinitionService(Logger);
-
         }
         
 
@@ -189,7 +191,27 @@ namespace Akkatecture.Aggregates
             {
                 var aggregateSnapshot = CreateSnapshot();
                 if (aggregateSnapshot != null)
-                    SaveSnapshot(aggregateSnapshot);
+                {
+                    var t = aggregateSnapshot.GetType();
+                    _snapshotDefinitionService.Load(aggregateSnapshot.GetType());
+                    var snapshotDefinition = _snapshotDefinitionService.GetDefinition(aggregateSnapshot.GetType());
+                    var snapshotMetadata = new SnapshotMetadata
+                    {
+                        AggregateId = Id.Value,
+                        AggregateName = Name.Value,
+                        AggregateSequenceNumber = Version,
+                        SnapshotName = snapshotDefinition.Name,
+                        SnapshotVersion = snapshotDefinition.Version
+                    };
+
+                    var commitedSnapshot =
+                        new ComittedSnapshot<TAggregate, TIdentity, IAggregateSnapshot<TAggregate, TIdentity>>(
+                            Id,
+                            aggregateSnapshot,
+                            snapshotMetadata,
+                            now, Version);
+                    SaveSnapshot(commitedSnapshot);
+                }
             }
         }
 
@@ -308,6 +330,16 @@ namespace Akkatecture.Aggregates
 
         protected virtual void HydrateSnapshot(IAggregateSnapshot<TAggregate, TIdentity> aggregateSnapshot, long version)
         {
+            var snapshotType = aggregateSnapshot.GetType();
+            if (_snapshotHandlers.ContainsKey(snapshotType))
+            {
+                _snapshotHandlers[snapshotType](aggregateSnapshot);
+            }
+            else if (_snapshotHydraters.Any(ea => ea.Hydrate((TAggregate)this, aggregateSnapshot)))
+            {
+                // Already done
+            }
+            
             var snapshotHydrater = GetSnapshotHydrateMethods(aggregateSnapshot);
 
             snapshotHydrater(aggregateSnapshot);
@@ -336,8 +368,8 @@ namespace Akkatecture.Aggregates
             //Check here
             try
             {
-                var snapshot = aggregateSnapshotOffer.Snapshot as IAggregateSnapshot<TAggregate,TIdentity>;
-                HydrateSnapshot(snapshot, aggregateSnapshotOffer.Metadata.SequenceNr);
+                var comittedSnapshot = aggregateSnapshotOffer.Snapshot as ComittedSnapshot<TAggregate,TIdentity, IAggregateSnapshot<TAggregate, TIdentity>>;
+                HydrateSnapshot(comittedSnapshot.AggregateSnapshot, aggregateSnapshotOffer.Metadata.SequenceNr);
             }
             catch (Exception exception)
             {

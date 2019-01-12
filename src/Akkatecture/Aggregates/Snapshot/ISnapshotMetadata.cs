@@ -1,4 +1,4 @@
-// The MIT License (MIT)
+﻿// The MIT License (MIT)
 //
 // Copyright (c) 2018 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
@@ -25,14 +25,12 @@ using Akkatecture.Core;
 
 namespace Akkatecture.Aggregates.Snapshot
 {
-    /*public interface ISnapshotAggregateRoot : IAggregateRoot
+    public interface ISnapshotMetadata : IMetadataContainer
     {
-        int? SnapshotVersion { get; }
+        string SnapshotName { get; }
+        int SnapshotVersion { get; }
+        long AggregateSequenceNumber { get; }
+        string AggregateId { get; }
+        string AggregateName { get; }
     }
-
-    public interface ISnapshotAggregateRoot<out TIdentity, TSnapshot> : ISnapshotAggregateRoot, IAggregateRoot<TIdentity>
-        where TIdentity : IIdentity
-        where TSnapshot : ISnapshot
-    {
-    }*/
 }

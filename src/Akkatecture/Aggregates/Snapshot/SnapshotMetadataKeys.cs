@@ -1,4 +1,4 @@
-// The MIT License (MIT)
+﻿// The MIT License (MIT)
 //
 // Copyright (c) 2018 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
@@ -21,14 +21,14 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Akkatecture.Aggregates.Snapshot.Strategies
+namespace Akkatecture.Aggregates.Snapshot
 {
-    public class SnapshotNeverStrategy: ISnapshotStrategy
+    public sealed class SnapshotMetadataKeys
     {
-        public static ISnapshotStrategy Instance = new SnapshotNeverStrategy();
-        public bool ShouldCreateSnapshot(IAggregateRoot snapshotAggregateRoot)
-        {
-            return false;
-        }
+        public const string AggregateName = "aggregate_name";
+        public const string AggregateId = "aggregate_id";
+        public const string AggregateSequenceNumber = "aggregate_sequence_number";
+        public const string SnapshotName = "snapshot_name";
+        public const string SnapshotVersion = "snapshot_version";
     }
 }

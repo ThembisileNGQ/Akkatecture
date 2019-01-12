@@ -1,9 +1,5 @@
 ﻿// The MIT License (MIT)
 //
-// Copyright (c) 2015-2018 Rasmus Mikkelsen
-// Copyright (c) 2015-2018 eBay Software Foundation
-// Modified from original source https://github.com/eventflow/EventFlow
-//
 // Copyright (c) 2018 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
 // 
@@ -28,46 +24,39 @@
 using System;
 using Akkatecture.Core;
 
-namespace Akkatecture.Aggregates
+namespace Akkatecture.Aggregates.Snapshot
 {
-    public class CommittedEvent<TAggregate, TIdentity, TAggregateEvent> : ICommittedEvent<TAggregate, TIdentity, TAggregateEvent>
+    public class ComittedSnapshot<TAggregate, TIdentity, TAggregateSnapshot>
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
-        where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+        where TAggregateSnapshot : IAggregateSnapshot<TAggregate, TIdentity>
     {
         public TIdentity AggregateIdentity { get; }
-        public TAggregateEvent AggregateEvent { get; }
-        public Metadata Metadata { get; }
+        public TAggregateSnapshot AggregateSnapshot { get; }
+        public SnapshotMetadata Metadata { get; }
         public long AggregateSequenceNumber { get; }
         public DateTimeOffset Timestamp { get; }
 
-        public CommittedEvent(
+        public ComittedSnapshot(
             TIdentity aggregateIdentity,
-            TAggregateEvent aggregateEvent,
-            Metadata metadata,
+            TAggregateSnapshot aggregateSnapshot,
+            SnapshotMetadata metadata,
             DateTimeOffset timestamp,
             long aggregateSequenceNumber)
         {
-            if (aggregateEvent == null) throw new ArgumentNullException(nameof(aggregateEvent));
+            if (aggregateSnapshot == null) throw new ArgumentNullException(nameof(aggregateSnapshot));
             if (metadata == null) throw new ArgumentNullException(nameof(metadata));
             if (timestamp == default(DateTimeOffset)) throw new ArgumentNullException(nameof(timestamp));
-            if (aggregateEvent == null) throw new ArgumentNullException(nameof(aggregateEvent));
+            if (aggregateSnapshot == null) throw new ArgumentNullException(nameof(aggregateSnapshot));
             if (aggregateIdentity == null || string.IsNullOrEmpty(aggregateIdentity.Value)) throw new ArgumentNullException(nameof(aggregateIdentity));
-            
-            
+
+
             AggregateIdentity = aggregateIdentity;
             AggregateSequenceNumber = aggregateSequenceNumber;
             AggregateIdentity = aggregateIdentity;
-            AggregateEvent = aggregateEvent;
+            AggregateSnapshot = aggregateSnapshot;
             Metadata = metadata;
             Timestamp = timestamp;
         }
-        
-        public IAggregateEvent GetAggregateEvent()
-        {
-            return AggregateEvent;
-        }
-
-        
     }
 }
