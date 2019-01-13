@@ -1,6 +1,6 @@
 ﻿// The MIT License (MIT)
 //
-// Copyright (c) 2018 Lutando Ngqakaza
+// Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
 // 
 // 
@@ -29,9 +29,9 @@ namespace Akkatecture.Examples.Domain.Model.UserAccount.Commands
     {
         public string Name { get; }
         public UserAccountChangeNameCommand(
-            UserAccountId aggreagateId,
+            UserAccountId aggregateId,
             string name)
-            : base(aggreagateId)
+            : base(aggregateId)
         {
             Name = name;
         }

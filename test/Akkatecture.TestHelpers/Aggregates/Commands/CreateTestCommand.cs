@@ -1,6 +1,6 @@
 ﻿// The MIT License (MIT)
 //
-// Copyright (c) 2018 Lutando Ngqakaza
+// Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
 // 
 // 
@@ -21,16 +21,20 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using Akka.Actor;
 using Akkatecture.Commands;
 
 namespace Akkatecture.TestHelpers.Aggregates.Commands
 {
     public class CreateTestCommand : Command<TestAggregate, TestAggregateId>
     {
-        public CreateTestCommand(TestAggregateId aggregateId)
+        public IActorRef Probe { get; }
+        public CreateTestCommand(
+            TestAggregateId aggregateId,
+            IActorRef probe = null)
             : base(aggregateId)
         {
-            
+            Probe = probe;
         }
     }
 }

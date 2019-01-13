@@ -1,6 +1,6 @@
 ﻿// The MIT License (MIT)
 //
-// Copyright (c) 2018 Lutando Ngqakaza
+// Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
 // 
 // 
@@ -50,6 +50,11 @@ namespace Akkatecture.Akka
         public static void Tell(this ActorRefProvider provider, object message, IActorRef sender)
         {
             provider.ActorRef.Tell(message, sender);
+        }
+        
+        public static void Tell(this ActorRefProvider provider, object message)
+        {
+            provider.ActorRef.Tell(message, ActorRefs.NoSender);
         }
 
         public static Task<object> Ask(this ActorRefProvider provider, object message, TimeSpan? timeout = null)

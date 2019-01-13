@@ -1,6 +1,6 @@
 ﻿// The MIT License (MIT)
 //
-// Copyright (c) 2018 Lutando Ngqakaza
+// Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
 // 
 // 
@@ -23,6 +23,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.TestKit.Xunit2;
 using Akkatecture.Aggregates;
@@ -55,7 +56,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
             
             var aggregateId = TestAggregateId.New;
-            var command = new CreateTestCommand(aggregateId);
+            var command = new CreateTestCommand(aggregateId, probe);
             aggregateManager.Tell(command);
 
             ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent>>(
@@ -71,7 +72,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
 
             var aggregateId = TestAggregateId.New;
-            var command = new CreateTestCommand(aggregateId);
+            var command = new CreateTestCommand(aggregateId, probe);
             aggregateManager.Tell(command);
 
             ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent>>(
@@ -79,9 +80,9 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
                     && x.IdentityType == typeof(TestAggregateId)
                     && x.AggregateType == typeof(TestAggregate)
                     && x.EventType == typeof(TestCreatedEvent)
-                    //&& x.Metadata.EventName == "TestCreated"
+                    && x.Metadata.EventName == "TestCreated"
                     && x.Metadata.AggregateId == aggregateId.Value
-                    //&& x.Metadata.EventVersion == 1
+                    && x.Metadata.EventVersion == 1
                     && x.Metadata.AggregateSequenceNumber == 1);
         }
 
@@ -94,7 +95,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
 
             var aggregateId = TestAggregateId.New;
-            var command = new CreateTestCommand(aggregateId);
+            var command = new CreateTestCommand(aggregateId, probe);
             var nextCommand = new PublishTestStateCommand(aggregateId);
             aggregateManager.Tell(command);
             aggregateManager.Tell(nextCommand);
@@ -102,7 +103,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>>(
                 x => x.AggregateEvent.LastSequenceNr == 1
                      && x.AggregateEvent.Version == 1
-                     && x.AggregateEvent.State.TestCollection.Count == 0);
+                     && x.AggregateEvent.AggregateState.TestCollection.Count == 0);
         }
 
         [Fact]
@@ -114,7 +115,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
 
             var aggregateId = TestAggregateId.New;
-            var command = new CreateTestCommand(aggregateId);
+            var command = new CreateTestCommand(aggregateId, probe);
             var testId = TestId.New;
             var test = new Test(testId);
             var nextCommand = new AddTestCommand(aggregateId,test);
@@ -135,7 +136,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
 
 
             var aggregateId = TestAggregateId.New;
-            var command = new CreateTestCommand(aggregateId);
+            var command = new CreateTestCommand(aggregateId, probe);
             var testId = TestId.New;
             var test = new Test(testId);
             var nextCommand = new AddTestCommand(aggregateId, test);
@@ -160,15 +161,14 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         [Category(Category)]
         public void TestEventSourcing_AfterManyTests_TestStateSignalled()
         {
-
-            //State has dictionary with complex key, NewtonSoft hates that
+            
             var probe = CreateTestActor("probeActor");
             Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
             var aggregateId = TestAggregateId.New;
 
             
-            var command = new CreateTestCommand(aggregateId);
+            var command = new CreateTestCommand(aggregateId, probe);
             aggregateManager.Tell(command);
 
             for (var i = 0; i < 5; i++)
@@ -189,8 +189,36 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>>(
                 x => x.AggregateEvent.LastSequenceNr == 6
                      && x.AggregateEvent.Version == 6
-                     && x.AggregateEvent.State.TestCollection.Count == 5);
+                     && x.AggregateEvent.AggregateState.TestCollection.Count == 5);
 
+        }
+
+        [Fact]
+        [Category(Category)]
+        public void TestSnapShotting_AfterManyTests_TestStateSignalled()
+        {
+            var probe = CreateTestActor("probeActor");
+            Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>));
+            var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
+            var aggregateId = TestAggregateId.New;
+
+            
+            var command = new CreateTestCommand(aggregateId, probe);
+            aggregateManager.Tell(command);
+
+            for (var i = 0; i < 10; i++)
+            {
+                var test = new Test(TestId.New);
+                var testCommand = new AddTestCommand(aggregateId, test);
+                aggregateManager.Tell(testCommand);
+            }
+            
+
+            ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>>(
+                x => x.AggregateEvent.LastSequenceNr == 11
+                     && x.AggregateEvent.Version == 11
+                     && x.AggregateEvent.AggregateState.TestCollection.Count == 10
+                     && x.AggregateEvent.AggregateState.FromHydration);
         }
     }
 }

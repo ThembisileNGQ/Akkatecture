@@ -1,6 +1,6 @@
 ﻿// The MIT License (MIT)
 //
-// Copyright (c) 2018 Lutando Ngqakaza
+// Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
 // 
 // 
@@ -27,16 +27,16 @@ namespace Akkatecture.TestHelpers.Aggregates.Events.Signals
 {
     public class TestStateSignalEvent : AggregateEvent<TestAggregate, TestAggregateId>
     {
-        public TestState State { get; }
+        public TestAggregateState AggregateState { get; }
         public long LastSequenceNr { get; }
         public long Version { get; }
 
         public TestStateSignalEvent(
-            TestState state,
+            TestAggregateState aggregateState,
             long lastSequenceNr,
             long version)
         {
-            State = state;
+            AggregateState = aggregateState;
             LastSequenceNr = lastSequenceNr;
             Version = version;
         }

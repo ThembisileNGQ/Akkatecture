@@ -1,6 +1,6 @@
 ﻿// The MIT License (MIT)
 //
-// Copyright (c) 2018 Lutando Ngqakaza
+// Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
 // 
 // 
@@ -21,40 +21,16 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System.Collections.Generic;
-using Akkatecture.Aggregates;
-using Akkatecture.TestHelpers.Aggregates.Entities;
-using Akkatecture.TestHelpers.Aggregates.Events;
+using Akkatecture.Core;
 
-namespace Akkatecture.TestHelpers.Aggregates
+namespace Akkatecture.Aggregates.Snapshot
 {
-
-    public class TestState : AggregateState<TestAggregate, TestAggregateId>,
-        IApply<TestAddedEvent>,
-        IApply<TestReceivedEvent>,
-        IApply<TestSentEvent>,
-        IApply<TestCreatedEvent>
+    public interface ISnapshotMetadata : IMetadataContainer
     {
-        public List<Test> TestCollection { get; private set; }
-
-        public void Apply(TestCreatedEvent aggregateEvent)
-        {
-            TestCollection = new List<Test>();
-        }
-        
-        public void Apply(TestAddedEvent aggregateEvent)
-        {
-            TestCollection.Add(aggregateEvent.Test);
-        }
-
-        public void Apply(TestReceivedEvent aggregateEvent)
-        {
-            TestCollection.Add(aggregateEvent.Test);
-        }
-
-        public void Apply(TestSentEvent aggregateEvent)
-        {
-            TestCollection.RemoveAll(x => x.Id == aggregateEvent.Test.Id);
-        }
+        string SnapshotName { get; }
+        int SnapshotVersion { get; }
+        long AggregateSequenceNumber { get; }
+        string AggregateId { get; }
+        string AggregateName { get; }
     }
 }

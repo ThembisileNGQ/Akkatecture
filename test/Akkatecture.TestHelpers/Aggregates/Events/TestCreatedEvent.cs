@@ -1,6 +1,6 @@
 ﻿// The MIT License (MIT)
 //
-// Copyright (c) 2018 Lutando Ngqakaza
+// Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
 // 
 // 
@@ -34,6 +34,20 @@ namespace Akkatecture.TestHelpers.Aggregates.Events
         public TestCreatedEvent(TestAggregateId testAggregateId)
         {
             TestAggregateId = testAggregateId;
+        }
+    }
+
+    [EventVersion("TestCreated", 2)]
+    public class TestCreatedEventV2 : AggregateEvent<TestAggregate, TestAggregateId>
+    {
+        public TestAggregateId TestAggregateId { get; }
+        public string Name { get; }
+        public TestCreatedEventV2(
+            TestAggregateId testAggregateId,
+            string name)
+        {
+            TestAggregateId = testAggregateId;
+            Name = name;
         }
     }
 }

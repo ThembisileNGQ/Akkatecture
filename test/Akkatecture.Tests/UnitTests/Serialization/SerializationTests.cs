@@ -8,8 +8,9 @@ using Akkatecture.TestHelpers.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Entities;
 using Akkatecture.TestHelpers.Aggregates.Events;
 using FluentAssertions;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
 using Xunit;
+using EventId = Akkatecture.Aggregates.EventId;
 
 namespace Akkatecture.Tests.UnitTests.Serialization
 {
@@ -21,7 +22,7 @@ namespace Akkatecture.Tests.UnitTests.Serialization
         [Category(Category)]
         public void CommittedEvent_AfterSerialization_IsValidAfterDeserialization()
         {
-            
+            var aggregateSequenceNumber = 3;
             var aggregateId = TestAggregateId.New;
             var entityId = TestId.New;
             var entity = new Test(entityId);
@@ -33,7 +34,7 @@ namespace Akkatecture.Tests.UnitTests.Serialization
             var eventMetadata = new Metadata
             {
                 Timestamp = now,
-                AggregateSequenceNumber = 3,
+                AggregateSequenceNumber = aggregateSequenceNumber,
                 AggregateName = typeof(TestAggregate).GetAggregateName().Value,
                 AggregateId = aggregateId.Value,
                 EventId = eventId
@@ -42,7 +43,9 @@ namespace Akkatecture.Tests.UnitTests.Serialization
                 new CommittedEvent<TestAggregate, TestAggregateId, TestAddedEvent>(
                     aggregateId, 
                     aggregateEvent,
-                    eventMetadata);
+                    eventMetadata,
+                    now,
+                    aggregateSequenceNumber);
 
             committedEvent.SerializeDeserialize().Should().BeEquivalentTo(committedEvent);
         }

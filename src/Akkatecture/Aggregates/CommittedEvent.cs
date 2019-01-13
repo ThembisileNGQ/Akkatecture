@@ -1,10 +1,10 @@
 ﻿// The MIT License (MIT)
 //
-// Copyright (c) 2015-2018 Rasmus Mikkelsen
-// Copyright (c) 2015-2018 eBay Software Foundation
+// Copyright (c) 2015-2019 Rasmus Mikkelsen
+// Copyright (c) 2015-2019 eBay Software Foundation
 // Modified from original source https://github.com/eventflow/EventFlow
 //
-// Copyright (c) 2018 Lutando Ngqakaza
+// Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
 // 
 // 
@@ -35,22 +35,32 @@ namespace Akkatecture.Aggregates
         where TIdentity : IIdentity
         where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
     {
-        public TAggregateEvent AggregateEvent { get; }
         public TIdentity AggregateIdentity { get; }
+        public TAggregateEvent AggregateEvent { get; }
         public Metadata Metadata { get; }
+        public long AggregateSequenceNumber { get; }
+        public DateTimeOffset Timestamp { get; }
 
         public CommittedEvent(
             TIdentity aggregateIdentity,
             TAggregateEvent aggregateEvent,
-            Metadata metadata)
+            Metadata metadata,
+            DateTimeOffset timestamp,
+            long aggregateSequenceNumber)
         {
+            if (aggregateEvent == null) throw new ArgumentNullException(nameof(aggregateEvent));
+            if (metadata == null) throw new ArgumentNullException(nameof(metadata));
+            if (timestamp == default(DateTimeOffset)) throw new ArgumentNullException(nameof(timestamp));
             if (aggregateEvent == null) throw new ArgumentNullException(nameof(aggregateEvent));
             if (aggregateIdentity == null || string.IsNullOrEmpty(aggregateIdentity.Value)) throw new ArgumentNullException(nameof(aggregateIdentity));
             
             
             AggregateIdentity = aggregateIdentity;
+            AggregateSequenceNumber = aggregateSequenceNumber;
+            AggregateIdentity = aggregateIdentity;
             AggregateEvent = aggregateEvent;
             Metadata = metadata;
+            Timestamp = timestamp;
         }
         
         public IAggregateEvent GetAggregateEvent()

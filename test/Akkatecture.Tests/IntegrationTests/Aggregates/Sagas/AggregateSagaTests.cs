@@ -1,6 +1,6 @@
 ﻿// The MIT License (MIT)
 //
-// Copyright (c) 2018 Lutando Ngqakaza
+// Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
 // 
 // 
@@ -54,11 +54,11 @@ namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
             Sys.ActorOf(Props.Create(() => new TestSagaManager(() => new TestSaga(aggregateManager))), "test-sagaaggregatemanager");
             
             var senderAggregateId = TestAggregateId.New;
-            var senderCreateAggregateCommand = new CreateTestCommand(senderAggregateId);
+            var senderCreateAggregateCommand = new CreateTestCommand(senderAggregateId, probe);
             aggregateManager.Tell(senderCreateAggregateCommand);
 
             var receiverAggregateId = TestAggregateId.New;
-            var receiverCreateAggregateCommand = new CreateTestCommand(receiverAggregateId);
+            var receiverCreateAggregateCommand = new CreateTestCommand(receiverAggregateId, probe);
             aggregateManager.Tell(receiverCreateAggregateCommand);
 
             var senderTestId = TestId.New;

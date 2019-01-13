@@ -1,10 +1,10 @@
 ﻿// The MIT License (MIT)
 //
-// Copyright (c) 2015-2018 Rasmus Mikkelsen
-// Copyright (c) 2015-2018 eBay Software Foundation
+// Copyright (c) 2015-2019 Rasmus Mikkelsen
+// Copyright (c) 2015-2019 eBay Software Foundation
 // Modified from original source https://github.com/eventflow/EventFlow
 //
-// Copyright (c) 2018 Lutando Ngqakaza
+// Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
 // 
 // 
@@ -36,6 +36,7 @@ using Akka.Event;
 using Akka.Persistence;
 using Akkatecture.Aggregates;
 using Akkatecture.Core;
+using Akkatecture.Events;
 using Akkatecture.Extensions;
 
 namespace Akkatecture.Sagas.AggregateSaga
@@ -51,8 +52,10 @@ namespace Akkatecture.Sagas.AggregateSaga
         public override string PersistenceId { get; } = Context.Self.Path.Name;
         public AggregateSagaSettings Settings { get; }
         protected ILoggingAdapter Logger { get; }
+        protected IEventDefinitionService _eventDefinitionService;
         public TSagaState State { get; protected set; }
         public TIdentity Id { get; }
+        public int? SnapshotVersion { get; private set; }
         public IAggregateName Name => AggregateName;
         public long Version { get; protected set; }
         public bool IsNew => Version <= 0;
@@ -114,6 +117,9 @@ namespace Akkatecture.Sagas.AggregateSaga
 
             if (Settings.UseDefaultSnapshotRecover)
                 Recover<SnapshotOffer>(Recover);
+            
+            
+            _eventDefinitionService = new EventDefinitionService(Logger);
 
         }
 
@@ -223,7 +229,8 @@ namespace Akkatecture.Sagas.AggregateSaga
             {
                 throw new ArgumentNullException(nameof(aggregateEvent));
             }
-
+            _eventDefinitionService.Load(typeof(TAggregateEvent));
+            var eventDefinition = _eventDefinitionService.GetDefinition(typeof(TAggregateEvent));
             var aggregateSequenceNumber = Version + 1;
             var eventId = EventId.NewDeterministic(
                 GuidFactories.Deterministic.Namespaces.Events,
@@ -235,7 +242,10 @@ namespace Akkatecture.Sagas.AggregateSaga
                 AggregateSequenceNumber = aggregateSequenceNumber,
                 AggregateName = Name.Value,
                 AggregateId = Id.Value,
-                EventId = eventId
+                EventId = eventId,
+                EventName = eventDefinition.Name,
+                EventVersion = eventDefinition.Version,
+                
             };
             eventMetadata.Add(MetadataKeys.TimestampEpoch, now.ToUnixTime().ToString());
             if (metadata != null)
@@ -251,7 +261,7 @@ namespace Akkatecture.Sagas.AggregateSaga
 
             Version++;
 
-            var domainEvent = new DomainEvent<TAggregateSaga, TIdentity, TAggregateEvent>(aggregateEvent, eventMetadata, now, Id, Version);
+            var domainEvent = new DomainEvent<TAggregateSaga, TIdentity, TAggregateEvent>(Id, aggregateEvent, eventMetadata, now, Version);
 
             Publish(domainEvent);
         }

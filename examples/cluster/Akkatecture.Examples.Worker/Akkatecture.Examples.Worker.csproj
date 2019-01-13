@@ -9,7 +9,7 @@
     <Title>Akkatecture.Examples.Worker</Title>
     <Authors>Lutando Ngqakaza</Authors>
     <Company>Lutando Ngqakaza</Company>
-    <Copyright>Copyright (c) Lutando Ngqakaza 2018 - 2018</Copyright>
+    <Copyright>Copyright (c) Lutando Ngqakaza 2018 - 2019</Copyright>
     <Description>
       The worker node for Akkatecture.Examples.ClusterClient to send requests to.
     </Description>

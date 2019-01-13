@@ -1,6 +1,6 @@
 ﻿// The MIT License (MIT)
 //
-// Copyright (c) 2018 Lutando Ngqakaza
+// Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
 // 
 // 
@@ -29,6 +29,17 @@ namespace Akkatecture.TestHelpers.Akka
             @"  akka.loglevel = ""DEBUG""
                 akka.stdout-loglevel = ""DEBUG""
                 akka.actor.serialize-messages = on
+                akka.persistence.snapshot-store {
+                    plugin = ""akka.persistence.snapshot-store.inmem""
+                    # List of snapshot stores to start automatically. Use "" for the default snapshot store.
+                    auto-start-snapshot-stores = []
+                }
+                akka.persistence.snapshot-store.inmem {
+                    # Class name of the plugin.
+                    class = ""Akka.Persistence.Snapshot.MemorySnapshotStore, Akka.Persistence""
+                    # Dispatcher for the plugin actor.
+                    plugin-dispatcher = ""akka.actor.default-dispatcher""
+                }
             ";
     }
 }

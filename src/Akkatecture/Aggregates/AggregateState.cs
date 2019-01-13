@@ -1,10 +1,10 @@
 ﻿// The MIT License (MIT)
 //
-// Copyright (c) 2015-2018 Rasmus Mikkelsen
-// Copyright (c) 2015-2018 eBay Software Foundation
+// Copyright (c) 2015-2019 Rasmus Mikkelsen
+// Copyright (c) 2015-2019 eBay Software Foundation
 // Modified from original source https://github.com/eventflow/EventFlow
 //
-// Copyright (c) 2018 Lutando Ngqakaza
+// Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
 // 
 // 
@@ -27,38 +27,40 @@
 
 using System;
 using System.Collections.Generic;
+using Akkatecture.Aggregates.Snapshot;
 using Akkatecture.Core;
 using Akkatecture.Extensions;
 
 namespace Akkatecture.Aggregates
 {
-    public abstract class AggregateState<TAggregate, TIdentity> : AggregateState<TAggregate, TIdentity,
-            IEventApplier<TAggregate, TIdentity>>
+    public abstract class AggregateState<TAggregate, TIdentity> : AggregateState<TAggregate, TIdentity, IMessageApplier<TAggregate, TIdentity>>
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
     {
         
     }
     
-    public abstract class AggregateState<TAggregate, TIdentity, TEventApplier> : IEventApplier<TAggregate, TIdentity>
-        where TEventApplier : class, IEventApplier<TAggregate, TIdentity>
+    public abstract class AggregateState<TAggregate, TIdentity, TMessageApplier> : IMessageApplier<TAggregate, TIdentity>
+        where TMessageApplier : class, IMessageApplier<TAggregate, TIdentity>
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
     {
-        private static readonly IReadOnlyDictionary<Type, Action<TEventApplier, IAggregateEvent>> ApplyMethods;
+        private static readonly IReadOnlyDictionary<Type, Action<TMessageApplier, IAggregateEvent>> ApplyMethods;
+        private static readonly IReadOnlyDictionary<Type, Action<TMessageApplier, IAggregateSnapshot>> HydrateMethods;
 
         static AggregateState()
         {
-            ApplyMethods = typeof(TEventApplier).GetAggregateEventApplyMethods<TAggregate, TIdentity, TEventApplier>();
+            ApplyMethods = typeof(TMessageApplier).GetAggregateEventApplyMethods<TAggregate, TIdentity, TMessageApplier>();
+            HydrateMethods = typeof(TMessageApplier).GetAggregateSnapshotHydrateMethods<TAggregate, TIdentity, TMessageApplier>();
         }
 
         protected AggregateState()
         {
-            var me = this as TEventApplier;
+            var me = this as TMessageApplier;
             if (me == null)
             {
                 throw new InvalidOperationException(
-                    $"Event applier of type '{GetType().PrettyPrint()}' has a wrong generic argument '{typeof(TEventApplier).PrettyPrint()}'");
+                    $"Event applier of type '{GetType().PrettyPrint()}' has a wrong generic argument '{typeof(TMessageApplier).PrettyPrint()}'");
             }
         }
 
@@ -67,14 +69,30 @@ namespace Akkatecture.Aggregates
             IAggregateEvent<TAggregate, TIdentity> aggregateEvent)
         {
             var aggregateEventType = aggregateEvent.GetType();
-            Action<TEventApplier, IAggregateEvent> applier;
+            Action<TMessageApplier, IAggregateEvent> applier;
 
             if (!ApplyMethods.TryGetValue(aggregateEventType, out applier))
             {
                 return false;
             }
 
-            applier((TEventApplier)(object)this, aggregateEvent);
+            applier((TMessageApplier)(object)this, aggregateEvent);
+            return true;
+        }
+        
+        public bool Hydrate(
+            TAggregate aggregate,
+            IAggregateSnapshot<TAggregate, TIdentity> aggregateSnapshot)
+        {
+            var aggregateEventType = aggregateSnapshot.GetType();
+            Action<TMessageApplier, IAggregateSnapshot> hydrater;
+
+            if (!HydrateMethods.TryGetValue(aggregateEventType, out hydrater))
+            {
+                return false;
+            }
+
+            hydrater((TMessageApplier)(object)this, aggregateSnapshot);
             return true;
         }
     }
