@@ -42,7 +42,7 @@ namespace Akkatecture.TestHelpers.Aggregates
     {
         public int TestErrors { get; private set; }
         public TestAggregate(TestAggregateId aggregateId)
-            : base(aggregateId, new SnapshotEveryFewVersionsStrategy(10))
+            : base(aggregateId)
         {
             TestErrors = 0;
             //Aggregate Commands
@@ -58,6 +58,8 @@ namespace Akkatecture.TestHelpers.Aggregates
 
             Command<SaveSnapshotSuccess>(SnapshotStatus);
             Command<SaveSnapshotFailure>(SnapshotStatus);
+            
+            SetSnapshotStrategy(new SnapshotEveryFewVersionsStrategy(10));
         }
 
         private bool Execute(CreateTestCommand command)
@@ -177,7 +179,7 @@ namespace Akkatecture.TestHelpers.Aggregates
             };
         }
         
-        protected virtual void Signal<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
+        private void Signal<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
             where TAggregateEvent : IAggregateEvent<TestAggregate, TestAggregateId>
         {
             if (aggregateEvent == null)
@@ -216,7 +218,7 @@ namespace Akkatecture.TestHelpers.Aggregates
             Publish(domainEvent);
         }
 
-        protected virtual void Throw<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
+        private void Throw<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
             where TAggregateEvent : IAggregateEvent<TestAggregate, TestAggregateId>
         {
             Signal(aggregateEvent, metadata);
