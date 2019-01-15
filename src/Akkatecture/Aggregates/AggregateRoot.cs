@@ -48,7 +48,7 @@ namespace Akkatecture.Aggregates
     {
         private static readonly IReadOnlyDictionary<Type, Action<TAggregateState, IAggregateEvent>> ApplyMethodsFromState;
         private static readonly IReadOnlyDictionary<Type, Action<TAggregateState, IAggregateSnapshot>> HydrateMethodsFromState;
-        private static readonly IAggregateName AggregateName = typeof(TAggregate).GetAggregateName();
+        public static readonly IAggregateName AggregateName = typeof(TAggregate).GetAggregateName();
         private readonly List<IEventApplier<TAggregate, TIdentity>> _eventAppliers = new List<IEventApplier<TAggregate, TIdentity>>();
         private readonly List<ISnapshotHydrater<TAggregate, TIdentity>> _snapshotHydraters = new List<ISnapshotHydrater<TAggregate, TIdentity>>();
         private readonly Dictionary<Type, Action<object>> _eventHandlers = new Dictionary<Type, Action<object>>();
@@ -57,7 +57,7 @@ namespace Akkatecture.Aggregates
         protected ILoggingAdapter Logger { get; }
         protected IEventDefinitionService _eventDefinitionService;
         protected ISnapshotDefinitionService _snapshotDefinitionService;
-        protected ISnapshotStrategy SnapshotStrategy { get; }
+        protected ISnapshotStrategy SnapshotStrategy { get; set; } = SnapshotNeverStrategy.Instance;
         public int? SnapshotVersion { get; private set; }
         public TAggregateState State { get; protected set; }
         public IAggregateName Name => AggregateName;
@@ -77,8 +77,7 @@ namespace Akkatecture.Aggregates
                 .GetAggregateSnapshotHydrateMethods<TAggregate, TIdentity, TAggregateState>();
         }
 
-        protected AggregateRoot(TIdentity id,
-            ISnapshotStrategy snapshotStrategy = null)
+        protected AggregateRoot(TIdentity id)
         {
             Logger = Context.GetLogger();
             if (id == null) throw new ArgumentNullException(nameof(id));
@@ -108,20 +107,15 @@ namespace Akkatecture.Aggregates
             PersistenceId = id.Value;
             Register(State);
             
-            if (snapshotStrategy == null)
+            if (Settings.UseDefaultSnapshotRecover)
             {
-                SnapshotStrategy = SnapshotNeverStrategy.Instance;
+                Recover<SnapshotOffer>(Recover);
+            }
                 
-            }
-            else
-            {
-                SnapshotStrategy = snapshotStrategy;
-                if (Settings.UseDefaultSnapshotRecover)
-                    Recover<SnapshotOffer>(Recover);
-
-                Command<SaveSnapshotSuccess>(SnapshotStatus);
-                Command<SaveSnapshotFailure>(SnapshotStatus);
-            }
+            
+            Command<SaveSnapshotSuccess>(SnapshotStatus);
+            Command<SaveSnapshotFailure>(SnapshotStatus);
+            
             if (Settings.UseDefaultEventRecover)
             {
                 Recover<ICommittedEvent<TAggregate, TIdentity, IAggregateEvent<TAggregate, TIdentity>>>(Recover);
@@ -365,7 +359,7 @@ namespace Akkatecture.Aggregates
         
         protected virtual bool Recover(SnapshotOffer aggregateSnapshotOffer)
         {
-            //Check here
+            Logger.Info($"Aggregate [{Name}] With Id={Id} has received a SnapshotOffer of type {aggregateSnapshotOffer.Snapshot.GetType().PrettyPrint()}");
             try
             {
                 var comittedSnapshot = aggregateSnapshotOffer.Snapshot as ComittedSnapshot<TAggregate,TIdentity, IAggregateSnapshot<TAggregate, TIdentity>>;
@@ -381,20 +375,29 @@ namespace Akkatecture.Aggregates
             return true;
         }
 
+        protected virtual void SetSnapshotStrategy(ISnapshotStrategy snapshotStrategy)
+        {
+            if (snapshotStrategy != null)
+            {
+                SnapshotStrategy = snapshotStrategy;
+            }
+        }
         protected virtual bool SnapshotStatus(SaveSnapshotSuccess snapshotSuccess)
         {
+            Logger.Info($"Aggregate [{Name}] With Id={Id} Saved Snapshot at Version {snapshotSuccess.Metadata.SequenceNr}");
             return true;
         }
         
         protected virtual bool SnapshotStatus(SaveSnapshotFailure snapshotFailure)
         {
+            Logger.Error($"Aggregate [{Name}] With Id={Id} Failed to save snapshot at version {snapshotFailure.Metadata.SequenceNr} because of {snapshotFailure.Cause}");
             return true;
         }
         
 
         protected virtual bool Recover(RecoveryCompleted recoveryCompleted)
         {
-            
+            Logger.Info($"Aggregate [{Name}] With Id={Id} has completed recovering from it's journal(s)");
             return true;
         }
 
