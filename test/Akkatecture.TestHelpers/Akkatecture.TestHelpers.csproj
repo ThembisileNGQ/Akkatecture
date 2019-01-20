@@ -24,6 +24,6 @@
     <ProjectReference Include="..\..\src\Akkatecture\Akkatecture.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Moq" Version="4.8.2" />
+    <PackageReference Include="Moq" Version="4.10.1" />
   </ItemGroup>
 </Project>
