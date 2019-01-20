@@ -42,11 +42,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.Walkthrough.Dom
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.Walkthrough.Application", "examples\walkthrough\Akkatecture.Walkthrough.Application\Akkatecture.Walkthrough.Application.csproj", "{1349C01A-9C7F-48FA-A651-2C24F5E8A130}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{8C65E1C0-6979-410B-A5BF-B1AF40A1C660}"
-ProjectSection(SolutionItems) = preProject
-	appveyor.yml = appveyor.yml
-EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.Examples.Application", "examples\simple\Akkatecture.Examples.Application\Akkatecture.Examples.Application.csproj", "{F4512D84-8576-44DB-9F15-E299F62EB9D3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.Examples.Domain", "examples\simple\Akkatecture.Examples.Domain\Akkatecture.Examples.Domain.csproj", "{C104C065-D0CE-42C0-9C43-D8F17ECEA0A0}"
