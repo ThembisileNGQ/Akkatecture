@@ -7,7 +7,7 @@ namespace Akkatecture.Events
 {
     public static class DomainEventMapper
     {
-        public static object FromComittedEvent(object evt)
+        internal static object FromComittedEvent(object evt)
         {
             var type = typeof(ICommittedEvent<,,>);
 
@@ -16,8 +16,7 @@ namespace Akkatecture.Events
                 //dynamic dispach here to get AggregateEvent
                 
                 var comittedEvent = evt as dynamic;
-                var typeInfo = evt.GetType().GetTypeInfo();
-                
+
                 var genericType = typeof(DomainEvent<,,>)
                     .MakeGenericType(type.GetGenericArguments()[0], type.GetGenericArguments()[1],type.GetGenericArguments()[2]);
                 
