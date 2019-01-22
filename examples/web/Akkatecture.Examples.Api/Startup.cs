@@ -27,7 +27,6 @@ using Akkatecture.Examples.Api.Domain.Repositories.Operations;
 using Akkatecture.Examples.Api.Domain.Repositories.Resources;
 using Akkatecture.Examples.Api.Domain.Sagas;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
