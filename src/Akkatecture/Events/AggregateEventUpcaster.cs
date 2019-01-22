@@ -24,7 +24,6 @@ namespace Akkatecture.Events
         where TIdentity : IIdentity
     {
         private static ConcurrentDictionary<Type, bool> DecisionCache = new ConcurrentDictionary<Type, bool>();
-
         public readonly IReadOnlyDictionary<Type, Func<TEventUpcaster, IAggregateEvent, IAggregateEvent>> UpcastFunctions;
 
         
@@ -44,7 +43,7 @@ namespace Akkatecture.Events
           
         }
         
-        public bool ShouldUpcast(object potentialUpcast)
+        private bool ShouldUpcast(object potentialUpcast)
         {
             var type = potentialUpcast.GetType();
             

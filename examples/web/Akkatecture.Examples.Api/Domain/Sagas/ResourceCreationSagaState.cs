@@ -22,7 +22,6 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using Akkatecture.Aggregates;
-using Akkatecture.Examples.Api.Domain.Aggregates.Resource.Events;
 using Akkatecture.Examples.Api.Domain.Sagas.Events;
 using Akkatecture.Sagas;
 
