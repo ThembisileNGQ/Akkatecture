@@ -192,6 +192,38 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
                      && x.AggregateEvent.AggregateState.TestCollection.Count == 5);
 
         }
+        
+        [Fact]
+        [Category(Category)]
+        public void TestEventMultipleEmitSourcing_AfterManyMultiCommand_TestStateSignalled()
+        {
+            
+            var probe = CreateTestActor("probeActor");
+            Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>));
+            var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
+            var aggregateId = TestAggregateId.New;
+
+            
+            var command = new CreateTestCommand(aggregateId, probe);
+            aggregateManager.Tell(command);
+
+            var test = new Test(TestId.New);
+            var testCommand = new AddFourTestsCommand(aggregateId, test);
+            aggregateManager.Tell(testCommand);
+            
+            var poisonCommand = new PoisonTestAggregateCommand(aggregateId);
+            aggregateManager.Tell(poisonCommand);
+
+            var reviveCommand = new PublishTestStateCommand(aggregateId);
+            aggregateManager.Tell(reviveCommand);
+
+
+            ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>>(
+                x => x.AggregateEvent.LastSequenceNr == 5
+                     && x.AggregateEvent.Version == 5
+                     && x.AggregateEvent.AggregateState.TestCollection.Count == 4);
+
+        }
 
         [Fact]
         [Category(Category)]

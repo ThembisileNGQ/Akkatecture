@@ -144,13 +144,36 @@ namespace Akkatecture.Aggregates
         public virtual void Emit<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
             where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
         {
+            var committedEvent = From(aggregateEvent, Version, metadata);
+            Persist(committedEvent, ApplyCommittedEvent);
+        }
+
+        public virtual void EmitAll<TAggregateEvent>(IEnumerable<TAggregateEvent> aggregateEvents, IMetadata metadata = null)
+            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+        {
+            long version = Version;
+            var comittedEvents = new List<CommittedEvent<TAggregate, TIdentity, TAggregateEvent>>();
+            foreach (var aggregateEvent in aggregateEvents)
+            {
+                var committedEvent = From(aggregateEvent, version + 1, metadata);
+                comittedEvents.Add(committedEvent);
+                version++;
+            }
+            
+            PersistAll(comittedEvents, ApplyCommittedEvent);
+        }
+
+        public virtual CommittedEvent<TAggregate, TIdentity, TAggregateEvent> From<TAggregateEvent>(TAggregateEvent aggregateEvent,
+            long version, IMetadata metadata = null)
+            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+        {
             if (aggregateEvent == null)
             {
                 throw new ArgumentNullException(nameof(aggregateEvent));
             }
             _eventDefinitionService.Load(typeof(TAggregateEvent));
             var eventDefinition = _eventDefinitionService.GetDefinition(typeof(TAggregateEvent));
-            var aggregateSequenceNumber = Version + 1;
+            var aggregateSequenceNumber = version + 1;
             var eventId = EventId.NewDeterministic(
                 GuidFactories.Deterministic.Namespaces.Events,
                 $"{Id.Value}-v{aggregateSequenceNumber}");
@@ -172,15 +195,8 @@ namespace Akkatecture.Aggregates
             }
             
             var committedEvent = new CommittedEvent<TAggregate, TIdentity, TAggregateEvent>(Id, aggregateEvent,eventMetadata,now,Version);
-            Persist(committedEvent, ApplyCommittedEvent);
+            return committedEvent;
         }
-
-        public virtual void EmitAll<TAggregateEvent>(IEnumerable<TAggregateEvent> aggregateEvent, IMetadata metadata = null)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
-        {
-            //fillin
-        }
-
         protected virtual IAggregateSnapshot<TAggregate, TIdentity> CreateSnapshot()
         {
             Logger.Info($"[{Name}] With Id={Id} Attempted to Create a Snapshot, override the CreateSnapshot() method to return the snapshot data model.");
@@ -228,15 +244,6 @@ namespace Akkatecture.Aggregates
                 }
             }
             
-        }
-        
-        protected void  ApplyCommittedEvents<TAggregateEvent>(IEnumerable<ICommittedEvent<TAggregate, TIdentity, TAggregateEvent>> committedEvents)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
-        {
-            foreach (var committedEvent in committedEvents)
-            {
-                ApplyCommittedEvent(committedEvent);
-            }
         }
         
         protected virtual void Publish<TEvent>(TEvent aggregateEvent)
