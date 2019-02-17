@@ -33,5 +33,10 @@ namespace Akkatecture.Extensions
         {
             return context.Child(identity.Value);
         }
+
+        public static void Reply(this IActorContext context, object message)
+        {
+            context.Sender.Tell(message);
+        }
     }
 }

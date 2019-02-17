@@ -25,6 +25,7 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
 using Akkatecture.Core;
 
 namespace Akkatecture.Aggregates
@@ -46,5 +47,8 @@ namespace Akkatecture.Aggregates
         where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
     {
         TAggregateEvent AggregateEvent { get; }
+        Metadata Metadata { get; }
+        long AggregateSequenceNumber { get; }
+        DateTimeOffset Timestamp { get; }
     }
 }

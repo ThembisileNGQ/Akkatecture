@@ -278,11 +278,25 @@ namespace Akkatecture.Sagas.AggregateSaga
 
             Persist(aggregateEvent, aggregateApplyMethod);
 
+        }
+
+        protected virtual IAggregateSnapshot<TAggregateSaga, TIdentity> CreateSnapshot()
+        {
+            Logger.Info($"[{Name}] With Id={Id} Attempted to Create a Snapshot, override the CreateSnapshot() method to return the snapshot data model.");
+            return null;
+        }
+
+        protected void ApplyCommittedEvents<TAggregateEvent>(ICommittedEvent<TAggregateSaga, TIdentity, TAggregateEvent> committedEvent)
+            where TAggregateEvent : IAggregateEvent<TAggregateSaga, TIdentity>
+        {
+            var applyMethods = GetEventApplyMethods(committedEvent.AggregateEvent);
+            applyMethods(committedEvent.AggregateEvent);
+            
             Logger.Info($"[{Name}] With Id={Id} Commited [{typeof(TAggregateEvent).PrettyPrint()}]");
 
             Version++;
 
-            var domainEvent = new DomainEvent<TAggregateSaga, TIdentity, TAggregateEvent>(Id, aggregateEvent, eventMetadata, now, Version);
+            var domainEvent = new DomainEvent<TAggregateSaga, TIdentity, TAggregateEvent>(Id, committedEvent.AggregateEvent, committedEvent.Metadata, committedEvent.Timestamp, Version);
 
             Publish(domainEvent);
 
@@ -308,23 +322,11 @@ namespace Akkatecture.Sagas.AggregateSaga
                             Id,
                             aggregateSnapshot,
                             snapshotMetadata,
-                            now, Version);
+                            committedEvent.Timestamp,
+                            Version);
                     SaveSnapshot(commitedSnapshot);
                 }
             }
-        }
-
-        protected virtual IAggregateSnapshot<TAggregateSaga, TIdentity> CreateSnapshot()
-        {
-            Logger.Info($"[{Name}] With Id={Id} Attempted to Create a Snapshot, override the CreateSnapshot() method to return the snapshot data model.");
-            return null;
-        }
-
-        protected void ApplyCommittedEvents<TAggregateEvent>(ICommittedEvent<TAggregateSaga, TIdentity, TAggregateEvent> committedEvent)
-            where TAggregateEvent : IAggregateEvent<TAggregateSaga, TIdentity>
-        {
-            var applyMethods = GetEventApplyMethods(committedEvent.AggregateEvent);
-            applyMethods(committedEvent.AggregateEvent);
 
         }
 
