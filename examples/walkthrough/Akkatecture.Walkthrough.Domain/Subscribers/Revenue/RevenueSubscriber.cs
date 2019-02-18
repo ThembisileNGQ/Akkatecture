@@ -21,7 +21,6 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System.Threading.Tasks;
 using Akka.Actor;
 using Akkatecture.Aggregates;
 using Akkatecture.Subscribers;
@@ -32,7 +31,7 @@ using Akkatecture.Walkthrough.Domain.Repositories.Revenue.Commands;
 namespace Akkatecture.Walkthrough.Domain.Subscribers.Revenue
 {
     public class RevenueSubscriber : DomainEventSubscriber,
-         ISubscribeToAsync<Account,AccountId,FeesDeductedEvent>
+         ISubscribeTo<Account,AccountId,FeesDeductedEvent>
     {
         public IActorRef RevenueRepository { get; }
         
@@ -41,12 +40,12 @@ namespace Akkatecture.Walkthrough.Domain.Subscribers.Revenue
             RevenueRepository = revenueRepository;
         }
         
-        public Task HandleAsync(IDomainEvent<Account, AccountId, FeesDeductedEvent> domainEvent)
+        public bool Handle(IDomainEvent<Account, AccountId, FeesDeductedEvent> domainEvent)
         {
             var command = new AddRevenueCommand(domainEvent.AggregateEvent.Amount);
             RevenueRepository.Tell(command);
-            
-            return Task.CompletedTask;
+
+            return true;
         }
     }
 }

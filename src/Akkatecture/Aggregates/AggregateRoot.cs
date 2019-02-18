@@ -81,7 +81,9 @@ namespace Akkatecture.Aggregates
         protected AggregateRoot(TIdentity id)
         {
             Logger = Context.GetLogger();
-            if (id == null) throw new ArgumentNullException(nameof(id));
+            Settings = new AggregateRootSettings(Context.System.Settings.Config);
+            if (id == null)
+                throw new ArgumentNullException(nameof(id));
             if ((this as TAggregate) == null)
             {
                 throw new InvalidOperationException(
@@ -103,7 +105,6 @@ namespace Akkatecture.Aggregates
 
             _eventDefinitionService = new EventDefinitionService(Logger);
             _snapshotDefinitionService = new SnapshotDefinitionService(Logger);
-            Settings = new AggregateRootSettings(Context.System.Settings.Config);
             Id = id;
             PersistenceId = id.Value;
             Register(State);
