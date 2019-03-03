@@ -31,9 +31,7 @@
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\LICENSE"/>
-  </ItemGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\..\src\Akkatecture.Clustering\Akkatecture.Clustering.csproj" />
     <ProjectReference Include="..\..\src\Akkatecture\Akkatecture.csproj" />
