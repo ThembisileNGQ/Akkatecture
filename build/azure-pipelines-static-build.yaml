@@ -1,0 +1,34 @@
+# Build ASP.NET Core project using Azure Pipelines
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core?view=vsts
+
+pool:
+  vmImage: 'Ubuntu 16.04'
+  
+variables:
+  buildConfiguration: 'Release'
+
+
+pr:
+  branches:
+    include:
+    - master
+    - dev
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: 'Restore [Akkatecture]'
+  inputs:
+    command: 'restore'
+    projects: 'Akkatecture.sln'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build [Akkatecture]'
+  inputs:
+    command: 'restore'
+    projects: 'Akkatecture.sln'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Test [Akkatecture.Tests]'
+  inputs:
+    command: 'test'
+    projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
