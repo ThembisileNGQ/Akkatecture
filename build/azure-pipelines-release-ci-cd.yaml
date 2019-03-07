@@ -1,9 +1,11 @@
-# Build ASP.NET Core project using Azure Pipelines
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core?view=vsts
+# Akkatecture Development CI CD pipeline definition
+# This definition is responsible for building and testing
+# the project in the development branch. It pushes package
+# artefacts to a public nuget feed as production packages.
 
 pool:
   vmImage: 'Ubuntu 16.04'
-  
+
 variables:
   buildConfiguration: 'Release'
 
