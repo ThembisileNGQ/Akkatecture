@@ -48,6 +48,7 @@ namespace Akkatecture.TestHelpers.Aggregates
             //Aggregate Commands
             Command<CreateTestCommand>(Execute);
             Command<AddTestCommand>(Execute);
+            Command<AddFourTestsCommand>(Execute);
             Command<GiveTestCommand>(Execute);
             Command<ReceiveTestCommand>(Execute);
 
@@ -83,6 +84,25 @@ namespace Akkatecture.TestHelpers.Aggregates
             {
 
                 Emit(new TestAddedEvent(command.Test));
+
+            }
+            else
+            {
+                TestErrors++;
+                Throw(new TestedErrorEvent(TestErrors));
+            }
+            return true;
+        }
+        
+        private bool Execute(AddFourTestsCommand command)
+        {
+            if (!IsNew)
+            {
+                var events = Enumerable
+                    .Range(0, 4)
+                    .Select(x => new TestAddedEvent(command.Test));
+                
+                EmitAll(events);
 
             }
             else

@@ -15,7 +15,7 @@
     <PackageTags>akka cqrs es eventsourcing clustering actors microservices actor-model</PackageTags>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/Lutando/Akkatecture</RepositoryUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/Lutando/Akkatecture/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <NeutralLanguage>en-GB</NeutralLanguage>
     <PackageReleaseNotes>Externally Updated</PackageReleaseNotes>
     <PackageIconUrl>https://akkatecture.net/logos/logo-512.png</PackageIconUrl>

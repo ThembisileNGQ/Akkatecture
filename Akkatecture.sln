@@ -33,31 +33,22 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Examples.Worker
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Examples.ClusterClient", "examples\cluster\Akkatecture.Examples.ClusterClient\Akkatecture.Examples.ClusterClient.csproj", "{5513AA4C-5E65-41CC-84AF-6C6003B54F60}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "walkthrough", "walkthrough", "{114EF159-E6C3-43AC-A6C4-7248AC39B6AE}"
-ProjectSection(SolutionItems) = preProject
-	examples\walkthrough\README.md = examples\walkthrough\README.md
-EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Examples.Application", "examples\simple\Akkatecture.Examples.Application\Akkatecture.Examples.Application.csproj", "{F4512D84-8576-44DB-9F15-E299F62EB9D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.Walkthrough.Domain", "examples\walkthrough\Akkatecture.Walkthrough.Domain\Akkatecture.Walkthrough.Domain.csproj", "{B9F45061-8C53-4F90-ACC3-6A03728F5D1E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.Walkthrough.Application", "examples\walkthrough\Akkatecture.Walkthrough.Application\Akkatecture.Walkthrough.Application.csproj", "{1349C01A-9C7F-48FA-A651-2C24F5E8A130}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.Examples.Application", "examples\simple\Akkatecture.Examples.Application\Akkatecture.Examples.Application.csproj", "{F4512D84-8576-44DB-9F15-E299F62EB9D3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.Examples.Domain", "examples\simple\Akkatecture.Examples.Domain\Akkatecture.Examples.Domain.csproj", "{C104C065-D0CE-42C0-9C43-D8F17ECEA0A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Examples.Domain", "examples\simple\Akkatecture.Examples.Domain\Akkatecture.Examples.Domain.csproj", "{C104C065-D0CE-42C0-9C43-D8F17ECEA0A0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "web", "web", "{2B7C892D-01E8-4FE5-A8BB-BBF130A42904}"
-ProjectSection(SolutionItems) = preProject
-	examples\web\README.md = examples\web\README.md
-EndProjectSection
+	ProjectSection(SolutionItems) = preProject
+		examples\web\README.md = examples\web\README.md
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.Examples.Api", "examples\web\Akkatecture.Examples.Api\Akkatecture.Examples.Api.csproj", "{6A69FDC5-7A8D-4FB8-874A-484F68FBEA7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akkatecture.Examples.Api", "examples\web\Akkatecture.Examples.Api\Akkatecture.Examples.Api.csproj", "{6A69FDC5-7A8D-4FB8-874A-484F68FBEA7A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "postman", "postman", "{8811113F-775E-4371-8E71-942BD50844A6}"
-ProjectSection(SolutionItems) = preProject
-	examples\web\PostmanCollection\Akkatecture.Api.Example.postman_collection.json = examples\web\PostmanCollection\Akkatecture.Api.Example.postman_collection.json
-	examples\web\PostmanCollection\Akkatecture.Api.Example.postman_environment.json = examples\web\PostmanCollection\Akkatecture.Api.Example.postman_environment.json
-EndProjectSection
+	ProjectSection(SolutionItems) = preProject
+		examples\web\PostmanCollection\Akkatecture.Api.Example.postman_collection.json = examples\web\PostmanCollection\Akkatecture.Api.Example.postman_collection.json
+		examples\web\PostmanCollection\Akkatecture.Api.Example.postman_environment.json = examples\web\PostmanCollection\Akkatecture.Api.Example.postman_environment.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,14 +84,6 @@ Global
 		{5513AA4C-5E65-41CC-84AF-6C6003B54F60}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5513AA4C-5E65-41CC-84AF-6C6003B54F60}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5513AA4C-5E65-41CC-84AF-6C6003B54F60}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B9F45061-8C53-4F90-ACC3-6A03728F5D1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B9F45061-8C53-4F90-ACC3-6A03728F5D1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B9F45061-8C53-4F90-ACC3-6A03728F5D1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B9F45061-8C53-4F90-ACC3-6A03728F5D1E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1349C01A-9C7F-48FA-A651-2C24F5E8A130}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1349C01A-9C7F-48FA-A651-2C24F5E8A130}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1349C01A-9C7F-48FA-A651-2C24F5E8A130}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1349C01A-9C7F-48FA-A651-2C24F5E8A130}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F4512D84-8576-44DB-9F15-E299F62EB9D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F4512D84-8576-44DB-9F15-E299F62EB9D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4512D84-8576-44DB-9F15-E299F62EB9D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -127,9 +110,6 @@ Global
 		{BEAC89B6-9B71-4BF6-9B3A-4193DE028F7A} = {F39AA664-CAE8-4592-9173-8D03CABA1C07}
 		{DD833121-B2AD-4F2E-A12E-B1B28714817A} = {F39AA664-CAE8-4592-9173-8D03CABA1C07}
 		{5513AA4C-5E65-41CC-84AF-6C6003B54F60} = {F39AA664-CAE8-4592-9173-8D03CABA1C07}
-		{114EF159-E6C3-43AC-A6C4-7248AC39B6AE} = {7522402D-176E-4305-A68B-F3FFBFD38158}
-		{B9F45061-8C53-4F90-ACC3-6A03728F5D1E} = {114EF159-E6C3-43AC-A6C4-7248AC39B6AE}
-		{1349C01A-9C7F-48FA-A651-2C24F5E8A130} = {114EF159-E6C3-43AC-A6C4-7248AC39B6AE}
 		{F4512D84-8576-44DB-9F15-E299F62EB9D3} = {090ECC2F-5647-4B15-ABDF-2E1B44439626}
 		{C104C065-D0CE-42C0-9C43-D8F17ECEA0A0} = {090ECC2F-5647-4B15-ABDF-2E1B44439626}
 		{2B7C892D-01E8-4FE5-A8BB-BBF130A42904} = {7522402D-176E-4305-A68B-F3FFBFD38158}

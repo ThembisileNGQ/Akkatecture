@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Akka.Actor;
 using Akka.Event;
 using Akka.Persistence;
 using Akka.Persistence.Journal;
@@ -53,7 +54,7 @@ namespace Akkatecture.Aggregates
         private readonly List<ISnapshotHydrater<TAggregate, TIdentity>> _snapshotHydraters = new List<ISnapshotHydrater<TAggregate, TIdentity>>();
         private readonly Dictionary<Type, Action<object>> _eventHandlers = new Dictionary<Type, Action<object>>();
         private readonly Dictionary<Type, Action<object>> _snapshotHandlers = new Dictionary<Type, Action<object>>();
-        private CircularBuffer<ISourceId> _previousSourceIds = new CircularBuffer<ISourceId>(10);
+        protected CircularBuffer<ISourceId> _previousSourceIds = new CircularBuffer<ISourceId>(100);
         protected ILoggingAdapter Logger { get; }
         protected IEventDefinitionService _eventDefinitionService;
         protected ISnapshotDefinitionService _snapshotDefinitionService;
@@ -80,7 +81,9 @@ namespace Akkatecture.Aggregates
         protected AggregateRoot(TIdentity id)
         {
             Logger = Context.GetLogger();
-            if (id == null) throw new ArgumentNullException(nameof(id));
+            Settings = new AggregateRootSettings(Context.System.Settings.Config);
+            if (id == null)
+                throw new ArgumentNullException(nameof(id));
             if ((this as TAggregate) == null)
             {
                 throw new InvalidOperationException(
@@ -102,7 +105,6 @@ namespace Akkatecture.Aggregates
 
             _eventDefinitionService = new EventDefinitionService(Logger);
             _snapshotDefinitionService = new SnapshotDefinitionService(Logger);
-            Settings = new AggregateRootSettings(Context.System.Settings.Config);
             Id = id;
             PersistenceId = id.Value;
             Register(State);
@@ -121,7 +123,7 @@ namespace Akkatecture.Aggregates
                 Recover<ICommittedEvent<TAggregate, TIdentity, IAggregateEvent<TAggregate, TIdentity>>>(Recover);
                 Recover<RecoveryCompleted>(Recover);
             }
-            
+
         }
         
 
@@ -143,13 +145,36 @@ namespace Akkatecture.Aggregates
         public virtual void Emit<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
             where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
         {
+            var committedEvent = From(aggregateEvent, Version, metadata);
+            Persist(committedEvent, ApplyCommittedEvent);
+        }
+
+        public virtual void EmitAll<TAggregateEvent>(IEnumerable<TAggregateEvent> aggregateEvents, IMetadata metadata = null)
+            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+        {
+            long version = Version;
+            var comittedEvents = new List<CommittedEvent<TAggregate, TIdentity, TAggregateEvent>>();
+            foreach (var aggregateEvent in aggregateEvents)
+            {
+                var committedEvent = From(aggregateEvent, version + 1, metadata);
+                comittedEvents.Add(committedEvent);
+                version++;
+            }
+            
+            PersistAll(comittedEvents, ApplyCommittedEvent);
+        }
+
+        public virtual CommittedEvent<TAggregate, TIdentity, TAggregateEvent> From<TAggregateEvent>(TAggregateEvent aggregateEvent,
+            long version, IMetadata metadata = null)
+            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+        {
             if (aggregateEvent == null)
             {
                 throw new ArgumentNullException(nameof(aggregateEvent));
             }
             _eventDefinitionService.Load(typeof(TAggregateEvent));
             var eventDefinition = _eventDefinitionService.GetDefinition(typeof(TAggregateEvent));
-            var aggregateSequenceNumber = Version + 1;
+            var aggregateSequenceNumber = version + 1;
             var eventId = EventId.NewDeterministic(
                 GuidFactories.Deterministic.Namespaces.Events,
                 $"{Id.Value}-v{aggregateSequenceNumber}");
@@ -171,13 +196,25 @@ namespace Akkatecture.Aggregates
             }
             
             var committedEvent = new CommittedEvent<TAggregate, TIdentity, TAggregateEvent>(Id, aggregateEvent,eventMetadata,now,Version);
-            Persist(committedEvent, ApplyCommittedEvents);
-           
-            Logger.Info($"[{Name}] With Id={Id} Commited [{typeof(TAggregateEvent).PrettyPrint()}]");
+            return committedEvent;
+        }
+        protected virtual IAggregateSnapshot<TAggregate, TIdentity> CreateSnapshot()
+        {
+            Logger.Info($"[{Name}] With Id={Id} Attempted to Create a Snapshot, override the CreateSnapshot() method to return the snapshot data model.");
+            return null;
+        }
+
+        protected void  ApplyCommittedEvent<TAggregateEvent>(ICommittedEvent<TAggregate, TIdentity, TAggregateEvent> committedEvent)
+            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+        {
+            var applyMethods = GetEventApplyMethods(committedEvent.AggregateEvent);
+            applyMethods(committedEvent.AggregateEvent);
+            
+            Logger.Info($"[{Name}] With Id={Id} Commited and Applied [{typeof(TAggregateEvent).PrettyPrint()}]");
 
             Version++;
                 
-            var domainEvent = new DomainEvent<TAggregate,TIdentity,TAggregateEvent>(Id, aggregateEvent,eventMetadata,now,Version);
+            var domainEvent = new DomainEvent<TAggregate,TIdentity,TAggregateEvent>(Id, committedEvent.AggregateEvent,committedEvent.Metadata,committedEvent.Timestamp,Version);
 
             Publish(domainEvent);
 
@@ -186,7 +223,6 @@ namespace Akkatecture.Aggregates
                 var aggregateSnapshot = CreateSnapshot();
                 if (aggregateSnapshot != null)
                 {
-                    var t = aggregateSnapshot.GetType();
                     _snapshotDefinitionService.Load(aggregateSnapshot.GetType());
                     var snapshotDefinition = _snapshotDefinitionService.GetDefinition(aggregateSnapshot.GetType());
                     var snapshotMetadata = new SnapshotMetadata
@@ -203,23 +239,11 @@ namespace Akkatecture.Aggregates
                             Id,
                             aggregateSnapshot,
                             snapshotMetadata,
-                            now, Version);
+                            committedEvent.Timestamp, Version);
+                    
                     SaveSnapshot(commitedSnapshot);
                 }
             }
-        }
-
-        protected virtual IAggregateSnapshot<TAggregate, TIdentity> CreateSnapshot()
-        {
-            Logger.Info($"[{Name}] With Id={Id} Attempted to Create a Snapshot, override the CreateSnapshot() method to return the snapshot data model.");
-            return null;
-        }
-
-        protected void  ApplyCommittedEvents<TAggregateEvent>(ICommittedEvent<TAggregate, TIdentity, TAggregateEvent> committedEvent)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
-        {
-            var applyMethods = GetEventApplyMethods(committedEvent.AggregateEvent);
-            applyMethods(committedEvent.AggregateEvent);
             
         }
         
@@ -262,7 +286,12 @@ namespace Akkatecture.Aggregates
                 ApplyEvent(e);
             }
         }
-
+        protected override bool AroundReceive(Receive receive, object message)
+        {
+            
+            base.AroundReceive(receive, message);
+            return true;
+        }
         protected override void Unhandled(object message)
         {
             Logger.Info($"Aggregate with Id '{Id?.Value} has received an unhandled message {message.GetType().PrettyPrint()}'");
