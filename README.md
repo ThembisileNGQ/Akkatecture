@@ -28,7 +28,7 @@ Akkatecture comes with a few prescribed examples on how one might use it:
 
 * **[Simple](https://github.com/Lutando/Akkatecture/tree/master/examples/simple):** A simple console based example that shows the most simple example of how to create an aggregate and issue commands to it.
 
-* **[Walkthrough](https://github.com/Lutando/Akkatecture/tree/master/examples/walkthrough):** Tutorial style sample based on the walkthrough in the Akkatecture documentation. The walkthrough proposes domain that should be modelled based on some business requirements. The walkthrough goes step by step covering all the primitives and features covered in Akkatecture to give you an understanding of the framework. The beginning of the walkthrough can be found [here](https://akkatecture.net/docs/walkthrough-introduction).
+* **[Walkthrough](https://github.com/Akkatecture/Walkthrough):** Tutorial style sample based on the walkthrough in the Akkatecture documentation. The walkthrough proposes domain that should be modelled based on some business requirements. The walkthrough goes step by step covering all the primitives and features covered in Akkatecture to give you an understanding of the framework. The beginning of the walkthrough can be found [here](https://akkatecture.net/docs/walkthrough-introduction).
 
 
 * **[Cluster](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster):** A more involved sample that shows you how to do distributed aggregates using clustering. Read the [readme](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster/README.md) for the sample for a good overview of the example.
