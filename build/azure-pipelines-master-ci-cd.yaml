@@ -3,31 +3,40 @@
 # the project in the master branch. It pushes package
 # artefacts to a private nuget feed as pre-release packages.
 
-pool:
-  vmImage: 'Ubuntu 16.04'
+trigger:
+  branches:
+    include:
+    - master
 
 variables:
-  buildConfiguration: 'Release'
+  vNext: '0.5.0'
+  dayOfYear: $(DayOfYear)
+  revision: $(Rev:r)
+  
+name: ${{ format('{0}-prerelease-{1}{2}', variables.vNext, variables.dayOfYear, variables.revision) }}
 
+jobs:
+  - job: Build
+    pool:
+      vmImage: 'Ubuntu 16.04'
+    variables:
+      buildConfiguration: 'Release'
+      
+    steps:
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore [Akkatecture]'
+      inputs:
+        command: 'restore'
+        projects: 'Akkatecture.sln'
 
-trigger:
-- master
+    - task: DotNetCoreCLI@2
+      displayName: 'Build [Akkatecture]'
+      inputs:
+        command: 'restore'
+        projects: 'Akkatecture.sln'
 
-steps:
-- task: DotNetCoreCLI@2
-  displayName: 'Restore [Akkatecture]'
-  inputs:
-    command: 'restore'
-    projects: 'Akkatecture.sln'
-
-- task: DotNetCoreCLI@2
-  displayName: 'Build [Akkatecture]'
-  inputs:
-    command: 'restore'
-    projects: 'Akkatecture.sln'
-
-- task: DotNetCoreCLI@2
-  displayName: 'Test [Akkatecture.Tests]'
-  inputs:
-    command: 'test'
-    projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
+    - task: DotNetCoreCLI@2
+      displayName: 'Test [Akkatecture.Tests]'
+      inputs:
+        command: 'test'
+        projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'

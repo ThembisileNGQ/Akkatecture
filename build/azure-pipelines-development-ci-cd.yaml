@@ -9,20 +9,19 @@ trigger:
     - dev
 
 variables:
+  vNext: '0.5.0'
   dayOfYear: $(DayOfYear)
   revision: $(Rev:r)
   
-name: ${{ format('0.5.0-alpha-{0}{1}', variables.dayOfYear, variables.revision) }}
+name: ${{ format('{0}-alpha-{1}{2}', variables.vNext, variables.dayOfYear, variables.revision) }}
 
 jobs:
-
   - job: Build
     pool:
       vmImage: 'Ubuntu 16.04'
     variables:
       buildConfiguration: 'Release'
       
-    #name: ${{ format('{0}-alpha-{1}{2}', variables.vNext, variables.dayOfYear, variables.revision) }}
     steps:
     - task: DotNetCoreCLI@2
       displayName: 'Restore [Akkatecture]'
