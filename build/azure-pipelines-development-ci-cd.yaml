@@ -37,7 +37,7 @@ jobs:
       inputs:
         command: 'build'
         projects: 'Akkatecture.sln'
-        configuration: $(BuildConfiguration)
+        configuration: '$(BuildConfiguration)'
         arguments: '/p:Version=$(Build.BuildNumber)'
         #majorVersion: ${{ variables.majorVersion }}
         #minorVersion: ${{ variables.minorVersion }}
@@ -50,15 +50,17 @@ jobs:
         configuration: $(BuildConfiguration)
         projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
         publishTestResults: true
+        
+    - script: echo ${{ format('src/Akkatecture.Clustering/bin/{0}/*.nupkg', variables.buildConfiguration) }}
 
     - task: DotNetCoreCLI@2
+    - script: echo ${{ format('src/Akkatecture.Clustering/bin/{0}/*.nupkg', variables.buildConfiguration) }}
       displayName: 'Push [Akkatecture]'
       inputs:
         command: 'push'
         packagesToPush: ${{ format('src/Akkatecture/bin/{0}/*.nupkg', variables.buildConfiguration) }}
         feedsToUse: 'select'
         vstsFeed: 'akkatecture'
-
     - task: DotNetCoreCLI@2
       displayName: 'Push [Akkatecture.Cluster]'
       inputs:
