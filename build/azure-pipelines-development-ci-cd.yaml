@@ -20,8 +20,9 @@ jobs:
     variables:
       buildConfiguration: 'Release'
       
-    name: ${{ format('{0}-alpha-{1}{2}', variables.vNext, variables.dayOfYear, variables.revision) }}
+    #name: ${{ format('{0}-alpha-{1}{2}', variables.vNext, variables.dayOfYear, variables.revision) }}
     steps:
+    - script: echo ${{ format('{0}-alpha-{1}{2}', variables.vNext, variables.dayOfYear, variables.revision) }}
     - task: DotNetCoreCLI@2
       displayName: 'Restore [Akkatecture]'
       inputs:
