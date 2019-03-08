@@ -9,7 +9,7 @@ trigger:
     - dev
 
 #name: $(Major).$(Minor).$(Patch)-$(Branch)-$(DayOfYear)$(Rev:r)
-name: ${{ format('{0}-alpha-{1}{2}', variables.vNext, variables.dayOfYear, variables.revision) }}
+
 
 jobs:
   - template: azure-pipelines-common.yaml
@@ -19,7 +19,8 @@ jobs:
       vmImage: 'Ubuntu 16.04'
     variables:
       buildConfiguration: 'Release'
-
+      
+    name: ${{ format('{0}-alpha-{1}{2}', variables.vNext, variables.dayOfYear, variables.revision) }}
     steps:
     - task: DotNetCoreCLI@2
       displayName: 'Restore [Akkatecture]'
