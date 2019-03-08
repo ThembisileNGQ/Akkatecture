@@ -43,8 +43,8 @@ jobs:
         projectName: Akkatecture
         projectVersion: $(Build.BuildNumber)
         extraProperties: |
-        sonar.organization=lutando-github
-        sonar.branch.name=$(Build.SourceBranchName)
+          sonar.organization=lutando-github
+          sonar.branch.name=$(Build.SourceBranchName)
 
     - task: DotNetCoreCLI@2
       displayName: 'Build [Akkatecture]'
