@@ -1,6 +1,6 @@
-# Akkatecture Development CI CD pipeline definition
+# Akkatecture Release CI CD pipeline definition
 # This definition is responsible for building and testing
-# the project in the development branch. It pushes package
+# the project in the master branch. It pushes package
 # artefacts to a public nuget feed as production packages.
 
 trigger: none
