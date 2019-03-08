@@ -3,37 +3,39 @@
 # the project in the development branch. It pushes package
 # artefacts to a private nuget feed as alpha packages.
 
-- template: azure-pipelines-common.yaml
+
 
 #name: $(Major).$(Minor).$(Patch)-$(Branch)-$(DayOfYear)$(Rev:r)
 name: ${{ format('{0}-alpha-{1}{2}', variables.vNext, DayOfYear, Rev:r) }}
-
-pool:
-  vmImage: 'Ubuntu 16.04'
-
-variables:
-  buildConfiguration: 'Release'
 
 trigger:
   branches:
     include:
     - dev
+jobs:
+  - template: azure-pipelines-common.yaml
 
-steps:
-- task: DotNetCoreCLI@2
-  displayName: 'Restore [Akkatecture]'
-  inputs:
-    command: 'restore'
-    projects: 'Akkatecture.sln'
+  - job: Build
+    pool:
+      vmImage: 'Ubuntu 16.04'
+    variables:
+      buildConfiguration: 'Release'
 
-- task: DotNetCoreCLI@2
-  displayName: 'Build [Akkatecture]'
-  inputs:
-    command: 'restore'
-    projects: 'Akkatecture.sln'
+    steps:
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore [Akkatecture]'
+      inputs:
+        command: 'restore'
+        projects: 'Akkatecture.sln'
 
-- task: DotNetCoreCLI@2
-  displayName: 'Test [Akkatecture.Tests]'
-  inputs:
-    command: 'test'
-    projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
+    - task: DotNetCoreCLI@2
+      displayName: 'Build [Akkatecture]'
+      inputs:
+        command: 'restore'
+        projects: 'Akkatecture.sln'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Test [Akkatecture.Tests]'
+      inputs:
+        command: 'test'
+        projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
