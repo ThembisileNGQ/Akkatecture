@@ -3,6 +3,8 @@
 # the project within the context of pull requests. as a
 # static build it only builds and tests the project.
 
+trigger: none
+
 pr:
   branches:
     include:
@@ -15,7 +17,7 @@ jobs:
       vmImage: 'Ubuntu 16.04'
     variables:
       buildConfiguration: 'Release'
-      
+
     steps:
     - task: DotNetCoreCLI@2
       displayName: 'Restore [Akkatecture]'
