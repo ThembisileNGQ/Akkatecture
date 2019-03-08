@@ -8,8 +8,8 @@ trigger:
     include:
     - dev
 
-#name: $(Major).$(Minor).$(Patch)-$(Branch)-$(DayOfYear)$(Rev:r)
-
+#name: $(Major).$(Minor).$(Patch)-$(alp)-$(DayOfYear)$(Rev:r)
+name: ${{ format('0.5.0-alpha-{0}{1}', $(DayOfYear), $(Rev:r)) }}
 
 jobs:
   - template: azure-pipelines-common.yaml
