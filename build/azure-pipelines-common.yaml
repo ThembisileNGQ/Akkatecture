@@ -1,9 +1,0 @@
-# Akkatecture Development CI CD pipeline definition
-# This definition is responsible for building and testing
-# the project within the context of pull requests. as a
-# static build it only builds and tests the project.
-
-#variables:
-#  vNext: '0.5.0'
-#  dayOfYear: $(DayOfYear)
-#  revision: $(Rev:r)

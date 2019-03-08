@@ -9,11 +9,14 @@ trigger:
     - dev
 
 variables:
-  vNext: '0.5.0'
+  majorVersion: '0'
+  minorVersion: '5'
+  patchVersion: '0'
+  feedVersion: 'alpha'
   dayOfYear: $(DayOfYear)
   revision: $(Rev:r)
   
-name: ${{ format('{0}-alpha-{1}{2}', variables.vNext, variables.dayOfYear, variables.revision) }}
+name: ${{ format('{0}.{1}.{2}-{3}-{4}{5}', variables.majorVersion, variables.minorVersion, variables.patchVersion, variables.feedVersion, variables.dayOfYear, variables.revision) }}
 
 jobs:
   - job: Build
@@ -32,11 +35,33 @@ jobs:
     - task: DotNetCoreCLI@2
       displayName: 'Build [Akkatecture]'
       inputs:
-        command: 'restore'
+        command: 'build'
         projects: 'Akkatecture.sln'
+        arguments: '/p:Version=$(Build.BuildNumber) --configuration $(BuildConfiguration)'
 
     - task: DotNetCoreCLI@2
       displayName: 'Test [Akkatecture.Tests]'
       inputs:
         command: 'test'
+        configuration: $(BuildConfiguration)
         projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
+        publishTestResults: true
+
+    - script: echo ${{ format('src/Akkatecture.Clustering/bin/{0}/*.nupkg', variables.buildConfiguration) }}
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Push [Akkatecture]'
+      inputs:
+        command: 'push'
+        packagesToPush: ${{ format('src/Akkatecture/bin/{0}/*.nupkg', variables.buildConfiguration) }}
+        nuGetFeedType: 'internal'
+        publishVstsFeed: 'akkatecture'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Push [Akkatecture.Cluster]'
+      inputs:
+        command: 'push'
+        packagesToPush: ${{ format('src/Akkatecture.Clustering/bin/{0}/*.nupkg', variables.buildConfiguration) }}
+        nuGetFeedType: 'internal'
+        publishVstsFeed: 'akkatecture'
+        
