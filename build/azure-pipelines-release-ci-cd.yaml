@@ -49,7 +49,7 @@ jobs:
         command: push
         packagesToPush: 'src/Akkatecture/bin/$(BuildConfiguration)/*.nupkg'
         nuGetFeedType: external
-        publishFeedCredentials: Akkatecture
+        publishFeedCredentials: Akkatecture-NuGet
 
     - task: NuGetCommand@2
       displayName: 'Push [Akkatecture.Clustering]'
@@ -57,7 +57,7 @@ jobs:
         command: push
         packagesToPush: 'src/Akkatecture.Clustering/bin/$(BuildConfiguration)/*.nupkg'
         nuGetFeedType: external
-        publishFeedCredentials: Akkatecture
+        publishFeedCredentials: Akkatecture-NuGet
 
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact Source'
