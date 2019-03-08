@@ -61,6 +61,6 @@ jobs:
       inputs:
         command: 'push'
         packagesToPush: ${{ format('src/Akkatecture.Clustering/bin/{0}/*.nupkg', variables.buildConfiguration) }}
-        feedsToUse: 'select'
-        vstsFeed: 'akkatecture'
+        nuGetFeedType: 'internal'
+        publishVstsFeed: 'akkatecture'
         
