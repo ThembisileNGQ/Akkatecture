@@ -38,7 +38,7 @@ jobs:
         command: 'build'
         projects: 'Akkatecture.sln'
         configuration: $(BuildConfiguration)
-        versioningScheme: byBuildNumber
+        arguments: '/p:Version=$(Build.BuildNumber)'
         #majorVersion: ${{ variables.majorVersion }}
         #minorVersion: ${{ variables.minorVersion }}
         #patchVersion: ${{ format('{0}-{1}-{2}{3}', variables.patchVersion, variables.feedVersion, variables.dayOfYear, variables.revision) }}
