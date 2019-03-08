@@ -9,9 +9,9 @@ trigger:
     - dev
 
 variables:
-  dayOfYear: $(DayOfYear)
-  revision: $(Rev:r)
-#name: $(Major).$(Minor).$(Patch)-$(alp)-$(DayOfYear)$(Rev:r)
+  dayOfYear: '22'
+  revision: '55'
+  
 name: ${{ format('0.5.0-alpha-{0}{1}', variables.dayOfYear, variables.revision) }}
 
 jobs:
