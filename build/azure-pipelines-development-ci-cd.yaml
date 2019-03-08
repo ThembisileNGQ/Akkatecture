@@ -3,7 +3,7 @@
 # the project in the development branch. It pushes package
 # artefacts to a private nuget feed as alpha packages.
 
-template: 'azure-pipelines-common.yaml'
+- template: azure-pipelines-common.yaml
 
 #name: $(Major).$(Minor).$(Patch)-$(Branch)-$(DayOfYear)$(Rev:r)
 name: ${{ format('{0}-alpha-{1}{2}', variables.vNext, DayOfYear, Rev:r) }}
@@ -14,7 +14,7 @@ pool:
 variables:
   buildConfiguration: 'Release'
 
-pr:
+trigger:
   branches:
     include:
     - dev
