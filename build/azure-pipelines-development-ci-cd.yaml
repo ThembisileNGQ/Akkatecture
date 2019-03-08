@@ -13,7 +13,7 @@ pr: none
 variables:
   majorVersion: '0'
   minorVersion: '4'
-  patchVersion: '2'
+  patchVersion: '3'
   feedVersion: 'alpha'
   dayOfYear: $(DayOfYear)
   revision: $(Rev:r)
