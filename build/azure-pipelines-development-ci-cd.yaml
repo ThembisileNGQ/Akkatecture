@@ -35,16 +35,28 @@ jobs:
         command: 'restore'
         projects: 'Akkatecture.sln'
 
-    - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
+    - task: SonarSource.sonarcloud.14d9cde6-c1da-4d55-aa01-2965cd301255.SonarCloudPrepare@1
       displayName: 'Prepare Analysis [Akkatecture]'
       inputs:
-        SonarQube: 'SonarCloud'
-        projectKey: $(SonarQubeProjectKey)
+        SonarCloud: Akkatecture
+        organization: 'lutando-github'
+        projectKey: lutando.akkatecture
         projectName: Akkatecture
         projectVersion: $(Build.BuildNumber)
         extraProperties: |
           sonar.organization=lutando-github
           sonar.branch.name=$(Build.SourceBranchName)
+
+    #- task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.sent @4
+    #  displayName: 'Prepare Analysis [Akkatecture]'
+    #  inputs:
+    #    SonarQube: 'SonarCloud'
+    #    projectKey: $(SonarQubeProjectKey)
+    #    projectName: Akkatecture
+    #    projectVersion: $(Build.BuildNumber)
+    #    extraProperties: |
+    #      sonar.organization=lutando-github
+    #      sonar.branch.name=$(Build.SourceBranchName)
 
     - task: DotNetCoreCLI@2
       displayName: 'Build [Akkatecture]'
@@ -61,7 +73,7 @@ jobs:
         projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
         publishTestResults: true
 
-    - task: SonarSource.sonarqube.6D01813A-9589-4B15-8491-8164AEB38055.SonarQubeAnalyze@4
+    - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
       displayName: 'Run Analysis [Akkatecture]'
 
     - task: DotNetCoreCLI@2
