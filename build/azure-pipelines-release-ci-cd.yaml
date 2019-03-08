@@ -6,11 +6,11 @@
 trigger: none
 
 variables:
-  vNext: '0.5.0'
-  dayOfYear: $(DayOfYear)
-  revision: $(Rev:r)
+  majorVersion: '0'
+  minorVersion: '5'
+  patchVersion: '0'
   
-name: ${{ variables.vNext }}
+name: ${{ format('{0}.{1}.{2}', variables.majorVersion, variables.minorVersion, variables.patchVersion) }}
 
 jobs:
   - job: Build
@@ -29,11 +29,36 @@ jobs:
     - task: DotNetCoreCLI@2
       displayName: 'Build [Akkatecture]'
       inputs:
-        command: 'restore'
+        command: 'build'
         projects: 'Akkatecture.sln'
+        arguments: '/p:Version=$(Build.BuildNumber) --configuration $(BuildConfiguration)'
 
     - task: DotNetCoreCLI@2
       displayName: 'Test [Akkatecture.Tests]'
       inputs:
         command: 'test'
+        configuration: $(BuildConfiguration)
         projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
+        publishTestResults: true
+
+    - task: NuGetCommand@2
+      displayName: 'Push [Akkatecture]'
+      inputs:
+        command: push
+        packagesToPush: 'src/Akkatecture/bin/$(BuildConfiguration)/*.nupkg'
+        nuGetFeedType: external
+        publishFeedCredentials: Akkatecture
+
+    - task: NuGetCommand@2
+      displayName: 'Push [Akkatecture.Clustering]'
+      inputs:
+        command: push
+        packagesToPush: 'src/Akkatecture.Clustering/bin/$(BuildConfiguration)/*.nupkg'
+        nuGetFeedType: external
+        publishFeedCredentials: Akkatecture
+        
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact Source'
+      inputs:
+        PathtoPublish: '$(Agent.BuildDirectory)'
+        ArtifactName: Source
