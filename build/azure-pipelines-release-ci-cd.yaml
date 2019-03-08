@@ -4,6 +4,7 @@
 # artefacts to a public nuget feed as production packages.
 
 trigger: none
+pr: none
 
 variables:
   majorVersion: '0'
