@@ -9,7 +9,7 @@ trigger:
     - dev
 
 #name: $(Major).$(Minor).$(Patch)-$(Branch)-$(DayOfYear)$(Rev:r)
-name: ${{ format('{0}-alpha-{1}{2}', variables.vNext, $(DayOfYear), $(Rev:r)) }}
+name: ${{ format('{0}-alpha-{1}{2}', variables.vNext, variables.dayOfYear, variables.revision) }}
 
 jobs:
   - template: azure-pipelines-common.yaml
