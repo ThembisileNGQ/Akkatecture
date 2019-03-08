@@ -1,34 +1,39 @@
-# Build ASP.NET Core project using Azure Pipelines
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core?view=vsts
+# Akkatecture Development CI CD pipeline definition
+# This definition is responsible for building and testing
+# the project in the development branch. It pushes package
+# artefacts to a public nuget feed as production packages.
 
-pool:
-  vmImage: 'Ubuntu 16.04'
-  
+trigger: none
+
 variables:
-  buildConfiguration: 'Release'
+  vNext: '0.5.0'
+  dayOfYear: $(DayOfYear)
+  revision: $(Rev:r)
+  
+name: ${{ variables.vNext }}
 
+jobs:
+  - job: Build
+    pool:
+      vmImage: 'Ubuntu 16.04'
+    variables:
+      buildConfiguration: 'Release'
+      
+    steps:
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore [Akkatecture]'
+      inputs:
+        command: 'restore'
+        projects: 'Akkatecture.sln'
 
-pr:
-  branches:
-    include:
-    - master
-    - dev
+    - task: DotNetCoreCLI@2
+      displayName: 'Build [Akkatecture]'
+      inputs:
+        command: 'restore'
+        projects: 'Akkatecture.sln'
 
-steps:
-- task: DotNetCoreCLI@2
-  displayName: 'Restore [Akkatecture]'
-  inputs:
-    command: 'restore'
-    projects: 'Akkatecture.sln'
-
-- task: DotNetCoreCLI@2
-  displayName: 'Build [Akkatecture]'
-  inputs:
-    command: 'restore'
-    projects: 'Akkatecture.sln'
-
-- task: DotNetCoreCLI@2
-  displayName: 'Test [Akkatecture.Tests]'
-  inputs:
-    command: 'test'
-    projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
+    - task: DotNetCoreCLI@2
+      displayName: 'Test [Akkatecture.Tests]'
+      inputs:
+        command: 'test'
+        projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
