@@ -8,6 +8,8 @@ trigger:
     include:
     - dev
 
+pr: none
+
 variables:
   majorVersion: '0'
   minorVersion: '5'
