@@ -9,8 +9,8 @@ trigger:
     - dev
 
 variables:
-  dayOfYear: '22'
-  revision: '55'
+  dayOfYear: $(DayOfYear)
+  revision: $(Rev:r)
   
 name: ${{ format('0.5.0-alpha-{0}{1}', variables.dayOfYear, variables.revision) }}
 
