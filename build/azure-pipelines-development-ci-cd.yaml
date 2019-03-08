@@ -47,6 +47,7 @@ jobs:
       displayName: 'Test [Akkatecture.Tests]'
       inputs:
         command: 'test'
+        configuration: $(BuildConfiguration)
         projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
         publishTestResults: true
 
@@ -54,7 +55,7 @@ jobs:
       displayName: 'Push [Akkatecture]'
       inputs:
         command: 'push'
-        packagesToPush: 'src/Akkatecture/bin/$(BuildConfiguration)/*.nupkg'
+        packagesToPush: ${{ format('src/Akkatecture/bin/{0}/*.nupkg', variables.buildConfiguration) }}
         feedsToUse: 'select'
         vstsFeed: 'akkatecture'
 
@@ -62,7 +63,7 @@ jobs:
       displayName: 'Push [Akkatecture.Cluster]'
       inputs:
         command: 'push'
-        packagesToPush: 'src/Akkatecture.Clustering/bin/$(BuildConfiguration)/*.nupkg'
+        packagesToPush: ${{ format('src/Akkatecture.Clustering/bin/{0}/*.nupkg', variables.buildConfiguration) }}
         feedsToUse: 'select'
         vstsFeed: 'akkatecture'
         
