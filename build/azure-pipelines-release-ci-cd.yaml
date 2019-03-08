@@ -43,24 +43,24 @@ jobs:
         projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
         publishTestResults: true
 
-#    - task: NuGetCommand@2
-#      displayName: 'Push [Akkatecture]'
-#      inputs:
-#        command: push
-#        packagesToPush: 'src/Akkatecture/bin/$(BuildConfiguration)/*.nupkg'
-#        nuGetFeedType: external
-#        publishFeedCredentials: Akkatecture
+    - task: NuGetCommand@2
+      displayName: 'Push [Akkatecture]'
+      inputs:
+        command: push
+        packagesToPush: 'src/Akkatecture/bin/$(BuildConfiguration)/*.nupkg'
+        nuGetFeedType: external
+        publishFeedCredentials: Akkatecture
 
-#    - task: NuGetCommand@2
-#      displayName: 'Push [Akkatecture.Clustering]'
-#      inputs:
-#        command: push
-#        packagesToPush: 'src/Akkatecture.Clustering/bin/$(BuildConfiguration)/*.nupkg'
-#        nuGetFeedType: external
-#        publishFeedCredentials: Akkatecture
+    - task: NuGetCommand@2
+      displayName: 'Push [Akkatecture.Clustering]'
+      inputs:
+        command: push
+        packagesToPush: 'src/Akkatecture.Clustering/bin/$(BuildConfiguration)/*.nupkg'
+        nuGetFeedType: external
+        publishFeedCredentials: Akkatecture
 
-#    - task: PublishBuildArtifacts@1
-#      displayName: 'Publish Artifact Source'
-#      inputs:
-#        PathtoPublish: '$(Agent.BuildDirectory)'
-#        ArtifactName: Source
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact Source'
+      inputs:
+        PathtoPublish: '$(Agent.BuildDirectory)'
+        ArtifactName: Source
