@@ -50,11 +50,10 @@ jobs:
         configuration: $(BuildConfiguration)
         projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
         publishTestResults: true
-        
+
     - script: echo ${{ format('src/Akkatecture.Clustering/bin/{0}/*.nupkg', variables.buildConfiguration) }}
 
     - task: DotNetCoreCLI@2
-    - script: echo ${{ format('src/Akkatecture.Clustering/bin/{0}/*.nupkg', variables.buildConfiguration) }}
       displayName: 'Push [Akkatecture]'
       inputs:
         command: 'push'
