@@ -40,7 +40,7 @@ jobs:
       inputs:
         SonarCloud: Akkatecture
         organization: 'lutando-github'
-        projectKey: lutando.akkatecture
+        projectKey: Lutando_Akkatecture
         projectName: Akkatecture
         projectVersion: $(Build.BuildNumber)
         extraProperties: |
