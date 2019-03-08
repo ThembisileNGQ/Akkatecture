@@ -15,7 +15,6 @@ variables:
 name: ${{ format('0.5.0-alpha-{0}{1}', variables.dayOfYear, variables.revision) }}
 
 jobs:
-  - template: azure-pipelines-common.yaml
 
   - job: Build
     pool:
