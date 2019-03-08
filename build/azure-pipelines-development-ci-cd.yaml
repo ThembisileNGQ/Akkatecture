@@ -17,7 +17,6 @@ variables:
   feedVersion: 'alpha'
   dayOfYear: $(DayOfYear)
   revision: $(Rev:r)
-  sonarQubeKey: $(SonarQubeProjectKey)
   
 name: ${{ format('{0}.{1}.{2}-{3}-{4}{5}', variables.majorVersion, variables.minorVersion, variables.patchVersion, variables.feedVersion, variables.dayOfYear, variables.revision) }}
 
@@ -46,17 +45,6 @@ jobs:
         extraProperties: |
           sonar.organization=lutando-github
           sonar.branch.name=$(Build.SourceBranchName)
-
-    #- task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.sent @4
-    #  displayName: 'Prepare Analysis [Akkatecture]'
-    #  inputs:
-    #    SonarQube: 'SonarCloud'
-    #    projectKey: $(SonarQubeProjectKey)
-    #    projectName: Akkatecture
-    #    projectVersion: $(Build.BuildNumber)
-    #    extraProperties: |
-    #      sonar.organization=lutando-github
-    #      sonar.branch.name=$(Build.SourceBranchName)
 
     - task: DotNetCoreCLI@2
       displayName: 'Build [Akkatecture]'
