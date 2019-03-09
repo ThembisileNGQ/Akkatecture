@@ -59,7 +59,7 @@ jobs:
         command: 'test'
         configuration: $(BuildConfiguration)
         projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
-        arguments: ' /p:CollectCoverage=true'
+        arguments: '/p:CollectCoverage=true'
         publishTestResults: true
 
     - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
