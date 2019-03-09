@@ -13,7 +13,7 @@ pr: none
 variables:
   majorVersion: '0'
   minorVersion: '4'
-  patchVersion: '2'
+  patchVersion: '3'
   feedVersion: 'alpha'
   dayOfYear: $(DayOfYear)
   revision: $(Rev:r)
@@ -59,6 +59,7 @@ jobs:
         command: 'test'
         configuration: $(BuildConfiguration)
         projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
+        arguments: '/p:CollectCoverage=true /p:Exclude="[xunit*]*'
         publishTestResults: true
 
     - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1

@@ -13,7 +13,7 @@ pr: none
 variables:
   majorVersion: '0'
   minorVersion: '4'
-  patchVersion: '2'
+  patchVersion: '3'
   feedVersion: 'prerelease'
   dayOfYear: $(DayOfYear)
   revision: $(Rev:r)
@@ -58,6 +58,7 @@ jobs:
       inputs:
         command: 'test'
         configuration: $(BuildConfiguration)
+        arguments: '/p:CollectCoverage=true /p:Exclude="[xunit*]*'
         projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
         publishTestResults: true
 
