@@ -58,6 +58,7 @@ jobs:
       inputs:
         command: 'test'
         configuration: $(BuildConfiguration)
+        arguments: ' /p:CollectCoverage=true'
         projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
         publishTestResults: true
 
