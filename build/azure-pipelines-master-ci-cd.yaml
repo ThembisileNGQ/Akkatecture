@@ -45,6 +45,7 @@ jobs:
         extraProperties: |
           sonar.organization=lutando-github
           sonar.branch.name=$(Build.SourceBranchName)
+          sonar.cs.opencover.reportsPaths='test\Akkatecture.Tests\coverage.opencover.xml'
 
     - task: DotNetCoreCLI@2
       displayName: 'Build [Akkatecture]'
@@ -57,9 +58,9 @@ jobs:
       displayName: 'Test [Akkatecture.Tests]'
       inputs:
         command: 'test'
-        configuration: $(BuildConfiguration)
-        arguments: '/p:CollectCoverage=true /p:Exclude="[xunit*]*'
         projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
+        configuration: $(BuildConfiguration)
+        arguments: '/p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:Exclude="[xunit*]*'
         publishTestResults: true
 
     - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
