@@ -45,7 +45,7 @@ jobs:
         extraProperties: |
           sonar.organization=lutando-github
           sonar.branch.name=$(Build.SourceBranchName)
-          sonar.cs.opencover.reportsPaths='test\Akkatecture.Tests\coverage.opencover.xml'
+          sonar.cs.opencover.reportsPaths="test\Akkatecture.Tests\coverage.opencover.xml"
 
     - task: DotNetCoreCLI@2
       displayName: 'Build [Akkatecture]'
