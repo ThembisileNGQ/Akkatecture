@@ -43,7 +43,7 @@ jobs:
         projectName: Akkatecture
         projectVersion: $(Build.BuildNumber)
         extraProperties: |
-          sonar.cs.opencover.reportsPaths="test\Akkatecture.Tests\coverage.opencover.xml"
+          sonar.cs.opencover.reportsPaths="$(Build.SourcesDirectory)\opencover.xml"
 
     - task: DotNetCoreCLI@2
       displayName: 'Build [Akkatecture]'
@@ -58,11 +58,14 @@ jobs:
         command: 'test'
         projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
         configuration: $(BuildConfiguration)
-        arguments: '/p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:Exclude="[xunit*]*'
+        arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=$(Build.SourcesDirectory)/opencover.xml /p:Exclude="[xunit*]*'
         publishTestResults: true
 
     - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
       displayName: 'Run Analysis [Akkatecture]'
+
+    - task: SonarSource.sonarcloud.38b27399-a642-40af-bb7d-9971f69712e8.SonarCloudPublish@1
+      displayName: 'Publish Quality Gate Result[Akkatecture]'
 
     - task: DotNetCoreCLI@2
       displayName: 'Push [Akkatecture]'
