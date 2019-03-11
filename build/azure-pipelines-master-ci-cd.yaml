@@ -50,7 +50,7 @@ jobs:
       inputs:
         command: 'build'
         projects: 'Akkatecture.sln'
-        arguments: '/p:Version=$(Build.BuildNumber) --configuration $(BuildConfiguration)'
+        arguments: '--configuration $(BuildConfiguration) /p:Version=$(Build.BuildNumber)'
 
     - task: DotNetCoreCLI@2
       displayName: 'Test [Akkatecture.Tests]'
@@ -65,7 +65,7 @@ jobs:
       displayName: 'Run Analysis [Akkatecture]'
 
     - task: SonarSource.sonarcloud.38b27399-a642-40af-bb7d-9971f69712e8.SonarCloudPublish@1
-      displayName: 'Publish Quality Gate Result[Akkatecture]'
+      displayName: 'Publish Quality Gate Result [Akkatecture]'
 
     - task: DotNetCoreCLI@2
       displayName: 'Push [Akkatecture]'
