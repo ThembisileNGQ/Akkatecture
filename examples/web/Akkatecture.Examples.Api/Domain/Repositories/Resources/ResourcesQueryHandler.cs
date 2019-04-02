@@ -39,22 +39,22 @@ namespace Akkatecture.Examples.Api.Domain.Repositories.Resources
         {
             _resourceStorageHandler = resourceStorageHandler;
         }
-        public async Task<ResourcesReadModel> Find(Guid id)
+        public async Task<ResourcesProjection> Find(Guid id)
         {
             var query = new GetResourcesQuery();
             
-            var result = await _resourceStorageHandler.Ask<List<ResourcesReadModel>>(query);
+            var result = await _resourceStorageHandler.Ask<List<ResourcesProjection>>(query);
 
             var readModel = result.SingleOrDefault(x => x.Id == id);
             
             return readModel;
         }
 
-        public async Task<IReadOnlyCollection<ResourcesReadModel>> FindAll()
+        public async Task<IReadOnlyCollection<ResourcesProjection>> FindAll()
         {
             var query =new GetResourcesQuery();
             
-            var result = await _resourceStorageHandler.Ask<List<ResourcesReadModel>>(query);
+            var result = await _resourceStorageHandler.Ask<List<ResourcesProjection>>(query);
 
             return result;
         }

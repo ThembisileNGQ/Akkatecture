@@ -26,13 +26,13 @@ using Akkatecture.Examples.Api.Domain.Aggregates.Resource;
 
 namespace Akkatecture.Examples.Api.Domain.Repositories.Resources
 {
-    public class ResourcesReadModel
+    public class ResourcesProjection
     {
         public Guid Id { get; }
         public double ElapsedTimeToCreation { get; }
         public DateTime CreatedAt { get; }
 
-        public ResourcesReadModel(
+        public ResourcesProjection(
             Guid id,
             double elapsedTimeToCreation,
             DateTime createdAt)

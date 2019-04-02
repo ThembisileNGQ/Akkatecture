@@ -29,7 +29,7 @@ namespace Akkatecture.Examples.Api.Domain.Repositories.Resources
 {
     public interface IQueryResources
     {
-        Task<ResourcesReadModel> Find(Guid id);
-        Task<IReadOnlyCollection<ResourcesReadModel>> FindAll();
+        Task<ResourcesProjection> Find(Guid id);
+        Task<IReadOnlyCollection<ResourcesProjection>> FindAll();
     }
 }

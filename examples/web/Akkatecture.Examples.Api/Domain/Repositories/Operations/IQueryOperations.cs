@@ -29,7 +29,7 @@ namespace Akkatecture.Examples.Api.Domain.Repositories.Operations
 {
     public interface IQueryOperations
     {
-        Task<OperationsReadModel> Find(Guid operationId);
-        Task<IReadOnlyCollection<OperationsReadModel>> FindAll();
+        Task<OperationsProjection> Find(Guid operationId);
+        Task<IReadOnlyCollection<OperationsProjection>> FindAll();
     }
 }

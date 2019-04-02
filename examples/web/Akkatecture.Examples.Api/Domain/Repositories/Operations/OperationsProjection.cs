@@ -25,7 +25,7 @@ using System;
 
 namespace Akkatecture.Examples.Api.Domain.Repositories.Operations
 {
-    public class OperationsReadModel
+    public class OperationsProjection
     {
         public Guid Id { get; }
         public int Percentage { get; }
@@ -33,7 +33,7 @@ namespace Akkatecture.Examples.Api.Domain.Repositories.Operations
         public string Status => Percentage < 100 ? "Running" : "Finished";
         public DateTime StartedAt { get; }
 
-        public OperationsReadModel(
+        public OperationsProjection(
             Guid id,
             int percentage,
             int elapsed,
