@@ -34,7 +34,7 @@ namespace Akkatecture.Aggregates
     public abstract class AggregateManager<TAggregate, TIdentity, TCommand> : ReceiveActor, IAggregateManager<TAggregate, TIdentity>
         where TAggregate : ReceivePersistentActor, IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
-        where TCommand : class, ICommand<TAggregate, TIdentity>
+        where TCommand : ICommand<TAggregate, TIdentity>
     {
         protected ILoggingAdapter Logger { get; set; }
         protected Func<DeadLetter, bool> DeadLetterHandler => Handle;
@@ -84,9 +84,9 @@ namespace Akkatecture.Aggregates
         protected bool Handle(DeadLetter deadLetter)
         {
             if(deadLetter.Message is TCommand &&
-                (deadLetter.Message as TCommand).AggregateId.GetType() == typeof(TIdentity))
+                (deadLetter.Message as dynamic).AggregateId.GetType() == typeof(TIdentity))
             {
-                var command = deadLetter.Message as TCommand;
+                var command = deadLetter.Message as dynamic;
 
                 ReDispatch(command);
             }

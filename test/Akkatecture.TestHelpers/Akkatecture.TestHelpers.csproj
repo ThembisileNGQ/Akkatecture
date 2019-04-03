@@ -25,7 +25,14 @@
     <NeutralLanguage>en-GB</NeutralLanguage>
     <PackageReleaseNotes>Externally Updated</PackageReleaseNotes>
   </PropertyGroup>
+  
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Akkatecture.TestFixtures\Akkatecture.TestFixtures.csproj" />
     <ProjectReference Include="..\..\src\Akkatecture\Akkatecture.csproj" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Akka.TestKit" Version="1.3.12" />
+  </ItemGroup>
+  
 </Project>

@@ -27,6 +27,7 @@ using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.TestKit.Xunit2;
 using Akkatecture.Aggregates;
+using Akkatecture.TestFixtures.Aggregates;
 using Akkatecture.TestHelpers.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Entities;
@@ -49,9 +50,24 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
 
         [Fact]
         [Category(Category)]
+        public void With_Test_Kit_InitialState_AfterAggregateCreation_TestCreatedEventEmitted()
+        {
+            var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
+            var aggregateId = TestAggregateId.New;
+            var testId = TestId.New;
+            
+            fixture
+                .For(aggregateId)
+                .Given(new TestCreatedEvent(aggregateId))
+                .When(new AddTestCommand(aggregateId, new Test(testId)))
+                .ThenExpect<TestAddedEvent>(x => x.Test.Id == testId);
+        }
+        
+        [Fact]
+        [Category(Category)]
         public void InitialState_AfterAggregateCreation_TestCreatedEventEmitted()
         {
-            var probe = CreateTestActor("probeActor");
+            var probe = CreateTestActor("probe");
             Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
             
@@ -67,7 +83,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         [Category(Category)]
         public void EventContainerMetadata_AfterAggregateCreation_TestCreatedEventEmitted()
         {
-            var probe = CreateTestActor("probeActor");
+            var probe = CreateTestActor("probe");
             Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
 
@@ -90,7 +106,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         [Category(Category)]
         public void InitialState_AfterAggregateCreation_TestStateSignalled()
         {
-            var probe = CreateTestActor("probeActor");
+            var probe = CreateTestActor("probe");
             Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
 
@@ -110,7 +126,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         [Category(Category)]
         public void TestCommand_AfterAggregateCreation_TestEventEmitted()
         {
-            var probe = CreateTestActor("probeActor");
+            var probe = CreateTestActor("probe");
             Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
 
@@ -130,7 +146,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         [Category(Category)]
         public void TestCommandTwice_AfterAggregateCreation_TestEventEmitted()
         {
-            var probe = CreateTestActor("probeActor");
+            var probe = CreateTestActor("probe");
             Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
 
@@ -162,7 +178,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         public void TestEventSourcing_AfterManyTests_TestStateSignalled()
         {
             
-            var probe = CreateTestActor("probeActor");
+            var probe = CreateTestActor("probe");
             Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
             var aggregateId = TestAggregateId.New;
@@ -198,7 +214,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         public void TestEventMultipleEmitSourcing_AfterManyMultiCommand_TestStateSignalled()
         {
             
-            var probe = CreateTestActor("probeActor");
+            var probe = CreateTestActor("probe");
             Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
             var aggregateId = TestAggregateId.New;
@@ -229,7 +245,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         [Category(Category)]
         public void TestSnapShotting_AfterManyTests_TestStateSignalled()
         {
-            var probe = CreateTestActor("probeActor");
+            var probe = CreateTestActor("probe");
             Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
             var aggregateId = TestAggregateId.New;

@@ -58,6 +58,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{F1C674D3
 		build\azure-pipelines-static-ci.yaml = build\azure-pipelines-static-ci.yaml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.TestFixtures", "src\Akkatecture.TestFixtures\Akkatecture.TestFixtures.csproj", "{BED56747-BBF3-45F5-9EB6-C24808AA09EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -104,6 +106,10 @@ Global
 		{6A69FDC5-7A8D-4FB8-874A-484F68FBEA7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A69FDC5-7A8D-4FB8-874A-484F68FBEA7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A69FDC5-7A8D-4FB8-874A-484F68FBEA7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BED56747-BBF3-45F5-9EB6-C24808AA09EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BED56747-BBF3-45F5-9EB6-C24808AA09EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BED56747-BBF3-45F5-9EB6-C24808AA09EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BED56747-BBF3-45F5-9EB6-C24808AA09EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -123,6 +129,7 @@ Global
 		{2B7C892D-01E8-4FE5-A8BB-BBF130A42904} = {7522402D-176E-4305-A68B-F3FFBFD38158}
 		{6A69FDC5-7A8D-4FB8-874A-484F68FBEA7A} = {2B7C892D-01E8-4FE5-A8BB-BBF130A42904}
 		{8811113F-775E-4371-8E71-942BD50844A6} = {2B7C892D-01E8-4FE5-A8BB-BBF130A42904}
+		{BED56747-BBF3-45F5-9EB6-C24808AA09EC} = {C7A99371-DCC0-4726-A971-E35C8CDF4768}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F5A40806-ED71-4286-A37C-BE0364FA29A6}

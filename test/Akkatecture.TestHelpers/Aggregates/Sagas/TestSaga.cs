@@ -41,7 +41,6 @@ namespace Akkatecture.TestHelpers.Aggregates.Sagas
         {
             TestAggregateManager = testAggregateManager;
             
-            //Test Probe Command
             Command<EmitTestSagaState>(Handle);
         }
 
