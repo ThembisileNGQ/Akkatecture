@@ -50,7 +50,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
 
         [Fact]
         [Category(Category)]
-        public void With_Test_Kit_InitialState_AfterAggregateCreation_TestCreatedEventEmitted()
+        public void With_Test_Kit_InitialEvent_AfterAggregateCreation_TestCreatedEventEmitted()
         {
             var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
             var aggregateId = TestAggregateId.New;
@@ -59,6 +59,21 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             fixture
                 .For(aggregateId)
                 .Given(new TestCreatedEvent(aggregateId))
+                .When(new AddTestCommand(aggregateId, new Test(testId)))
+                .ThenExpect<TestAddedEvent>(x => x.Test.Id == testId);
+        }
+        
+        [Fact]
+        [Category(Category)]
+        public void With_Test_Kit_InitialCommand_AfterAggregateCreation_TestCreatedEventEmitted()
+        {
+            var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
+            var aggregateId = TestAggregateId.New;
+            var testId = TestId.New;
+            
+            fixture
+                .For(aggregateId)
+                .GivenCommands(new CreateTestCommand(aggregateId))
                 .When(new AddTestCommand(aggregateId, new Test(testId)))
                 .ThenExpect<TestAddedEvent>(x => x.Test.Id == testId);
         }

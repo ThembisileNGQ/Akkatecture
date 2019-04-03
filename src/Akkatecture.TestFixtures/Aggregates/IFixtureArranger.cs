@@ -1,5 +1,6 @@
 using Akka.Persistence;
 using Akkatecture.Aggregates;
+using Akkatecture.Commands;
 using Akkatecture.Core;
 
 namespace Akkatecture.TestFixtures.Aggregates
@@ -15,6 +16,6 @@ namespace Akkatecture.TestFixtures.Aggregates
             where TAggregateEvent : IAggregateEvent<TAggregate,TIdentity>;
         
         IFixtureExecutor<TAggregate, TIdentity> GivenCommands<TCommand>(params TCommand[] commands)
-            where TCommand : IAggregateEvent<TAggregate,TIdentity>;
+            where TCommand : ICommand<TAggregate,TIdentity>;
     }
 }

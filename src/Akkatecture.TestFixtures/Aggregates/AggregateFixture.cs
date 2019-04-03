@@ -49,9 +49,25 @@ namespace Akkatecture.TestFixtures.Aggregates
             return this;
         }
 
-        public IFixtureExecutor<TAggregate, TIdentity> GivenCommands<TCommand>(params TCommand[] commands) where TCommand : IAggregateEvent<TAggregate, TIdentity>
+        public IFixtureExecutor<TAggregate, TIdentity> GivenCommand<TCommand>(TCommand command) 
+            where TCommand : ICommand<TAggregate, TIdentity>
         {
-            throw new NotImplementedException();
+            if(command == null)
+                throw new ArgumentNullException(nameof(command));
+            
+            return GivenCommands(command);
+        }
+        public IFixtureExecutor<TAggregate, TIdentity> GivenCommands<TCommand>(params TCommand[] commands) 
+            where TCommand : ICommand<TAggregate, TIdentity>
+        {
+            if(commands == null)
+                throw new ArgumentNullException(nameof(commands));
+            
+            foreach (var command in commands)
+            {
+                AggregateRef.Tell(command);
+            }
+            return this;
         }
 
         public IFixtureAsserter<TAggregate, TIdentity> When<TCommand>(TCommand command) 
