@@ -27,6 +27,7 @@
 
 using System;
 using Akkatecture.Core;
+using Akkatecture.Extensions;
 
 namespace Akkatecture.Aggregates
 {
@@ -37,8 +38,8 @@ namespace Akkatecture.Aggregates
     {
         public TIdentity AggregateIdentity { get; }
         public TAggregateEvent AggregateEvent { get; }
-        public Metadata Metadata { get; }
         public long AggregateSequenceNumber { get; }
+	    public Metadata Metadata { get; }
         public DateTimeOffset Timestamp { get; }
 
         public CommittedEvent(
@@ -51,23 +52,28 @@ namespace Akkatecture.Aggregates
             if (aggregateEvent == null) throw new ArgumentNullException(nameof(aggregateEvent));
             if (metadata == null) throw new ArgumentNullException(nameof(metadata));
             if (timestamp == default(DateTimeOffset)) throw new ArgumentNullException(nameof(timestamp));
-            if (aggregateEvent == null) throw new ArgumentNullException(nameof(aggregateEvent));
             if (aggregateIdentity == null || string.IsNullOrEmpty(aggregateIdentity.Value)) throw new ArgumentNullException(nameof(aggregateIdentity));
-            
-            
-            AggregateIdentity = aggregateIdentity;
-            AggregateSequenceNumber = aggregateSequenceNumber;
-            AggregateIdentity = aggregateIdentity;
+
             AggregateEvent = aggregateEvent;
             Metadata = metadata;
             Timestamp = timestamp;
+            AggregateIdentity = aggregateIdentity;
+            AggregateSequenceNumber = aggregateSequenceNumber;
         }
-        
+
+        public IIdentity GetIdentity()
+        {
+            return AggregateIdentity;
+        }
+
         public IAggregateEvent GetAggregateEvent()
         {
             return AggregateEvent;
         }
 
-        
+        public override string ToString()
+        {
+            return $"{AggregateType.PrettyPrint()} v{AggregateSequenceNumber}/{EventType.PrettyPrint()}:{AggregateIdentity}";
+        }
     }
 }

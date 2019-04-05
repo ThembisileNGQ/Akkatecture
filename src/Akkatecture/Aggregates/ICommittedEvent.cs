@@ -32,8 +32,17 @@ namespace Akkatecture.Aggregates
 {
     public interface ICommittedEvent
     {
+	    Type AggregateType { get; }
+	    Type IdentityType { get; }
+	    Type EventType { get; }
+	    long AggregateSequenceNumber { get; }
+	    Metadata Metadata { get; }
+	    DateTimeOffset Timestamp { get; }
 
+	    IIdentity GetIdentity();
+	    IAggregateEvent GetAggregateEvent();
     }
+
     public interface ICommittedEvent<TAggregate, out TIdentity> : ICommittedEvent
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
@@ -47,8 +56,5 @@ namespace Akkatecture.Aggregates
         where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
     {
         TAggregateEvent AggregateEvent { get; }
-        Metadata Metadata { get; }
-        long AggregateSequenceNumber { get; }
-        DateTimeOffset Timestamp { get; }
     }
 }
