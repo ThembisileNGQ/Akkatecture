@@ -58,7 +58,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             
             fixture
                 .For(aggregateId)
-                .Given(new TestCreatedEvent(aggregateId))
+                .Given(new TestCreatedEvent(aggregateId), new TestAddedEvent(new Test(TestId.New)))
                 .When(new AddTestCommand(aggregateId, new Test(testId)))
                 .ThenExpect<TestAddedEvent>(x => x.Test.Id == testId);
         }

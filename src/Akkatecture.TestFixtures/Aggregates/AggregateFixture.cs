@@ -41,9 +41,7 @@ namespace Akkatecture.TestFixtures.Aggregates
             return this;
         }
 
-        public IFixtureExecutor<TAggregate, TIdentity> Given<TAggregateEvent>(
-            params TAggregateEvent[] aggregateEvents)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+        public IFixtureExecutor<TAggregate, TIdentity> Given(params IAggregateEvent<TAggregate,TIdentity>[] aggregateEvents)
         {
             InitializeJournal(AggregateId, aggregateEvents);
             return this;

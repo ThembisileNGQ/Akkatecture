@@ -12,8 +12,7 @@ namespace Akkatecture.TestFixtures.Aggregates
         IFixtureArranger<TAggregate, TIdentity> For(TIdentity aggregateId);
         
         IFixtureExecutor<TAggregate, TIdentity> GivenNothing();
-        IFixtureExecutor<TAggregate, TIdentity> Given<TAggregateEvent>(params TAggregateEvent[] aggregateEvents) 
-            where TAggregateEvent : IAggregateEvent<TAggregate,TIdentity>;
+        IFixtureExecutor<TAggregate, TIdentity> Given(params IAggregateEvent<TAggregate, TIdentity>[] aggregateEvents);
         
         IFixtureExecutor<TAggregate, TIdentity> GivenCommands<TCommand>(params TCommand[] commands)
             where TCommand : ICommand<TAggregate,TIdentity>;
