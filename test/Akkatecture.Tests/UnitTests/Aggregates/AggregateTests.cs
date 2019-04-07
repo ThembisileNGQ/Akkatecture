@@ -23,6 +23,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.TestKit.Xunit2;
@@ -33,6 +34,7 @@ using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Entities;
 using Akkatecture.TestHelpers.Aggregates.Events;
 using Akkatecture.TestHelpers.Aggregates.Events.Signals;
+using Akkatecture.TestHelpers.Aggregates.Snapshots;
 using Xunit;
 
 namespace Akkatecture.Tests.UnitTests.Aggregates
@@ -73,9 +75,23 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             
             fixture
                 .For(aggregateId)
-                .GivenCommands(new CreateTestCommand(aggregateId))
+                .Given(new CreateTestCommand(aggregateId))
                 .When(new AddTestCommand(aggregateId, new Test(testId)))
                 .ThenExpect<TestAddedEvent>(x => x.Test.Id == testId);
+        }
+        
+        [Fact]
+        [Category(Category)]
+        public void With_Test_Kit_InitialSnapshot_After_TestCreatedEventEmitted()
+        {
+            var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
+            var aggregateId = TestAggregateId.New;
+            
+            fixture
+                .For(aggregateId)
+                .Given(new TestAggregateSnapshot(Enumerable.Range(0,10).Select(x => new TestAggregateSnapshot.TestModel(Guid.NewGuid())).ToList()), 10)
+                .When(new PublishTestStateCommand(aggregateId))
+                .ThenExpect<TestStateSignalEvent>(x => x.AggregateState.FromHydration);
         }
         
         [Fact]
