@@ -10,6 +10,8 @@ pr:
     include:
     - master
     - dev
+    - Lutando:dev
+    - Lutando:master
 
 jobs:
   - job: Build
