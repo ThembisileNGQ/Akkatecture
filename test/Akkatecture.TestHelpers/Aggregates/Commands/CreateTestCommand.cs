@@ -28,13 +28,10 @@ namespace Akkatecture.TestHelpers.Aggregates.Commands
 {
     public class CreateTestCommand : Command<TestAggregate, TestAggregateId>
     {
-        public IActorRef Probe { get; }
         public CreateTestCommand(
-            TestAggregateId aggregateId,
-            IActorRef probe = null)
+            TestAggregateId aggregateId)
             : base(aggregateId)
         {
-            Probe = probe;
         }
     }
 }

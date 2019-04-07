@@ -21,20 +21,15 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.TestKit.Xunit2;
 using Akkatecture.Aggregates;
-using Akkatecture.TestFixtures.Aggregates;
 using Akkatecture.TestHelpers.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Entities;
 using Akkatecture.TestHelpers.Aggregates.Events;
 using Akkatecture.TestHelpers.Aggregates.Events.Signals;
-using Akkatecture.TestHelpers.Aggregates.Snapshots;
 using Xunit;
 
 namespace Akkatecture.Tests.UnitTests.Aggregates
@@ -49,50 +44,6 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         {
             
         }
-
-        [Fact]
-        [Category(Category)]
-        public void With_Test_Kit_InitialEvent_AfterAggregateCreation_TestCreatedEventEmitted()
-        {
-            var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
-            var aggregateId = TestAggregateId.New;
-            var testId = TestId.New;
-            
-            fixture
-                .For(aggregateId)
-                .Given(new TestCreatedEvent(aggregateId), new TestAddedEvent(new Test(TestId.New)))
-                .When(new AddTestCommand(aggregateId, new Test(testId)))
-                .ThenExpect<TestAddedEvent>(x => x.Test.Id == testId);
-        }
-        
-        [Fact]
-        [Category(Category)]
-        public void With_Test_Kit_InitialCommand_AfterAggregateCreation_TestCreatedEventEmitted()
-        {
-            var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
-            var aggregateId = TestAggregateId.New;
-            var testId = TestId.New;
-            
-            fixture
-                .For(aggregateId)
-                .Given(new CreateTestCommand(aggregateId))
-                .When(new AddTestCommand(aggregateId, new Test(testId)))
-                .ThenExpect<TestAddedEvent>(x => x.Test.Id == testId);
-        }
-        
-        [Fact]
-        [Category(Category)]
-        public void With_Test_Kit_InitialSnapshot_After_TestCreatedEventEmitted()
-        {
-            var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
-            var aggregateId = TestAggregateId.New;
-            
-            fixture
-                .For(aggregateId)
-                .Given(new TestAggregateSnapshot(Enumerable.Range(0,10).Select(x => new TestAggregateSnapshot.TestModel(Guid.NewGuid())).ToList()), 10)
-                .When(new PublishTestStateCommand(aggregateId))
-                .ThenExpect<TestStateSignalEvent>(x => x.AggregateState.FromHydration);
-        }
         
         [Fact]
         [Category(Category)]
@@ -103,7 +54,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
             
             var aggregateId = TestAggregateId.New;
-            var command = new CreateTestCommand(aggregateId, probe);
+            var command = new CreateTestCommand(aggregateId);
             aggregateManager.Tell(command);
 
             ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent>>(
@@ -119,7 +70,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
 
             var aggregateId = TestAggregateId.New;
-            var command = new CreateTestCommand(aggregateId, probe);
+            var command = new CreateTestCommand(aggregateId);
             aggregateManager.Tell(command);
 
             ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent>>(
@@ -142,7 +93,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
 
             var aggregateId = TestAggregateId.New;
-            var command = new CreateTestCommand(aggregateId, probe);
+            var command = new CreateTestCommand(aggregateId);
             var nextCommand = new PublishTestStateCommand(aggregateId);
             aggregateManager.Tell(command);
             aggregateManager.Tell(nextCommand);
@@ -162,7 +113,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
 
             var aggregateId = TestAggregateId.New;
-            var command = new CreateTestCommand(aggregateId, probe);
+            var command = new CreateTestCommand(aggregateId);
             var testId = TestId.New;
             var test = new Test(testId);
             var nextCommand = new AddTestCommand(aggregateId,test);
@@ -183,7 +134,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
 
 
             var aggregateId = TestAggregateId.New;
-            var command = new CreateTestCommand(aggregateId, probe);
+            var command = new CreateTestCommand(aggregateId);
             var testId = TestId.New;
             var test = new Test(testId);
             var nextCommand = new AddTestCommand(aggregateId, test);
@@ -215,7 +166,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             var aggregateId = TestAggregateId.New;
 
             
-            var command = new CreateTestCommand(aggregateId, probe);
+            var command = new CreateTestCommand(aggregateId);
             aggregateManager.Tell(command);
 
             for (var i = 0; i < 5; i++)
@@ -251,7 +202,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             var aggregateId = TestAggregateId.New;
 
             
-            var command = new CreateTestCommand(aggregateId, probe);
+            var command = new CreateTestCommand(aggregateId);
             aggregateManager.Tell(command);
 
             var test = new Test(TestId.New);
@@ -282,7 +233,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             var aggregateId = TestAggregateId.New;
 
             
-            var command = new CreateTestCommand(aggregateId, probe);
+            var command = new CreateTestCommand(aggregateId);
             aggregateManager.Tell(command);
 
             for (var i = 0; i < 10; i++)

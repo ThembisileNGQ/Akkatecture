@@ -24,6 +24,7 @@
 using System;
 using Akka.Persistence;
 using Akkatecture.Aggregates;
+using Akkatecture.Commands;
 using Akkatecture.Core;
 
 namespace Akkatecture.TestFixtures.Aggregates
@@ -32,7 +33,11 @@ namespace Akkatecture.TestFixtures.Aggregates
         where TAggregate : ReceivePersistentActor, IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
     {
+        IFixtureAsserter<TAggregate, TIdentity> AndWhen(params ICommand<TAggregate, TIdentity>[] command);
         IFixtureAsserter<TAggregate, TIdentity> ThenExpect<TAggregateEvent>(Predicate<TAggregateEvent> aggregateEventPredicate = null)
+            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>;
+        
+        IFixtureAsserter<TAggregate, TIdentity> ThenExpectDomainEvent<TAggregateEvent>(Predicate<DomainEvent<TAggregate, TIdentity, TAggregateEvent>> domainEventPredicate = null)
             where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>;
     }
 }
