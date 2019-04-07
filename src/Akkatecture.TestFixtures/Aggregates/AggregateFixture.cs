@@ -98,7 +98,7 @@ namespace Akkatecture.TestFixtures.Aggregates
             for (var i = 0; i < events.Length; i++)
             {
                 var e = new CommittedEvent<TAggregate,TIdentity,TAggregateEvent>(aggregateId,events[i],new Metadata(), DateTimeOffset.UtcNow, i+1);
-                writes[i] = new AtomicWrite(new Persistent(e, i+1, aggregateId.Value, "", false, ActorRefs.NoSender, writerGuid));
+                writes[i] = new AtomicWrite(new Persistent(e, i+1, aggregateId.Value, string.Empty, false, ActorRefs.NoSender, writerGuid));
             }
             var journal = Persistence.Instance.Apply(_testKit.Sys).JournalFor(null);
             journal.Tell(new WriteMessages(writes, AggregateTestProbe.Ref, 1));
@@ -107,12 +107,16 @@ namespace Akkatecture.TestFixtures.Aggregates
             AggregateTestProbe.ExpectMsg<WriteMessagesSuccessful>(x =>
             {
                 _testKit.Sys.Log.Info($"{aggregateId} journal write message successful with {x}");
+                return true;
             });
             
             for (int i = 0; i < events.Length; i++)
                 AggregateTestProbe.ExpectMsg<WriteMessageSuccess>(x =>
                 {
                     _testKit.Sys.Log.Info($"{aggregateId} journal initialized with {x}");
+                    return x.Persistent.PersistenceId == aggregateId.ToString() &&
+                           x.Persistent.Payload is CommittedEvent<TAggregate,TIdentity,TAggregateEvent> &&
+                           x.Persistent.SequenceNr == (long) i+1;
                 });
         }
 
