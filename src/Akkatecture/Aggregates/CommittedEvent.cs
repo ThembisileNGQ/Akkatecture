@@ -53,7 +53,7 @@ namespace Akkatecture.Aggregates
             if (timestamp == default(DateTimeOffset)) throw new ArgumentNullException(nameof(timestamp));
             if (aggregateEvent == null) throw new ArgumentNullException(nameof(aggregateEvent));
             if (aggregateIdentity == null || string.IsNullOrEmpty(aggregateIdentity.Value)) throw new ArgumentNullException(nameof(aggregateIdentity));
-            
+            if (aggregateSequenceNumber <= 0) throw new ArgumentOutOfRangeException(nameof(aggregateSequenceNumber));
             
             AggregateIdentity = aggregateIdentity;
             AggregateSequenceNumber = aggregateSequenceNumber;
