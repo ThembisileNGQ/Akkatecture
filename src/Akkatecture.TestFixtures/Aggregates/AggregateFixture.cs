@@ -93,7 +93,6 @@ namespace Akkatecture.TestFixtures.Aggregates
         private void InitializeJournal<TAggregateEvent>(TIdentity aggregateId, params TAggregateEvent[] events)
             where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
         {
-            var probe = _testKit.CreateTestProbe();
             var writerGuid = Guid.NewGuid().ToString();
             var writes = new AtomicWrite[events.Length];
             for (var i = 0; i < events.Length; i++)
@@ -102,11 +101,11 @@ namespace Akkatecture.TestFixtures.Aggregates
                 writes[i] = new AtomicWrite(new Persistent(e, i+1, aggregateId.Value, "", false, ActorRefs.NoSender, writerGuid));
             }
             var journal = Persistence.Instance.Apply(_testKit.Sys).JournalFor(null);
-            journal.Tell(new WriteMessages(writes, probe.Ref, 1));
+            journal.Tell(new WriteMessages(writes, AggregateTestProbe.Ref, 1));
 
-            probe.ExpectMsg<WriteMessagesSuccessful>();
+            AggregateTestProbe.ExpectMsg<WriteMessagesSuccessful>();
             for (int i = 0; i < events.Length; i++)
-                probe.ExpectMsg<WriteMessageSuccess>();
+                AggregateTestProbe.ExpectMsg<WriteMessageSuccess>();
         }
 
     }
