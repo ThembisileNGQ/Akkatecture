@@ -103,9 +103,17 @@ namespace Akkatecture.TestFixtures.Aggregates
             var journal = Persistence.Instance.Apply(_testKit.Sys).JournalFor(null);
             journal.Tell(new WriteMessages(writes, AggregateTestProbe.Ref, 1));
 
-            AggregateTestProbe.ExpectMsg<WriteMessagesSuccessful>();
+            
+            AggregateTestProbe.ExpectMsg<WriteMessagesSuccessful>(x =>
+            {
+                _testKit.Sys.Log.Info($"{aggregateId} journal write message successful with {x}");
+            });
+            
             for (int i = 0; i < events.Length; i++)
-                AggregateTestProbe.ExpectMsg<WriteMessageSuccess>();
+                AggregateTestProbe.ExpectMsg<WriteMessageSuccess>(x =>
+                {
+                    _testKit.Sys.Log.Info($"{aggregateId} journal initialized with {x}");
+                });
         }
 
     }
