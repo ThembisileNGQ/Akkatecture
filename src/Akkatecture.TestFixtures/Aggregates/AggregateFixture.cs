@@ -78,11 +78,15 @@ namespace Akkatecture.TestFixtures.Aggregates
             return this;
         }
         
-        public IFixtureAsserter<TAggregate, TIdentity> ThenExpect<TAggregateEvent>(Predicate<TAggregateEvent> aggregateEventPredicate)
+        public IFixtureAsserter<TAggregate, TIdentity> ThenExpect<TAggregateEvent>(Predicate<TAggregateEvent> aggregateEventPredicate = null)
             where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
         {
             _testKit.Sys.EventStream.Subscribe(AggregateTestProbe, typeof(DomainEvent<TAggregate, TIdentity, TAggregateEvent>));
-            AggregateTestProbe.ExpectMsg<DomainEvent<TAggregate, TIdentity, TAggregateEvent>>(x => aggregateEventPredicate(x.AggregateEvent));
+            
+            if(aggregateEventPredicate == null)
+                AggregateTestProbe.ExpectMsg<DomainEvent<TAggregate, TIdentity, TAggregateEvent>>();
+            else
+                AggregateTestProbe.ExpectMsg<DomainEvent<TAggregate, TIdentity, TAggregateEvent>>(x => aggregateEventPredicate(x.AggregateEvent));
             return this;
         }
         

@@ -9,7 +9,7 @@ namespace Akkatecture.TestFixtures.Aggregates
         where TAggregate : ReceivePersistentActor, IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
     {
-        IFixtureAsserter<TAggregate, TIdentity> ThenExpect<TAggregateEvent>(Predicate<TAggregateEvent> aggregateEventPredicate)
+        IFixtureAsserter<TAggregate, TIdentity> ThenExpect<TAggregateEvent>(Predicate<TAggregateEvent> aggregateEventPredicate = null)
             where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>;
     }
 }
