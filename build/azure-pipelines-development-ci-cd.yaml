@@ -15,10 +15,9 @@ variables:
   minorVersion: '4'
   patchVersion: '3'
   feedVersion: 'alpha'
-  dayOfYear: $(DayOfYear)
   revision: $(Rev:r)
 
-name: ${{ format('{0}.{1}.{2}-{3}-{4}{5}', variables.majorVersion, variables.minorVersion, variables.patchVersion, variables.feedVersion, variables.dayOfYear, variables.revision) }}
+name: ${{ format('{0}.{1}.{2}-{3}-{4}{5}', variables.majorVersion, variables.minorVersion, variables.patchVersion, variables.feedVersion, DayOfYear, variables.revision) }}
 
 jobs:
   - job: Build
