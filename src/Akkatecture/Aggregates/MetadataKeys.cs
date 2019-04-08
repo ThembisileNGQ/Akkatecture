@@ -27,7 +27,7 @@
 
 namespace Akkatecture.Aggregates
 {
-    public sealed class MetadataKeys
+    public static class MetadataKeys
     {
         public const string EventId = "event_id";
         public const string BatchId = "batch_id";

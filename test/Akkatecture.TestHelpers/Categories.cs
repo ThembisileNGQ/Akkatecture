@@ -23,7 +23,7 @@
 
 namespace Akkatecture.TestHelpers
 {
-    public sealed class Categories
+    public static class Categories
     {
         public const string Integration = "integration";
         
