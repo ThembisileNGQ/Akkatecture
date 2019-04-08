@@ -27,7 +27,6 @@
 
 using System;
 using Akkatecture.Core;
-using Akkatecture.Extensions;
 
 namespace Akkatecture.Aggregates
 {

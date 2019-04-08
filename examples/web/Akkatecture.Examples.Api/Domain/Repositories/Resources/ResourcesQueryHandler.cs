@@ -25,7 +25,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Akka.Actor;
 using Akkatecture.Akka;
 
 namespace Akkatecture.Examples.Api.Domain.Repositories.Resources

@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Akka.TestKit.Xunit2;
+using Akkatecture.Commands;
 using Akkatecture.TestFixtures.Aggregates;
 using Akkatecture.TestHelpers.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Commands;
@@ -165,8 +167,8 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         public void With_Test_Kit_TestEventSourcing_AfterManyTests_TestStateSignalled()
         {
             var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
-            var aggregateId = TestAggregateId.New;
-            var commands = Enumerable.Range(0, 5).Select(x => new AddTestCommand(aggregateId, new Test(TestId.New))).ToList();
+            var aggregateId = TestAggregateId.New;var commands = new List<ICommand<TestAggregate, TestAggregateId>>();
+            commands.AddRange(Enumerable.Range(0, 5).Select(x => new AddTestCommand(aggregateId, new Test(TestId.New))));
             
             fixture
                 .Using(() => new TestAggregateManager(), aggregateId)
@@ -205,7 +207,8 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         {
             var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
             var aggregateId = TestAggregateId.New;
-            var commands = Enumerable.Range(0, 10).Select(x => new AddTestCommand(aggregateId, new Test(TestId.New))).ToList();
+            var commands = new List<ICommand<TestAggregate, TestAggregateId>>();
+            commands.AddRange(Enumerable.Range(0, 10).Select(x => new AddTestCommand(aggregateId, new Test(TestId.New))));
             
             fixture
                 .Using(() => new TestAggregateManager(), aggregateId)

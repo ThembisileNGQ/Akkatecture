@@ -72,7 +72,7 @@ namespace Akkatecture.Clustering.Core
 
             var shardRef = clusterSharding.Start(
                 typeof(TAggregateManager).Name,
-                Props.Create<TAggregateManager>(aggregateManagerFactory),
+                Props.Create(aggregateManagerFactory),
                 clusterShardingSettings,
                 ShardIdentityExtractors
                     .AggregateIdentityExtractor<TAggregate, TIdentity>,

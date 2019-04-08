@@ -22,7 +22,6 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using Akkatecture.Examples.Api.Domain.Aggregates.Resource;
 
 namespace Akkatecture.Examples.Api.Domain.Repositories.Resources
 {

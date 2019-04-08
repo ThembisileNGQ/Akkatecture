@@ -46,15 +46,15 @@ namespace Akkatecture.Events
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
     {
-        private static ConcurrentDictionary<Type, bool> DecisionCache = new ConcurrentDictionary<Type, bool>();
-        public readonly IReadOnlyDictionary<Type, Func<TEventUpcaster, IAggregateEvent, IAggregateEvent>> UpcastFunctions;
+        private static ConcurrentDictionary<Type, bool> _decisionCache = new ConcurrentDictionary<Type, bool>();
+        private readonly IReadOnlyDictionary<Type, Func<TEventUpcaster, IAggregateEvent, IAggregateEvent>> _upcastFunctions;
 
-        
-        public AggregateEventUpcaster()
+
+        protected AggregateEventUpcaster()
         {
-            var upcastables = GetType().GetAggregateEventUpcastTypes();
-            var dictionary = upcastables.ToDictionary(x => x, x=> true);
-            DecisionCache = new ConcurrentDictionary<Type, bool>(dictionary);
+            var upcastTypes = GetType().GetAggregateEventUpcastTypes();
+            var dictionary = upcastTypes.ToDictionary(x => x, x=> true);
+            _decisionCache = new ConcurrentDictionary<Type, bool>(dictionary);
             
             var me = this as TEventUpcaster;
             if (me == null)
@@ -62,7 +62,7 @@ namespace Akkatecture.Events
                 throw new InvalidOperationException(
                     $"Event applier of type '{GetType().PrettyPrint()}' has a wrong generic argument '{typeof(TEventUpcaster).PrettyPrint()}'");
             }
-            UpcastFunctions  = GetType().GetAggregateEventUpcastMethods<TAggregate, TIdentity, TEventUpcaster>();
+            _upcastFunctions  = GetType().GetAggregateEventUpcastMethods<TAggregate, TIdentity, TEventUpcaster>();
           
         }
         
@@ -74,20 +74,20 @@ namespace Akkatecture.Events
             {
                 var eventType = type.GenericTypeArguments[2];
 
-                if (DecisionCache.ContainsKey(eventType))
+                if (_decisionCache.ContainsKey(eventType))
                 {
                     
                     return true;
                 }
                 else
                 {
-                    DecisionCache.AddOrSet(eventType, false);
+                    _decisionCache.AddOrSet(eventType, false);
                     return false;
                 }
                 
             }
 
-            DecisionCache.AddOrSet(type, false);
+            _decisionCache.AddOrSet(type, false);
             return false;
         }
 
@@ -96,22 +96,22 @@ namespace Akkatecture.Events
             if (ShouldUpcast(evt))
             {
                 //dynamic dispach here to get AggregateEvent
-                var comittedEvent = evt as dynamic;
+                var committedEvent = evt as dynamic;
                     
-                var upcastedEvent = Upcast(comittedEvent.AggregateEvent);
+                var upcastedEvent = Upcast(committedEvent.AggregateEvent);
                 
                 var genericType = typeof(CommittedEvent<,,>)
                     .MakeGenericType(typeof(TAggregate), typeof(TIdentity), upcastedEvent.GetType());
                 
-                var upcastedComittedEvent = Activator.CreateInstance(
+                var upcastedCommitedEvent = Activator.CreateInstance(
                     genericType,
-                    comittedEvent.AggregateIdentity,
+                    committedEvent.AggregateIdentity,
                     upcastedEvent,
-                    comittedEvent.Metadata,
-                    comittedEvent.Timestamp,
-                    comittedEvent.AggregateSequenceNumber);
+                    committedEvent.Metadata,
+                    committedEvent.Timestamp,
+                    committedEvent.AggregateSequenceNumber);
                 
-                return EventSequence.Single(upcastedComittedEvent);
+                return EventSequence.Single(upcastedCommitedEvent);
             }
 
             return EventSequence.Single(evt);
@@ -125,7 +125,7 @@ namespace Akkatecture.Events
             var aggregateEventType = aggregateEvent.GetType();
             Func<TEventUpcaster,IAggregateEvent, IAggregateEvent> upcaster;
 
-            if (!UpcastFunctions.TryGetValue(aggregateEventType, out upcaster))
+            if (!_upcastFunctions.TryGetValue(aggregateEventType, out upcaster))
             {
                 throw new ArgumentException();
             }

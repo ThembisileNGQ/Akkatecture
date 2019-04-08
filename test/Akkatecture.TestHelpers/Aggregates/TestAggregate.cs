@@ -38,7 +38,7 @@ using Akkatecture.TestHelpers.Aggregates.Snapshots;
 namespace Akkatecture.TestHelpers.Aggregates
 {
     [AggregateName("Test")]
-    public class TestAggregate : AggregateRoot<TestAggregate, TestAggregateId, TestAggregateState>
+    public sealed class TestAggregate : AggregateRoot<TestAggregate, TestAggregateId, TestAggregateState>
     {
         public int TestErrors { get; private set; }
         public TestAggregate(TestAggregateId aggregateId)

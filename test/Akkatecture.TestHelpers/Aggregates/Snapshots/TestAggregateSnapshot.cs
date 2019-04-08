@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.NetworkInformation;
 using Akkatecture.Aggregates.Snapshot;
 
 namespace Akkatecture.TestHelpers.Aggregates.Snapshots
