@@ -30,7 +30,6 @@ using Akkatecture.Aggregates;
 using Akkatecture.Aggregates.Snapshot;
 using Akkatecture.Commands;
 using Akkatecture.Core;
-using Akkatecture.Sagas.AggregateSaga;
 using SnapshotMetadata = Akkatecture.Aggregates.Snapshot.SnapshotMetadata;
 using AkkaSnapshotMetadata = Akka.Persistence.SnapshotMetadata;
 
