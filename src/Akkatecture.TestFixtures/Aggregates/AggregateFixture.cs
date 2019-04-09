@@ -44,7 +44,8 @@ namespace Akkatecture.TestFixtures.Aggregates
         public TIdentity AggregateId { get; private set; }
         public IActorRef AggregateRef { get; private set; }
         public TestProbe AggregateTestProbe { get; private set; }
-        
+        public Props AggregateProps { get; private set; }
+        public bool UsesAggregateManager { get; private set; }
         public AggregateFixture(
             TestKitBase testKit)
         {
@@ -59,7 +60,9 @@ namespace Akkatecture.TestFixtures.Aggregates
             
             AggregateId = aggregateId;
             AggregateTestProbe = _testKit.CreateTestProbe("aggregate-probe");
-            AggregateRef = _testKit.Sys.ActorOf(Props.Create<TAggregate>(AggregateId), AggregateId.Value);
+            AggregateProps = Props.Create<TAggregate>(aggregateId);
+            AggregateRef = ActorRefs.Nobody;
+            UsesAggregateManager = false;
             return this;
         }
 
@@ -70,11 +73,16 @@ namespace Akkatecture.TestFixtures.Aggregates
             AggregateId = aggregateId;
             AggregateTestProbe = _testKit.CreateTestProbe("aggregate-probe");
             AggregateRef = _testKit.Sys.ActorOf(Props.Create(aggregateManagerFactory), "aggregate-manager");
+            UsesAggregateManager = false;
+            AggregateProps = Props.Empty;
             return this;
         }
 
         public IFixtureExecutor<TAggregate, TIdentity> GivenNothing()
         {
+            if (!UsesAggregateManager && AggregateRef == ActorRefs.Nobody)
+                AggregateRef = _testKit.Sys.ActorOf(AggregateProps, AggregateId.Value);
+
             return this;
         }
 
@@ -94,7 +102,10 @@ namespace Akkatecture.TestFixtures.Aggregates
         {
             if(commands == null)
                 throw new ArgumentNullException(nameof(commands));
-            
+
+            if (!UsesAggregateManager && AggregateRef == ActorRefs.Nobody)
+                AggregateRef = _testKit.Sys.ActorOf(AggregateProps, AggregateId.Value);
+
             foreach (var command in commands)
             {
                 if(command == null)
@@ -107,8 +118,12 @@ namespace Akkatecture.TestFixtures.Aggregates
 
         public IFixtureAsserter<TAggregate, TIdentity> When(params ICommand<TAggregate, TIdentity>[] commands)
         {
+
             if(commands == null)
                 throw new ArgumentNullException(nameof(commands));
+
+            if(!UsesAggregateManager && AggregateRef == ActorRefs.Nobody)
+                AggregateRef = _testKit.Sys.ActorOf(AggregateProps, AggregateId.Value);
 
             foreach (var command in commands)
             {

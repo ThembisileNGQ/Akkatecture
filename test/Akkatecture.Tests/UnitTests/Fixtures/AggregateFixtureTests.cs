@@ -46,7 +46,9 @@ Cause: [akka://fixture-tests1/system/akka.persistence.journal.inmem#281960718]: 
                 var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(testKit);
                 var aggregateIdentity = TestAggregateId.New;
 
-                fixture.For(aggregateIdentity);
+                fixture
+                    .For(aggregateIdentity)
+                    .GivenNothing();
 
                 fixture.AggregateRef.Path.Name.Should().Be(aggregateIdentity.Value);
                 fixture.AggregateId.Should().Be(aggregateIdentity);
