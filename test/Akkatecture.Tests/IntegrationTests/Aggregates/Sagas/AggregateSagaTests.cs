@@ -39,7 +39,7 @@ namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
     {
         private const string Category = "Sagas";
         public AggregateSagaTests()
-            : base(TestHelpers.Akka.Configuration.Config)
+            : base(TestHelpers.Akka.Configuration.Config,"aggregate-saga-tests")
         {
             
         }
@@ -54,11 +54,11 @@ namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
             Sys.ActorOf(Props.Create(() => new TestSagaManager(() => new TestSaga(aggregateManager))), "test-sagaaggregatemanager");
             
             var senderAggregateId = TestAggregateId.New;
-            var senderCreateAggregateCommand = new CreateTestCommand(senderAggregateId, probe);
+            var senderCreateAggregateCommand = new CreateTestCommand(senderAggregateId);
             aggregateManager.Tell(senderCreateAggregateCommand);
 
             var receiverAggregateId = TestAggregateId.New;
-            var receiverCreateAggregateCommand = new CreateTestCommand(receiverAggregateId, probe);
+            var receiverCreateAggregateCommand = new CreateTestCommand(receiverAggregateId);
             aggregateManager.Tell(receiverCreateAggregateCommand);
 
             var senderTestId = TestId.New;

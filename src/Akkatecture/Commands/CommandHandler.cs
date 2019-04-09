@@ -29,7 +29,6 @@ using Akka.Actor;
 using Akka.Event;
 using Akka.Persistence;
 using Akkatecture.Aggregates;
-using Akkatecture.Aggregates.ExecutionResults;
 using Akkatecture.Core;
 using Akkatecture.Extensions;
 

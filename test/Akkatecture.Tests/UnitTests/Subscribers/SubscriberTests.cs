@@ -26,7 +26,6 @@ using Akka.Actor;
 using Akka.TestKit.Xunit2;
 using Akkatecture.TestHelpers.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Commands;
-using Akkatecture.TestHelpers.Aggregates.Entities;
 using Akkatecture.TestHelpers.Aggregates.Events;
 using Akkatecture.TestHelpers.Subscribers;
 using Xunit;
@@ -39,7 +38,7 @@ namespace Akkatecture.Tests.UnitTests.Subscribers
         private const string Category = "Subscribers";
 
         public SubscriberTests()
-            :base(TestHelpers.Akka.Configuration.Config)
+            :base(TestHelpers.Akka.Configuration.Config, "subscriber-tests")
         {
             
         }

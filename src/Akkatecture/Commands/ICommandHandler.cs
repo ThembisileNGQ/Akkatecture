@@ -35,7 +35,7 @@ namespace Akkatecture.Commands
     {
     }
 
-    public interface ICommandHandler<in TAggregate, TIdentity,TResult, in TCommand> : ICommandHandler
+    public interface ICommandHandler<in TAggregate, TIdentity, out TResult, in TCommand> : ICommandHandler
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
         where TCommand : ICommand<TAggregate, TIdentity>

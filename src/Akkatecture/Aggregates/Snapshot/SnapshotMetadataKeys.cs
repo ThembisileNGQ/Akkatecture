@@ -25,6 +25,7 @@ namespace Akkatecture.Aggregates.Snapshot
 {
     public sealed class SnapshotMetadataKeys
     {
+        public const string SnapshotId = "snapshot_id";
         public const string AggregateName = "aggregate_name";
         public const string AggregateId = "aggregate_id";
         public const string AggregateSequenceNumber = "aggregate_sequence_number";

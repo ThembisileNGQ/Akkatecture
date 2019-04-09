@@ -33,7 +33,7 @@ namespace Akkatecture.Examples.Api.Domain.Repositories.Resources
     public class ResourcesStorageHandler : DomainEventSubscriber,
         ISubscribeToAsync<ResourceCreationSaga,ResourceCreationSagaId,ResourceCreationEndedEvent>
     {
-        public List<ResourcesProjection> Resources = new List<ResourcesProjection>();
+        private readonly List<ResourcesProjection> _resources = new List<ResourcesProjection>();
 
         public ResourcesStorageHandler()
         {
@@ -44,14 +44,14 @@ namespace Akkatecture.Examples.Api.Domain.Repositories.Resources
         {
             var readModel = new ResourcesProjection(domainEvent.AggregateEvent.ResourceId.GetGuid(),domainEvent.AggregateEvent.Elapsed,domainEvent.AggregateEvent.EndedAt);
             
-            Resources.Add(readModel);
+            _resources.Add(readModel);
             
             return Task.CompletedTask;
         }
 
         public bool Handle(GetResourcesQuery query)
         {
-            Sender.Tell(Resources,Self);
+            Sender.Tell(_resources,Self);
             return true;
         }
     }

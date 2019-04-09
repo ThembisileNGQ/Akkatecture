@@ -35,7 +35,7 @@ namespace Akkatecture.Examples.Api.Domain.Sagas
         {
             switch (domainEvent.GetAggregateEvent())
             {
-                case ResourceCreatedEvent evt:
+                case ResourceCreatedEvent _:
                     return new ResourceCreationSagaId($"{LocatorIdPrefix}-{domainEvent.GetIdentity()}");
                 default:
                     throw new ArgumentException(nameof(domainEvent));

@@ -36,7 +36,7 @@ namespace Akkatecture.Examples.Api.Domain.Repositories.Operations
         ISubscribeToAsync<ResourceCreationSaga,ResourceCreationSagaId,ResourceCreationProgressEvent>,
         ISubscribeToAsync<ResourceCreationSaga,ResourceCreationSagaId,ResourceCreationEndedEvent>
     {
-        public List<OperationsProjection> Operations = new List<OperationsProjection>();
+        private readonly List<OperationsProjection> _operations = new List<OperationsProjection>();
 
         public OperationsStorageHandler()
         {
@@ -47,33 +47,33 @@ namespace Akkatecture.Examples.Api.Domain.Repositories.Operations
         {
             var operation = new OperationsProjection(domainEvent.AggregateEvent.ResourceId.GetGuid(),0,0, domainEvent.AggregateEvent.StartedAt);
             
-            Operations.Add(operation);
+            _operations.Add(operation);
             return Task.CompletedTask;
         }
 
         public Task HandleAsync(IDomainEvent<ResourceCreationSaga, ResourceCreationSagaId, ResourceCreationProgressEvent> domainEvent)
         {
-            var oldOperation = Operations.Single(x => x.Id == domainEvent.AggregateEvent.ResourceId.GetGuid());
+            var oldOperation = _operations.Single(x => x.Id == domainEvent.AggregateEvent.ResourceId.GetGuid());
             var operation = new OperationsProjection(domainEvent.AggregateEvent.ResourceId.GetGuid(),domainEvent.AggregateEvent.Progress,domainEvent.AggregateEvent.Elapsed, oldOperation.StartedAt);
 
-            Operations.RemoveAll(x => x.Id == domainEvent.AggregateEvent.ResourceId.GetGuid());
-            Operations.Add(operation);
+            _operations.RemoveAll(x => x.Id == domainEvent.AggregateEvent.ResourceId.GetGuid());
+            _operations.Add(operation);
             return Task.CompletedTask;
         }
 
         public Task HandleAsync(IDomainEvent<ResourceCreationSaga, ResourceCreationSagaId, ResourceCreationEndedEvent> domainEvent)
         {
-            var oldOperation = Operations.Single(x => x.Id == domainEvent.AggregateEvent.ResourceId.GetGuid());
+            var oldOperation = _operations.Single(x => x.Id == domainEvent.AggregateEvent.ResourceId.GetGuid());
             var operation = new OperationsProjection(domainEvent.AggregateEvent.ResourceId.GetGuid(),domainEvent.AggregateEvent.Progress,domainEvent.AggregateEvent.Elapsed, oldOperation.StartedAt);
             
-            Operations.RemoveAll(x => x.Id == domainEvent.AggregateEvent.ResourceId.GetGuid());
-            Operations.Add(operation);
+            _operations.RemoveAll(x => x.Id == domainEvent.AggregateEvent.ResourceId.GetGuid());
+            _operations.Add(operation);
             return Task.CompletedTask;
         }
 
         public bool Handle(GetOperationsQuery query)
         {
-            Sender.Tell(Operations,Self);
+            Sender.Tell(_operations,Self);
             return true;
         }
     }

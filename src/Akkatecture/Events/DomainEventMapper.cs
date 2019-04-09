@@ -30,26 +30,26 @@ namespace Akkatecture.Events
 {
     public static class DomainEventMapper
     {
-        internal static object FromComittedEvent(object evt)
+        internal static object FromCommittedEvent(object evt)
         {
             var type = typeof(ICommittedEvent<,,>);
 
-            if (type.GetTypeInfo().IsAssignableFrom(evt.GetType()))
+            if (type.GetTypeInfo().IsInstanceOfType(evt))
             {
-                //dynamic dispach here to get AggregateEvent
+                //dynamic dispatch here to get AggregateEvent
                 
-                var comittedEvent = evt as dynamic;
+                var committedEvent = evt as dynamic;
 
                 var genericType = typeof(DomainEvent<,,>)
                     .MakeGenericType(type.GetGenericArguments()[0], type.GetGenericArguments()[1],type.GetGenericArguments()[2]);
                 
                 var domainEvent = Activator.CreateInstance(
                     genericType,
-                    comittedEvent.AggregateIdentity,
-                    comittedEvent.AggregateEvent,
-                    comittedEvent.Metadata,
-                    comittedEvent.Timestamp,
-                    comittedEvent.AggregateSequenceNumber);
+                    committedEvent.AggregateIdentity,
+                    committedEvent.AggregateEvent,
+                    committedEvent.Metadata,
+                    committedEvent.Timestamp,
+                    committedEvent.AggregateSequenceNumber);
 
                 return domainEvent;
             }
@@ -64,7 +64,7 @@ namespace Akkatecture.Events
     {
         public IEventSequence FromJournal(object evt, string manifest)
         {
-            var newEvent = DomainEventMapper.FromComittedEvent(evt);
+            var newEvent = DomainEventMapper.FromCommittedEvent(evt);
             
             return new SingleEventSequence(newEvent);
         }

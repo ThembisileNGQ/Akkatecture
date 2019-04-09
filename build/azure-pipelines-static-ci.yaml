@@ -6,12 +6,10 @@
 trigger: none
 
 pr:
+  autoCancel: true
   branches:
     include:
-    - master
-    - dev
-    - Lutando:dev
-    - Lutando:master
+    - '*'
 
 jobs:
   - job: Build

@@ -27,6 +27,7 @@ namespace Akkatecture.Aggregates.Snapshot
 {
     public interface ISnapshotMetadata : IMetadataContainer
     {
+        ISnapshotId SnapshotId { get; }
         string SnapshotName { get; }
         int SnapshotVersion { get; }
         long AggregateSequenceNumber { get; }
