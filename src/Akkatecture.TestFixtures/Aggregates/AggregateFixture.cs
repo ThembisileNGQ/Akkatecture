@@ -60,7 +60,7 @@ namespace Akkatecture.TestFixtures.Aggregates
             
             AggregateId = aggregateId;
             AggregateTestProbe = _testKit.CreateTestProbe("aggregate-probe");
-            AggregateProps = Props.Create<TAggregate>(aggregateId);
+            AggregateProps = Props.Create<TAggregate>(args: aggregateId);
             AggregateRef = ActorRefs.Nobody;
             UsesAggregateManager = false;
             return this;
@@ -128,7 +128,7 @@ namespace Akkatecture.TestFixtures.Aggregates
             foreach (var command in commands)
             {
                 if(command == null)
-                    throw new ArgumentNullException(nameof(command));
+                    throw new NullReferenceException(nameof(command));
                 
                 AggregateRef.Tell(command);
             }
