@@ -33,13 +33,18 @@ namespace Akkatecture.Messaging
         where TIdentity : IIdentity
         where TCommand : ICommand<TAggregate,TIdentity>
     {
-        public TIdentity DestinationId { get; set; }
+        public TIdentity DestinationId { get; }
         public TCommand Command { get; }
 
-        protected Envelope(TIdentity destinationId, TCommand command)
+        protected Envelope(
+            TIdentity destinationId,
+            TCommand command)
         {
-            if (destinationId == null) throw new ArgumentNullException(nameof(destinationId));
-            if (command == null) throw new ArgumentNullException(nameof(command));
+            if (destinationId == null)
+                throw new ArgumentNullException(nameof(destinationId));
+            
+            if (command == null)
+                throw new ArgumentNullException(nameof(command));
 
             DestinationId = destinationId;
             Command = command;
