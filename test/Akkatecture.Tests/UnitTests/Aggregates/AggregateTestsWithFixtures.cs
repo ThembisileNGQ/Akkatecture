@@ -21,7 +21,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         private const string Category = "AggregatesWithFixtures";
 
         public AggregateTestsWithFixtures()
-            : base(TestHelpers.Akka.Configuration.Config)
+            : base(TestHelpers.Akka.Configuration.Config, "aggregate-fixture-tests")
         {
             
         }
@@ -55,7 +55,20 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
                 .When(new AddTestCommand(aggregateId, new Test(testId)))
                 .ThenExpect<TestAddedEvent>(x => x.Test.Id == testId);
         }
-        
+        /*
+         * [xUnit.net 00:00:06.05]     Akkatecture.Tests.UnitTests.Aggregates.AggregateTestsWithFixtures.With_Test_Kit_InitialSnapshot_After_TestCreatedEventEmitted [FAIL]
+Failed   Akkatecture.Tests.UnitTests.Aggregates.AggregateTestsWithFixtures.With_Test_Kit_InitialSnapshot_After_TestCreatedEventEmitted
+Error Message:
+ Failed: Timeout 00:00:03 while waiting for a message of type Akkatecture.Aggregates.DomainEvent`3[Akkatecture.TestHelpers.Aggregates.TestAggregate,Akkatecture.TestHelpers.Aggregates.TestAggregateId,Akkatecture.TestHelpers.Aggregates.Events.Signals.TestStateSignalEvent]
+Expected: True
+Actual:   False
+Stack Trace:
+   at Akka.TestKit.TestKitBase.InternalExpectMsgEnvelope[T](Nullable`1 timeout, Action`2 assert, String hint, Boolean shouldLog)
+   at Akka.TestKit.TestKitBase.InternalExpectMsg[T](Nullable`1 timeout, Action`2 assert, String hint)
+   at Akka.TestKit.TestKitBase.ExpectMsg[T](Predicate`1 isMessage, Nullable`1 timeout, String hint)
+   at Akkatecture.TestFixtures.Aggregates.AggregateFixture`2.ThenExpect[TAggregateEvent](Predicate`1 aggregateEventPredicate) in /Users/lutando/Workspace/Akkatecture/Akkatecture/src/Akkatecture.TestFixtures/Aggregates/AggregateFixture.cs:line 138
+   at Akkatecture.Tests.UnitTests.Aggregates.AggregateTestsWithFixtures.With_Test_Kit_InitialSnapshot_After_TestCreatedEventEmitted() in /Users/lutando/Workspace/Akkatecture/Akkatecture/test/Akkatecture.Tests/UnitTests/Aggregates/AggregateTestsWithFixtures.cs:line 66
+         */
         [Fact]
         [Category(Category)]
         public void With_Test_Kit_InitialSnapshot_After_TestCreatedEventEmitted()

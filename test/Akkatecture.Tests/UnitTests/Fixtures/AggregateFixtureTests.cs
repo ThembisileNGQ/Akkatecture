@@ -27,7 +27,21 @@ namespace Akkatecture.Tests.UnitTests.Fixtures
         [Category(Category)]
         public void FixtureArrangerWithIdentity_CreatesAggregateRef()
         {
-            using (var testKit = new TestKit(_config))
+            /*
+             *[ERROR][04/08/2019 16:49:36][Thread 0010][akka://fixture-tests1/system/akka.persistence.journal.inmem] Object reference not set to an instance of an object.
+Cause: [akka://fixture-tests1/system/akka.persistence.journal.inmem#281960718]: Akka.Actor.ActorInitializationException: Exception during creation ---> System.NullReferenceException: Object reference not set to an instance of an object.
+   at Akka.Actor.Props.NewActor()
+   at Akka.Actor.ActorCell.CreateNewActorInstance()
+   at Akka.Actor.ActorCell.<>c__DisplayClass109_0.<NewActor>b__0()
+   at Akka.Actor.ActorCell.UseThreadContext(Action action)
+   at Akka.Actor.ActorCell.NewActor()
+   at Akka.Actor.ActorCell.Create(Exception failure)
+   --- End of inner exception stack trace ---
+   at Akka.Actor.ActorCell.Create(Exception failure)
+   at Akka.Actor.ActorCell.SysMsgInvokeAll(EarliestFirstSystemMessageList messages, Int32 currentState)
+             * 
+             */
+            using (var testKit = new TestKit(_config, "fixture-tests1"))
             {
                 var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(testKit);
                 var aggregateIdentity = TestAggregateId.New;
@@ -43,7 +57,7 @@ namespace Akkatecture.Tests.UnitTests.Fixtures
         [Category(Category)]
         public void FixtureArrangerWithAggregateManager_CreatesAggregateManagerRef()
         {
-            using (var testKit = new TestKit(_config))
+            using (var testKit = new TestKit(_config,"fixture-tests2"))
             {
                 var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(testKit);
                 var aggregateIdentity = TestAggregateId.New;
@@ -59,7 +73,7 @@ namespace Akkatecture.Tests.UnitTests.Fixtures
         [Category(Category)]
         public void FixtureArrangerWithEvents_CanBeReplayed()
         {
-            using (var testKit = new TestKit(_config))
+            using (var testKit = new TestKit(_config,"fixture-tests3"))
             {
                 var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(testKit);
                 var aggregateIdentity = TestAggregateId.New;
@@ -89,13 +103,13 @@ namespace Akkatecture.Tests.UnitTests.Fixtures
                 
                 receiverProbe.ExpectMsg<RecoverySuccess>();
             }
-        }
+        } 
         
         [Fact]
         [Category(Category)]
         public void FixtureArrangerWithSnapshot_CanBeLoaded()
         {
-            using (var testKit = new TestKit(_config))
+            using (var testKit = new TestKit(_config,"fixture-tests4"))
             {
                 var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(testKit);
                 var aggregateIdentity = TestAggregateId.New;

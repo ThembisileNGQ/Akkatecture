@@ -185,11 +185,8 @@ namespace Akkatecture.TestFixtures.Aggregates
             snapshotStore.Tell(new SaveSnapshot(metadata, committedSnapshot), AggregateTestProbe.Ref);
 
             AggregateTestProbe.ExpectMsg<SaveSnapshotSuccess>(x =>
-            {
-                _testKit.Sys.Log.Info($"{aggregateId} store write message successful with {x}");
-                return x.Metadata.SequenceNr == sequenceNumber &&
-                       x.Metadata.PersistenceId == aggregateId.ToString();
-            });
+                x.Metadata.SequenceNr == sequenceNumber &&
+                x.Metadata.PersistenceId == aggregateId.ToString());
             
         }
         

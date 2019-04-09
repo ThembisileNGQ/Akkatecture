@@ -26,7 +26,6 @@ namespace Akkatecture.TestHelpers
     public static class Categories
     {
         public const string Integration = "integration";
-        
         public const string Unit = "unit";
     }
 }
