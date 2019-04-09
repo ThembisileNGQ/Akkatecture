@@ -9,7 +9,7 @@ pr:
   autoCancel: true
   branches:
     include:
-    - '*
+    - '*'
 
 jobs:
   - job: Build

@@ -188,7 +188,6 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
                 x => x.AggregateEvent.LastSequenceNr == 6
                      && x.AggregateEvent.Version == 6
                      && x.AggregateEvent.AggregateState.TestCollection.Count == 5);
-
         }
         
         [Fact]
