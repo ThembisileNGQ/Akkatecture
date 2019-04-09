@@ -80,8 +80,8 @@ namespace Akkatecture.TestFixtures.Aggregates
 
         public IFixtureExecutor<TAggregate, TIdentity> GivenNothing()
         {
-            if (!UsesAggregateManager && AggregateRef == ActorRefs.Nobody)
-                AggregateRef = _testKit.Sys.ActorOf(AggregateProps, AggregateId.Value);
+            //if (!UsesAggregateManager && AggregateRef == ActorRefs.Nobody)
+            //    AggregateRef = _testKit.Sys.ActorOf(AggregateProps, AggregateId.Value);
 
             return this;
         }
