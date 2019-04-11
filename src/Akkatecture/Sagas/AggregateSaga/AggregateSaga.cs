@@ -288,7 +288,7 @@ namespace Akkatecture.Sagas.AggregateSaga
                 eventMetadata.AddRange(metadata);
             }
 
-            var committedEvent = new CommittedEvent<TAggregateSaga, TIdentity, TAggregateEvent>(Id, aggregateEvent, eventMetadata, now, Version);
+            var committedEvent = new CommittedEvent<TAggregateSaga, TIdentity, TAggregateEvent>(Id, aggregateEvent, eventMetadata, now, aggregateSequenceNumber);
             return committedEvent;
         }
 

@@ -6,10 +6,10 @@
 trigger: none
 
 pr:
+  autoCancel: true
   branches:
     include:
-    - master
-    - dev
+    - '*'
 
 jobs:
   - job: Build

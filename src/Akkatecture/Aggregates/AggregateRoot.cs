@@ -31,7 +31,6 @@ using System.Linq;
 using Akka.Actor;
 using Akka.Event;
 using Akka.Persistence;
-using Akka.Persistence.Journal;
 using Akkatecture.Aggregates.Snapshot;
 using Akkatecture.Aggregates.Snapshot.Strategies;
 using Akkatecture.Commands;
@@ -195,7 +194,7 @@ namespace Akkatecture.Aggregates
                 eventMetadata.AddRange(metadata);
             }
             
-            var committedEvent = new CommittedEvent<TAggregate, TIdentity, TAggregateEvent>(Id, aggregateEvent,eventMetadata,now,Version);
+            var committedEvent = new CommittedEvent<TAggregate, TIdentity, TAggregateEvent>(Id, aggregateEvent,eventMetadata,now,aggregateSequenceNumber);
             return committedEvent;
         }
         protected virtual IAggregateSnapshot<TAggregate, TIdentity> CreateSnapshot()
@@ -271,17 +270,14 @@ namespace Akkatecture.Aggregates
         public void ApplyEvents(IEnumerable<IAggregateEvent> aggregateEvents)
         {
             if (Version > 0)
-            {
                 throw new InvalidOperationException($"Aggregate '{GetType().PrettyPrint()}' with ID '{Id}' already has events");
-            }
 
             foreach (var aggregateEvent in aggregateEvents)
             {
                 var e = aggregateEvent as IAggregateEvent<TAggregate, TIdentity>;
                 if (e == null)
-                {
                     throw new ArgumentException($"Aggregate event of type '{aggregateEvent.GetType()}' does not belong with aggregate '{this}',");
-                }
+                
 
                 ApplyEvent(e);
             }
@@ -305,10 +301,8 @@ namespace Akkatecture.Aggregates
 
             Action<TAggregateState, IAggregateEvent> applyMethod;
             if (!ApplyMethodsFromState.TryGetValue(eventType, out applyMethod))
-            {
-                throw new NotImplementedException(
-                    $"Aggregate State '{State.GetType().PrettyPrint()}' does have an 'Apply' method that takes aggregate event '{eventType.PrettyPrint()}' as argument");
-            }
+                throw new NotImplementedException($"Aggregate State '{State.GetType().PrettyPrint()}' does have an 'Apply' method that takes aggregate event '{eventType.PrettyPrint()}' as argument");
+            
 
             var aggregateApplyMethod = applyMethod.Bind(State);
 
@@ -322,10 +316,8 @@ namespace Akkatecture.Aggregates
 
             Action<TAggregateState, IAggregateSnapshot> hydrateMethod;
             if (!HydrateMethodsFromState.TryGetValue(snapshotType, out hydrateMethod))
-            {
-                throw new NotImplementedException(
-                    $"Aggregate State '{State.GetType().PrettyPrint()}' does have an 'Apply' method that takes aggregate event '{snapshotType.PrettyPrint()}' as argument");
-            }
+                throw new NotImplementedException($"Aggregate State '{State.GetType().PrettyPrint()}' does have an 'Apply' method that takes aggregate event '{snapshotType.PrettyPrint()}' as argument");
+            
 
             var snapshotHydrateMethod = hydrateMethod.Bind(State);
 

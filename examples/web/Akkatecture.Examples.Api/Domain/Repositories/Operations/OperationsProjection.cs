@@ -22,24 +22,29 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using Akkatecture.Aggregates;
-using Akkatecture.Examples.Api.Domain.Aggregates.Resource.Events;
-using Akkatecture.Sagas;
 
-namespace Akkatecture.Examples.Api.Domain.Sagas
+namespace Akkatecture.Examples.Api.Domain.Repositories.Operations
 {
-    public class ResourceCreationSagaLocator : ISagaLocator<ResourceCreationSagaId>
+    public class OperationsProjection
     {
-        public const string LocatorIdPrefix = "resourcecreation";
-        public ResourceCreationSagaId LocateSaga(IDomainEvent domainEvent)
+        public Guid Id { get; }
+        public int Percentage { get; }
+        public int Elapsed { get; }
+        public string Status => Percentage < 100 ? "Running" : "Finished";
+        public DateTime StartedAt { get; }
+
+        public OperationsProjection(
+            Guid id,
+            int percentage,
+            int elapsed,
+            DateTime startedAt)
         {
-            switch (domainEvent.GetAggregateEvent())
-            {
-                case ResourceCreatedEvent _:
-                    return new ResourceCreationSagaId($"{LocatorIdPrefix}-{domainEvent.GetIdentity()}");
-                default:
-                    throw new ArgumentException(nameof(domainEvent));
-            }
+            Id = id;
+            Percentage = percentage;
+            Elapsed = elapsed;
+            StartedAt = startedAt;
         }
     }
+    
+    
 }

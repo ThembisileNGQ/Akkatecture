@@ -38,7 +38,7 @@ using Akkatecture.TestHelpers.Aggregates.Snapshots;
 namespace Akkatecture.TestHelpers.Aggregates
 {
     [AggregateName("Test")]
-    public class TestAggregate : AggregateRoot<TestAggregate, TestAggregateId, TestAggregateState>
+    public sealed class TestAggregate : AggregateRoot<TestAggregate, TestAggregateId, TestAggregateState>
     {
         public int TestErrors { get; private set; }
         public TestAggregate(TestAggregateId aggregateId)
@@ -192,11 +192,8 @@ namespace Akkatecture.TestHelpers.Aggregates
 
         protected override IAggregateSnapshot<TestAggregate, TestAggregateId> CreateSnapshot()
         {
-            return new TestAggregateSnapshot
-            {
-                Tests = State.TestCollection.Select(x => new TestAggregateSnapshot.TestModel{Id = x.Id.GetGuid()})
-                    .ToList()
-            };
+            return new TestAggregateSnapshot(State.TestCollection
+                .Select(x => new TestAggregateSnapshot.TestModel(x.Id.GetGuid())).ToList());
         }
         
         private void Signal<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)

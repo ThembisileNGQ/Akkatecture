@@ -1,4 +1,4 @@
-﻿// The MIT License (MIT)
+// The MIT License (MIT)
 //
 // Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
@@ -21,30 +21,22 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
+using Akka.Persistence;
+using Akkatecture.Aggregates;
+using Akkatecture.Aggregates.Snapshot;
+using Akkatecture.Commands;
+using Akkatecture.Core;
 
-namespace Akkatecture.Examples.Api.Domain.Repositories.Operations
+namespace Akkatecture.TestFixtures.Aggregates
 {
-    public class OperationsReadModel
+    public interface IFixtureArranger<TAggregate, TIdentity>
+        where TAggregate : ReceivePersistentActor, IAggregateRoot<TIdentity>
+        where TIdentity : IIdentity
     {
-        public Guid Id { get; }
-        public int Percentage { get; }
-        public int Elapsed { get; }
-        public string Status => Percentage < 100 ? "Running" : "Finished";
-        public DateTime StartedAt { get; }
-
-        public OperationsReadModel(
-            Guid id,
-            int percentage,
-            int elapsed,
-            DateTime startedAt)
-        {
-            Id = id;
-            Percentage = percentage;
-            Elapsed = elapsed;
-            StartedAt = startedAt;
-        }
+        IFixtureArranger<TAggregate, TIdentity> For(TIdentity aggregateId);
+        IFixtureExecutor<TAggregate, TIdentity> GivenNothing();
+        IFixtureExecutor<TAggregate, TIdentity> Given(params IAggregateEvent<TAggregate, TIdentity>[] aggregateEvents);
+        IFixtureExecutor<TAggregate, TIdentity> Given(IAggregateSnapshot<TAggregate, TIdentity> aggregateSnapshot, long snapshotSequenceNumber);
+        IFixtureExecutor<TAggregate, TIdentity> Given(params ICommand<TAggregate, TIdentity>[] commands);
     }
-    
-    
 }

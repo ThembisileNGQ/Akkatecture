@@ -67,6 +67,7 @@ namespace Akkatecture.Core
             public static class Namespaces
             {
                 public static readonly Guid Events = Guid.Parse("387F5B61-9E98-439A-BFF1-15AD0EA91EA0");
+                public static readonly Guid Snapshots = Guid.Parse("B61D4D52-B546-43C2-A67F-754DCBD31586");
                 public static readonly Guid Commands = Guid.Parse("4286D89F-7F92-430B-8E00-E468FE3C3F59");
             }
 

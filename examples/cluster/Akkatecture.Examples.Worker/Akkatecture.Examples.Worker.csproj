@@ -25,13 +25,16 @@
     <NeutralLanguage>en-GB</NeutralLanguage>
     <PackageReleaseNotes>Externally Updated</PackageReleaseNotes>
   </PropertyGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Akkatecture.Clustering\Akkatecture.Clustering.csproj" />
     <ProjectReference Include="..\..\simple\Akkatecture.Examples.Domain\Akkatecture.Examples.Domain.csproj" />
   </ItemGroup>
+  
   <ItemGroup>
     <None Update="worker.conf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  
 </Project>

@@ -26,7 +26,6 @@ using Akka.Actor;
 using Akka.TestKit.Xunit2;
 using Akkatecture.TestHelpers.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Commands;
-using Akkatecture.TestHelpers.Aggregates.Entities;
 using Akkatecture.TestHelpers.Aggregates.Events;
 using Akkatecture.TestHelpers.Subscribers;
 using Xunit;
@@ -39,7 +38,7 @@ namespace Akkatecture.Tests.UnitTests.Subscribers
         private const string Category = "Subscribers";
 
         public SubscriberTests()
-            :base(TestHelpers.Akka.Configuration.Config)
+            :base(TestHelpers.Akka.Configuration.Config, "subscriber-tests")
         {
             
         }
@@ -48,7 +47,7 @@ namespace Akkatecture.Tests.UnitTests.Subscribers
         [Category(Category)]
         public void Subscriber_ReceivedEvent_FromAggregatesEmit()
         {
-            var probe = CreateTestActor("probeActor");
+            var probe = CreateTestActor("probe");
             Sys.EventStream.Subscribe(probe, typeof(TestSubscribedEventHandled<TestCreatedEvent>));
             Sys.ActorOf(Props.Create(() => new TestAggregateSubscriber()), "test-subscriber");        
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
@@ -66,7 +65,7 @@ namespace Akkatecture.Tests.UnitTests.Subscribers
         [Category(Category)]
         public void Subscriber_ReceivedAsyncEvent_FromAggregatesEmit()
         {
-            var probe = CreateTestActor("probeActor");
+            var probe = CreateTestActor("probe");
             Sys.EventStream.Subscribe(probe, typeof(TestAsyncSubscribedEventHandled<TestCreatedEvent>));
             Sys.ActorOf(Props.Create(() => new TestAsyncAggregateSubscriber()), "test-subscriber");        
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");

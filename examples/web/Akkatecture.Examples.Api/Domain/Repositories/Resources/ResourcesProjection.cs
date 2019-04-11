@@ -22,24 +22,23 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using Akkatecture.Aggregates;
-using Akkatecture.Examples.Api.Domain.Aggregates.Resource.Events;
-using Akkatecture.Sagas;
 
-namespace Akkatecture.Examples.Api.Domain.Sagas
+namespace Akkatecture.Examples.Api.Domain.Repositories.Resources
 {
-    public class ResourceCreationSagaLocator : ISagaLocator<ResourceCreationSagaId>
+    public class ResourcesProjection
     {
-        public const string LocatorIdPrefix = "resourcecreation";
-        public ResourceCreationSagaId LocateSaga(IDomainEvent domainEvent)
+        public Guid Id { get; }
+        public double ElapsedTimeToCreation { get; }
+        public DateTime CreatedAt { get; }
+
+        public ResourcesProjection(
+            Guid id,
+            double elapsedTimeToCreation,
+            DateTime createdAt)
         {
-            switch (domainEvent.GetAggregateEvent())
-            {
-                case ResourceCreatedEvent _:
-                    return new ResourceCreationSagaId($"{LocatorIdPrefix}-{domainEvent.GetIdentity()}");
-                default:
-                    throw new ArgumentException(nameof(domainEvent));
-            }
+            Id = id;
+            ElapsedTimeToCreation = elapsedTimeToCreation;
+            CreatedAt = createdAt;
         }
     }
 }

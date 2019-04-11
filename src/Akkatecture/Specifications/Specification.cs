@@ -42,6 +42,6 @@ namespace Akkatecture.Specifications
             return IsNotSatisfiedBecause(obj);
         }
 
-        protected abstract IEnumerable<string> IsNotSatisfiedBecause(T account);
+        protected abstract IEnumerable<string> IsNotSatisfiedBecause(T aggregate);
     }
 }

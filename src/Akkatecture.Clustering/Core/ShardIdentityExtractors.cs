@@ -30,7 +30,7 @@ using Akkatecture.Sagas.AggregateSaga;
 
 namespace Akkatecture.Clustering.Core
 {
-    public class ShardIdentityExtractors
+    public static class ShardIdentityExtractors
     {
         public static  Tuple<string, object> AggregateIdentityExtractor<TAggregate,TIdentity>(object message)
             where TIdentity : IIdentity

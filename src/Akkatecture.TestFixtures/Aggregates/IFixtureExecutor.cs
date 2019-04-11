@@ -1,4 +1,4 @@
-﻿// The MIT License (MIT)
+// The MIT License (MIT)
 //
 // Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
@@ -21,25 +21,17 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
+using Akka.Persistence;
 using Akkatecture.Aggregates;
-using Akkatecture.Examples.Api.Domain.Aggregates.Resource.Events;
-using Akkatecture.Sagas;
+using Akkatecture.Commands;
+using Akkatecture.Core;
 
-namespace Akkatecture.Examples.Api.Domain.Sagas
+namespace Akkatecture.TestFixtures.Aggregates
 {
-    public class ResourceCreationSagaLocator : ISagaLocator<ResourceCreationSagaId>
+    public interface IFixtureExecutor<TAggregate, TIdentity>
+        where TAggregate : ReceivePersistentActor, IAggregateRoot<TIdentity>
+        where TIdentity : IIdentity
     {
-        public const string LocatorIdPrefix = "resourcecreation";
-        public ResourceCreationSagaId LocateSaga(IDomainEvent domainEvent)
-        {
-            switch (domainEvent.GetAggregateEvent())
-            {
-                case ResourceCreatedEvent _:
-                    return new ResourceCreationSagaId($"{LocatorIdPrefix}-{domainEvent.GetIdentity()}");
-                default:
-                    throw new ArgumentException(nameof(domainEvent));
-            }
-        }
+        IFixtureAsserter<TAggregate, TIdentity> When(params ICommand<TAggregate, TIdentity>[] command);
     }
 }

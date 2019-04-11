@@ -77,6 +77,13 @@ namespace Akkatecture.Aggregates.Snapshot
             get { return GetMetadataValue(SnapshotMetadataKeys.SnapshotName); }
             set { Add(SnapshotMetadataKeys.SnapshotName, value); }
         }
+        
+        [JsonIgnore]
+        public ISnapshotId SnapshotId
+        {
+            get { return GetMetadataValue(SnapshotMetadataKeys.SnapshotId, Snapshot.SnapshotId.With); }
+            set { Add(SnapshotMetadataKeys.SnapshotId, value.Value); }
+        }
 
         [JsonIgnore]
         public int SnapshotVersion

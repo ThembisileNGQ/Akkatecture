@@ -29,7 +29,7 @@ using Akkatecture.Clustering.Configuration;
 
 namespace Akkatecture.Examples.Seed
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {

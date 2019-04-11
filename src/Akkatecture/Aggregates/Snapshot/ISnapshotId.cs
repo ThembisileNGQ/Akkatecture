@@ -1,4 +1,4 @@
-﻿// The MIT License (MIT)
+// The MIT License (MIT)
 //
 // Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
@@ -21,25 +21,12 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
-using Akkatecture.Examples.Api.Domain.Aggregates.Resource;
+using Akkatecture.Core;
 
-namespace Akkatecture.Examples.Api.Domain.Repositories.Resources
+namespace Akkatecture.Aggregates.Snapshot
 {
-    public class ResourcesReadModel
+    public interface ISnapshotId : ISourceId
     {
-        public Guid Id { get; }
-        public double ElapsedTimeToCreation { get; }
-        public DateTime CreatedAt { get; }
-
-        public ResourcesReadModel(
-            Guid id,
-            double elapsedTimeToCreation,
-            DateTime createdAt)
-        {
-            Id = id;
-            ElapsedTimeToCreation = elapsedTimeToCreation;
-            CreatedAt = createdAt;
-        }
+        
     }
 }

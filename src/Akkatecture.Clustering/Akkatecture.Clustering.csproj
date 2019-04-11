@@ -25,14 +25,17 @@
     <PackageReleaseNotes>Externally Updated</PackageReleaseNotes>
     <PackageIconUrl>https://akkatecture.net/logos/logo-512.png</PackageIconUrl>
   </PropertyGroup>
+  
   <ItemGroup>
     <PackageReference Include="Akka.Cluster" Version="1.3.12" />
     <PackageReference Include="Akka.Cluster.Sharding" Version="1.3.12-beta" />
     <PackageReference Include="Akka.Cluster.Tools" Version="1.3.12" />
     <PackageReference Include="Akka.Persistence" Version="1.3.12" />
   </ItemGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\Akkatecture\Akkatecture.csproj" />
     <EmbeddedResource Include="Configuration\default.conf" />
   </ItemGroup>
+  
 </Project>
