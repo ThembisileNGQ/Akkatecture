@@ -27,7 +27,7 @@ using Akkatecture.Core;
 
 namespace Akkatecture.Messaging
 {
-    public interface IEnvelope<out TIdentity, out TCommand> //: IEnvelope
+    public interface IEnvelope<out TIdentity, out TCommand>
         where TIdentity : IIdentity
         where TCommand : ICommand
     {

@@ -57,11 +57,10 @@ namespace Akkatecture.Aggregates
         protected AggregateState()
         {
             var me = this as TMessageApplier;
+            
             if (me == null)
-            {
-                throw new InvalidOperationException(
-                    $"Event applier of type '{GetType().PrettyPrint()}' has a wrong generic argument '{typeof(TMessageApplier).PrettyPrint()}'");
-            }
+                throw new InvalidOperationException($"Event applier of type '{GetType().PrettyPrint()}' has a wrong generic argument '{typeof(TMessageApplier).PrettyPrint()}'");
+            
         }
 
         public bool Apply(
@@ -72,9 +71,8 @@ namespace Akkatecture.Aggregates
             Action<TMessageApplier, IAggregateEvent> applier;
 
             if (!ApplyMethods.TryGetValue(aggregateEventType, out applier))
-            {
                 return false;
-            }
+            
 
             applier((TMessageApplier)(object)this, aggregateEvent);
             return true;
@@ -88,9 +86,8 @@ namespace Akkatecture.Aggregates
             Action<TMessageApplier, IAggregateSnapshot> hydrater;
 
             if (!HydrateMethods.TryGetValue(aggregateEventType, out hydrater))
-            {
                 return false;
-            }
+            
 
             hydrater((TMessageApplier)(object)this, aggregateSnapshot);
             return true;
