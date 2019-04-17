@@ -1,19 +1,19 @@
 ﻿// The MIT License (MIT)
 //
 // Copyright (c) 2018 - 2019 Lutando Ngqakaza
-// https://github.com/Lutando/Akkatecture 
-// 
-// 
+// https://github.com/Lutando/Akkatecture
+//
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in
 // the Software without restriction, including without limitation the rights to
 // use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
 // the Software, and to permit persons to whom the Software is furnished to do so,
 // subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
 // FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
@@ -54,12 +54,12 @@ namespace Akkatecture.TestHelpers.Aggregates
 
             //Aggregate Test Probe Commands
             Command<PoisonTestAggregateCommand>(Execute);
-            Command<PublishTestStateCommand>(Execute);         
+            Command<PublishTestStateCommand>(Execute);
             Command<TestDomainErrorCommand>(Execute);
 
             Command<SaveSnapshotSuccess>(SnapshotStatus);
             Command<SaveSnapshotFailure>(SnapshotStatus);
-            
+
             SetSnapshotStrategy(new SnapshotEveryFewVersionsStrategy(10));
         }
 
@@ -93,7 +93,7 @@ namespace Akkatecture.TestHelpers.Aggregates
             }
             return true;
         }
-        
+
         private bool Execute(AddFourTestsCommand command)
         {
             if (!IsNew)
@@ -101,7 +101,7 @@ namespace Akkatecture.TestHelpers.Aggregates
                 var events = Enumerable
                     .Range(0, 4)
                     .Select(x => new TestAddedEvent(command.Test));
-                
+
                 EmitAll(events);
 
             }
@@ -121,7 +121,7 @@ namespace Akkatecture.TestHelpers.Aggregates
                 {
                     Emit(new TestSentEvent(command.TestToGive,command.ReceiverAggregateId));
                 }
-                
+
             }
             else
             {
@@ -161,15 +161,15 @@ namespace Akkatecture.TestHelpers.Aggregates
 
             return true;
         }
-        
+
         private bool Execute(PublishTestStateCommand command)
         {
             Signal(new TestStateSignalEvent(State,LastSequenceNr,Version));
 
             return true;
         }
-       
-        
+
+
         private bool Execute(TestDomainErrorCommand command)
         {
             TestErrors++;
@@ -195,7 +195,7 @@ namespace Akkatecture.TestHelpers.Aggregates
             return new TestAggregateSnapshot(State.TestCollection
                 .Select(x => new TestAggregateSnapshot.TestModel(x.Id.GetGuid())).ToList());
         }
-        
+
         private void Signal<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
             where TAggregateEvent : IAggregateEvent<TestAggregate, TestAggregateId>
         {
@@ -204,8 +204,8 @@ namespace Akkatecture.TestHelpers.Aggregates
                 throw new ArgumentNullException(nameof(aggregateEvent));
             }
 
-            _eventDefinitionService.Load(typeof(TAggregateEvent));
-            var eventDefinition = _eventDefinitionService.GetDefinition(typeof(TAggregateEvent));
+            _eventDefinitionService.Load(aggregateEvent.GetType());
+            var eventDefinition = _eventDefinitionService.GetDefinition(aggregateEvent.GetType());
             var aggregateSequenceNumber = Version;
             var eventId = EventId.NewDeterministic(
                 GuidFactories.Deterministic.Namespaces.Events,

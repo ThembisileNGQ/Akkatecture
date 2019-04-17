@@ -5,19 +5,19 @@
 // Modified from original source https://github.com/eventflow/EventFlow
 //
 // Copyright (c) 2018 - 2019 Lutando Ngqakaza
-// https://github.com/Lutando/Akkatecture 
-// 
-// 
+// https://github.com/Lutando/Akkatecture
+//
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in
 // the Software without restriction, including without limitation the rights to
 // use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
 // the Software, and to permit persons to whom the Software is furnished to do so,
 // subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
 // FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
@@ -116,7 +116,7 @@ namespace Akkatecture.Sagas.AggregateSaga
                 InitReceives();
                 InitAsyncReceives();
             }
-            
+
             Register(State);
 
             if (Settings.UseDefaultEventRecover)
@@ -124,7 +124,7 @@ namespace Akkatecture.Sagas.AggregateSaga
                 Recover<ICommittedEvent<TAggregateSaga, TIdentity, IAggregateEvent<TAggregateSaga, TIdentity>>>(Recover);
                 Recover<RecoveryCompleted>(Recover);
             }
-                
+
 
             if (Settings.UseDefaultSnapshotRecover)
                 Recover<SnapshotOffer>(Recover);
@@ -265,8 +265,8 @@ namespace Akkatecture.Sagas.AggregateSaga
             {
                 throw new ArgumentNullException(nameof(aggregateEvent));
             }
-            _eventDefinitionService.Load(typeof(TAggregateEvent));
-            var eventDefinition = _eventDefinitionService.GetDefinition(typeof(TAggregateEvent));
+            _eventDefinitionService.Load(aggregateEvent.GetType());
+            var eventDefinition = _eventDefinitionService.GetDefinition(aggregateEvent.GetType());
             var aggregateSequenceNumber = version + 1;
             var eventId = EventId.NewDeterministic(
                 GuidFactories.Deterministic.Namespaces.Events,
@@ -364,7 +364,7 @@ namespace Akkatecture.Sagas.AggregateSaga
 
             return aggregateApplyMethod;
         }
-        
+
         protected void Register<TAggregateEvent>(Action<TAggregateEvent> handler)
             where TAggregateEvent : IAggregateEvent<TAggregateSaga, TIdentity>
         {
@@ -394,7 +394,7 @@ namespace Akkatecture.Sagas.AggregateSaga
 
             Version++;
         }
-        
+
         protected void Register(IEventApplier<TAggregateSaga, TIdentity> eventApplier)
         {
             _eventAppliers.Add(eventApplier);
@@ -519,7 +519,7 @@ namespace Akkatecture.Sagas.AggregateSaga
 
             return snapshotHydrateMethod;
         }
-        
+
         protected void SetSourceIdHistory(int count)
         {
             _previousSourceIds = new CircularBuffer<ISourceId>(count);
