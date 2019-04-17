@@ -35,7 +35,7 @@ namespace Akkatecture.Aggregates.ExecutionResults
         public IReadOnlyCollection<string> Errors { get; }
 
         public FailedExecutionResult(
-            IEnumerable<string> errors)
+            params string[] errors)
         {
             Errors = (errors ?? Enumerable.Empty<string>()).ToList();
         }

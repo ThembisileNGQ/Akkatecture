@@ -31,6 +31,7 @@ using System.Linq;
 using Akka.Actor;
 using Akka.Event;
 using Akka.Persistence;
+using Akkatecture.Aggregates.ExecutionResults;
 using Akkatecture.Aggregates.Snapshot;
 using Akkatecture.Aggregates.Snapshot.Strategies;
 using Akkatecture.Commands;
@@ -287,10 +288,33 @@ namespace Akkatecture.Aggregates
         }
         protected override bool AroundReceive(Receive receive, object message)
         {
-            
-            base.AroundReceive(receive, message);
-            return true;
+            if (message is DistinctCommand<TAggregate, TIdentity> distinctCommand)
+            {
+                if (HasSourceId(distinctCommand.SourceId))
+                {
+                    Logger.Error($"Aggregate with Id '{Id?.Value} has received a duplicate message {message.GetType().PrettyPrint()} with SourceId {distinctCommand.SourceId}");
+                    Reply(Sender, new FailedExecutionResult("duplicate message received"));
+                } else
+                {
+                    _previousSourceIds.Put(distinctCommand.SourceId);
+                    return base.AroundReceive(receive, message);
+                }
+            }
+
+            return base.AroundReceive(receive, message);
         }
+
+        protected virtual void Reply(IActorRef sender, ExecutionResult executionResult)
+        {
+            if(Sender == ActorRefs.NoSender || Sender == ActorRefs.Nobody)
+            {
+                // do nothing
+            } else
+            {
+                Sender.Tell(executionResult);
+            }
+        }
+
         protected override void Unhandled(object message)
         {
             Logger.Info($"Aggregate with Id '{Id?.Value} has received an unhandled message {message.GetType().PrettyPrint()}'");

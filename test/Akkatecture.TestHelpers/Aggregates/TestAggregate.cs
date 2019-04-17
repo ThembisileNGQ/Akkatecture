@@ -51,6 +51,7 @@ namespace Akkatecture.TestHelpers.Aggregates
             Command<AddFourTestsCommand>(Execute);
             Command<GiveTestCommand>(Execute);
             Command<ReceiveTestCommand>(Execute);
+            Command<TestDistinctCommand>(Execute);
 
             //Aggregate Test Probe Commands
             Command<PoisonTestAggregateCommand>(Execute);
@@ -136,7 +137,7 @@ namespace Akkatecture.TestHelpers.Aggregates
         {
             if (!IsNew)
             {
-                Emit(new TestReceivedEvent(command.SenderAggregateId,command.TestToReceive));
+                Emit(new TestReceivedEvent(command.SenderAggregateId, command.TestToReceive));
             }
             else
             {
@@ -144,6 +145,11 @@ namespace Akkatecture.TestHelpers.Aggregates
                 Throw(new TestedErrorEvent(TestErrors));
             }
 
+            return true;
+        }
+
+        private bool Execute(TestDistinctCommand command)
+        {
             return true;
         }
 

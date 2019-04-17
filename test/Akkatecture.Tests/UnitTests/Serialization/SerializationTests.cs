@@ -7,6 +7,7 @@ using Akkatecture.Core;
 using Akkatecture.Extensions;
 using Akkatecture.TestHelpers;
 using Akkatecture.TestHelpers.Aggregates;
+using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Entities;
 using Akkatecture.TestHelpers.Aggregates.Events;
 using Akkatecture.TestHelpers.Aggregates.Snapshots;
@@ -80,7 +81,18 @@ namespace Akkatecture.Tests.UnitTests.Serialization
 
             committedEvent.SerializeDeserialize().Should().BeEquivalentTo(committedEvent);
         }
-        
+
+        [Fact]
+        [Category(Category)]
+        public void DistinctDommand_AfterSerialization_IsValidAfterDeserializatio()
+        {
+            /*var aggregateId = TestAggregateId.New;
+            var magicNumber = 42;
+            var command = new TestDistinctCommand(aggregateId, magicNumber);
+
+            command.SerializeDeserialize().Should().BeEquivalentTo(command);*/
+        }
+
     }
 
 }

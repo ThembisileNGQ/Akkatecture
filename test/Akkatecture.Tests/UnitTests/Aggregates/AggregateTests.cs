@@ -21,10 +21,13 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
 using System.ComponentModel;
 using Akka.Actor;
 using Akka.TestKit.Xunit2;
 using Akkatecture.Aggregates;
+using Akkatecture.Aggregates.ExecutionResults;
+using Akkatecture.Commands;
 using Akkatecture.TestHelpers.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Entities;
@@ -248,6 +251,29 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
                      && x.AggregateEvent.Version == 11
                      && x.AggregateEvent.AggregateState.TestCollection.Count == 10
                      && x.AggregateEvent.AggregateState.FromHydration);
+        }
+
+        [Fact]
+        [Category(Category)]
+        public void TestDistinctCommand_AfterTwoHandles_CommandFails()
+        {
+           /*
+            var probe = CreateTestProbe("probe");
+            var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
+            var aggregateId = TestAggregateId.New;
+            var createCommand = new CreateTestCommand(aggregateId);
+            aggregateManager.Tell(createCommand);
+
+            var command = new TestDistinctCommand(aggregateId, 10);
+
+            aggregateManager.Tell(command, probe);
+
+            probe.ExpectNoMsg();
+
+            aggregateManager.Tell(command, probe);
+
+            probe.ExpectMsg<FailedExecutionResult>(TimeSpan.FromHours(1));
+            */
         }
     }
 }

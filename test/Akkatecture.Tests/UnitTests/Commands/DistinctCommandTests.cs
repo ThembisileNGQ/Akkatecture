@@ -25,11 +25,8 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using Akkatecture.Commands;
-using Akkatecture.Extensions;
 using Akkatecture.TestHelpers.Aggregates;
+using Akkatecture.TestHelpers.Aggregates.Commands;
 using FluentAssertions;
 using Xunit;
 
@@ -44,30 +41,11 @@ namespace Akkatecture.Tests.UnitTests.Commands
         public void Arguments(string aggregateId, int magicNumber, string expectedSouceId)
         {
             var testId = TestAggregateId.With(aggregateId);
-            var command = new MyDistinctCommand(testId, magicNumber);
+            var command = new TestDistinctCommand(testId, magicNumber);
 
             var sourceId = command.SourceId;
             
             sourceId.Value.Should().Be(expectedSouceId);
-        }
-
-        public class MyDistinctCommand : DistinctCommand<TestAggregate, TestAggregateId>
-        {
-            public int MagicNumber { get; }
-
-            public MyDistinctCommand(
-                TestAggregateId aggregateId,
-                int magicNumber) 
-                : base(aggregateId)
-            {
-                MagicNumber = magicNumber;
-            }
-
-            protected override IEnumerable<byte[]> GetSourceIdComponents()
-            {
-                yield return BitConverter.GetBytes(MagicNumber);
-                yield return AggregateId.GetBytes();
-            }
         }
     }
 }
