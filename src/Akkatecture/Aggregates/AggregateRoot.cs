@@ -5,19 +5,19 @@
 // Modified from original source https://github.com/eventflow/EventFlow
 //
 // Copyright (c) 2018 - 2019 Lutando Ngqakaza
-// https://github.com/Lutando/Akkatecture 
-// 
-// 
+// https://github.com/Lutando/Akkatecture
+//
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in
 // the Software without restriction, including without limitation the rights to
 // use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
 // the Software, and to permit persons to whom the Software is furnished to do so,
 // subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
 // FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
@@ -68,7 +68,7 @@ namespace Akkatecture.Aggregates
         public bool IsNew => Version <= 0;
         public override Recovery Recovery => new Recovery(SnapshotSelectionCriteria.Latest);
         public AggregateRootSettings Settings { get; }
-        
+
         static AggregateRoot()
         {
             ApplyMethodsFromState = typeof(TAggregateState)
@@ -91,7 +91,7 @@ namespace Akkatecture.Aggregates
             }
 
             if (State == null)
-            {     
+            {
                 try
                 {
                     State = (TAggregateState)Activator.CreateInstance(typeof(TAggregateState));
@@ -100,7 +100,7 @@ namespace Akkatecture.Aggregates
                 {
                     Logger.Error($"Unable to activate State for {GetType()}");
                 }
-                
+
             }
 
             _eventDefinitionService = new EventDefinitionService(Logger);
@@ -108,16 +108,16 @@ namespace Akkatecture.Aggregates
             Id = id;
             PersistenceId = id.Value;
             Register(State);
-            
+
             if (Settings.UseDefaultSnapshotRecover)
             {
                 Recover<SnapshotOffer>(Recover);
             }
-                
-            
+
+
             Command<SaveSnapshotSuccess>(SnapshotStatus);
             Command<SaveSnapshotFailure>(SnapshotStatus);
-            
+
             if (Settings.UseDefaultEventRecover)
             {
                 Recover<ICommittedEvent<TAggregate, TIdentity, IAggregateEvent<TAggregate, TIdentity>>>(Recover);
@@ -125,7 +125,7 @@ namespace Akkatecture.Aggregates
             }
 
         }
-        
+
 
         protected void SetSourceIdHistory(int count)
         {
@@ -141,7 +141,7 @@ namespace Akkatecture.Aggregates
         {
             return Id;
         }
-        
+
         public virtual void Emit<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
             where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
         {
@@ -160,7 +160,7 @@ namespace Akkatecture.Aggregates
                 comittedEvents.Add(committedEvent);
                 version++;
             }
-            
+
             PersistAll(comittedEvents, ApplyCommittedEvent);
         }
 
@@ -172,8 +172,8 @@ namespace Akkatecture.Aggregates
             {
                 throw new ArgumentNullException(nameof(aggregateEvent));
             }
-            _eventDefinitionService.Load(typeof(TAggregateEvent));
-            var eventDefinition = _eventDefinitionService.GetDefinition(typeof(TAggregateEvent));
+            _eventDefinitionService.Load(aggregateEvent.GetType());
+            var eventDefinition = _eventDefinitionService.GetDefinition(aggregateEvent.GetType());
             var aggregateSequenceNumber = version + 1;
             var eventId = EventId.NewDeterministic(
                 GuidFactories.Deterministic.Namespaces.Events,
@@ -209,11 +209,11 @@ namespace Akkatecture.Aggregates
         {
             var applyMethods = GetEventApplyMethods(committedEvent.AggregateEvent);
             applyMethods(committedEvent.AggregateEvent);
-            
+
             Logger.Info($"[{Name}] With Id={Id} Commited and Applied [{typeof(TAggregateEvent).PrettyPrint()}]");
 
             Version++;
-                
+
             var domainEvent = new DomainEvent<TAggregate,TIdentity,TAggregateEvent>(Id, committedEvent.AggregateEvent,committedEvent.Metadata,committedEvent.Timestamp,Version);
 
             Publish(domainEvent);
@@ -240,19 +240,19 @@ namespace Akkatecture.Aggregates
                             aggregateSnapshot,
                             snapshotMetadata,
                             committedEvent.Timestamp, Version);
-                    
+
                     SaveSnapshot(commitedSnapshot);
                 }
             }
-            
+
         }
-        
+
         protected virtual void Publish<TEvent>(TEvent aggregateEvent)
         {
             Context.System.EventStream.Publish(aggregateEvent);
             Logger.Info($"[{Name}] With Id={Id} Published [{typeof(TEvent).PrettyPrint()}]");
         }
-        
+
         public void ApplyEvents(IReadOnlyCollection<IDomainEvent> domainEvents)
         {
             if (!domainEvents.Any())
@@ -279,6 +279,7 @@ namespace Akkatecture.Aggregates
                 if (e == null)
                     throw new ArgumentException($"Aggregate event of type '{aggregateEvent.GetType()}' does not belong with aggregate '{this}',");
                 
+
 
                 ApplyEvent(e);
             }
@@ -328,6 +329,7 @@ namespace Akkatecture.Aggregates
                 throw new NotImplementedException($"Aggregate State '{State.GetType().PrettyPrint()}' does have an 'Apply' method that takes aggregate event '{eventType.PrettyPrint()}' as argument");
             
 
+
             var aggregateApplyMethod = applyMethod.Bind(State);
 
             return aggregateApplyMethod;
@@ -342,6 +344,7 @@ namespace Akkatecture.Aggregates
             if (!HydrateMethodsFromState.TryGetValue(snapshotType, out hydrateMethod))
                 throw new NotImplementedException($"Aggregate State '{State.GetType().PrettyPrint()}' does have an 'Apply' method that takes aggregate event '{snapshotType.PrettyPrint()}' as argument");
             
+
 
             var snapshotHydrateMethod = hydrateMethod.Bind(State);
 
@@ -359,7 +362,7 @@ namespace Akkatecture.Aggregates
             {
                 // Already done
             }
-           
+
             var eventApplier = GetEventApplyMethods(aggregateEvent);
 
             eventApplier(aggregateEvent);
@@ -378,7 +381,7 @@ namespace Akkatecture.Aggregates
             {
                 // Already done
             }
-            
+
             var snapshotHydrater = GetSnapshotHydrateMethods(aggregateSnapshot);
 
             snapshotHydrater(aggregateSnapshot);
@@ -401,7 +404,7 @@ namespace Akkatecture.Aggregates
 
             return true;
         }
-        
+
         protected virtual bool Recover(SnapshotOffer aggregateSnapshotOffer)
         {
             Logger.Info($"Aggregate [{Name}] With Id={Id} has received a SnapshotOffer of type {aggregateSnapshotOffer.Snapshot.GetType().PrettyPrint()}");
@@ -432,13 +435,13 @@ namespace Akkatecture.Aggregates
             Logger.Info($"Aggregate [{Name}] With Id={Id} Saved Snapshot at Version {snapshotSuccess.Metadata.SequenceNr}");
             return true;
         }
-        
+
         protected virtual bool SnapshotStatus(SaveSnapshotFailure snapshotFailure)
         {
             Logger.Error($"Aggregate [{Name}] With Id={Id} Failed to save snapshot at version {snapshotFailure.Metadata.SequenceNr} because of {snapshotFailure.Cause}");
             return true;
         }
-        
+
 
         protected virtual bool Recover(RecoveryCompleted recoveryCompleted)
         {
@@ -480,9 +483,9 @@ namespace Akkatecture.Aggregates
             {
                 Logger.Error($"Unable to Activate CommandHandler {typeof(TCommandHandler).PrettyPrint()} for {typeof(TAggregate).PrettyPrint()}");
             }
-            
+
         }
-        
+
     }
-    
+
 }
