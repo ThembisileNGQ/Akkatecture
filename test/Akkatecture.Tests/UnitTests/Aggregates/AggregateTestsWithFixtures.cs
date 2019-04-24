@@ -26,6 +26,8 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             
         }
         
+        //TODO API idea ; var fixture = this.FixtureFor<TestAggregate, TestAggregateId>
+        
         [Fact]
         [Category(Category)]
         public void With_Test_Kit_InitialEvent_AfterAggregateCreation_TestCreatedEventEmitted()
