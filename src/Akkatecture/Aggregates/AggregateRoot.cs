@@ -55,6 +55,10 @@ namespace Akkatecture.Aggregates
         private readonly Dictionary<Type, Action<object>> _eventHandlers = new Dictionary<Type, Action<object>>();
         private readonly Dictionary<Type, Action<object>> _snapshotHandlers = new Dictionary<Type, Action<object>>();
         protected CircularBuffer<ISourceId> _previousSourceIds = new CircularBuffer<ISourceId>(100);
+        internal CommandContext<TAggregate, TIdentity> CommandContext = new CommandContext<TAggregate, TIdentity>();
+        protected ICommand<TAggregate, TIdentity> PinnedCommand { get; private set; }
+        protected object PinnedReply { get; private set; }
+        
         protected ILoggingAdapter Logger { get; }
         protected IEventDefinitionService _eventDefinitionService;
         protected ISnapshotDefinitionService _snapshotDefinitionService;
@@ -103,6 +107,7 @@ namespace Akkatecture.Aggregates
 
             }
 
+            PinnedCommand = null;
             _eventDefinitionService = new EventDefinitionService(Logger);
             _snapshotDefinitionService = new SnapshotDefinitionService(Logger);
             Id = id;
@@ -288,6 +293,7 @@ namespace Akkatecture.Aggregates
         {
             if (message is DistinctCommand<TAggregate, TIdentity> distinctCommand)
             {
+                PinnedCommand = distinctCommand;
                 if (HasSourceId(distinctCommand.SourceId))
                 {
                     Logger.Error($"Aggregate with Id '{Id?.Value} has received a duplicate message {message.GetType().PrettyPrint()} with SourceId {distinctCommand.SourceId}");
@@ -297,12 +303,16 @@ namespace Akkatecture.Aggregates
                     _previousSourceIds.Put(distinctCommand.SourceId);
                     return base.AroundReceive(receive, message);
                 }
+            } else if (message is Command<TAggregate, TIdentity> command)
+            {
+                PinnedCommand = command;
+                CommandContext.RegisterNew(command);
             }
 
             return base.AroundReceive(receive, message);
         }
 
-        protected virtual void Reply(IActorRef sender, ExecutionResult executionResult)
+        protected virtual void Reply(ExecutionResult executionResult)
         {
             if(sender == ActorRefs.NoSender || sender == ActorRefs.Nobody)
             {
