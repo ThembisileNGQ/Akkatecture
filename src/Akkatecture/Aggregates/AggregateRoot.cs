@@ -304,12 +304,12 @@ namespace Akkatecture.Aggregates
 
         protected virtual void Reply(IActorRef sender, ExecutionResult executionResult)
         {
-            if(Sender == ActorRefs.NoSender || Sender == ActorRefs.Nobody)
+            if(sender == ActorRefs.NoSender || sender == ActorRefs.Nobody)
             {
                 // do nothing
             } else
             {
-                Sender.Tell(executionResult);
+                sender.Tell(executionResult);
             }
         }
 
