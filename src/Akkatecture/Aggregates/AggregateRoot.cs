@@ -190,6 +190,7 @@ namespace Akkatecture.Aggregates
                 AggregateSequenceNumber = aggregateSequenceNumber,
                 AggregateName = Name.Value,
                 AggregateId = Id.Value,
+                SourceId = PinnedCommand.SourceId,
                 EventId = eventId,
                 EventName = eventDefinition.Name,
                 EventVersion = eventDefinition.Version
@@ -222,7 +223,8 @@ namespace Akkatecture.Aggregates
             var domainEvent = new DomainEvent<TAggregate,TIdentity,TAggregateEvent>(Id, committedEvent.AggregateEvent,committedEvent.Metadata,committedEvent.Timestamp,Version);
 
             Publish(domainEvent);
-
+            ReplyIfAvailable();
+            
             if (SnapshotStrategy.ShouldCreateSnapshot(this))
             {
                 var aggregateSnapshot = CreateSnapshot();
@@ -297,7 +299,7 @@ namespace Akkatecture.Aggregates
                 if (HasSourceId(distinctCommand.SourceId))
                 {
                     Logger.Error($"Aggregate with Id '{Id?.Value} has received a duplicate message {message.GetType().PrettyPrint()} with SourceId {distinctCommand.SourceId}");
-                    Reply(Sender, new FailedExecutionResult("duplicate message received"));
+                    Reply(new FailedExecutionResult("duplicate message received"));
                 } else
                 {
                     _previousSourceIds.Put(distinctCommand.SourceId);
@@ -312,15 +314,24 @@ namespace Akkatecture.Aggregates
             return base.AroundReceive(receive, message);
         }
 
-        protected virtual void Reply(ExecutionResult executionResult)
+        protected virtual void Reply(object replyMessage)
         {
-            if(sender == ActorRefs.NoSender || sender == ActorRefs.Nobody)
+            if(Sender == ActorRefs.NoSender || Sender == ActorRefs.Nobody)
             {
                 // do nothing
             } else
             {
-                sender.Tell(executionResult);
+                PinnedReply = replyMessage;
             }
+        }
+
+        protected virtual void ReplyIfAvailable()
+        {
+            if(PinnedReply != null)
+                Sender.Tell(PinnedReply);
+
+            PinnedReply = null;
+            PinnedCommand = null;
         }
 
         protected override void Unhandled(object message)

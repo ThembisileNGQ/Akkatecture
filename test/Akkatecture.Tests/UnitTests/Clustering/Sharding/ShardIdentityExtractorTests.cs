@@ -23,6 +23,7 @@
 
 using System;
 using Akkatecture.Clustering.Core;
+using Akkatecture.Commands;
 using Akkatecture.TestHelpers.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Commands;
 using FluentAssertions;
@@ -36,7 +37,8 @@ namespace Akkatecture.Tests.UnitTests.Clustering.Sharding
         public void AggregateIdentityExtractor_ValidMessage_ExtractsIdentity()
         {
             var aggregateId = TestAggregateId.New;
-            var message = new CreateTestCommand(aggregateId);
+            var commandId = CommandId.New;
+            var message = new CreateTestCommand(aggregateId, commandId);
 
             var extractedIdentity =
                 ShardIdentityExtractors.AggregateIdentityExtractor<TestAggregate, TestAggregateId>(message).Item1;
@@ -48,7 +50,8 @@ namespace Akkatecture.Tests.UnitTests.Clustering.Sharding
         public void AggregateIdentityExtractor_ValidObject_ExtractsObject()
         {
             var aggregateId = TestAggregateId.New;
-            var message = new CreateTestCommand(aggregateId);
+            var commandId = CommandId.New;
+            var message = new CreateTestCommand(aggregateId, commandId);
 
             var extractedObject = ShardIdentityExtractors.AggregateIdentityExtractor<TestAggregate, TestAggregateId>(message).Item2;
 
@@ -80,7 +83,8 @@ namespace Akkatecture.Tests.UnitTests.Clustering.Sharding
         public void AggregateSagaIdentityExtractor_ValidMessage_ExtractsIdentity()
         {
             var aggregateId = TestAggregateId.New;
-            var message = new CreateTestCommand(aggregateId);
+            var commandId = CommandId.New;
+            var message = new CreateTestCommand(aggregateId, commandId);
 
             var extractedIdentity =
                 ShardIdentityExtractors.AggregateIdentityExtractor<TestAggregate, TestAggregateId>(message).Item1;

@@ -23,6 +23,7 @@
 
 using System;
 using Akkatecture.Clustering.Core;
+using Akkatecture.Commands;
 using Akkatecture.TestHelpers.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Commands;
 using FluentAssertions;
@@ -43,7 +44,8 @@ namespace Akkatecture.Tests.UnitTests.Clustering.Sharding
         public void AggregateCommandIdentityExtractor_ValidMessage_ExtractsIdentity(int shardSize)
         {
             var aggregateId = TestAggregateId.New;
-            var message = new CreateTestCommand(aggregateId);
+            var commandId = CommandId.New;
+            var message = new CreateTestCommand(aggregateId, commandId);
             var shardResolver = new ShardResolvers(shardSize);
 
             var extractedShard = shardResolver.AggregateShardResolver<TestAggregate, TestAggregateId>(message);

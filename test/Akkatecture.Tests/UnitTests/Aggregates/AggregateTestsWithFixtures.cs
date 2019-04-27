@@ -34,12 +34,13 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         {
             var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
             var aggregateId = TestAggregateId.New;
+            var commandId = CommandId.New;
             var testId = TestId.New;
             
             fixture
                 .For(aggregateId)
                 .Given(new TestCreatedEvent(aggregateId), new TestAddedEvent(new Test(TestId.New)))
-                .When(new AddTestCommand(aggregateId, new Test(testId)))
+                .When(new AddTestCommand(aggregateId, commandId, new Test(testId)))
                 .ThenExpect<TestAddedEvent>(x => x.Test.Id == testId);
         }
         
@@ -49,12 +50,13 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         {
             var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
             var aggregateId = TestAggregateId.New;
+            var commandId = CommandId.New;
             var testId = TestId.New;
             
             fixture
                 .For(aggregateId)
-                .Given(new CreateTestCommand(aggregateId))
-                .When(new AddTestCommand(aggregateId, new Test(testId)))
+                .Given(new CreateTestCommand(aggregateId, commandId))
+                .When(new AddTestCommand(aggregateId, CommandId.New, new Test(testId)))
                 .ThenExpect<TestAddedEvent>(x => x.Test.Id == testId);
         }
         
@@ -78,11 +80,12 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         {
             var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
             var aggregateId = TestAggregateId.New;
+            var commandId = CommandId.New;
             
             fixture
                 .For(aggregateId)
                 .GivenNothing()
-                .When(new CreateTestCommand(aggregateId))
+                .When(new CreateTestCommand(aggregateId, commandId))
                 .ThenExpect<TestCreatedEvent>(x => x.TestAggregateId == aggregateId);
         }
 
@@ -92,11 +95,12 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         {
             var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
             var aggregateId = TestAggregateId.New;
+            var commandId = CommandId.New;
             
             fixture
                 .For(aggregateId)
                 .GivenNothing()
-                .When(new CreateTestCommand(aggregateId))
+                .When(new CreateTestCommand(aggregateId, commandId))
                 .ThenExpectDomainEvent<TestCreatedEvent>(
                     x => x.AggregateIdentity.Equals(aggregateId)
                          && x.IdentityType == typeof(TestAggregateId)
@@ -114,11 +118,12 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         {
             var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
             var aggregateId = TestAggregateId.New;
+            var commandId = CommandId.New;
             
             fixture
                 .For(aggregateId)
                 .GivenNothing()
-                .When(new CreateTestCommand(aggregateId), new PublishTestStateCommand(aggregateId))
+                .When(new CreateTestCommand(aggregateId, commandId), new PublishTestStateCommand(aggregateId))
                 .ThenExpectDomainEvent<TestStateSignalEvent>(
                     x => x.AggregateEvent.LastSequenceNr == 1
                          && x.AggregateEvent.Version == 1
@@ -131,13 +136,15 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         {
             var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
             var aggregateId = TestAggregateId.New;
+            var commandId = CommandId.New;
+            var commandId2 = CommandId.New;
             var testId = TestId.New;
             var test = new Test(testId);
             
             fixture
                 .For(aggregateId)
                 .GivenNothing()
-                .When(new CreateTestCommand(aggregateId), new AddTestCommand(aggregateId,test))
+                .When(new CreateTestCommand(aggregateId, commandId), new AddTestCommand(aggregateId, commandId2 ,test))
                 .ThenExpect<TestAddedEvent>(x => x.Test.Equals(test));
         }
 
@@ -147,6 +154,9 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         {
             var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
             var aggregateId = TestAggregateId.New;
+            var commandId = CommandId.New;
+            var commandId2 = CommandId.New;
+            var commandId3 = CommandId.New;
             var testId = TestId.New;
             var test = new Test(testId);
             var test2Id = TestId.New;
@@ -155,7 +165,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             fixture
                 .For(aggregateId)
                 .GivenNothing()
-                .When(new CreateTestCommand(aggregateId), new AddTestCommand(aggregateId,test),new AddTestCommand(aggregateId,test2))
+                .When(new CreateTestCommand(aggregateId, commandId), new AddTestCommand(aggregateId, commandId2,test),new AddTestCommand(aggregateId, commandId3,test2))
                 .ThenExpectDomainEvent<TestAddedEvent>(
                     x => x.AggregateEvent.Test.Equals(test)
                          && x.AggregateSequenceNumber == 2)
@@ -169,8 +179,9 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         public void With_Test_Kit_TestEventSourcing_AfterManyTests_TestStateSignalled()
         {
             var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
-            var aggregateId = TestAggregateId.New;var commands = new List<ICommand<TestAggregate, TestAggregateId>>();
-            commands.AddRange(Enumerable.Range(0, 5).Select(x => new AddTestCommand(aggregateId, new Test(TestId.New))));
+            var aggregateId = TestAggregateId.New;
+            var commands = new List<ICommand<TestAggregate, TestAggregateId>>();
+            commands.AddRange(Enumerable.Range(0, 5).Select(x => new AddTestCommand(aggregateId, CommandId.New, new Test(TestId.New))));
             
             fixture
                 .Using(() => new TestAggregateManager(), aggregateId)
@@ -194,7 +205,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             fixture
                 .Using(() => new TestAggregateManager(), aggregateId)
                 .Given(new TestCreatedEvent(aggregateId))
-                .When(new AddFourTestsCommand(aggregateId, new Test(TestId.New)))
+                .When(new AddFourTestsCommand(aggregateId, CommandId.New, new Test(TestId.New)))
                 .AndWhen(new PoisonTestAggregateCommand(aggregateId))
                 .AndWhen(new PublishTestStateCommand(aggregateId))
                 .ThenExpectDomainEvent<TestStateSignalEvent>(
@@ -210,7 +221,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
             var aggregateId = TestAggregateId.New;
             var commands = new List<ICommand<TestAggregate, TestAggregateId>>();
-            commands.AddRange(Enumerable.Range(0, 10).Select(x => new AddTestCommand(aggregateId, new Test(TestId.New))));
+            commands.AddRange(Enumerable.Range(0, 10).Select(x => new AddTestCommand(aggregateId, CommandId.New, new Test(TestId.New))));
             
             fixture
                 .Using(() => new TestAggregateManager(), aggregateId)

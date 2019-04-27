@@ -22,6 +22,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using Akkatecture.Commands;
+using Akkatecture.Core;
 using Akkatecture.TestHelpers.Aggregates.Entities;
 
 namespace Akkatecture.TestHelpers.Aggregates.Commands
@@ -31,8 +32,9 @@ namespace Akkatecture.TestHelpers.Aggregates.Commands
         public Test Test { get; }
         public AddFourTestsCommand(
             TestAggregateId aggregateId,
+            CommandId sourceId,
             Test test)
-            : base(aggregateId)
+            : base(aggregateId, sourceId)
         {
             Test = test;
         }

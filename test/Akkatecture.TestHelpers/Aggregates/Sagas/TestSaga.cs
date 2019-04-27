@@ -23,6 +23,7 @@
 
 using Akka.Actor;
 using Akkatecture.Aggregates;
+using Akkatecture.Commands;
 using Akkatecture.Sagas;
 using Akkatecture.Sagas.AggregateSaga;
 using Akkatecture.TestHelpers.Aggregates.Commands;
@@ -47,8 +48,11 @@ namespace Akkatecture.TestHelpers.Aggregates.Sagas
         {
             if (IsNew)
             {
-                var command = new ReceiveTestCommand(domainEvent.AggregateEvent.RecipientAggregateId,
-                    domainEvent.AggregateIdentity, domainEvent.AggregateEvent.Test);
+                var command = new ReceiveTestCommand(
+                    domainEvent.AggregateEvent.RecipientAggregateId,
+                    CommandId.New,
+                    domainEvent.AggregateIdentity,
+                    domainEvent.AggregateEvent.Test);
 
                 Emit(new TestSagaStartedEvent(domainEvent.AggregateIdentity, domainEvent.AggregateEvent.RecipientAggregateId, domainEvent.AggregateEvent.Test));
 

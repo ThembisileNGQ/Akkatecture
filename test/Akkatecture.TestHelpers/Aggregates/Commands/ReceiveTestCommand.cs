@@ -33,6 +33,7 @@ namespace Akkatecture.TestHelpers.Aggregates.Commands
 
         public ReceiveTestCommand(
             TestAggregateId aggregateId,
+            CommandId sourceId,
             TestAggregateId senderAggregateId,
             Test testToReceive)
             : base(aggregateId)
