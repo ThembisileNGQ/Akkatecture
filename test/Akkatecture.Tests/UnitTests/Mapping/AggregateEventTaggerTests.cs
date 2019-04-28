@@ -58,5 +58,47 @@ namespace Akkatecture.Tests.UnitTests.Mapping
                 false.Should().BeTrue();
             }
         }
+        
+        [Fact]
+        [Category(Category)]
+        public void CommittedEvent_WhenTagged_ContainsAggregateEventAsTaggedElement()
+        {
+            var aggregateEventTagger = new AggregateEventTagger();
+            var aggregateSequenceNumber = 3;
+            var aggregateId = TestAggregateId.New;
+            var entityId = TestId.New;
+            var entity = new Test(entityId);
+            var aggregateEvent = new TestAddedEvent(entity);
+            var now = DateTimeOffset.UtcNow;
+            var eventId = EventId.NewDeterministic(
+                GuidFactories.Deterministic.Namespaces.Events,
+                $"{aggregateId.Value}-v{3}");
+            var eventMetadata = new Metadata
+            {
+                Timestamp = now,
+                AggregateSequenceNumber = aggregateSequenceNumber,
+                AggregateName = typeof(TestAggregate).GetAggregateName().Value,
+                AggregateId = aggregateId.Value,
+                EventId = eventId
+            };
+            var committedEvent =
+                new CommittedEvent<TestAggregate, TestAggregateId, TestAddedEvent>(
+                    aggregateId,
+                    aggregateEvent,
+                    eventMetadata,
+                    now,
+                    aggregateSequenceNumber);
+
+            var taggedEvent = aggregateEventTagger.ToJournal(committedEvent);
+
+            if (taggedEvent is Tagged a)
+            {
+                a.Tags.Should().Contain("TestAdded");
+            }
+            else
+            {
+                false.Should().BeTrue();
+            }
+        }
     }
 }

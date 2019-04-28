@@ -31,6 +31,7 @@ using System.Linq;
 using Akka.Actor;
 using Akka.Event;
 using Akka.Persistence;
+using Akkatecture.Aggregates.ExecutionResults;
 using Akkatecture.Aggregates.Snapshot;
 using Akkatecture.Aggregates.Snapshot.Strategies;
 using Akkatecture.Commands;
@@ -54,6 +55,9 @@ namespace Akkatecture.Aggregates
         private readonly Dictionary<Type, Action<object>> _eventHandlers = new Dictionary<Type, Action<object>>();
         private readonly Dictionary<Type, Action<object>> _snapshotHandlers = new Dictionary<Type, Action<object>>();
         protected CircularBuffer<ISourceId> _previousSourceIds = new CircularBuffer<ISourceId>(100);
+        protected ICommand<TAggregate, TIdentity> PinnedCommand { get; private set; }
+        protected object PinnedReply { get; private set; }
+        
         protected ILoggingAdapter Logger { get; }
         protected IEventDefinitionService _eventDefinitionService;
         protected ISnapshotDefinitionService _snapshotDefinitionService;
@@ -102,6 +106,7 @@ namespace Akkatecture.Aggregates
 
             }
 
+            PinnedCommand = null;
             _eventDefinitionService = new EventDefinitionService(Logger);
             _snapshotDefinitionService = new SnapshotDefinitionService(Logger);
             Id = id;
@@ -184,6 +189,7 @@ namespace Akkatecture.Aggregates
                 AggregateSequenceNumber = aggregateSequenceNumber,
                 AggregateName = Name.Value,
                 AggregateId = Id.Value,
+                SourceId = PinnedCommand.SourceId,
                 EventId = eventId,
                 EventName = eventDefinition.Name,
                 EventVersion = eventDefinition.Version
@@ -193,7 +199,7 @@ namespace Akkatecture.Aggregates
             {
                 eventMetadata.AddRange(metadata);
             }
-
+            
             var committedEvent = new CommittedEvent<TAggregate, TIdentity, TAggregateEvent>(Id, aggregateEvent,eventMetadata,now,aggregateSequenceNumber);
             return committedEvent;
         }
@@ -216,7 +222,8 @@ namespace Akkatecture.Aggregates
             var domainEvent = new DomainEvent<TAggregate,TIdentity,TAggregateEvent>(Id, committedEvent.AggregateEvent,committedEvent.Metadata,committedEvent.Timestamp,Version);
 
             Publish(domainEvent);
-
+            ReplyIfAvailable();
+            
             if (SnapshotStrategy.ShouldCreateSnapshot(this))
             {
                 var aggregateSnapshot = CreateSnapshot();
@@ -277,6 +284,7 @@ namespace Akkatecture.Aggregates
                 var e = aggregateEvent as IAggregateEvent<TAggregate, TIdentity>;
                 if (e == null)
                     throw new ArgumentException($"Aggregate event of type '{aggregateEvent.GetType()}' does not belong with aggregate '{this}',");
+                
 
 
                 ApplyEvent(e);
@@ -284,10 +292,46 @@ namespace Akkatecture.Aggregates
         }
         protected override bool AroundReceive(Receive receive, object message)
         {
+            if (message is DistinctCommand<TAggregate, TIdentity> distinctCommand)
+            {
+                PinnedCommand = distinctCommand;
+                if (HasSourceId(distinctCommand.SourceId))
+                {
+                    Logger.Error($"Aggregate with Id '{Id?.Value} has received a duplicate message {message.GetType().PrettyPrint()} with SourceId {distinctCommand.SourceId}");
+                    Reply(new FailedExecutionResult("duplicate message received"));
+                } else
+                {
+                    _previousSourceIds.Put(distinctCommand.SourceId);
+                    return base.AroundReceive(receive, message);
+                }
+            } else if (message is Command<TAggregate, TIdentity> command)
+            {
+                PinnedCommand = command;
+            }
 
-            base.AroundReceive(receive, message);
-            return true;
+            return base.AroundReceive(receive, message);
         }
+
+        protected virtual void Reply(object replyMessage)
+        {
+            if(Sender == ActorRefs.NoSender || Sender == ActorRefs.Nobody)
+            {
+                // do nothing
+            } else
+            {
+                PinnedReply = replyMessage;
+            }
+        }
+
+        protected virtual void ReplyIfAvailable()
+        {
+            if(PinnedReply != null)
+                Sender.Tell(PinnedReply);
+
+            PinnedReply = null;
+            PinnedCommand = null;
+        }
+
         protected override void Unhandled(object message)
         {
             Logger.Info($"Aggregate with Id '{Id?.Value} has received an unhandled message {message.GetType().PrettyPrint()}'");
@@ -302,6 +346,7 @@ namespace Akkatecture.Aggregates
             Action<TAggregateState, IAggregateEvent> applyMethod;
             if (!ApplyMethodsFromState.TryGetValue(eventType, out applyMethod))
                 throw new NotImplementedException($"Aggregate State '{State.GetType().PrettyPrint()}' does have an 'Apply' method that takes aggregate event '{eventType.PrettyPrint()}' as argument");
+            
 
 
             var aggregateApplyMethod = applyMethod.Bind(State);
@@ -317,6 +362,7 @@ namespace Akkatecture.Aggregates
             Action<TAggregateState, IAggregateSnapshot> hydrateMethod;
             if (!HydrateMethodsFromState.TryGetValue(snapshotType, out hydrateMethod))
                 throw new NotImplementedException($"Aggregate State '{State.GetType().PrettyPrint()}' does have an 'Apply' method that takes aggregate event '{snapshotType.PrettyPrint()}' as argument");
+            
 
 
             var snapshotHydrateMethod = hydrateMethod.Bind(State);

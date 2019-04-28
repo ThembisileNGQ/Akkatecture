@@ -95,7 +95,7 @@ namespace Akkatecture.Events
         {
             if (ShouldUpcast(evt))
             {
-                //dynamic dispach here to get AggregateEvent
+                //dynamic dispatch here to get AggregateEvent
                 var committedEvent = evt as dynamic;
                     
                 var upcastedEvent = Upcast(committedEvent.AggregateEvent);
@@ -103,7 +103,7 @@ namespace Akkatecture.Events
                 var genericType = typeof(CommittedEvent<,,>)
                     .MakeGenericType(typeof(TAggregate), typeof(TIdentity), upcastedEvent.GetType());
                 
-                var upcastedCommitedEvent = Activator.CreateInstance(
+                var upcastedCommittedEvent = Activator.CreateInstance(
                     genericType,
                     committedEvent.AggregateIdentity,
                     upcastedEvent,
@@ -111,7 +111,7 @@ namespace Akkatecture.Events
                     committedEvent.Timestamp,
                     committedEvent.AggregateSequenceNumber);
                 
-                return EventSequence.Single(upcastedCommitedEvent);
+                return EventSequence.Single(upcastedCommittedEvent);
             }
 
             return EventSequence.Single(evt);

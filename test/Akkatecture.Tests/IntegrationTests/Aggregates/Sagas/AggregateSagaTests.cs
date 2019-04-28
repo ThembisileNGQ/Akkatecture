@@ -25,6 +25,7 @@ using System.ComponentModel;
 using Akka.Actor;
 using Akka.TestKit.Xunit2;
 using Akkatecture.Aggregates;
+using Akkatecture.Commands;
 using Akkatecture.TestHelpers.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Entities;
@@ -48,32 +49,33 @@ namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
         [Category(Category)]
         public void SendingTest_FromTestAggregate_CompletesSaga()
         {
-            var probe = CreateTestActor("probe");
-            Sys.EventStream.Subscribe(probe, typeof(DomainEvent<TestSaga, TestSagaId, TestSagaStartedEvent>));
+            var eventProbe = CreateTestProbe("event-probe");
+            Sys.EventStream.Subscribe(eventProbe, typeof(DomainEvent<TestSaga, TestSagaId, TestSagaStartedEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
             Sys.ActorOf(Props.Create(() => new TestSagaManager(() => new TestSaga(aggregateManager))), "test-sagaaggregatemanager");
             
             var senderAggregateId = TestAggregateId.New;
-            var senderCreateAggregateCommand = new CreateTestCommand(senderAggregateId);
+            var senderCreateAggregateCommand = new CreateTestCommand(senderAggregateId, CommandId.New);
             aggregateManager.Tell(senderCreateAggregateCommand);
 
             var receiverAggregateId = TestAggregateId.New;
-            var receiverCreateAggregateCommand = new CreateTestCommand(receiverAggregateId);
+            var receiverCreateAggregateCommand = new CreateTestCommand(receiverAggregateId, CommandId.New);
             aggregateManager.Tell(receiverCreateAggregateCommand);
 
             var senderTestId = TestId.New;
             var senderTest = new Test(senderTestId);
-            var nextAggregateCommand = new AddTestCommand(senderAggregateId, senderTest);
+            var nextAggregateCommand = new AddTestCommand(senderAggregateId, CommandId.New, senderTest);
             aggregateManager.Tell(nextAggregateCommand);
 
 
 
-            var sagaStartingCommand = new GiveTestCommand(senderAggregateId,receiverAggregateId,senderTest);
+            var sagaStartingCommand = new GiveTestCommand(senderAggregateId, CommandId.New,receiverAggregateId,senderTest);
             aggregateManager.Tell(sagaStartingCommand);
             
 
 
-            ExpectMsg<DomainEvent<TestSaga, TestSagaId, TestSagaStartedEvent>>(
+            eventProbe.
+                ExpectMsg<DomainEvent<TestSaga, TestSagaId, TestSagaStartedEvent>>(
                 x => x.AggregateEvent.Sender.Equals(senderAggregateId)
                     && x.AggregateEvent.Receiver.Equals(receiverAggregateId)
                     && x.AggregateEvent.SentTest.Equals(senderTest));

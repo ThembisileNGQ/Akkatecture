@@ -101,7 +101,7 @@ namespace Akkatecture.Core.VersionedTypes
                     GetType().PrettyPrint(),
                     string.Join(", ", assemblies));
 
-                _logger.Info(logs);
+                _logger?.Info(logs);
 
                 foreach (var definition in definitions)
                 {
@@ -118,7 +118,7 @@ namespace Akkatecture.Core.VersionedTypes
 
                     if (versions.ContainsKey(definition.Version))
                     {
-                        _logger.Info(
+                        _logger?.Info(
                             "Already loaded versioned type '{0}' v{1}, skipping it",
                             definition.Name,
                             definition.Version);

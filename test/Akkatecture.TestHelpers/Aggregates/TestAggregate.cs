@@ -25,6 +25,7 @@ using System;
 using System.Linq;
 using Akka.Persistence;
 using Akkatecture.Aggregates;
+using Akkatecture.Aggregates.ExecutionResults;
 using Akkatecture.Aggregates.Snapshot;
 using Akkatecture.Aggregates.Snapshot.Strategies;
 using Akkatecture.Core;
@@ -51,6 +52,7 @@ namespace Akkatecture.TestHelpers.Aggregates
             Command<AddFourTestsCommand>(Execute);
             Command<GiveTestCommand>(Execute);
             Command<ReceiveTestCommand>(Execute);
+            Command<TestDistinctCommand>(Execute);
 
             //Aggregate Test Probe Commands
             Command<PoisonTestAggregateCommand>(Execute);
@@ -68,11 +70,13 @@ namespace Akkatecture.TestHelpers.Aggregates
             if (IsNew)
             {
                 Emit(new TestCreatedEvent(command.AggregateId));
+                Reply(TestExecutionResult.SucceededWith(command.SourceId));
             }
             else
             {
                 TestErrors++;
                 Throw(new TestedErrorEvent(TestErrors));
+                Reply(TestExecutionResult.FailedWith(command.SourceId));
             }
 
             return true;
@@ -84,12 +88,14 @@ namespace Akkatecture.TestHelpers.Aggregates
             {
 
                 Emit(new TestAddedEvent(command.Test));
+                Reply(TestExecutionResult.SucceededWith(command.SourceId));
 
             }
             else
             {
                 TestErrors++;
                 Throw(new TestedErrorEvent(TestErrors));
+                Reply(TestExecutionResult.FailedWith(command.SourceId));
             }
             return true;
         }
@@ -103,12 +109,14 @@ namespace Akkatecture.TestHelpers.Aggregates
                     .Select(x => new TestAddedEvent(command.Test));
 
                 EmitAll(events);
+                Reply(TestExecutionResult.SucceededWith(command.SourceId));
 
             }
             else
             {
                 TestErrors++;
                 Throw(new TestedErrorEvent(TestErrors));
+                Reply(TestExecutionResult.FailedWith(command.SourceId));
             }
             return true;
         }
@@ -120,6 +128,7 @@ namespace Akkatecture.TestHelpers.Aggregates
                 if (State.TestCollection.Any(x => x.Id == command.TestToGive.Id))
                 {
                     Emit(new TestSentEvent(command.TestToGive,command.ReceiverAggregateId));
+                    Reply(TestExecutionResult.SucceededWith(command.SourceId));
                 }
 
             }
@@ -127,6 +136,7 @@ namespace Akkatecture.TestHelpers.Aggregates
             {
                 TestErrors++;
                 Throw(new TestedErrorEvent(TestErrors));
+                Reply(TestExecutionResult.FailedWith(command.SourceId));
             }
 
             return true;
@@ -136,14 +146,21 @@ namespace Akkatecture.TestHelpers.Aggregates
         {
             if (!IsNew)
             {
-                Emit(new TestReceivedEvent(command.SenderAggregateId,command.TestToReceive));
+                Emit(new TestReceivedEvent(command.SenderAggregateId, command.TestToReceive));
+                Reply(TestExecutionResult.SucceededWith(command.SourceId));
             }
             else
             {
                 TestErrors++;
                 Throw(new TestedErrorEvent(TestErrors));
+                Reply(TestExecutionResult.FailedWith(command.SourceId));
             }
 
+            return true;
+        }
+
+        private bool Execute(TestDistinctCommand command)
+        {
             return true;
         }
 
@@ -157,6 +174,7 @@ namespace Akkatecture.TestHelpers.Aggregates
             {
                 TestErrors++;
                 Throw(new TestedErrorEvent(TestErrors));
+                Reply(TestExecutionResult.FailedWith(command.SourceId));
             }
 
             return true;

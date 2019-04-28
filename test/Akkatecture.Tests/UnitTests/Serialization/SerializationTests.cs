@@ -3,10 +3,12 @@ using System.ComponentModel;
 using System.Linq;
 using Akkatecture.Aggregates;
 using Akkatecture.Aggregates.Snapshot;
+using Akkatecture.Commands;
 using Akkatecture.Core;
 using Akkatecture.Extensions;
 using Akkatecture.TestHelpers;
 using Akkatecture.TestHelpers.Aggregates;
+using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Entities;
 using Akkatecture.TestHelpers.Aggregates.Events;
 using Akkatecture.TestHelpers.Aggregates.Snapshots;
@@ -80,7 +82,30 @@ namespace Akkatecture.Tests.UnitTests.Serialization
 
             committedEvent.SerializeDeserialize().Should().BeEquivalentTo(committedEvent);
         }
+
+        //TODO : Work Item - https://dev.azure.com/lutando/Akkatecture/_workitems/edit/25/
+        /*[Fact] 
+        [Category(Category)]
+        public void DistinctCommand_AfterSerialization_IsValidAfterDeserialization()
+        {
+            var aggregateId = TestAggregateId.New;
+            var magicNumber = 42;
+            var command = new TestDistinctCommand(aggregateId, magicNumber);
+
+            command.SerializeDeserialize().Should().BeEquivalentTo(command);
+        }*/
         
+        [Fact]
+        [Category(Category)]
+        public void AddFourTestsCommand_AfterSerialization_IsValidAfterDeserialization()
+        {
+            var aggregateId = TestAggregateId.New;
+            var commandId = CommandId.New;
+            var command = new AddFourTestsCommand(aggregateId, commandId, new Test(TestId.New));
+
+            command.SerializeDeserialize().Should().BeEquivalentTo(command);
+        }
+
     }
 
 }
