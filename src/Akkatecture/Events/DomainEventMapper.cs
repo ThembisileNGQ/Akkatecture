@@ -32,16 +32,16 @@ namespace Akkatecture.Events
     {
         internal static object FromCommittedEvent(object evt)
         {
-            var type = typeof(ICommittedEvent<,,>);
-
-            if (type.GetTypeInfo().IsInstanceOfType(evt))
+            var eventType = evt.GetType();
+            
+            if (evt is ICommittedEvent && eventType.GenericTypeArguments.Length == 3)
             {
                 //dynamic dispatch here to get AggregateEvent
                 
                 var committedEvent = evt as dynamic;
 
                 var genericType = typeof(DomainEvent<,,>)
-                    .MakeGenericType(type.GetGenericArguments()[0], type.GetGenericArguments()[1],type.GetGenericArguments()[2]);
+                    .MakeGenericType(eventType.GetGenericArguments()[0], eventType.GetGenericArguments()[1],eventType.GetGenericArguments()[2]);
                 
                 var domainEvent = Activator.CreateInstance(
                     genericType,
@@ -60,13 +60,4 @@ namespace Akkatecture.Events
         }
     }
     
-    public class DomainEventReadAdapter : IReadEventAdapter
-    {
-        public IEventSequence FromJournal(object evt, string manifest)
-        {
-            var newEvent = DomainEventMapper.FromCommittedEvent(evt);
-            
-            return new SingleEventSequence(newEvent);
-        }
-    }
 }
