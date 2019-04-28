@@ -52,14 +52,6 @@ jobs:
         publishFeedCredentials: 'Akkatecture-NuGet'
 
     - task: NuGetCommand@2
-      displayName: 'Push [Akkatecture]'
-      inputs:
-        command: push
-        packagesToPush: 'src/Akkatecture/bin/$(BuildConfiguration)/*.nupkg'
-        nuGetFeedType: external
-        publishFeedCredentials: 'Akkatecture-NuGet'
-
-    - task: NuGetCommand@2
       displayName: 'Push [Akkatecture.TestFixture]'
       inputs:
         command: push
