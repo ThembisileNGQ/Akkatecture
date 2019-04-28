@@ -80,6 +80,14 @@ jobs:
         nuGetFeedType: 'internal'
         publishVstsFeed: 'akkatecture'
 
+    - task: DotNetCoreCLI@2
+      displayName: 'Push [Akkatecture.Cluster]'
+      inputs:
+        command: 'push'
+        packagesToPush: ${{ format('src/Akkatecture.TestFixture/bin/{0}/*.nupkg', variables.buildConfiguration) }}
+        nuGetFeedType: 'internal'
+        publishVstsFeed: 'akkatecture'
+
       - task: DotNetCoreCLI@2
         displayName: 'Push [Akkatecture.Cluster]'
         inputs:

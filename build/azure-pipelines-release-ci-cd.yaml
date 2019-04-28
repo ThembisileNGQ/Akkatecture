@@ -59,6 +59,14 @@ jobs:
         nuGetFeedType: external
         publishFeedCredentials: 'Akkatecture-NuGet'
 
+    - task: NuGetCommand@2
+      displayName: 'Push [Akkatecture.Clustering]'
+      inputs:
+        command: push
+        packagesToPush: 'src/Akkatecture.TestFixture/bin/$(BuildConfiguration)/*.nupkg'
+        nuGetFeedType: external
+        publishFeedCredentials: 'Akkatecture-NuGet'
+
       - task: NuGetCommand@2
         displayName: 'Push [Akkatecture.Clustering]'
         inputs:
