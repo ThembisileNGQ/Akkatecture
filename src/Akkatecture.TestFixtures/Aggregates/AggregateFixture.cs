@@ -58,11 +58,15 @@ namespace Akkatecture.TestFixtures.Aggregates
             if(aggregateId == null)
                 throw new ArgumentNullException(nameof(aggregateId));
             
+            if(!AggregateTestProbe.IsNobody())
+                throw new InvalidOperationException(nameof(AggregateTestProbe));
+            
             AggregateId = aggregateId;
             AggregateTestProbe = _testKit.CreateTestProbe("aggregate-probe");
             AggregateProps = Props.Create<TAggregate>(args: aggregateId);
             AggregateRef = ActorRefs.Nobody;
             UsesAggregateManager = false;
+            
             return this;
         }
 
@@ -70,11 +74,17 @@ namespace Akkatecture.TestFixtures.Aggregates
             Expression<Func<TAggregateManager>> aggregateManagerFactory, TIdentity aggregateId)
             where TAggregateManager : ReceiveActor, IAggregateManager<TAggregate, TIdentity>
         {
+            if(aggregateId == null)
+                throw new ArgumentNullException(nameof(aggregateId));
+            if(!AggregateTestProbe.IsNobody())
+                throw new InvalidOperationException(nameof(AggregateTestProbe));
+            
             AggregateId = aggregateId;
             AggregateTestProbe = _testKit.CreateTestProbe("aggregate-probe");
             AggregateRef = _testKit.Sys.ActorOf(Props.Create(aggregateManagerFactory), "aggregate-manager");
             UsesAggregateManager = false;
             AggregateProps = Props.Empty;
+            
             return this;
         }
 
@@ -89,12 +99,14 @@ namespace Akkatecture.TestFixtures.Aggregates
         public IFixtureExecutor<TAggregate, TIdentity> Given(params IAggregateEvent<TAggregate,TIdentity>[] aggregateEvents)
         {
             InitializeEventJournal(AggregateId, aggregateEvents);
+            
             return this;
         }
         
         public IFixtureExecutor<TAggregate, TIdentity> Given(IAggregateSnapshot<TAggregate,TIdentity> aggregateSnapshot, long snapshotSequenceNumber)
         {
             InitializeSnapshotStore(AggregateId, aggregateSnapshot, snapshotSequenceNumber);
+            
             return this;
         }
 
@@ -113,6 +125,7 @@ namespace Akkatecture.TestFixtures.Aggregates
                 
                 AggregateRef.Tell(command);
             }
+            
             return this;
         }
 
@@ -133,7 +146,6 @@ namespace Akkatecture.TestFixtures.Aggregates
                 AggregateRef.Tell(command);
             }
             
-            
             return this;
         }
 
@@ -151,6 +163,7 @@ namespace Akkatecture.TestFixtures.Aggregates
                 AggregateTestProbe.ExpectMsg<DomainEvent<TAggregate, TIdentity, TAggregateEvent>>();
             else
                 AggregateTestProbe.ExpectMsg<DomainEvent<TAggregate, TIdentity, TAggregateEvent>>(x => aggregateEventPredicate(x.AggregateEvent));
+            
             return this;
         }
         
@@ -163,6 +176,7 @@ namespace Akkatecture.TestFixtures.Aggregates
                 AggregateTestProbe.ExpectMsg<DomainEvent<TAggregate, TIdentity, TAggregateEvent>>();
             else
                 AggregateTestProbe.ExpectMsg<DomainEvent<TAggregate, TIdentity, TAggregateEvent>>(domainEventPredicate);
+            
             return this;
         }
         

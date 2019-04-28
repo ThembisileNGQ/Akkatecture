@@ -67,8 +67,7 @@ namespace Akkatecture.Commands
     {
         protected Command(
             TIdentity aggregateId)
-            : this(aggregateId, 
-                CommandId.New)
+            : this(aggregateId, CommandId.New)
         {
         }
 

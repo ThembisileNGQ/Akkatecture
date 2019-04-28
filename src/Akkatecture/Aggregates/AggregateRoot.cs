@@ -55,7 +55,6 @@ namespace Akkatecture.Aggregates
         private readonly Dictionary<Type, Action<object>> _eventHandlers = new Dictionary<Type, Action<object>>();
         private readonly Dictionary<Type, Action<object>> _snapshotHandlers = new Dictionary<Type, Action<object>>();
         protected CircularBuffer<ISourceId> _previousSourceIds = new CircularBuffer<ISourceId>(100);
-        internal CommandContext<TAggregate, TIdentity> CommandContext = new CommandContext<TAggregate, TIdentity>();
         protected ICommand<TAggregate, TIdentity> PinnedCommand { get; private set; }
         protected object PinnedReply { get; private set; }
         
@@ -308,7 +307,6 @@ namespace Akkatecture.Aggregates
             } else if (message is Command<TAggregate, TIdentity> command)
             {
                 PinnedCommand = command;
-                CommandContext.RegisterNew(command);
             }
 
             return base.AroundReceive(receive, message);

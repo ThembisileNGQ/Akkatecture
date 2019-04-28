@@ -28,7 +28,7 @@ namespace Akkatecture.Tests.UnitTests.Fixtures
         [Category(Category)]
         public void FixtureArrangerWithIdentity_CreatesAggregateRef()
         {
-            //Issue - https://dev.azure.com/lutando/Akkatecture/_workitems/edit/23/
+            //TODO - https://dev.azure.com/lutando/Akkatecture/_workitems/edit/23/
             using (var testKit = new TestKit(_config, "fixture-tests-1"))
             {
                 var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(testKit);

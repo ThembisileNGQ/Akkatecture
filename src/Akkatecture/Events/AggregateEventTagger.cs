@@ -34,11 +34,20 @@ namespace Akkatecture.Events
         {
             try
             {
-                var tag = evt
+                var aggregateName = evt
                     .GetType()
                     .GetCommittedEventAggregateRootName();
+                
+                var eventDefinitionService = new EventDefinitionService(null);
+                
+                var aggregateEventType = evt
+                    .GetType()
+                    .GetCommittedEventAggregateEventType();
 
-                return new Tagged(evt, new[] {tag.Value});
+                eventDefinitionService.Load(aggregateEventType);
+                var eventDefinition = eventDefinitionService.GetDefinition(aggregateEventType);
+                
+                return new Tagged(evt, new[] {aggregateName.Value, eventDefinition.Name});
             }
             catch
             {

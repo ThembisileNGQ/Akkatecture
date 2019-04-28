@@ -84,7 +84,7 @@ namespace Akkatecture.Tests.UnitTests.Serialization
         }
 
         //TODO : Work Item - https://dev.azure.com/lutando/Akkatecture/_workitems/edit/25/
-        [Fact] 
+        /*[Fact] 
         [Category(Category)]
         public void DistinctCommand_AfterSerialization_IsValidAfterDeserialization()
         {
@@ -93,7 +93,7 @@ namespace Akkatecture.Tests.UnitTests.Serialization
             var command = new TestDistinctCommand(aggregateId, magicNumber);
 
             command.SerializeDeserialize().Should().BeEquivalentTo(command);
-        }
+        }*/
         
         [Fact]
         [Category(Category)]
