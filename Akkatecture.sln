@@ -59,7 +59,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{F1C674D3
 		build\README.md = build\README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.TestFixtures", "src\Akkatecture.TestFixtures\Akkatecture.TestFixtures.csproj", "{BED56747-BBF3-45F5-9EB6-C24808AA09EC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.TestFixture", "src\Akkatecture.TestFixture\Akkatecture.TestFixture.csproj", "{BED56747-BBF3-45F5-9EB6-C24808AA09EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

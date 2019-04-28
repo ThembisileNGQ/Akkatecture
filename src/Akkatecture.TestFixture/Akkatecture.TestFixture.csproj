@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <ProjectGuid>{0CB7A8CC-E3CD-481C-81C9-BA830DC32361}</ProjectGuid>
+        <RootNamespace>Akkatecture.TestFixture</RootNamespace>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -10,14 +11,14 @@
         <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-        <Title>Akkatecture.TestFixtures</Title>
+        <Title>Akkatecture.TestFixture</Title>
         <Authors>Lutando Ngqakaza</Authors>
         <Company>Lutando Ngqakaza</Company>
         <Copyright>Copyright (c) Lutando Ngqakaza 2018 - 2019</Copyright>
         <Description>
-            a cqrs and event sourcing framework for akka.net
+            bdd style test fixtures for akkatecture
         </Description>
-        <PackageTags>akka cqrs es eventsourcing clustering actors microservices actor-model</PackageTags>
+        <PackageTags>akka cqrs es eventsourcing tdd actors testing actor-model</PackageTags>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/Lutando/Akkatecture</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>

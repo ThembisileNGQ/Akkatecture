@@ -33,7 +33,7 @@ using Akkatecture.Core;
 using SnapshotMetadata = Akkatecture.Aggregates.Snapshot.SnapshotMetadata;
 using AkkaSnapshotMetadata = Akka.Persistence.SnapshotMetadata;
 
-namespace Akkatecture.TestFixtures.Aggregates
+namespace Akkatecture.TestFixture.Aggregates
 {
     
     public class AggregateFixture<TAggregate, TIdentity> : IFixtureArranger<TAggregate, TIdentity> , IFixtureExecutor<TAggregate,TIdentity> , IFixtureAsserter<TAggregate, TIdentity>

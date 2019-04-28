@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <ProjectGuid>{D9461EE2-175F-4F2B-AD75-FB93C09ABCDE}</ProjectGuid>
+    <SonarQubeExclude>true</SonarQubeExclude>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -27,7 +28,7 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Akkatecture.TestFixtures\Akkatecture.TestFixtures.csproj" />
+    <ProjectReference Include="..\..\src\Akkatecture.TestFixture\Akkatecture.TestFixture.csproj" />
     <ProjectReference Include="..\..\src\Akkatecture\Akkatecture.csproj" />
   </ItemGroup>
   
