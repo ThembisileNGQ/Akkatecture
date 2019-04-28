@@ -54,13 +54,13 @@ namespace Akkatecture.Specifications.Provided
             _specifications = specificationList;
         }
 
-        protected override IEnumerable<string> IsNotSatisfiedBecause(T account)
+        protected override IEnumerable<string> IsNotSatisfiedBecause(T aggregate)
         {
             var notStatisfiedReasons = _specifications
                 .Select(s => new
                 {
                     Specification = s,
-                    WhyIsNotStatisfied = s.WhyIsNotSatisfiedBy(account).ToList()
+                    WhyIsNotStatisfied = s.WhyIsNotSatisfiedBy(aggregate).ToList()
                 })
                 .Where(a => a.WhyIsNotStatisfied.Any())
                 .Select(a => $"{a.Specification.GetType().PrettyPrint()}: {string.Join(", ", a.WhyIsNotStatisfied)}")

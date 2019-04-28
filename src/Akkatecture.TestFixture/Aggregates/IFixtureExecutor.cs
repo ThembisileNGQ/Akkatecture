@@ -32,6 +32,6 @@ namespace Akkatecture.TestFixture.Aggregates
         where TAggregate : ReceivePersistentActor, IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
     {
-        IFixtureAsserter<TAggregate, TIdentity> When(params ICommand<TAggregate, TIdentity>[] command);
+        IFixtureAsserter<TAggregate, TIdentity> When(params ICommand<TAggregate, TIdentity>[] commands);
     }
 }

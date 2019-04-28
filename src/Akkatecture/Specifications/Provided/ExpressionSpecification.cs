@@ -49,9 +49,9 @@ namespace Akkatecture.Specifications.Provided
             return _string.Value;
         }
 
-        protected override IEnumerable<string> IsNotSatisfiedBecause(T account)
+        protected override IEnumerable<string> IsNotSatisfiedBecause(T aggregate)
         {
-            if (!_predicate(account))
+            if (!_predicate(aggregate))
             {
                 yield return $"'{_string.Value}' is not satisfied";
             }
