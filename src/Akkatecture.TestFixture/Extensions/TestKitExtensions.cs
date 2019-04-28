@@ -5,9 +5,9 @@ using Akka.Persistence;
 using Akka.TestKit;
 using Akkatecture.Aggregates;
 using Akkatecture.Core;
-using Akkatecture.TestFixture.Aggregates;
+using Akkatecture.TestFixtures.Aggregates;
 
-namespace Akkatecture.TestFixture.Extensions
+namespace Akkatecture.TestFixtures.Extensions
 {
     public static class TestKitExtensions
     {
