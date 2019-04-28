@@ -48,7 +48,7 @@ namespace Akkatecture.Tests.UnitTests.Subscribers
         [Category(Category)]
         public void Subscriber_ReceivedEvent_FromAggregatesEmit()
         {
-            var eventProbe = CreateTestProbe("probe");
+            var eventProbe = CreateTestProbe("event-probe");
             Sys.EventStream.Subscribe(eventProbe, typeof(TestSubscribedEventHandled<TestCreatedEvent>));
             Sys.ActorOf(Props.Create(() => new TestAggregateSubscriber()), "test-subscriber");        
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
@@ -68,7 +68,7 @@ namespace Akkatecture.Tests.UnitTests.Subscribers
         [Category(Category)]
         public void Subscriber_ReceivedAsyncEvent_FromAggregatesEmit()
         {
-            var eventProbe = CreateTestProbe("probe");
+            var eventProbe = CreateTestProbe("event-probe");
             Sys.EventStream.Subscribe(eventProbe, typeof(TestAsyncSubscribedEventHandled<TestCreatedEvent>));
             Sys.ActorOf(Props.Create(() => new TestAsyncAggregateSubscriber()), "test-subscriber");        
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");

@@ -30,7 +30,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         
         [Fact]
         [Category(Category)]
-        public void With_Test_Kit_InitialEvent_AfterAggregateCreation_TestCreatedEventEmitted()
+        public void InitialEvent_AfterAggregateCreation_TestCreatedEventEmitted()
         {
             var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
             var aggregateId = TestAggregateId.New;
@@ -46,7 +46,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         
         [Fact]
         [Category(Category)]
-        public void With_Test_Kit_InitialCommand_AfterAggregateCreation_TestCreatedEventEmitted()
+        public void InitialCommand_AfterAggregateCreation_TestCreatedEventEmitted()
         {
             var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
             var aggregateId = TestAggregateId.New;
@@ -62,7 +62,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         
         [Fact]
         [Category(Category)]
-        public void With_Test_Kit_InitialSnapshot_After_TestCreatedEventEmitted()
+        public void InitialSnapshot_After_TestCreatedEventEmitted()
         {
             var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
             var aggregateId = TestAggregateId.New;
@@ -76,7 +76,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
 
         [Fact]
         [Category(Category)]
-        public void With_Test_Kit_InitialState_AfterAggregateCreation_TestCreatedEventEmitted()
+        public void InitialState_AfterAggregateCreation_TestCreatedEventEmitted()
         {
             var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
             var aggregateId = TestAggregateId.New;
@@ -91,7 +91,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
 
         [Fact]
         [Category(Category)]
-        public void With_Test_Kit_EventContainerMetadata_AfterAggregateCreation_TestCreatedEventEmitted()
+        public void EventContainerMetadata_AfterAggregateCreation_TestCreatedEventEmitted()
         {
             var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
             var aggregateId = TestAggregateId.New;
@@ -114,7 +114,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
 
         [Fact]
         [Category(Category)]
-        public void With_Test_Kit_InitialState_AfterAggregateCreation_TestStateSignalled()
+        public void InitialState_AfterAggregateCreation_TestStateSignalled()
         {
             var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
             var aggregateId = TestAggregateId.New;
@@ -132,7 +132,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
 
         [Fact]
         [Category(Category)]
-        public void With_Test_Kit_TestCommand_AfterAggregateCreation_TestEventEmitted()
+        public void TestCommand_AfterAggregateCreation_TestEventEmitted()
         {
             var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
             var aggregateId = TestAggregateId.New;
@@ -150,7 +150,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
 
         [Fact]
         [Category(Category)]
-        public void With_Test_Kit_TestCommandTwice_AfterAggregateCreation_TestEventEmitted()
+        public void TestCommandTwice_AfterAggregateCreation_TestEventEmitted()
         {
             var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
             var aggregateId = TestAggregateId.New;
@@ -176,7 +176,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
 
         [Fact]
         [Category(Category)]
-        public void With_Test_Kit_TestEventSourcing_AfterManyTests_TestStateSignalled()
+        public void TestEventSourcing_AfterManyTests_TestStateSignalled()
         {
             var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
             var aggregateId = TestAggregateId.New;
@@ -197,7 +197,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         
         [Fact]
         [Category(Category)]
-        public void With_Test_Kit_TestEventMultipleEmitSourcing_AfterManyMultiCommand_TestStateSignalled()
+        public void TestEventMultipleEmitSourcing_AfterManyMultiCommand_TestStateSignalled()
         {
             var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
             var aggregateId = TestAggregateId.New;
@@ -216,7 +216,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
 
         [Fact]
         [Category(Category)]
-        public void With_Test_Kit_TestSnapShotting_AfterManyTests_TestStateSignalled()
+        public void TestSnapShotting_AfterManyTests_TestStateSignalled()
         {
             var fixture = new AggregateFixture<TestAggregate, TestAggregateId>(this);
             var aggregateId = TestAggregateId.New;

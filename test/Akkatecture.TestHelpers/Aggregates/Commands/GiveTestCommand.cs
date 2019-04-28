@@ -36,7 +36,7 @@ namespace Akkatecture.TestHelpers.Aggregates.Commands
             CommandId sourceId, 
             TestAggregateId receiverAggregateId,
             Test testToGive)
-            : base(aggregateId)
+            : base(aggregateId, sourceId)
         {
             TestToGive = testToGive;
             ReceiverAggregateId = receiverAggregateId;

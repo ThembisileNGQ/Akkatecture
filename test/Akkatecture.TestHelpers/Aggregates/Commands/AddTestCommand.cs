@@ -33,7 +33,7 @@ namespace Akkatecture.TestHelpers.Aggregates.Commands
             TestAggregateId aggregateId,
             CommandId sourceId,
             Test test)
-            : base(aggregateId)
+            : base(aggregateId, sourceId)
         {
             Test = test;
         }
