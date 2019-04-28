@@ -21,23 +21,22 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
 using Akka.Persistence;
 using Akkatecture.Aggregates;
+using Akkatecture.Aggregates.Snapshot;
 using Akkatecture.Commands;
 using Akkatecture.Core;
 
-namespace Akkatecture.TestFixtures.Aggregates
+namespace Akkatecture.TestFixture.Aggregates
 {
-    public interface IFixtureAsserter<TAggregate, TIdentity>
+    public interface IFixtureArranger<TAggregate, TIdentity>
         where TAggregate : ReceivePersistentActor, IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
     {
-        IFixtureAsserter<TAggregate, TIdentity> AndWhen(params ICommand<TAggregate, TIdentity>[] commands);
-        IFixtureAsserter<TAggregate, TIdentity> ThenExpect<TAggregateEvent>(Predicate<TAggregateEvent> aggregateEventPredicate = null)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>;
-        
-        IFixtureAsserter<TAggregate, TIdentity> ThenExpectDomainEvent<TAggregateEvent>(Predicate<DomainEvent<TAggregate, TIdentity, TAggregateEvent>> domainEventPredicate = null)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>;
+        IFixtureArranger<TAggregate, TIdentity> For(TIdentity aggregateId);
+        IFixtureExecutor<TAggregate, TIdentity> GivenNothing();
+        IFixtureExecutor<TAggregate, TIdentity> Given(params IAggregateEvent<TAggregate, TIdentity>[] aggregateEvents);
+        IFixtureExecutor<TAggregate, TIdentity> Given(IAggregateSnapshot<TAggregate, TIdentity> aggregateSnapshot, long snapshotSequenceNumber);
+        IFixtureExecutor<TAggregate, TIdentity> Given(params ICommand<TAggregate, TIdentity>[] commands);
     }
 }

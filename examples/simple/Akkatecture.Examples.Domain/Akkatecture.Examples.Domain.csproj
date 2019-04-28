@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <ProjectGuid>{F716A019-4FF5-4604-93A7-D4C9A994A290}</ProjectGuid>
+    <SonarQubeExclude>true</SonarQubeExclude>
   </PropertyGroup>
 
   <PropertyGroup>
