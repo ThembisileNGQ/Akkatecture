@@ -41,9 +41,9 @@ namespace Akkatecture.Specifications.Provided
             _specification = specification ?? throw new ArgumentNullException(nameof(specification));
         }
 
-        protected override IEnumerable<string> IsNotSatisfiedBecause(T account)
+        protected override IEnumerable<string> IsNotSatisfiedBecause(T aggregate)
         {
-            if (_specification.IsSatisfiedBy(account))
+            if (_specification.IsSatisfiedBy(aggregate))
             {
                 yield return $"Specification '{_specification.GetType().PrettyPrint()}' should not be satisfied";
             }
