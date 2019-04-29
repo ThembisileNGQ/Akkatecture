@@ -32,10 +32,5 @@ namespace Akkatecture.Configuration
             return ConfigurationFactory.FromResource<AkkatectureDefaultSettings>("Akkatecture.Configuration.reference.conf");
         }
 
-        public static Config OpinionatedConfig()
-        {
-            return ConfigurationFactory.FromResource<AkkatectureDefaultSettings>("Akkatecture.Configuration.defaults.conf");
-        }
-
     }
 }

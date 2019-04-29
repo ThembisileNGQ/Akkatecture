@@ -46,7 +46,8 @@ namespace Akkatecture.Commands
         protected DistinctCommand(
             TIdentity aggregateId)
         {
-            if (aggregateId == null) throw new ArgumentNullException(nameof(aggregateId));
+            if (aggregateId == null) 
+                throw new ArgumentNullException(nameof(aggregateId));
 
             _lazySourceId = new Lazy<ISourceId>(CalculateSourceId, LazyThreadSafetyMode.PublicationOnly);
 

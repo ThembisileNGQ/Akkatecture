@@ -66,6 +66,12 @@ namespace Akkatecture.Tests.UnitTests.Extensions
             aggregateName.Value.Should().Be(expectedAggregateName);
         }
 
+        [Fact]
+        public void AggregateName_WithNullString_Throws()
+        {
+            this.Invoking(test => new AggregateNameAttribute(null)).Should().Throw<ArgumentNullException>();
+        }
+
         public class FooId : Identity<FooId>
         {
             public FooId(string value) : base(value)

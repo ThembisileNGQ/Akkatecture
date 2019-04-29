@@ -112,7 +112,7 @@ namespace Akkatecture.Aggregates
             Id = id;
             PersistenceId = id.Value;
             Register(State);
-
+            SetSourceIdHistory(100);
             if (Settings.UseDefaultSnapshotRecover)
             {
                 Recover<SnapshotOffer>(Recover);
@@ -259,37 +259,6 @@ namespace Akkatecture.Aggregates
             Logger.Info($"[{Name}] With Id={Id} Published [{typeof(TEvent).PrettyPrint()}]");
         }
 
-        public void ApplyEvents(IReadOnlyCollection<IDomainEvent> domainEvents)
-        {
-            if (!domainEvents.Any())
-            {
-                return;
-            }
-
-            ApplyEvents(domainEvents.Select(e => e.GetAggregateEvent()));
-            foreach (var domainEvent in domainEvents.Where(e => e.Metadata.ContainsKey(MetadataKeys.SourceId)))
-            {
-                _previousSourceIds.Put(domainEvent.Metadata.SourceId);
-            }
-            Version = domainEvents.Max(e => e.AggregateSequenceNumber);
-        }
-
-        public void ApplyEvents(IEnumerable<IAggregateEvent> aggregateEvents)
-        {
-            if (Version > 0)
-                throw new InvalidOperationException($"Aggregate '{GetType().PrettyPrint()}' with ID '{Id}' already has events");
-
-            foreach (var aggregateEvent in aggregateEvents)
-            {
-                var e = aggregateEvent as IAggregateEvent<TAggregate, TIdentity>;
-                if (e == null)
-                    throw new ArgumentException($"Aggregate event of type '{aggregateEvent.GetType()}' does not belong with aggregate '{this}',");
-                
-
-
-                ApplyEvent(e);
-            }
-        }
         protected override bool AroundReceive(Receive receive, object message)
         {
             if (message is DistinctCommand<TAggregate, TIdentity> distinctCommand)
@@ -346,8 +315,6 @@ namespace Akkatecture.Aggregates
             Action<TAggregateState, IAggregateEvent> applyMethod;
             if (!ApplyMethodsFromState.TryGetValue(eventType, out applyMethod))
                 throw new NotImplementedException($"Aggregate State '{State.GetType().PrettyPrint()}' does have an 'Apply' method that takes aggregate event '{eventType.PrettyPrint()}' as argument");
-            
-
 
             var aggregateApplyMethod = applyMethod.Bind(State);
 
