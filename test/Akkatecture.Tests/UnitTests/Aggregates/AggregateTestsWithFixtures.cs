@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Akka.TestKit.Xunit2;
+using Akkatecture.Aggregates;
 using Akkatecture.Commands;
 using Akkatecture.TestFixture.Aggregates;
 using Akkatecture.TestFixture.Extensions;
@@ -63,6 +64,34 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
                 .Given(new TestCreatedEvent(aggregateId), new TestAddedEvent(new Test(TestId.New)))
                 .When(new AddTestCommand(aggregateId, commandId, new Test(testId)))
                 .ThenExpect<TestAddedEvent>(x => x.Test.Id == testId);
+        }
+        
+        [Fact]
+        [Category(Category)]
+        public void InitialEvent_AfterAggregateCreationWithNoTestPredicate_TestCreatedEventEmitted()
+        {
+            var aggregateId = TestAggregateId.New;
+            var commandId = CommandId.New;
+            var testId = TestId.New;
+            
+            this.FixtureFor<TestAggregate,TestAggregateId>(aggregateId)
+                .Given(new TestCreatedEvent(aggregateId), new TestAddedEvent(new Test(TestId.New)))
+                .When(new AddTestCommand(aggregateId, commandId, new Test(testId)))
+                .ThenExpect<TestAddedEvent>();
+        }
+        
+        [Fact]
+        [Category(Category)]
+        public void InitialEvent_AfterAggregateCreation_TestCreatedDomainEventEmitted()
+        {
+            var aggregateId = TestAggregateId.New;
+            var commandId = CommandId.New;
+            var testId = TestId.New;
+            
+            this.FixtureFor<TestAggregate,TestAggregateId>(aggregateId)
+                .Given(new TestCreatedEvent(aggregateId), new TestAddedEvent(new Test(TestId.New)))
+                .When(new AddTestCommand(aggregateId, commandId, new Test(testId)))
+                .ThenExpectDomainEvent<TestAddedEvent>();
         }
         
         [Fact]
