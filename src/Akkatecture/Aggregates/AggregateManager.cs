@@ -116,7 +116,7 @@ namespace Akkatecture.Aggregates
 
         protected virtual IActorRef CreateAggregate(TIdentity aggregateId)
         {
-            var aggregateRef = Context.ActorOf(Props.Create<TAggregate>(aggregateId), aggregateId.Value);
+            var aggregateRef = Context.ActorOf(Props.Create<TAggregate>(args: aggregateId), aggregateId.Value);
             Context.Watch(aggregateRef);
             return aggregateRef;
         }

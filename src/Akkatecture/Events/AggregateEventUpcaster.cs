@@ -127,7 +127,7 @@ namespace Akkatecture.Events
 
             if (!_upcastFunctions.TryGetValue(aggregateEventType, out upcaster))
             {
-                throw new ArgumentException();
+                throw new ArgumentException(nameof(aggregateEventType));
             }
 
             var evt = upcaster((TEventUpcaster)(object)this, aggregateEvent) as IAggregateEvent<TAggregate, TIdentity>;

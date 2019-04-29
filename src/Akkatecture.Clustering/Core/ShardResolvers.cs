@@ -46,7 +46,7 @@ namespace Akkatecture.Clustering.Core
             where TIdentity : IIdentity
         {
             if (message is null)
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(message));
 
             if (message is ICommand<TAggregate, TIdentity> command)
                 return Math.Abs(GetPersistenceHash(command.AggregateId.Value) % NumberOfShards).ToString();
@@ -62,7 +62,7 @@ namespace Akkatecture.Clustering.Core
             where TSagaLocator : ISagaLocator<TIdentity>
         {
             if (message is null)
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(message));
 
             var sagaLocator = (TSagaLocator)Activator.CreateInstance(typeof(TSagaLocator));
 
