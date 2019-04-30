@@ -121,7 +121,7 @@ namespace Akkatecture.TestFixture.Aggregates
             foreach (var command in commands)
             {
                 if(command == null)
-                    throw new ArgumentNullException(nameof(command));
+                    throw new NullReferenceException(nameof(command));
                 
                 AggregateRef.Tell(command);
             }

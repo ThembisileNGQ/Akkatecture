@@ -58,7 +58,7 @@ jobs:
         command: 'test'
         projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
         configuration: $(BuildConfiguration)
-        arguments: '/p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=$(Build.SourcesDirectory)/opencover.xml /p:Exclude="[xunit*]*'
+        arguments: '/p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=$(Build.SourcesDirectory)/opencover.xml /p:Exclude="[xunit*]*%2c[Akkatecture.TestHelpers*]*%2[Akkatecture.Tests*]*"'
         publishTestResults: true
 
     - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1

@@ -22,10 +22,14 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using Akkatecture.Aggregates;
 using Akkatecture.Clustering.Core;
 using Akkatecture.Commands;
 using Akkatecture.TestHelpers.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Commands;
+using Akkatecture.TestHelpers.Aggregates.Entities;
+using Akkatecture.TestHelpers.Aggregates.Events;
+using Akkatecture.TestHelpers.Aggregates.Sagas;
 using FluentAssertions;
 using Xunit;
 
@@ -33,6 +37,7 @@ namespace Akkatecture.Tests.UnitTests.Clustering.Sharding
 {
     public class ShardIdentityResolverTests
     {
+        //Aggregates
         [Theory]
         [InlineData(1)]
         [InlineData(3)]
@@ -41,7 +46,7 @@ namespace Akkatecture.Tests.UnitTests.Clustering.Sharding
         [InlineData(89)]
         [InlineData(120)]
         [InlineData(500)]
-        public void AggregateCommandIdentityExtractor_ValidMessage_ExtractsIdentity(int shardSize)
+        public void AggregateCommandIdentityExtractor_ValidMessage_ExtractsShardValue(int shardSize)
         {
             var aggregateId = TestAggregateId.New;
             var commandId = CommandId.New;
@@ -73,6 +78,60 @@ namespace Akkatecture.Tests.UnitTests.Clustering.Sharding
 
             // ReSharper disable once ExpressionIsAlwaysNull
             this.Invoking(test => shardResolver.AggregateShardResolver<TestAggregate, TestAggregateId>(message))
+                .Should().Throw<ArgumentNullException>();
+        }
+        
+        //Sagas
+        [Theory]
+        [InlineData(1)]
+        [InlineData(3)]
+        [InlineData(4)]
+        [InlineData(55)]
+        [InlineData(89)]
+        [InlineData(120)]
+        [InlineData(500)]
+        public void AggregateSagaIdentityExtractor_ValidMessage_ExtractsShardValue(int shardSize)
+        {
+            var aggregateId = TestAggregateId.New;
+            var receiverId = TestAggregateId.New;
+            var testId = TestId.New;
+            var test = new Test(testId);
+            var now = DateTimeOffset.UtcNow;
+            var aggregateSequenceNumber = 3;
+            var message =
+                new DomainEvent<TestAggregate, TestAggregateId, TestSentEvent>(
+                    aggregateId,
+                    new TestSentEvent(test, receiverId),
+                    new Metadata(),
+                    now,
+                    aggregateSequenceNumber);
+            var shardResolver = new ShardResolvers(shardSize);
+
+            var extractedShard = shardResolver.AggregateSagaShardResolver<TestSagaManager,TestSaga, TestSagaId, TestSagaLocator>(message);
+            var extractedShardValue = int.Parse(extractedShard);
+
+            extractedShardValue.Should().BeInRange(0, shardSize);
+        }
+
+        [Fact]
+        public void AggregateSagaIdentityExtractor_InValidObject_ThrowsArgumentException()
+        {
+            var message = string.Empty;
+            var shardResolver = new ShardResolvers(10);
+
+            this.Invoking(test => shardResolver.AggregateSagaShardResolver<TestSagaManager,TestSaga, TestSagaId, TestSagaLocator>(message))
+                .Should().Throw<ArgumentException>()
+                .WithMessage(nameof(message));
+        }
+
+        [Fact]
+        public void AggregateSagaIdentityExtractor_InValidObject_ThrowsArgumentNullException()
+        {
+            DomainEvent<TestAggregate, TestAggregateId, TestSentEvent> message = null;
+            var shardResolver = new ShardResolvers(10);
+
+            // ReSharper disable once ExpressionIsAlwaysNull
+            this.Invoking(test => shardResolver.AggregateSagaShardResolver<TestSagaManager,TestSaga, TestSagaId, TestSagaLocator>(message))
                 .Should().Throw<ArgumentNullException>();
         }
     }

@@ -112,7 +112,7 @@ namespace Akkatecture.Aggregates
             Id = id;
             PersistenceId = id.Value;
             Register(State);
-
+            SetSourceIdHistory(100);
             if (Settings.UseDefaultSnapshotRecover)
             {
                 Recover<SnapshotOffer>(Recover);
@@ -259,52 +259,9 @@ namespace Akkatecture.Aggregates
             Logger.Info($"[{Name}] With Id={Id} Published [{typeof(TEvent).PrettyPrint()}]");
         }
 
-        public void ApplyEvents(IReadOnlyCollection<IDomainEvent> domainEvents)
-        {
-            if (!domainEvents.Any())
-            {
-                return;
-            }
-
-            ApplyEvents(domainEvents.Select(e => e.GetAggregateEvent()));
-            foreach (var domainEvent in domainEvents.Where(e => e.Metadata.ContainsKey(MetadataKeys.SourceId)))
-            {
-                _previousSourceIds.Put(domainEvent.Metadata.SourceId);
-            }
-            Version = domainEvents.Max(e => e.AggregateSequenceNumber);
-        }
-
-        public void ApplyEvents(IEnumerable<IAggregateEvent> aggregateEvents)
-        {
-            if (Version > 0)
-                throw new InvalidOperationException($"Aggregate '{GetType().PrettyPrint()}' with ID '{Id}' already has events");
-
-            foreach (var aggregateEvent in aggregateEvents)
-            {
-                var e = aggregateEvent as IAggregateEvent<TAggregate, TIdentity>;
-                if (e == null)
-                    throw new ArgumentException($"Aggregate event of type '{aggregateEvent.GetType()}' does not belong with aggregate '{this}',");
-                
-
-
-                ApplyEvent(e);
-            }
-        }
         protected override bool AroundReceive(Receive receive, object message)
         {
-            if (message is DistinctCommand<TAggregate, TIdentity> distinctCommand)
-            {
-                PinnedCommand = distinctCommand;
-                if (HasSourceId(distinctCommand.SourceId))
-                {
-                    Logger.Error($"Aggregate with Id '{Id?.Value} has received a duplicate message {message.GetType().PrettyPrint()} with SourceId {distinctCommand.SourceId}");
-                    Reply(new FailedExecutionResult("duplicate message received"));
-                } else
-                {
-                    _previousSourceIds.Put(distinctCommand.SourceId);
-                    return base.AroundReceive(receive, message);
-                }
-            } else if (message is Command<TAggregate, TIdentity> command)
+            if (message is Command<TAggregate, TIdentity> command)
             {
                 PinnedCommand = command;
             }
@@ -346,8 +303,6 @@ namespace Akkatecture.Aggregates
             Action<TAggregateState, IAggregateEvent> applyMethod;
             if (!ApplyMethodsFromState.TryGetValue(eventType, out applyMethod))
                 throw new NotImplementedException($"Aggregate State '{State.GetType().PrettyPrint()}' does have an 'Apply' method that takes aggregate event '{eventType.PrettyPrint()}' as argument");
-            
-
 
             var aggregateApplyMethod = applyMethod.Bind(State);
 
@@ -468,16 +423,6 @@ namespace Akkatecture.Aggregates
             return true;
         }
 
-        protected void Register<TAggregateEvent>(Action<TAggregateEvent> handler)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
-        {
-            var eventType = typeof(TAggregateEvent);
-            if (_eventHandlers.ContainsKey(eventType))
-            {
-                throw new ArgumentException($"There's already a event handler registered for the aggregate event '{eventType.PrettyPrint()}'");
-            }
-            _eventHandlers[eventType] = e => handler((TAggregateEvent)e);
-        }
 
         protected void Register(IEventApplier<TAggregate, TIdentity> eventApplier)
         {

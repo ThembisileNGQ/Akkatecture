@@ -43,5 +43,9 @@
     <ProjectReference Include="..\..\src\Akkatecture\Akkatecture.csproj" />
     <ProjectReference Include="..\Akkatecture.TestHelpers\Akkatecture.TestHelpers.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="UnitTests\Clustering\Extensions" />
+  </ItemGroup>
   
 </Project>

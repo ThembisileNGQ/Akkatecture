@@ -25,6 +25,7 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
 using Akkatecture.TestHelpers.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Commands;
 using FluentAssertions;
@@ -46,6 +47,14 @@ namespace Akkatecture.Tests.UnitTests.Commands
             var sourceId = command.SourceId;
             
             sourceId.Value.Should().Be(expectedSouceId);
+            command.GetSourceId().Value.Should().Be(expectedSouceId);
+        }
+
+        [Fact]
+        public void InstantiatingDistinctCommand_WithNullId_ThrowsException()
+        {
+            this.Invoking(test => new TestDistinctCommand(null, 99))
+                .Should().Throw<ArgumentNullException>();
         }
     }
 }

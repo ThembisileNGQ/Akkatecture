@@ -297,11 +297,6 @@ namespace Akkatecture.Extensions
         
         internal static IReadOnlyList<Type> GetSagaEventSubscriptionTypes(this Type type)
         {
-            //TODO
-            //add checks for iaggregateroot
-            //add checks for iidentity
-            //add checks for iaggregatevent
-
             var interfaces = type
                 .GetTypeInfo()
                 .GetInterfaces()
