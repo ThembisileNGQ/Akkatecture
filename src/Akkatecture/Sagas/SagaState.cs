@@ -38,15 +38,6 @@ namespace Akkatecture.Sagas
         where TSaga : IAggregateRoot<TIdentity>
         where TIdentity : ISagaId
     {
-        private static readonly IReadOnlyDictionary<Type, Action<TMessageApplier, IAggregateEvent>> ApplyMethods;
-        private static readonly IReadOnlyDictionary<Type, Action<TMessageApplier, IAggregateSnapshot>> HydrateMethods;
-
-        static SagaState()
-        {
-            ApplyMethods = typeof(TMessageApplier).GetAggregateEventApplyMethods<TSaga, TIdentity, TMessageApplier>();
-            HydrateMethods = typeof(TMessageApplier).GetAggregateSnapshotHydrateMethods<TSaga, TIdentity, TMessageApplier>();
-        }
-
         protected SagaState()
         {
             var me = this as TMessageApplier;

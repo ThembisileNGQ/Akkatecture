@@ -45,9 +45,6 @@ namespace Akkatecture.Aggregates
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
     {
-        private static readonly IReadOnlyDictionary<Type, Action<TMessageApplier, IAggregateEvent>> ApplyMethods = typeof(TMessageApplier).GetAggregateEventApplyMethods<TAggregate, TIdentity, TMessageApplier>();
-        private static readonly IReadOnlyDictionary<Type, Action<TMessageApplier, IAggregateSnapshot>> HydrateMethods = typeof(TMessageApplier).GetAggregateSnapshotHydrateMethods<TAggregate, TIdentity, TMessageApplier>();
-
         protected AggregateState()
         {
             var me = this as TMessageApplier;
