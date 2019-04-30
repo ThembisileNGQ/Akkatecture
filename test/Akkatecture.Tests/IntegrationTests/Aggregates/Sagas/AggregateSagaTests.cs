@@ -31,6 +31,7 @@ using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Entities;
 using Akkatecture.TestHelpers.Aggregates.Sagas;
 using Akkatecture.TestHelpers.Aggregates.Sagas.Events;
+using FluentAssertions;
 using Xunit;
 
 namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
@@ -51,6 +52,8 @@ namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
         {
             var eventProbe = CreateTestProbe("event-probe");
             Sys.EventStream.Subscribe(eventProbe, typeof(DomainEvent<TestSaga, TestSagaId, TestSagaStartedEvent>));
+            Sys.EventStream.Subscribe(eventProbe, typeof(DomainEvent<TestSaga, TestSagaId, TestSagaCompletedEvent>));
+            Sys.EventStream.Subscribe(eventProbe, typeof(DomainEvent<TestSaga, TestSagaId, TestSagaTransactionCompletedEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
             Sys.ActorOf(Props.Create(() => new TestSagaManager(() => new TestSaga(aggregateManager))), "test-sagaaggregatemanager");
             
@@ -67,8 +70,6 @@ namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
             var nextAggregateCommand = new AddTestCommand(senderAggregateId, CommandId.New, senderTest);
             aggregateManager.Tell(nextAggregateCommand);
 
-
-
             var sagaStartingCommand = new GiveTestCommand(senderAggregateId, CommandId.New,receiverAggregateId,senderTest);
             aggregateManager.Tell(sagaStartingCommand);
             
@@ -76,9 +77,15 @@ namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
 
             eventProbe.
                 ExpectMsg<DomainEvent<TestSaga, TestSagaId, TestSagaStartedEvent>>(
-                x => x.AggregateEvent.Sender.Equals(senderAggregateId)
-                    && x.AggregateEvent.Receiver.Equals(receiverAggregateId)
-                    && x.AggregateEvent.SentTest.Equals(senderTest));
+                    x => x.AggregateEvent.Sender.Equals(senderAggregateId)
+                         && x.AggregateEvent.Receiver.Equals(receiverAggregateId)
+                         && x.AggregateEvent.SentTest.Equals(senderTest));
+            
+            eventProbe.
+                ExpectMsg<DomainEvent<TestSaga, TestSagaId, TestSagaTransactionCompletedEvent>>();
+            
+            eventProbe.
+                ExpectMsg<DomainEvent<TestSaga, TestSagaId, TestSagaCompletedEvent>>();
         }
     }
 }

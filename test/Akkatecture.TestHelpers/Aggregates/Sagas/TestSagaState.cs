@@ -49,7 +49,6 @@ namespace Akkatecture.TestHelpers.Aggregates.Sagas
 
         public void Apply(TestSagaCompletedEvent aggregateEvent)
         {
-            //do nothing
         }
     }
 }
