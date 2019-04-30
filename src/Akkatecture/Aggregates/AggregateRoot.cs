@@ -47,13 +47,9 @@ namespace Akkatecture.Aggregates
         where TAggregateState : AggregateState<TAggregate,TIdentity, IMessageApplier<TAggregate,TIdentity>>
         where TIdentity : IIdentity
     {
-        private static readonly IReadOnlyDictionary<Type, Action<TAggregateState, IAggregateEvent>> ApplyMethodsFromState;
-        private static readonly IReadOnlyDictionary<Type, Action<TAggregateState, IAggregateSnapshot>> HydrateMethodsFromState;
+        private static readonly IReadOnlyDictionary<Type, Action<TAggregateState, IAggregateEvent>> ApplyMethodsFromState = typeof(TAggregateState).GetAggregateStateEventApplyMethods<TAggregate, TIdentity, TAggregateState>();
+        private static readonly IReadOnlyDictionary<Type, Action<TAggregateState, IAggregateSnapshot>> HydrateMethodsFromState =  typeof(TAggregateState).GetAggregateSnapshotHydrateMethods<TAggregate, TIdentity, TAggregateState>();
         public static readonly IAggregateName AggregateName = typeof(TAggregate).GetAggregateName();
-        private readonly List<IEventApplier<TAggregate, TIdentity>> _eventAppliers = new List<IEventApplier<TAggregate, TIdentity>>();
-        private readonly List<ISnapshotHydrater<TAggregate, TIdentity>> _snapshotHydraters = new List<ISnapshotHydrater<TAggregate, TIdentity>>();
-        private readonly Dictionary<Type, Action<object>> _eventHandlers = new Dictionary<Type, Action<object>>();
-        private readonly Dictionary<Type, Action<object>> _snapshotHandlers = new Dictionary<Type, Action<object>>();
         protected CircularBuffer<ISourceId> _previousSourceIds = new CircularBuffer<ISourceId>(100);
         protected ICommand<TAggregate, TIdentity> PinnedCommand { get; private set; }
         protected object PinnedReply { get; private set; }
@@ -71,15 +67,6 @@ namespace Akkatecture.Aggregates
         public bool IsNew => Version <= 0;
         public override Recovery Recovery => new Recovery(SnapshotSelectionCriteria.Latest);
         public AggregateRootSettings Settings { get; }
-
-        static AggregateRoot()
-        {
-            ApplyMethodsFromState = typeof(TAggregateState)
-                .GetAggregateStateEventApplyMethods<TAggregate, TIdentity, TAggregateState>();
-
-            HydrateMethodsFromState = typeof(TAggregateState)
-                .GetAggregateSnapshotHydrateMethods<TAggregate, TIdentity, TAggregateState>();
-        }
 
         protected AggregateRoot(TIdentity id)
         {
@@ -111,7 +98,6 @@ namespace Akkatecture.Aggregates
             _snapshotDefinitionService = new SnapshotDefinitionService(Logger);
             Id = id;
             PersistenceId = id.Value;
-            Register(State);
             SetSourceIdHistory(100);
             if (Settings.UseDefaultSnapshotRecover)
             {
@@ -327,16 +313,6 @@ namespace Akkatecture.Aggregates
 
         protected virtual void ApplyEvent(IAggregateEvent<TAggregate, TIdentity> aggregateEvent)
         {
-            var eventType = aggregateEvent.GetType();
-            if (_eventHandlers.ContainsKey(eventType))
-            {
-                _eventHandlers[eventType](aggregateEvent);
-            }
-            else if (_eventAppliers.Any(ea => ea.Apply((TAggregate)this, aggregateEvent)))
-            {
-                // Already done
-            }
-
             var eventApplier = GetEventApplyMethods(aggregateEvent);
 
             eventApplier(aggregateEvent);
@@ -346,16 +322,6 @@ namespace Akkatecture.Aggregates
 
         protected virtual void HydrateSnapshot(IAggregateSnapshot<TAggregate, TIdentity> aggregateSnapshot, long version)
         {
-            var snapshotType = aggregateSnapshot.GetType();
-            if (_snapshotHandlers.ContainsKey(snapshotType))
-            {
-                _snapshotHandlers[snapshotType](aggregateSnapshot);
-            }
-            else if (_snapshotHydraters.Any(ea => ea.Hydrate((TAggregate)this, aggregateSnapshot)))
-            {
-                // Already done
-            }
-
             var snapshotHydrater = GetSnapshotHydrateMethods(aggregateSnapshot);
 
             snapshotHydrater(aggregateSnapshot);
@@ -421,12 +387,6 @@ namespace Akkatecture.Aggregates
         {
             Logger.Info($"Aggregate [{Name}] With Id={Id} has completed recovering from it's journal(s)");
             return true;
-        }
-
-
-        protected void Register(IEventApplier<TAggregate, TIdentity> eventApplier)
-        {
-            _eventAppliers.Add(eventApplier);
         }
 
         public override string ToString()

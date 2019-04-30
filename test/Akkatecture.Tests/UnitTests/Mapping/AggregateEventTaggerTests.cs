@@ -25,10 +25,12 @@ using System;
 using System.ComponentModel;
 using Akka.Persistence.Journal;
 using Akkatecture.Aggregates;
+using Akkatecture.Commands;
 using Akkatecture.Core;
 using Akkatecture.Events;
 using Akkatecture.Extensions;
 using Akkatecture.TestHelpers.Aggregates;
+using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Entities;
 using Akkatecture.TestHelpers.Aggregates.Events;
 using FluentAssertions;
@@ -131,6 +133,18 @@ namespace Akkatecture.Tests.UnitTests.Mapping
             var aggregateEventTagger = new AggregateEventTagger();
 
             aggregateEventTagger.Manifest(null).Should().Be(string.Empty);
+        }
+        
+        [Fact]
+        [Category(Category)]
+        public void AggregateEventTagger_TaggingNonEvent_ShouldBeLeftAlone()
+        {
+            var aggregateEventTagger = new AggregateEventTagger();
+            var command = new CreateTestCommand(TestAggregateId.New, CommandId.New);
+
+            var untagged = aggregateEventTagger.ToJournal(command);
+
+            command.Should().Be(untagged);
         }
     }
 }

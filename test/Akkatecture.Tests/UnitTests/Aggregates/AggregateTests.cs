@@ -287,7 +287,6 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
                 aggregateManager.Tell(testCommand);
             }
             
-
             eventProbe
                 .ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>>(
                 x => x.AggregateEvent.LastSequenceNr == 11

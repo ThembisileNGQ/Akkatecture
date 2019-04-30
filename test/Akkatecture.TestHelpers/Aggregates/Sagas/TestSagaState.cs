@@ -41,12 +41,10 @@ namespace Akkatecture.TestHelpers.Aggregates.Sagas
             Sender = aggregateEvent.Sender;
             Receiver = aggregateEvent.Receiver;
             Test = aggregateEvent.SentTest;
-            Start();
         }
 
         public void Apply(TestSagaTransactionCompletedEvent aggregateEvent)
         {
-            Complete();
         }
 
         public void Apply(TestSagaCompletedEvent aggregateEvent)

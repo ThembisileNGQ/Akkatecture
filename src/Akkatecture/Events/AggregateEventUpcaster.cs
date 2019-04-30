@@ -33,8 +33,7 @@ using Akkatecture.Extensions;
 
 namespace Akkatecture.Events
 {
-    public abstract class AggregateEventUpcaster<TAggregate, TIdentity> : AggregateEventUpcaster<TAggregate, TIdentity,
-        IEventUpcaster<TAggregate, TIdentity>>
+    public abstract class AggregateEventUpcaster<TAggregate, TIdentity> : AggregateEventUpcaster<TAggregate, TIdentity, IEventUpcaster<TAggregate, TIdentity>>
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
     {
@@ -63,7 +62,6 @@ namespace Akkatecture.Events
                     $"Event applier of type '{GetType().PrettyPrint()}' has a wrong generic argument '{typeof(TEventUpcaster).PrettyPrint()}'");
             }
             _upcastFunctions  = GetType().GetAggregateEventUpcastMethods<TAggregate, TIdentity, TEventUpcaster>();
-          
         }
         
         private bool ShouldUpcast(object potentialUpcast)
@@ -79,15 +77,8 @@ namespace Akkatecture.Events
                     
                     return true;
                 }
-                else
-                {
-                    _decisionCache.AddOrSet(eventType, false);
-                    return false;
-                }
-                
             }
-
-            _decisionCache.AddOrSet(type, false);
+            
             return false;
         }
 

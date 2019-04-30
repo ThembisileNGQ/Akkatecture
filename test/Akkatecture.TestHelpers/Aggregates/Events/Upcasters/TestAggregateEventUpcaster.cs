@@ -25,12 +25,20 @@ using Akkatecture.Events;
 
 namespace Akkatecture.TestHelpers.Aggregates.Events.Upcasters
 {
+    public class UnInstantiableAggregateEventUpcaster : AggregateEventUpcaster<TestAggregate,TestAggregateId, TestAggregateEventUpcaster>,
+        IUpcast<TestAddedEvent, TestAddedEventV2>
+    {
+        public TestAddedEventV2 Upcast(TestAddedEvent aggregateEvent)
+        {
+            return new TestAddedEventV2(aggregateEvent.Test, "default upcasted string");
+        }
+    }
     public class TestAggregateEventUpcaster : AggregateEventUpcaster<TestAggregate,TestAggregateId>,
         IUpcast<TestCreatedEvent,TestCreatedEventV2>
     {
         public TestCreatedEventV2 Upcast(TestCreatedEvent aggregateEvent)
         {
-            return new TestCreatedEventV2(aggregateEvent.TestAggregateId, "newArgs");
+            return new TestCreatedEventV2(aggregateEvent.TestAggregateId, "default upcasted string");
         }
     }
 }

@@ -30,7 +30,7 @@ using Akkatecture.Aggregates;
 
 namespace Akkatecture.Sagas.AggregateSaga
 {
-    public interface IAggregateSaga<TIdentity> : ISaga<TIdentity,ISagaState<TIdentity>>, IAggregateRoot<TIdentity>
+    public interface IAggregateSaga<TIdentity> : IAggregateRoot<TIdentity>
         where TIdentity : ISagaId
     {
     }

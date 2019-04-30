@@ -30,6 +30,7 @@ using Akkatecture.Core;
 using Akkatecture.Extensions;
 using Akkatecture.TestHelpers.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Commands;
+using Akkatecture.TestHelpers.Aggregates.Entities;
 using Akkatecture.TestHelpers.Aggregates.Events;
 using Akkatecture.TestHelpers.Aggregates.Events.Upcasters;
 using FluentAssertions;
@@ -43,7 +44,7 @@ namespace Akkatecture.Tests.UnitTests.Mapping
 
         [Fact]
         [Category(Category)]
-        public void CommittedEvent_Tagged_ContainsTaggedElements()
+        public void CommittedEvent_WithUpgradableEvent_GetsUpgrades()
         {
             var aggregateEventUpcaster = new TestAggregateEventUpcaster();
             var aggregateSequenceNumber = 3;
@@ -72,16 +73,48 @@ namespace Akkatecture.Tests.UnitTests.Mapping
             var eventSequence = aggregateEventUpcaster.FromJournal(committedEvent, string.Empty);
             var upcastedEvent = eventSequence.Events.Single();
 
-            if (upcastedEvent is ICommittedEvent<TestAggregate, TestAggregateId, TestCreatedEventV2> e)
-            {
-                e.AggregateEvent.GetType().Should().Be<TestCreatedEventV2>();
-            }
-            else
-            {
-                false.Should().BeTrue();
-            }
+            upcastedEvent
+                .As<ICommittedEvent<TestAggregate, TestAggregateId, TestCreatedEventV2>>()
+                .AggregateEvent.Name
+                .Should().Be("default upcasted string");
 
         }
+        
+        [Fact]
+        [Category(Category)]
+        public void Upcasting_UnsupportedEvent_ThrowsException()
+        {
+            var aggregateEventUpcaster = new TestAggregateEventUpcaster();
+            var aggregateEvent = new TestAddedEvent(Test.New);
+            
+            this.Invoking(test => aggregateEventUpcaster.Upcast(aggregateEvent))
+                .Should().Throw<ArgumentException>();
+
+        }
+        
+        [Fact]
+        [Category(Category)]
+        public void Instantiating_UnInstantiableUpcaster_ThrowsException()
+        {
+            this.Invoking(test => new UnInstantiableAggregateEventUpcaster())
+                .Should().Throw<InvalidOperationException>();
+
+        }
+        
+        [Fact]
+        [Category(Category)]
+        public void NonCommittedEvent_WhenRead_IsReturnedUnchanged()
+        {
+            var message = new CreateTestCommand(TestAggregateId.New,CommandId.New);
+            var eventUpcaster = new TestAggregateEventUpcaster();
+
+            var unchanged = eventUpcaster.FromJournal(message, string.Empty);
+
+            unchanged.Events.Single().As<CreateTestCommand>().GetSourceId().Should().Be(message.GetSourceId());
+            unchanged.Events.Single().As<CreateTestCommand>().AggregateId.Should().Be(message.AggregateId);
+        }
+        
+        
 
     }
 }
