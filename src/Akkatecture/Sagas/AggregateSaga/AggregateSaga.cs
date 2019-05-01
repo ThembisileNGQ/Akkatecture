@@ -56,7 +56,7 @@ namespace Akkatecture.Sagas.AggregateSaga
         protected ISnapshotDefinitionService _snapshotDefinitionService;
         protected ISnapshotStrategy SnapshotStrategy { get; set; } = SnapshotNeverStrategy.Instance;
         public int? SnapshotVersion { get; private set; }
-        public TSagaState State { get; protected set; }
+        public TSagaState State { get; }
         public IAggregateName Name => SagaName;
         public override string PersistenceId { get; }
         public TIdentity Id { get; }

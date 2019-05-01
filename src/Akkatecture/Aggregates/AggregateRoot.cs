@@ -59,7 +59,7 @@ namespace Akkatecture.Aggregates
         protected ISnapshotDefinitionService _snapshotDefinitionService;
         protected ISnapshotStrategy SnapshotStrategy { get; set; } = SnapshotNeverStrategy.Instance;
         public int? SnapshotVersion { get; private set; }
-        public TAggregateState State { get; protected set; }
+        public TAggregateState State { get;  }
         public IAggregateName Name => AggregateName;
         public override string PersistenceId { get; }
         public TIdentity Id { get; }
