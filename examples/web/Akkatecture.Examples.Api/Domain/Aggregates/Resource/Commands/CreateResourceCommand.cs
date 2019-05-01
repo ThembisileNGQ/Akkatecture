@@ -50,7 +50,6 @@ namespace Akkatecture.Examples.Api.Domain.Aggregates.Resource.Commands
                 var aggregateEvent = new ResourceCreatedEvent();
                 aggregate.Emit(aggregateEvent);
 
-
                 var executionResult = new SuccessExecutionResult();
                 context.Sender.Tell(executionResult);
             }

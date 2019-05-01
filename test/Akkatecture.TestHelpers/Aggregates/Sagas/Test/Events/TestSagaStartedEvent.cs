@@ -23,6 +23,7 @@
 
 using Akkatecture.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Entities;
+using Akkatecture.TestHelpers.Aggregates.Sagas.Test;
 
 namespace Akkatecture.TestHelpers.Aggregates.Sagas.Events
 {
@@ -30,12 +31,12 @@ namespace Akkatecture.TestHelpers.Aggregates.Sagas.Events
     {
         public TestAggregateId Sender { get; }
         public TestAggregateId Receiver { get; }
-        public Test SentTest { get; }
+        public Entities.Test SentTest { get; }
 
         public TestSagaStartedEvent(
             TestAggregateId sender,
             TestAggregateId receiver,
-            Test sentTest)
+            Entities.Test sentTest)
         {
             Sender = sender;
             Receiver = receiver;

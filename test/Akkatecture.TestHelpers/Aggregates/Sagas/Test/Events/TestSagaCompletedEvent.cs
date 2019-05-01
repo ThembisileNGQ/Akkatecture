@@ -21,26 +21,18 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Akkatecture.TestHelpers.Akka
+using Akkatecture.Aggregates;
+using Akkatecture.TestHelpers.Aggregates.Sagas.Test;
+
+namespace Akkatecture.TestHelpers.Aggregates.Sagas.Events
 {
-    public static class Configuration
+    public class TestSagaCompletedEvent : AggregateEvent<TestSaga, TestSagaId>
     {
-        public static string Config =
-            @"  akka.loglevel = ""DEBUG""
-                akka.stdout-loglevel = ""DEBUG""
-                akka.actor.serialize-messages = on
-                loggers = [""Akka.TestKit.TestEventListener, Akka.TestKit""] 
-                akka.persistence.snapshot-store {
-                    plugin = ""akka.persistence.snapshot-store.inmem""
-                    # List of snapshot stores to start automatically. Use "" for the default snapshot store.
-                    auto-start-snapshot-stores = []
-                }
-                akka.persistence.snapshot-store.inmem {
-                    # Class name of the plugin.
-                    class = ""Akka.Persistence.Snapshot.MemorySnapshotStore, Akka.Persistence""
-                    # Dispatcher for the plugin actor.
-                    plugin-dispatcher = ""akka.actor.default-dispatcher""
-                }
-            ";
+        public TestSagaState State { get; }
+
+        public TestSagaCompletedEvent(TestSagaState state)
+        {
+            State = state;
+        }
     }
 }

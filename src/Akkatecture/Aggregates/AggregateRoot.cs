@@ -58,7 +58,6 @@ namespace Akkatecture.Aggregates
         protected IEventDefinitionService _eventDefinitionService;
         protected ISnapshotDefinitionService _snapshotDefinitionService;
         protected ISnapshotStrategy SnapshotStrategy { get; set; } = SnapshotNeverStrategy.Instance;
-        public int? SnapshotVersion { get; private set; }
         public TAggregateState State { get;  }
         public IAggregateName Name => AggregateName;
         public override string PersistenceId { get; }
@@ -288,7 +287,7 @@ namespace Akkatecture.Aggregates
 
             Action<TAggregateState, IAggregateEvent> applyMethod;
             if (!ApplyMethodsFromState.TryGetValue(eventType, out applyMethod))
-                throw new NotImplementedException($"Aggregate State '{State.GetType().PrettyPrint()}' does have an 'Apply' method that takes aggregate event '{eventType.PrettyPrint()}' as argument");
+                throw new NotImplementedException($"Aggregate State '{State.GetType().PrettyPrint()}' does not have an 'Apply' method that takes aggregate event type '{eventType.PrettyPrint()}' as argument");
 
             var aggregateApplyMethod = applyMethod.Bind(State);
 
@@ -302,7 +301,7 @@ namespace Akkatecture.Aggregates
 
             Action<TAggregateState, IAggregateSnapshot> hydrateMethod;
             if (!HydrateMethodsFromState.TryGetValue(snapshotType, out hydrateMethod))
-                throw new NotImplementedException($"Aggregate State '{State.GetType().PrettyPrint()}' does have an 'Apply' method that takes aggregate event '{snapshotType.PrettyPrint()}' as argument");
+                throw new NotImplementedException($"Aggregate State '{State.GetType().PrettyPrint()}' does not have a 'Hydrate' method that takes aggregate snapshot type '{snapshotType.PrettyPrint()}' as argument");
             
 
 

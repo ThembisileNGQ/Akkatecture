@@ -21,17 +21,29 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
 using Akkatecture.Aggregates;
+using Akkatecture.Sagas;
+using Akkatecture.TestHelpers.Aggregates.Events;
 
-namespace Akkatecture.TestHelpers.Aggregates.Sagas.Events
+namespace Akkatecture.TestHelpers.Aggregates.Sagas
 {
-    public class TestSagaCompletedEvent : AggregateEvent<TestSaga, TestSagaId>
+    public class TestAsyncSagaLocator : ISagaLocator<TestAsyncSagaId>
     {
-        public TestSagaState State { get; }
-
-        public TestSagaCompletedEvent(TestSagaState state)
+        public TestAsyncSagaId LocateSaga(IDomainEvent domainEvent)
         {
-            State = state;
+            var moniker = "testSaga";
+            switch (domainEvent.GetAggregateEvent())
+            {
+                case TestSentEvent evt:
+                    return new TestAsyncSagaId($"{moniker}-{evt.Test.Id}");
+
+                case TestReceivedEvent evt:
+                    return new TestAsyncSagaId($"{moniker}-{evt.Test.Id}");
+
+                default:
+                    throw new ArgumentException(nameof(domainEvent));
+            }
         }
     }
 }

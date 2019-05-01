@@ -55,7 +55,6 @@ namespace Akkatecture.Sagas.AggregateSaga
         protected IEventDefinitionService _eventDefinitionService;
         protected ISnapshotDefinitionService _snapshotDefinitionService;
         protected ISnapshotStrategy SnapshotStrategy { get; set; } = SnapshotNeverStrategy.Instance;
-        public int? SnapshotVersion { get; private set; }
         public TSagaState State { get; }
         public IAggregateName Name => SagaName;
         public override string PersistenceId { get; }
@@ -343,7 +342,7 @@ namespace Akkatecture.Sagas.AggregateSaga
             if (!ApplyMethodsFromState.TryGetValue(eventType, out applyMethod))
             {
                 throw new NotImplementedException(
-                    $"Aggregate State '{State.GetType().PrettyPrint()}' does have an 'Apply' method that takes aggregate event '{eventType.PrettyPrint()}' as argument");
+                    $"Aggregate State '{State.GetType().PrettyPrint()}' does not have an 'Apply' method that takes aggregate event type '{eventType.PrettyPrint()}' as argument");
             }
 
             var aggregateApplyMethod = applyMethod.Bind(State);
@@ -358,56 +357,6 @@ namespace Akkatecture.Sagas.AggregateSaga
             eventApplier(aggregateEvent);
 
             Version++;
-        }
-
-        public void ApplyEvents(IEnumerable<IAggregateEvent> aggregateEvents)
-        {
-            if (Version > 0)
-            {
-                throw new InvalidOperationException($"Aggregate '{GetType().PrettyPrint()}' with ID '{Id}' already has events");
-            }
-
-            foreach (var aggregateEvent in aggregateEvents)
-            {
-                var e = aggregateEvent as IAggregateEvent<TAggregateSaga, TIdentity>;
-                if (e == null)
-                {
-                    throw new ArgumentException($"Aggregate event of type '{aggregateEvent.GetType()}' does not belong with aggregate '{this}',");
-                }
-
-                ApplyEvent(e);
-            }
-        }
-
-        public void ApplyEvents(IReadOnlyCollection<IDomainEvent> domainEvents)
-        {
-            if (!domainEvents.Any())
-            {
-                return;
-            }
-
-            ApplyEvents(domainEvents.Select(e => e.GetAggregateEvent()));
-            foreach (var domainEvent in domainEvents.Where(e => e.Metadata.ContainsKey(MetadataKeys.SourceId)))
-            {
-                _previousSourceIds.Put(domainEvent.Metadata.SourceId);
-            }
-            Version = domainEvents.Max(e => e.AggregateSequenceNumber);
-        }
-
-        protected virtual bool Recover(IAggregateEvent<TAggregateSaga, TIdentity> aggregateEvent)
-        {
-            try
-            {
-                Logger.Debug($"Recovering with event of type [{aggregateEvent.GetType().PrettyPrint()}] ");
-                ApplyEvent(aggregateEvent);
-            }
-            catch (Exception exception)
-            {
-                Logger.Error($"Recovering with event of type [{aggregateEvent.GetType().PrettyPrint()}] caused an exception {exception.GetType().PrettyPrint()}");
-                return false;
-            }
-
-            return true;
         }
 
         protected virtual bool Recover(ICommittedEvent<TAggregateSaga, TIdentity, IAggregateEvent<TAggregateSaga, TIdentity>> domainEvent)
@@ -462,7 +411,7 @@ namespace Akkatecture.Sagas.AggregateSaga
             if (!HydrateMethodsFromState.TryGetValue(snapshotType, out hydrateMethod))
             {
                 throw new NotImplementedException(
-                    $"Aggregate State '{State.GetType().PrettyPrint()}' does have an 'Apply' method that takes aggregate event '{snapshotType.PrettyPrint()}' as argument");
+                    $"Aggregate State '{State.GetType().PrettyPrint()}' does not have an 'Hydrate' method that takes aggregate snapshot type '{snapshotType.PrettyPrint()}' as argument");
             }
 
             var snapshotHydrateMethod = hydrateMethod.Bind(State);

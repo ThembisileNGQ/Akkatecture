@@ -64,7 +64,8 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             
             eventProbe
                 .ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent>>(
-                x => x.AggregateEvent.TestAggregateId.Equals(aggregateId));
+                x => x.AggregateEvent.TestAggregateId.Equals(aggregateId) &&
+                     x.Metadata.ContainsKey("some-key"));
         }
         
         

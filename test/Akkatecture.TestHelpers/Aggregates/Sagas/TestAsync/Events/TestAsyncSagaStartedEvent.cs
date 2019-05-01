@@ -21,26 +21,29 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Akkatecture.TestHelpers.Akka
+using Akkatecture.Aggregates;
+using Akkatecture.TestHelpers.Aggregates.Entities;
+using Akkatecture.TestHelpers.Aggregates.Sagas.TestAsync;
+
+namespace Akkatecture.TestHelpers.Aggregates.Sagas.Events
 {
-    public static class Configuration
+    public class TestAsyncSagaStartedEvent : AggregateEvent<TestAsyncSaga,TestAsyncSagaId>
     {
-        public static string Config =
-            @"  akka.loglevel = ""DEBUG""
-                akka.stdout-loglevel = ""DEBUG""
-                akka.actor.serialize-messages = on
-                loggers = [""Akka.TestKit.TestEventListener, Akka.TestKit""] 
-                akka.persistence.snapshot-store {
-                    plugin = ""akka.persistence.snapshot-store.inmem""
-                    # List of snapshot stores to start automatically. Use "" for the default snapshot store.
-                    auto-start-snapshot-stores = []
-                }
-                akka.persistence.snapshot-store.inmem {
-                    # Class name of the plugin.
-                    class = ""Akka.Persistence.Snapshot.MemorySnapshotStore, Akka.Persistence""
-                    # Dispatcher for the plugin actor.
-                    plugin-dispatcher = ""akka.actor.default-dispatcher""
-                }
-            ";
+        private readonly Entities.Test _sentTest;
+        public TestAggregateId Sender { get; }
+        public TestAggregateId Receiver { get; }
+
+        public Entities.Test SentTest => _sentTest;
+
+        public TestAsyncSagaStartedEvent(
+            TestAggregateId sender,
+            TestAggregateId receiver,
+            Entities.Test sentTest)
+        {
+            Sender = sender;
+            Receiver = receiver;
+            _sentTest = sentTest;
+        }
+
     }
 }

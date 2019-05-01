@@ -34,10 +34,8 @@ namespace Akkatecture.Aggregates
     {
         IAggregateName Name { get; }
         long Version { get; }
-        bool IsNew { get; }
-        int? SnapshotVersion { get; }        
+        bool IsNew { get; }      
         bool HasSourceId(ISourceId sourceId);
-
         IIdentity GetIdentity();
     }
 

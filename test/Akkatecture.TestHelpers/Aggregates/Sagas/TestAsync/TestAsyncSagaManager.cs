@@ -24,12 +24,14 @@
 using System;
 using System.Linq.Expressions;
 using Akkatecture.Sagas.AggregateSaga;
+using Akkatecture.TestHelpers.Aggregates.Sagas.Test;
+using Akkatecture.TestHelpers.Aggregates.Sagas.TestAsync;
 
 namespace Akkatecture.TestHelpers.Aggregates.Sagas
 {
-    public class TestSagaManager : AggregateSagaManager<TestSaga,TestSagaId,TestSagaLocator>
+    public class TestAsyncSagaManager : AggregateSagaManager<TestAsyncSaga,TestAsyncSagaId,TestAsyncSagaLocator>
     {
-        public TestSagaManager(Expression<Func<TestSaga>> sagaFactory)
+        public TestAsyncSagaManager(Expression<Func<TestAsyncSaga>> sagaFactory)
             : base(sagaFactory)
         {
         }

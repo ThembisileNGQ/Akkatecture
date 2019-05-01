@@ -22,6 +22,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Akka.Persistence;
 using Akkatecture.Aggregates;
@@ -60,7 +61,6 @@ namespace Akkatecture.TestHelpers.Aggregates
             Command<TestDomainErrorCommand>(Execute);
 
             Command<SaveSnapshotSuccess>(SnapshotStatus);
-            Command<SaveSnapshotFailure>(SnapshotStatus);
 
             SetSnapshotStrategy(new SnapshotEveryFewVersionsStrategy(10));
         }
@@ -69,7 +69,7 @@ namespace Akkatecture.TestHelpers.Aggregates
         {
             if (IsNew)
             {
-                Emit(new TestCreatedEvent(command.AggregateId));
+                Emit(new TestCreatedEvent(command.AggregateId), new Metadata {{"some-key","some-value"}});
                 Reply(TestExecutionResult.SucceededWith(command.SourceId));
             }
             else
@@ -200,11 +200,6 @@ namespace Akkatecture.TestHelpers.Aggregates
         {
             Context.Stop(Self);
             Context.Parent.Tell(new PublishTestStateCommand(Id), Self);
-            return true;
-        }
-
-        protected override bool SnapshotStatus(SaveSnapshotFailure snapshotFailure)
-        {
             return true;
         }
 

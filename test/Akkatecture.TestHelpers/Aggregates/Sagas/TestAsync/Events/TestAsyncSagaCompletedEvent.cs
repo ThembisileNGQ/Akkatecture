@@ -22,11 +22,17 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using Akkatecture.Aggregates;
+using Akkatecture.TestHelpers.Aggregates.Sagas.TestAsync;
 
 namespace Akkatecture.TestHelpers.Aggregates.Sagas.Events
 {
-    public class TestSagaTransactionCompletedEvent : AggregateEvent<TestSaga, TestSagaId>
+    public class TestAsyncSagaCompletedEvent : AggregateEvent<TestAsyncSaga, TestAsyncSagaId>
     {
-        
+        public TestAsyncSagaState State { get; }
+
+        public TestAsyncSagaCompletedEvent(TestAsyncSagaState state)
+        {
+            State = state;
+        }
     }
 }

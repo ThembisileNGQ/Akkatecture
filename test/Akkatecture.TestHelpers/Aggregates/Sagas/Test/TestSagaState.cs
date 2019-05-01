@@ -24,9 +24,11 @@
 using Akkatecture.Aggregates;
 using Akkatecture.Sagas;
 using Akkatecture.TestHelpers.Aggregates.Entities;
+using Akkatecture.TestHelpers.Aggregates.Sagas;
 using Akkatecture.TestHelpers.Aggregates.Sagas.Events;
+using Akkatecture.TestHelpers.Aggregates.Sagas.Test;
 
-namespace Akkatecture.TestHelpers.Aggregates.Sagas
+namespace Akkatecture.TestHelpers.Aggregates
 {
     public class TestSagaState : SagaState<TestSaga, TestSagaId, IMessageApplier<TestSaga, TestSagaId>>,
         IApply<TestSagaStartedEvent>,
