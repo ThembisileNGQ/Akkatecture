@@ -30,7 +30,7 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Akka.Cluster" Version="1.3.12" />
+    <PackageReference Include="Akka.Cluster" Version="1.3.13" />
     <PackageReference Include="Akka.Cluster.Sharding" Version="1.3.12-beta" />
     <PackageReference Include="Akka.Cluster.Tools" Version="1.3.12" />
     <PackageReference Include="Akka.Persistence" Version="1.3.12" />
