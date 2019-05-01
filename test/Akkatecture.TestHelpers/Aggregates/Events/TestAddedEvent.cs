@@ -37,4 +37,18 @@ namespace Akkatecture.TestHelpers.Aggregates.Events
             Test = test;
         }
     }
+    
+    [EventVersion("TestAdded", 2)]
+    public class TestAddedEventV2 : AggregateEvent<TestAggregate, TestAggregateId>
+    {
+        public Test Test { get; }
+        public string Name { get; }
+        
+        public TestAddedEventV2(Test test, string name)
+        {
+            Test = test;
+            Name = name;
+
+        }
+    }
 }

@@ -21,17 +21,27 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
-using System.Linq.Expressions;
-using Akkatecture.Sagas.AggregateSaga;
+using Akkatecture.Aggregates;
+using Akkatecture.TestHelpers.Aggregates.Entities;
+using Akkatecture.TestHelpers.Aggregates.Sagas.Test;
 
-namespace Akkatecture.TestHelpers.Aggregates.Sagas
+namespace Akkatecture.TestHelpers.Aggregates.Sagas.Events
 {
-    public class TestSagaManager : AggregateSagaManager<TestSaga,TestSagaId,TestSagaLocator>
+    public class TestSagaStartedEvent : AggregateEvent<TestSaga,TestSagaId>
     {
-        public TestSagaManager(Expression<Func<TestSaga>> sagaFactory)
-            : base(sagaFactory)
+        public TestAggregateId Sender { get; }
+        public TestAggregateId Receiver { get; }
+        public Entities.Test SentTest { get; }
+
+        public TestSagaStartedEvent(
+            TestAggregateId sender,
+            TestAggregateId receiver,
+            Entities.Test sentTest)
         {
+            Sender = sender;
+            Receiver = receiver;
+            SentTest = sentTest;
         }
+
     }
 }

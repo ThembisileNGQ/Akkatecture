@@ -64,7 +64,8 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             
             eventProbe
                 .ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent>>(
-                x => x.AggregateEvent.TestAggregateId.Equals(aggregateId));
+                x => x.AggregateEvent.TestAggregateId.Equals(aggregateId) &&
+                     x.Metadata.ContainsKey("some-key"));
         }
         
         
@@ -287,7 +288,6 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
                 aggregateManager.Tell(testCommand);
             }
             
-
             eventProbe
                 .ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>>(
                 x => x.AggregateEvent.LastSequenceNr == 11

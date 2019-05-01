@@ -30,7 +30,7 @@ using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Events;
 using Akkatecture.TestHelpers.Aggregates.Sagas.Events;
 
-namespace Akkatecture.TestHelpers.Aggregates.Sagas
+namespace Akkatecture.TestHelpers.Aggregates.Sagas.Test
 {
     public class TestSaga : AggregateSaga<TestSaga,TestSagaId,TestSagaState>,
         ISagaIsStartedBy<TestAggregate, TestAggregateId, TestSentEvent>,

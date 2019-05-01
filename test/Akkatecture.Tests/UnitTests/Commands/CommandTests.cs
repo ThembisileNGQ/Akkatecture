@@ -30,7 +30,7 @@ namespace Akkatecture.Tests.UnitTests.Commands
         [Fact]
         public void InstantiatingCommand_WithNullSourceId_ThrowsException()
         {
-            this.Invoking(test => new CreateTestCommand(null, CommandId.New))
+            this.Invoking(test => new CreateTestCommand(TestAggregateId.New, null))
                 .Should().Throw<ArgumentNullException>().And.Message.Contains("sourceId");
         }
     }

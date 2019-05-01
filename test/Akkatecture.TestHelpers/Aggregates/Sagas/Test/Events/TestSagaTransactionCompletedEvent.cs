@@ -1,9 +1,5 @@
 ﻿// The MIT License (MIT)
 //
-// Copyright (c) 2015-2019 Rasmus Mikkelsen
-// Copyright (c) 2015-2019 eBay Software Foundation
-// Modified from original source https://github.com/eventflow/EventFlow
-//
 // Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
 // 
@@ -25,13 +21,13 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using Akkatecture.Core;
+using Akkatecture.Aggregates;
+using Akkatecture.TestHelpers.Aggregates.Sagas.Test;
 
-namespace Akkatecture.Aggregates
+namespace Akkatecture.TestHelpers.Aggregates.Sagas.Events
 {
-    public interface IEventApplier<TAggregate, TIdentity>
-        where TAggregate : IAggregateRoot<TIdentity>
-        where TIdentity : IIdentity
+    public class TestSagaTransactionCompletedEvent : AggregateEvent<TestSaga, TestSagaId>
     {
+        
     }
 }

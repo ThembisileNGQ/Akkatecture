@@ -27,6 +27,7 @@ namespace Akkatecture.TestHelpers.Aggregates.Entities
 {
     public class Test : Entity<TestId>
     {
+        public static Test New => new Test(TestId.New);
         public Test(TestId id)
             : base(id)
         {

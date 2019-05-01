@@ -25,6 +25,7 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
 using System.Linq;
 using Akkatecture.Core;
 using FluentAssertions;
@@ -52,6 +53,33 @@ namespace Akkatecture.Tests.UnitTests.Core
             
             var shouldContain = numbers.Reverse().Take(capacity).ToList();
             sut.Should().Contain(shouldContain);
+        }
+        
+        [Theory]
+        [InlineData(1)] // Below capacity
+        [InlineData(1, 2)] // At capacity
+        [InlineData(1, 2, 3)] // Once above capacity
+        [InlineData(1, 2, 3, 4)] // Loop twice over capacity
+        [InlineData(1, 2, 3, 4, 5)] // One more than of capacity
+        public void CircularBuffer_PuttingArray_ShouldContainNumbers(params int[] numbers)
+        {
+            const int capacity = 10;
+            var circularBuffer = new CircularBuffer<int>(capacity, numbers);
+
+            
+            var shouldContain = numbers.Reverse().Take(capacity).ToList();
+            circularBuffer.Should().Contain(shouldContain);
+        }
+        
+        [Theory]
+        [InlineData(1, 2, 6)] // At capacity
+        [InlineData(1, 2, 3, 7)] // Once above capacity
+        [InlineData(1, 2, 3, 4, 9)] // Loop twice over capacity
+        [InlineData(1, 2, 3, 4, 5, 10)] // One more than of capacity
+        public void CircularBuffer_PuttingArrayWithSmallCapacity_ThrowsException(params int[] numbers)
+        {
+            this.Invoking(test => new CircularBuffer<int>(2, numbers))
+                .Should().Throw<ArgumentException>();
         }
     }
 }

@@ -29,6 +29,5 @@ namespace Akkatecture.Aggregates.Snapshot
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
     {
-        bool Hydrate(TAggregate aggregate, IAggregateSnapshot<TAggregate, TIdentity> aggregateSnapshot);
     }
 }

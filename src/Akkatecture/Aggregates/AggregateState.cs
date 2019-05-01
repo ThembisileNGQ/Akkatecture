@@ -45,9 +45,6 @@ namespace Akkatecture.Aggregates
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
     {
-        private static readonly IReadOnlyDictionary<Type, Action<TMessageApplier, IAggregateEvent>> ApplyMethods = typeof(TMessageApplier).GetAggregateEventApplyMethods<TAggregate, TIdentity, TMessageApplier>();
-        private static readonly IReadOnlyDictionary<Type, Action<TMessageApplier, IAggregateSnapshot>> HydrateMethods = typeof(TMessageApplier).GetAggregateSnapshotHydrateMethods<TAggregate, TIdentity, TMessageApplier>();
-
         protected AggregateState()
         {
             var me = this as TMessageApplier;
@@ -57,34 +54,5 @@ namespace Akkatecture.Aggregates
             
         }
 
-        public bool Apply(
-            TAggregate aggregate,
-            IAggregateEvent<TAggregate, TIdentity> aggregateEvent)
-        {
-            var aggregateEventType = aggregateEvent.GetType();
-            Action<TMessageApplier, IAggregateEvent> applier;
-
-            if (!ApplyMethods.TryGetValue(aggregateEventType, out applier))
-                return false;
-            
-
-            applier((TMessageApplier)(object)this, aggregateEvent);
-            return true;
-        }
-        
-        public bool Hydrate(
-            TAggregate aggregate,
-            IAggregateSnapshot<TAggregate, TIdentity> aggregateSnapshot)
-        {
-            var aggregateEventType = aggregateSnapshot.GetType();
-            Action<TMessageApplier, IAggregateSnapshot> hydrater;
-
-            if (!HydrateMethods.TryGetValue(aggregateEventType, out hydrater))
-                return false;
-            
-
-            hydrater((TMessageApplier)(object)this, aggregateSnapshot);
-            return true;
-        }
     }
 }

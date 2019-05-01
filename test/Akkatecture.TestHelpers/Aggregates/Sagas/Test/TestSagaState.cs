@@ -1,9 +1,5 @@
 ﻿// The MIT License (MIT)
 //
-// Copyright (c) 2015-2019 Rasmus Mikkelsen
-// Copyright (c) 2015-2019 eBay Software Foundation
-// Modified from original source https://github.com/eventflow/EventFlow
-//
 // Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
 // 
@@ -25,28 +21,36 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
-using System.Collections.Generic;
+using Akkatecture.Aggregates;
+using Akkatecture.Sagas;
+using Akkatecture.TestHelpers.Aggregates.Entities;
+using Akkatecture.TestHelpers.Aggregates.Sagas;
+using Akkatecture.TestHelpers.Aggregates.Sagas.Events;
+using Akkatecture.TestHelpers.Aggregates.Sagas.Test;
 
-namespace Akkatecture.Sagas
+namespace Akkatecture.TestHelpers.Aggregates
 {
-    public interface ISagaState<out TIdentity>
-        where TIdentity : ISagaId
+    public class TestSagaState : SagaState<TestSaga, TestSagaId, IMessageApplier<TestSaga, TestSagaId>>,
+        IApply<TestSagaStartedEvent>,
+        IApply<TestSagaTransactionCompletedEvent>,
+        IApply<TestSagaCompletedEvent>
     {
-        SagaStatus Status { get; }
+        public TestAggregateId Sender { get; set; }
+        public TestAggregateId Receiver { get; set; }
+        public Test Test { get; set; }
+        public void Apply(TestSagaStartedEvent aggregateEvent)
+        {
+            Sender = aggregateEvent.Sender;
+            Receiver = aggregateEvent.Receiver;
+            Test = aggregateEvent.SentTest;
+        }
 
-        Dictionary<SagaStatus, DateTimeOffset> SagaTimes { get; }
+        public void Apply(TestSagaTransactionCompletedEvent aggregateEvent)
+        {
+        }
 
-        void Start();
-
-        void Complete();
-
-        void Fail();
-
-        void Cancel();
-
-        void PartiallySucceed();
-
-        void StopWatch();
+        public void Apply(TestSagaCompletedEvent aggregateEvent)
+        {
+        }
     }
 }

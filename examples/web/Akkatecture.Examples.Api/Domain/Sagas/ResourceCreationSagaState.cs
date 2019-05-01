@@ -37,7 +37,6 @@ namespace Akkatecture.Examples.Api.Domain.Sagas
         public void Apply(ResourceCreationStartedEvent aggregateEvent)
         {
             Progress = 0;
-            Start();
         }
 
         public void Apply(ResourceCreationProgressEvent aggregateEvent)
@@ -48,7 +47,6 @@ namespace Akkatecture.Examples.Api.Domain.Sagas
         public void Apply(ResourceCreationEndedEvent aggregateEvent)
         {
             Progress = 100;
-            Complete();
         }
     }
 }

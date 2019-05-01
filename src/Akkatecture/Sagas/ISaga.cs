@@ -34,8 +34,7 @@ namespace Akkatecture.Sagas
         
     }
 
-    public interface ISaga<TSagaId, TSagaState> : ISaga
-        where TSagaState : ISagaState<TSagaId>
+    public interface ISaga<TSagaId> : ISaga
         where TSagaId : ISagaId
     {
         

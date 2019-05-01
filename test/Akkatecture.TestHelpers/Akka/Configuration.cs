@@ -29,6 +29,7 @@ namespace Akkatecture.TestHelpers.Akka
             @"  akka.loglevel = ""DEBUG""
                 akka.stdout-loglevel = ""DEBUG""
                 akka.actor.serialize-messages = on
+                loggers = [""Akka.TestKit.TestEventListener, Akka.TestKit""] 
                 akka.persistence.snapshot-store {
                     plugin = ""akka.persistence.snapshot-store.inmem""
                     # List of snapshot stores to start automatically. Use "" for the default snapshot store.
