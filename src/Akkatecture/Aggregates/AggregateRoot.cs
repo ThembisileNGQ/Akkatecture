@@ -49,23 +49,24 @@ namespace Akkatecture.Aggregates
     {
         private static readonly IReadOnlyDictionary<Type, Action<TAggregateState, IAggregateEvent>> ApplyMethodsFromState = typeof(TAggregateState).GetAggregateStateEventApplyMethods<TAggregate, TIdentity, TAggregateState>();
         private static readonly IReadOnlyDictionary<Type, Action<TAggregateState, IAggregateSnapshot>> HydrateMethodsFromState =  typeof(TAggregateState).GetAggregateSnapshotHydrateMethods<TAggregate, TIdentity, TAggregateState>();
-        public static readonly IAggregateName AggregateName = typeof(TAggregate).GetAggregateName();
-        protected CircularBuffer<ISourceId> _previousSourceIds = new CircularBuffer<ISourceId>(100);
-        protected ICommand<TAggregate, TIdentity> PinnedCommand { get; private set; }
-        protected object PinnedReply { get; private set; }
+        private static readonly IAggregateName AggregateName = typeof(TAggregate).GetAggregateName();
+        private CircularBuffer<ISourceId> _previousSourceIds = new CircularBuffer<ISourceId>(100);
+        private ICommand<TAggregate, TIdentity> PinnedCommand { get; set; }
+        private object PinnedReply { get; set; }
         
         protected ILoggingAdapter Logger { get; }
-        protected IEventDefinitionService _eventDefinitionService;
-        protected ISnapshotDefinitionService _snapshotDefinitionService;
-        protected ISnapshotStrategy SnapshotStrategy { get; set; } = SnapshotNeverStrategy.Instance;
-        public TAggregateState State { get;  }
+        //TODO This should be private readonly. 
+        protected readonly IEventDefinitionService EventDefinitionService;
+        private readonly ISnapshotDefinitionService _snapshotDefinitionService;
+        private ISnapshotStrategy SnapshotStrategy { get; set; } = SnapshotNeverStrategy.Instance;
+        protected TAggregateState State { get;  }
         public IAggregateName Name => AggregateName;
         public override string PersistenceId { get; }
         public TIdentity Id { get; }
         public long Version { get; protected set; }
         public bool IsNew => Version <= 0;
         public override Recovery Recovery => new Recovery(SnapshotSelectionCriteria.Latest);
-        public AggregateRootSettings Settings { get; }
+        private AggregateRootSettings Settings { get; }
 
         protected AggregateRoot(TIdentity id)
         {
@@ -93,7 +94,7 @@ namespace Akkatecture.Aggregates
             }
 
             PinnedCommand = null;
-            _eventDefinitionService = new EventDefinitionService(Logger);
+            EventDefinitionService = new EventDefinitionService(Logger);
             _snapshotDefinitionService = new SnapshotDefinitionService(Logger);
             Id = id;
             PersistenceId = id.Value;
@@ -161,8 +162,8 @@ namespace Akkatecture.Aggregates
             {
                 throw new ArgumentNullException(nameof(aggregateEvent));
             }
-            _eventDefinitionService.Load(aggregateEvent.GetType());
-            var eventDefinition = _eventDefinitionService.GetDefinition(aggregateEvent.GetType());
+            EventDefinitionService.Load(aggregateEvent.GetType());
+            var eventDefinition = EventDefinitionService.GetDefinition(aggregateEvent.GetType());
             var aggregateSequenceNumber = version + 1;
             var eventId = EventId.NewDeterministic(
                 GuidFactories.Deterministic.Namespaces.Events,
@@ -408,7 +409,7 @@ namespace Akkatecture.Aggregates
             }
 
         }
-
+        
     }
 
 }
