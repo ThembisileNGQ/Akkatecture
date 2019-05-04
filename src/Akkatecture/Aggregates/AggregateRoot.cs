@@ -257,10 +257,7 @@ namespace Akkatecture.Aggregates
 
         protected virtual void Reply(object replyMessage)
         {
-            if(Sender == ActorRefs.NoSender || Sender == ActorRefs.Nobody)
-            {
-                // do nothing
-            } else
+            if(!Sender.IsNobody())
             {
                 PinnedReply = replyMessage;
             }
