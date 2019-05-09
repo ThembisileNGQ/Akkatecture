@@ -22,9 +22,11 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Akkatecture.Aggregates;
+using Akkatecture.Aggregates.ExecutionResults;
 using Akkatecture.Aggregates.Snapshot;
 using Akkatecture.Commands;
 using Akkatecture.Core;
@@ -127,6 +129,30 @@ namespace Akkatecture.Tests.UnitTests.Serialization
             var command = new AddFourTestsCommand(aggregateId, commandId, new Test(TestId.New));
 
             command.SerializeDeserialize().Should().BeEquivalentTo(command);
+        }
+        
+        [Fact]
+        [Category(Category)]
+        public void FailedExecutionResult_AfterSerialization_IsValidAfterDeserialization()
+        {
+            var failureString = "this is a failed execution";
+            var executionResult = new FailedExecutionResult(new List<string>{failureString});
+
+            var result = executionResult.SerializeDeserialize();
+            
+            result.Should().BeEquivalentTo(executionResult);
+            result.Errors.Should().Equal(failureString);
+        }
+        
+        [Fact]
+        [Category(Category)]
+        public void SuccessfulExecutionResult_AfterSerialization_IsValidAfterDeserialization()
+        {
+            var executionResult = new SuccessExecutionResult();
+
+            var result = executionResult.SerializeDeserialize();
+            
+            result.Should().BeEquivalentTo(executionResult);
         }
 
     }
