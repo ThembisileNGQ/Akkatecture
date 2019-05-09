@@ -40,7 +40,7 @@ namespace Akkatecture.Specifications
         public IEnumerable<string> WhyIsNotSatisfiedBy(T obj)
         {
             return IsNotSatisfiedBecause(obj);
-        }
+        } 
 
         protected abstract IEnumerable<string> IsNotSatisfiedBecause(T aggregate);
     }

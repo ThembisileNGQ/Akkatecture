@@ -217,8 +217,8 @@ namespace Akkatecture.TestHelpers.Aggregates
                 throw new ArgumentNullException(nameof(aggregateEvent));
             }
 
-            _eventDefinitionService.Load(aggregateEvent.GetType());
-            var eventDefinition = _eventDefinitionService.GetDefinition(aggregateEvent.GetType());
+            EventDefinitionService.Load(aggregateEvent.GetType());
+            var eventDefinition = EventDefinitionService.GetDefinition(aggregateEvent.GetType());
             var aggregateSequenceNumber = Version;
             var eventId = EventId.NewDeterministic(
                 GuidFactories.Deterministic.Namespaces.Events,

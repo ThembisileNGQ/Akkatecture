@@ -36,6 +36,12 @@ namespace Akkatecture.Aggregates.ExecutionResults
 
         public FailedExecutionResult(
             params string[] errors)
+            : this(errors.ToList())
+        {
+        }
+
+        public FailedExecutionResult(
+            IEnumerable<string> errors)
         {
             Errors = (errors ?? Enumerable.Empty<string>()).ToList();
         }
