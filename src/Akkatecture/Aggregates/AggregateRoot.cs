@@ -31,6 +31,7 @@ using System.Linq;
 using Akka.Actor;
 using Akka.Event;
 using Akka.Persistence;
+using Akka.Util.Internal;
 using Akkatecture.Aggregates.ExecutionResults;
 using Akkatecture.Aggregates.Snapshot;
 using Akkatecture.Aggregates.Snapshot.Strategies;
@@ -199,7 +200,7 @@ namespace Akkatecture.Aggregates
             where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
         {
             var applyMethods = GetEventApplyMethods(committedEvent.AggregateEvent);
-            applyMethods(committedEvent.AggregateEvent);
+			applyMethods.ForEach(a => a(committedEvent.AggregateEvent));
 
             Logger.Info($"[{Name}] With Id={Id} Commited and Applied [{typeof(TAggregateEvent).PrettyPrint()}]");
 
@@ -278,21 +279,24 @@ namespace Akkatecture.Aggregates
             base.Unhandled(message);
         }
 
-        protected Action<IAggregateEvent> GetEventApplyMethods<TAggregateEvent>(TAggregateEvent aggregateEvent)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
-        {
-            var eventType = aggregateEvent.GetType();
+		protected IEnumerable<Action<IAggregateEvent>> GetEventApplyMethods<TAggregateEvent>(TAggregateEvent aggregateEvent)
+			where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+		{
+			var eventType = aggregateEvent.GetType();
+			var aggregateApplyMethods = new List<Action<IAggregateEvent>>();
+			foreach (var method in ApplyMethodsFromState)
+			{
+				if (method.Key.IsAssignableFrom(eventType)) aggregateApplyMethods.Add(method.Value.Bind(State));
+			}
 
-            Action<TAggregateState, IAggregateEvent> applyMethod;
-            if (!ApplyMethodsFromState.TryGetValue(eventType, out applyMethod))
-                throw new NotImplementedException($"Aggregate State '{State.GetType().PrettyPrint()}' does not have an 'Apply' method that takes aggregate event type '{eventType.PrettyPrint()}' as argument");
+			if (!aggregateApplyMethods.Any())
+				throw new NotImplementedException($"Aggregate State '{State.GetType().PrettyPrint()}' does not have an 'Apply' method " +
+				                                  $"that takes aggregate event type '{eventType.PrettyPrint()}' or any of its base classes as argument");
 
-            var aggregateApplyMethod = applyMethod.Bind(State);
+			return aggregateApplyMethods;
+		}
 
-            return aggregateApplyMethod;
-        }
-
-        protected Action<IAggregateSnapshot> GetSnapshotHydrateMethods<TAggregateSnapshot>(TAggregateSnapshot aggregateEvent)
+		protected Action<IAggregateSnapshot> GetSnapshotHydrateMethods<TAggregateSnapshot>(TAggregateSnapshot aggregateEvent)
             where TAggregateSnapshot : IAggregateSnapshot<TAggregate, TIdentity>
         {
             var snapshotType = aggregateEvent.GetType();
@@ -301,18 +305,16 @@ namespace Akkatecture.Aggregates
             if (!HydrateMethodsFromState.TryGetValue(snapshotType, out hydrateMethod))
                 throw new NotImplementedException($"Aggregate State '{State.GetType().PrettyPrint()}' does not have a 'Hydrate' method that takes aggregate snapshot type '{snapshotType.PrettyPrint()}' as argument");
             
-
-
             var snapshotHydrateMethod = hydrateMethod.Bind(State);
-
+			
             return snapshotHydrateMethod;
         }
 
         protected virtual void ApplyEvent(IAggregateEvent<TAggregate, TIdentity> aggregateEvent)
         {
             var eventApplier = GetEventApplyMethods(aggregateEvent);
-
-            eventApplier(aggregateEvent);
+			
+	        eventApplier.ForEach(a => a(aggregateEvent));
 
             Version++;
         }
