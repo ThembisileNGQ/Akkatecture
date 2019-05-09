@@ -81,6 +81,38 @@ namespace Akkatecture.Tests.UnitTests.Serialization
         
         [Fact]
         [Category(Category)]
+        public void DomainEvent_AfterSerialization_IsValidAfterDeserialization()
+        {
+            var aggregateSequenceNumber = 3;
+            var aggregateId = TestAggregateId.New;
+            var entityId = TestId.New;
+            var entity = new Test(entityId);
+            var aggregateEvent = new TestAddedEvent(entity);
+            var now = DateTimeOffset.UtcNow;
+            var eventId = EventId.NewDeterministic(
+                GuidFactories.Deterministic.Namespaces.Events,
+                $"{aggregateId.Value}-v{aggregateSequenceNumber}");
+            var eventMetadata = new Metadata
+            {
+                Timestamp = now,
+                AggregateSequenceNumber = aggregateSequenceNumber,
+                AggregateName = typeof(TestAggregate).GetAggregateName().Value,
+                AggregateId = aggregateId.Value,
+                EventId = eventId
+            };
+            var domainEvent =
+                new DomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>(
+                    aggregateId, 
+                    aggregateEvent,
+                    eventMetadata,
+                    now,
+                    aggregateSequenceNumber);
+
+            domainEvent.SerializeDeserialize().Should().BeEquivalentTo(domainEvent);
+        }
+        
+        [Fact]
+        [Category(Category)]
         public void CommittedSnapshot_AfterSerialization_IsValidAfterDeserialization()
         {
             var aggregateSequenceNumber = 3;
