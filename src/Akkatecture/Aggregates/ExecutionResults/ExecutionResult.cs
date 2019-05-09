@@ -33,7 +33,7 @@ namespace Akkatecture.Aggregates.ExecutionResults
     public abstract class ExecutionResult : IExecutionResult
     {
         private static readonly IExecutionResult SuccessResult = new SuccessExecutionResult();
-        private static readonly IExecutionResult FailedResult = new FailedExecutionResult();
+        private static readonly IExecutionResult FailedResult = new FailedExecutionResult(Enumerable.Empty<string>());
 
         public static IExecutionResult Success() => SuccessResult;
         public static IExecutionResult Failed() => FailedResult;

@@ -22,9 +22,11 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Akkatecture.Aggregates;
+using Akkatecture.Aggregates.ExecutionResults;
 using Akkatecture.Aggregates.Snapshot;
 using Akkatecture.Commands;
 using Akkatecture.Core;
@@ -79,6 +81,38 @@ namespace Akkatecture.Tests.UnitTests.Serialization
         
         [Fact]
         [Category(Category)]
+        public void DomainEvent_AfterSerialization_IsValidAfterDeserialization()
+        {
+            var aggregateSequenceNumber = 3;
+            var aggregateId = TestAggregateId.New;
+            var entityId = TestId.New;
+            var entity = new Test(entityId);
+            var aggregateEvent = new TestAddedEvent(entity);
+            var now = DateTimeOffset.UtcNow;
+            var eventId = EventId.NewDeterministic(
+                GuidFactories.Deterministic.Namespaces.Events,
+                $"{aggregateId.Value}-v{aggregateSequenceNumber}");
+            var eventMetadata = new Metadata
+            {
+                Timestamp = now,
+                AggregateSequenceNumber = aggregateSequenceNumber,
+                AggregateName = typeof(TestAggregate).GetAggregateName().Value,
+                AggregateId = aggregateId.Value,
+                EventId = eventId
+            };
+            var domainEvent =
+                new DomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>(
+                    aggregateId, 
+                    aggregateEvent,
+                    eventMetadata,
+                    now,
+                    aggregateSequenceNumber);
+
+            domainEvent.SerializeDeserialize().Should().BeEquivalentTo(domainEvent);
+        }
+        
+        [Fact]
+        [Category(Category)]
         public void CommittedSnapshot_AfterSerialization_IsValidAfterDeserialization()
         {
             var aggregateSequenceNumber = 3;
@@ -127,6 +161,30 @@ namespace Akkatecture.Tests.UnitTests.Serialization
             var command = new AddFourTestsCommand(aggregateId, commandId, new Test(TestId.New));
 
             command.SerializeDeserialize().Should().BeEquivalentTo(command);
+        }
+        
+        [Fact]
+        [Category(Category)]
+        public void FailedExecutionResult_AfterSerialization_IsValidAfterDeserialization()
+        {
+            var failureString = "this is a failed execution";
+            var executionResult = new FailedExecutionResult(new List<string>{failureString});
+
+            var result = executionResult.SerializeDeserialize();
+            
+            result.Should().BeEquivalentTo(executionResult);
+            result.Errors.Should().Equal(failureString);
+        }
+        
+        [Fact]
+        [Category(Category)]
+        public void SuccessfulExecutionResult_AfterSerialization_IsValidAfterDeserialization()
+        {
+            var executionResult = new SuccessExecutionResult();
+
+            var result = executionResult.SerializeDeserialize();
+            
+            result.Should().BeEquivalentTo(executionResult);
         }
 
     }

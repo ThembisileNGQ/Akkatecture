@@ -55,7 +55,7 @@ namespace Akkatecture.Examples.Api.Domain.Aggregates.Resource.Commands
             }
             else
             {
-                var executionResult = new FailedExecutionResult("aggregate is already created");
+                var executionResult = new FailedExecutionResult(new List<string>{"aggregate is already created"});
                 context.Sender.Tell(executionResult);
             }
         }

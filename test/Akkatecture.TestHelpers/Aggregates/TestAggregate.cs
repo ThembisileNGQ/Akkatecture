@@ -59,6 +59,8 @@ namespace Akkatecture.TestHelpers.Aggregates
             Command<PoisonTestAggregateCommand>(Execute);
             Command<PublishTestStateCommand>(Execute);
             Command<TestDomainErrorCommand>(Execute);
+            Command<TestFailedExecutionResultCommand>(Execute);
+            Command<TestSuccessExecutionResultCommand>(Execute);
 
             Command<SaveSnapshotSuccess>(SnapshotStatus);
 
@@ -158,7 +160,17 @@ namespace Akkatecture.TestHelpers.Aggregates
 
             return true;
         }
-
+        private bool Execute(TestFailedExecutionResultCommand command)
+        {
+            Sender.Tell(ExecutionResult.Failed(), Self);
+            return true;
+        }
+        
+        private bool Execute(TestSuccessExecutionResultCommand command)
+        {
+            Sender.Tell(ExecutionResult.Success(), Self);
+            return true;
+        }
         private bool Execute(TestDistinctCommand command)
         {
             return true;

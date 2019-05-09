@@ -295,7 +295,31 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
                      && x.AggregateEvent.AggregateState.TestCollection.Count == 10
                      && x.AggregateEvent.AggregateState.FromHydration);
         }
-
+        
+        
+        [Fact]
+        [Category(Category)]
+        public async Task InitialState_TestingSuccessCommand_SuccessResultReplied()
+        {
+            var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
+            var aggregateId = TestAggregateId.New;
+            var commandId = CommandId.New;
+            var command = new TestSuccessExecutionResultCommand(aggregateId, commandId);
+            
+            var result = await aggregateManager.Ask<SuccessExecutionResult>(command);
+        }
+        
+        [Fact]
+        [Category(Category)]
+        public async Task InitialState_TestingFailedCommand_SuccessResultReplied()
+        {
+            var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
+            var aggregateId = TestAggregateId.New;
+            var commandId = CommandId.New;
+            var command = new TestFailedExecutionResultCommand(aggregateId, commandId);
+            
+            var result = await aggregateManager.Ask<FailedExecutionResult>(command);
+        }
         [Fact]
         [Category(Category)]
         public void TestDistinctCommand_AfterTwoHandles_CommandFails()

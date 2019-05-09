@@ -36,7 +36,7 @@ namespace Akkatecture.Aggregates
         Type IdentityType { get; }
         Type EventType { get; }
         long AggregateSequenceNumber { get; }
-        IMetadata Metadata { get; }
+        Metadata Metadata { get; }
         DateTimeOffset Timestamp { get; }
 
         IIdentity GetIdentity();
