@@ -202,7 +202,7 @@ namespace Akkatecture.Aggregates
             var applyMethods = GetEventApplyMethods(committedEvent.AggregateEvent);
 			applyMethods.ForEach(a => a(committedEvent.AggregateEvent));
 
-            Logger.Info($"[{Name}] With Id={Id} Commited and Applied [{typeof(TAggregateEvent).PrettyPrint()}]");
+            Logger.Info($"[{Name}] With Id={Id} Committed and Applied [{typeof(TAggregateEvent).PrettyPrint()}]");
 
             Version++;
 
@@ -227,14 +227,14 @@ namespace Akkatecture.Aggregates
                         SnapshotVersion = snapshotDefinition.Version
                     };
 
-                    var commitedSnapshot =
+                    var committedSnapshot =
                         new ComittedSnapshot<TAggregate, TIdentity, IAggregateSnapshot<TAggregate, TIdentity>>(
                             Id,
                             aggregateSnapshot,
                             snapshotMetadata,
                             committedEvent.Timestamp, Version);
 
-                    SaveSnapshot(commitedSnapshot);
+                    SaveSnapshot(committedSnapshot);
                 }
             }
 
