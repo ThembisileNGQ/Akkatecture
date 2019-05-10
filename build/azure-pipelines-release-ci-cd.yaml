@@ -72,3 +72,10 @@ jobs:
       inputs:
         PathtoPublish: '$(Agent.BuildDirectory)'
         ArtifactName: Source
+
+    - task: GitHubRelease@0
+      displayName: 'GitHub release (create)'
+      inputs:
+        gitHubConnection: 'Akkatecture-GitHub'
+        tagSource: manual
+        tag: $(Build.BuildNumber)

@@ -87,10 +87,3 @@ jobs:
         packagesToPush: ${{ format('src/Akkatecture.Clustering/bin/{0}/*.nupkg', variables.buildConfiguration) }}
         nuGetFeedType: 'internal'
         publishVstsFeed: 'akkatecture'
-
-    - task: GitHubRelease@0
-      displayName: 'GitHub release (create)'
-      inputs:
-        gitHubConnection: 'Akkatecture-GitHub'
-        tagSource: manual
-        tag: $(Build.BuildNumber)
