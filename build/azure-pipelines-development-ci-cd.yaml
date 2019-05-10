@@ -91,6 +91,6 @@ jobs:
     - task: GitHubRelease@0
       displayName: 'GitHub release (create)'
       inputs:
-        gitHubConnection: 'Lutando (1)'
+        gitHubConnection: 'Akkatecture-GitHub'
         tagSource: manual
         tag: $(Build.BuildNumber)
