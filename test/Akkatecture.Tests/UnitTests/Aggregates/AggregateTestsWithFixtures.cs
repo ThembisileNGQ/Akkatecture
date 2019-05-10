@@ -59,11 +59,14 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             var aggregateId = TestAggregateId.New;
             var commandId = CommandId.New;
             var testId = TestId.New;
-            
-            this.FixtureFor<TestAggregate,TestAggregateId>(aggregateId)
+
+            this.FixtureFor<TestAggregate, TestAggregateId>(aggregateId)
                 .Given(new TestCreatedEvent(aggregateId), new TestAddedEvent(new Test(TestId.New)))
                 .When(new AddTestCommand(aggregateId, commandId, new Test(testId)))
-                .ThenExpect<TestAddedEvent>(x => x.Test.Id == testId);
+                .ThenExpect<TestAddedEvent>(x => x.Test.Id == testId)
+                .ThenExpectReply<TestExecutionResult>(x => x.SourceId.Value == commandId.Value && x.Result.IsSuccess);
+
+
         }
         
         [Fact]

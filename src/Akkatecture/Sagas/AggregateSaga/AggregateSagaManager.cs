@@ -112,7 +112,7 @@ namespace Akkatecture.Sagas.AggregateSaga
         protected IActorRef FindOrSpawn(TIdentity sagaId)
         {
             var saga = Context.Child(sagaId);
-            if (Equals(saga, ActorRefs.Nobody))
+            if (saga.IsNobody())
             {
                 return Spawn(sagaId);
             }

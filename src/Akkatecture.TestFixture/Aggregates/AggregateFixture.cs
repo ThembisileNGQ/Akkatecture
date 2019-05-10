@@ -43,7 +43,8 @@ namespace Akkatecture.TestFixture.Aggregates
         private readonly TestKitBase _testKit;
         public TIdentity AggregateId { get; private set; }
         public IActorRef AggregateRef { get; private set; }
-        public TestProbe AggregateTestProbe { get; private set; }
+        public TestProbe AggregateEventTestProbe { get; private set; }
+        public TestProbe AggregateReplyTestProbe { get; private set; }
         public Props AggregateProps { get; private set; }
         public bool UsesAggregateManager { get; private set; }
         public AggregateFixture(
@@ -58,11 +59,12 @@ namespace Akkatecture.TestFixture.Aggregates
             if(aggregateId == null)
                 throw new ArgumentNullException(nameof(aggregateId));
             
-            if(!AggregateTestProbe.IsNobody())
-                throw new InvalidOperationException(nameof(AggregateTestProbe));
+            if(!AggregateEventTestProbe.IsNobody())
+                throw new InvalidOperationException(nameof(AggregateEventTestProbe));
             
             AggregateId = aggregateId;
-            AggregateTestProbe = _testKit.CreateTestProbe("aggregate-probe");
+            AggregateEventTestProbe = _testKit.CreateTestProbe("aggregate-event-test-probe");
+            AggregateReplyTestProbe = _testKit.CreateTestProbe("aggregate-reply-test-probe");
             AggregateProps = Props.Create<TAggregate>(args: aggregateId);
             AggregateRef = ActorRefs.Nobody;
             UsesAggregateManager = false;
@@ -76,11 +78,14 @@ namespace Akkatecture.TestFixture.Aggregates
         {
             if(aggregateId == null)
                 throw new ArgumentNullException(nameof(aggregateId));
-            if(!AggregateTestProbe.IsNobody())
-                throw new InvalidOperationException(nameof(AggregateTestProbe));
+            if(!AggregateEventTestProbe.IsNobody())
+                throw new InvalidOperationException(nameof(AggregateEventTestProbe));
+            if(!AggregateReplyTestProbe.IsNobody())
+                throw new InvalidOperationException(nameof(AggregateReplyTestProbe));
             
             AggregateId = aggregateId;
-            AggregateTestProbe = _testKit.CreateTestProbe("aggregate-probe");
+            AggregateEventTestProbe = _testKit.CreateTestProbe("aggregate-event-test-probe");
+            AggregateReplyTestProbe = _testKit.CreateTestProbe("aggregate-reply-test-probe");
             AggregateRef = _testKit.Sys.ActorOf(Props.Create(aggregateManagerFactory), "aggregate-manager");
             UsesAggregateManager = false;
             AggregateProps = Props.Empty;
@@ -90,7 +95,7 @@ namespace Akkatecture.TestFixture.Aggregates
 
         public IFixtureExecutor<TAggregate, TIdentity> GivenNothing()
         {
-            if (!UsesAggregateManager && AggregateRef == ActorRefs.Nobody)
+            if (!UsesAggregateManager && AggregateRef.IsNobody())
                 AggregateRef = _testKit.Sys.ActorOf(AggregateProps, AggregateId.Value);
 
             return this;
@@ -115,7 +120,7 @@ namespace Akkatecture.TestFixture.Aggregates
             if(commands == null)
                 throw new ArgumentNullException(nameof(commands));
 
-            if (!UsesAggregateManager && AggregateRef == ActorRefs.Nobody)
+            if (!UsesAggregateManager && AggregateRef.IsNobody())
                 AggregateRef = _testKit.Sys.ActorOf(AggregateProps, AggregateId.Value);
 
             foreach (var command in commands)
@@ -123,7 +128,7 @@ namespace Akkatecture.TestFixture.Aggregates
                 if(command == null)
                     throw new NullReferenceException(nameof(command));
                 
-                AggregateRef.Tell(command);
+                AggregateRef.Tell(command, AggregateReplyTestProbe);
             }
             
             return this;
@@ -135,7 +140,7 @@ namespace Akkatecture.TestFixture.Aggregates
             if(commands == null)
                 throw new ArgumentNullException(nameof(commands));
 
-            if(!UsesAggregateManager && AggregateRef == ActorRefs.Nobody)
+            if(!UsesAggregateManager && AggregateRef.IsNobody())
                 AggregateRef = _testKit.Sys.ActorOf(AggregateProps, AggregateId.Value);
 
             foreach (var command in commands)
@@ -143,7 +148,7 @@ namespace Akkatecture.TestFixture.Aggregates
                 if(command == null)
                     throw new NullReferenceException(nameof(command));
                 
-                AggregateRef.Tell(command);
+                AggregateRef.Tell(command, AggregateReplyTestProbe);
             }
             
             return this;
@@ -157,25 +162,31 @@ namespace Akkatecture.TestFixture.Aggregates
         public IFixtureAsserter<TAggregate, TIdentity> ThenExpect<TAggregateEvent>(Predicate<TAggregateEvent> aggregateEventPredicate = null)
             where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
         {
-            _testKit.Sys.EventStream.Subscribe(AggregateTestProbe, typeof(DomainEvent<TAggregate, TIdentity, TAggregateEvent>));
+            _testKit.Sys.EventStream.Subscribe(AggregateEventTestProbe, typeof(DomainEvent<TAggregate, TIdentity, TAggregateEvent>));
             
             if(aggregateEventPredicate == null)
-                AggregateTestProbe.ExpectMsg<DomainEvent<TAggregate, TIdentity, TAggregateEvent>>();
+                AggregateEventTestProbe.ExpectMsg<DomainEvent<TAggregate, TIdentity, TAggregateEvent>>();
             else
-                AggregateTestProbe.ExpectMsg<DomainEvent<TAggregate, TIdentity, TAggregateEvent>>(x => aggregateEventPredicate(x.AggregateEvent));
+                AggregateEventTestProbe.ExpectMsg<DomainEvent<TAggregate, TIdentity, TAggregateEvent>>(x => aggregateEventPredicate(x.AggregateEvent));
             
+            return this;
+        }
+
+        public IFixtureAsserter<TAggregate, TIdentity> ThenExpectReply<TReply>(Predicate<TReply> aggregateReplyPredicate = null)
+        {
+            AggregateReplyTestProbe.ExpectMsg<TReply>(aggregateReplyPredicate);
             return this;
         }
         
         public IFixtureAsserter<TAggregate, TIdentity> ThenExpectDomainEvent<TAggregateEvent>(Predicate<DomainEvent<TAggregate, TIdentity, TAggregateEvent>> domainEventPredicate = null)
             where TAggregateEvent : IAggregateEvent<TAggregate,TIdentity>
         {
-            _testKit.Sys.EventStream.Subscribe(AggregateTestProbe, typeof(DomainEvent<TAggregate, TIdentity, TAggregateEvent>));
+            _testKit.Sys.EventStream.Subscribe(AggregateEventTestProbe, typeof(DomainEvent<TAggregate, TIdentity, TAggregateEvent>));
             
             if(domainEventPredicate == null)
-                AggregateTestProbe.ExpectMsg<DomainEvent<TAggregate, TIdentity, TAggregateEvent>>();
+                AggregateEventTestProbe.ExpectMsg<DomainEvent<TAggregate, TIdentity, TAggregateEvent>>();
             else
-                AggregateTestProbe.ExpectMsg<DomainEvent<TAggregate, TIdentity, TAggregateEvent>>(domainEventPredicate);
+                AggregateEventTestProbe.ExpectMsg<DomainEvent<TAggregate, TIdentity, TAggregateEvent>>(domainEventPredicate);
             
             return this;
         }
@@ -190,14 +201,14 @@ namespace Akkatecture.TestFixture.Aggregates
                 writes[i] = new AtomicWrite(new Persistent(committedEvent, i+1, aggregateId.Value, string.Empty, false, ActorRefs.NoSender, writerGuid));
             }
             var journal = Persistence.Instance.Apply(_testKit.Sys).JournalFor(null);
-            journal.Tell(new WriteMessages(writes, AggregateTestProbe.Ref, 1));
+            journal.Tell(new WriteMessages(writes, AggregateEventTestProbe.Ref, 1));
 
-            AggregateTestProbe.ExpectMsg<WriteMessagesSuccessful>();
+            AggregateEventTestProbe.ExpectMsg<WriteMessagesSuccessful>();
             
             for (var i = 0; i < events.Length; i++)
             {
                 var seq = i;
-                AggregateTestProbe.ExpectMsg<WriteMessageSuccess>(x =>
+                AggregateEventTestProbe.ExpectMsg<WriteMessageSuccess>(x =>
                     x.Persistent.PersistenceId == aggregateId.ToString() &&
                     x.Persistent.Payload is CommittedEvent<TAggregate, TIdentity, IAggregateEvent<TAggregate, TIdentity>> &&
                     x.Persistent.SequenceNr == (long) seq+1);
@@ -211,9 +222,9 @@ namespace Akkatecture.TestFixture.Aggregates
             var committedSnapshot = new ComittedSnapshot<TAggregate, TIdentity, TAggregateSnapshot>(aggregateId, aggregateSnapshot, new SnapshotMetadata(), DateTimeOffset.UtcNow, sequenceNumber);
             
             var metadata = new AkkaSnapshotMetadata(aggregateId.ToString(), sequenceNumber);
-            snapshotStore.Tell(new SaveSnapshot(metadata, committedSnapshot), AggregateTestProbe.Ref);
+            snapshotStore.Tell(new SaveSnapshot(metadata, committedSnapshot), AggregateEventTestProbe.Ref);
 
-            AggregateTestProbe.ExpectMsg<SaveSnapshotSuccess>(x =>
+            AggregateEventTestProbe.ExpectMsg<SaveSnapshotSuccess>(x =>
                 x.Metadata.SequenceNr == sequenceNumber &&
                 x.Metadata.PersistenceId == aggregateId.ToString());
             

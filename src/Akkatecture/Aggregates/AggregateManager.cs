@@ -106,7 +106,7 @@ namespace Akkatecture.Aggregates
         {
             var aggregate = Context.Child(aggregateId);
 
-            if(Equals(aggregate, ActorRefs.Nobody))
+            if(aggregate.IsNobody())
             {
                 aggregate = CreateAggregate(aggregateId);
             }
