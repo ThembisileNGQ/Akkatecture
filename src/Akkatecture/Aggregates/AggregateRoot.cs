@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Akka.Actor;
 using Akka.Event;
@@ -77,7 +78,7 @@ namespace Akkatecture.Aggregates
             if ((this as TAggregate) == null)
             {
                 throw new InvalidOperationException(
-                    $"Aggregate '{GetType().PrettyPrint()}' specifies '{typeof(TAggregate).PrettyPrint()}' as generic argument, it should be its own type");
+                    $"Aggregate {Name} specifies Type={typeof(TAggregate).PrettyPrint()} as generic argument, it should be its own type.");
             }
 
             if (State == null)
@@ -86,9 +87,9 @@ namespace Akkatecture.Aggregates
                 {
                     State = (TAggregateState)Activator.CreateInstance(typeof(TAggregateState));
                 }
-                catch
+                catch(Exception exception)
                 {
-                    Logger.Error($"Unable to activate State for {GetType()}");
+                    Logger.Error(exception,"Unable to activate AggregateState of Type={0} for AggregateRoot of Name={1}",typeof(TAggregateState).PrettyPrint(), Name);
                 }
 
             }
@@ -191,7 +192,7 @@ namespace Akkatecture.Aggregates
         }
         protected virtual IAggregateSnapshot<TAggregate, TIdentity> CreateSnapshot()
         {
-            Logger.Info($"[{Name}] With Id={Id} Attempted to Create a Snapshot, override the CreateSnapshot() method to return the snapshot data model.");
+            Logger.Warning("Aggregate of Name={0}, and Id={1}; attempted to create a snapshot, override the {2}() method to get snapshotting to function.", Name, Id, nameof(CreateSnapshot));
             return null;
         }
 
@@ -201,7 +202,7 @@ namespace Akkatecture.Aggregates
             var applyMethods = GetEventApplyMethods(committedEvent.AggregateEvent);
             applyMethods(committedEvent.AggregateEvent);
 
-            Logger.Info($"[{Name}] With Id={Id} Commited and Applied [{typeof(TAggregateEvent).PrettyPrint()}]");
+            Logger.Info("Aggregate of Name={0}, and Id={1}; committed and applied an AggregateEvent of Type={2}", Name, Id, typeof(TAggregateEvent).PrettyPrint());
 
             Version++;
 
@@ -242,7 +243,7 @@ namespace Akkatecture.Aggregates
         protected virtual void Publish<TEvent>(TEvent aggregateEvent)
         {
             Context.System.EventStream.Publish(aggregateEvent);
-            Logger.Info($"[{Name}] With Id={Id} Published [{typeof(TEvent).PrettyPrint()}]");
+            Logger.Info("Aggregate of Name={0}, and Id={1}; published DomainEvent of Type={2}.",Name, Id, typeof(TEvent).PrettyPrint());
         }
 
         protected override bool AroundReceive(Receive receive, object message)
@@ -274,7 +275,7 @@ namespace Akkatecture.Aggregates
 
         protected override void Unhandled(object message)
         {
-            Logger.Info($"Aggregate with Id '{Id?.Value} has received an unhandled message {message.GetType().PrettyPrint()}'");
+            Logger.Warning("Aggregate of Name={0}, and Id={1}; has received an unhandled message of Type={2}.",Name, Id, message.GetType().PrettyPrint());
             base.Unhandled(message);
         }
 
@@ -285,7 +286,7 @@ namespace Akkatecture.Aggregates
 
             Action<TAggregateState, IAggregateEvent> applyMethod;
             if (!ApplyMethodsFromState.TryGetValue(eventType, out applyMethod))
-                throw new NotImplementedException($"Aggregate State '{State.GetType().PrettyPrint()}' does not have an 'Apply' method that takes aggregate event type '{eventType.PrettyPrint()}' as argument");
+                throw new NotImplementedException($"AggregateState of Type={State.GetType().PrettyPrint()} does not have an 'Apply' method that takes in an aggregate event of Type={eventType.PrettyPrint()} as an argument.");
 
             var aggregateApplyMethod = applyMethod.Bind(State);
 
@@ -299,7 +300,7 @@ namespace Akkatecture.Aggregates
 
             Action<TAggregateState, IAggregateSnapshot> hydrateMethod;
             if (!HydrateMethodsFromState.TryGetValue(snapshotType, out hydrateMethod))
-                throw new NotImplementedException($"Aggregate State '{State.GetType().PrettyPrint()}' does not have a 'Hydrate' method that takes aggregate snapshot type '{snapshotType.PrettyPrint()}' as argument");
+                throw new NotImplementedException($"AggregateState of Type={State.GetType().PrettyPrint()} does not have a 'Hydrate' method that takes in an aggregate snapshot of Type={snapshotType.PrettyPrint()} as an argument.");
             
 
 
@@ -330,12 +331,12 @@ namespace Akkatecture.Aggregates
         {
             try
             {
-                Logger.Debug($"Recovering with event of type [{committedEvent.GetType().PrettyPrint()}] ");
+                Logger.Debug("Aggregate of Name={0}, Id={1}, and Version={2}, is recovering with CommittedEvent of Type={3}.", Name, Id, Version, committedEvent.GetType().PrettyPrint());
                 ApplyEvent(committedEvent.AggregateEvent);
             }
             catch(Exception exception)
             {
-                Logger.Error($"Recovering with event of type [{committedEvent.GetType().PrettyPrint()}] caused an exception {exception.GetType().PrettyPrint()}");
+                Logger.Error(exception,"Aggregate of Name={0}, Id={1}; while recovering with event of Type={2} caused an exception.", Name, Id, committedEvent.GetType().PrettyPrint());
                 return false;
             }
 
@@ -344,15 +345,15 @@ namespace Akkatecture.Aggregates
 
         protected virtual bool Recover(SnapshotOffer aggregateSnapshotOffer)
         {
-            Logger.Info($"Aggregate [{Name}] With Id={Id} has received a SnapshotOffer of type {aggregateSnapshotOffer.Snapshot.GetType().PrettyPrint()}");
             try
             {
+                Logger.Debug("Aggregate of Name={0}, and Id={1}; has received a SnapshotOffer of Type={2}.", Name, Id, aggregateSnapshotOffer.Snapshot.GetType().PrettyPrint());
                 var comittedSnapshot = aggregateSnapshotOffer.Snapshot as ComittedSnapshot<TAggregate,TIdentity, IAggregateSnapshot<TAggregate, TIdentity>>;
                 HydrateSnapshot(comittedSnapshot.AggregateSnapshot, aggregateSnapshotOffer.Metadata.SequenceNr);
             }
             catch (Exception exception)
             {
-                Logger.Error($"Recovering with snapshot of type [{aggregateSnapshotOffer.Snapshot.GetType().PrettyPrint()}] caused an exception {exception.GetType().PrettyPrint()}");
+                Logger.Error(exception,"Aggregate of Name={0}, Id={1}; recovering with snapshot of Type={2} caused an exception.", Name, Id, aggregateSnapshotOffer.Snapshot.GetType().PrettyPrint());
 
                 return false;
             }
@@ -369,20 +370,20 @@ namespace Akkatecture.Aggregates
         }
         protected virtual bool SnapshotStatus(SaveSnapshotSuccess snapshotSuccess)
         {
-            Logger.Info($"Aggregate [{Name}] With Id={Id} Saved Snapshot at Version {snapshotSuccess.Metadata.SequenceNr}");
+            Logger.Debug("Aggregate of Name={0}, and Id={1}; saved a snapshot at Version={2}.", Name, Id, snapshotSuccess.Metadata.SequenceNr);
             return true;
         }
 
         protected virtual bool SnapshotStatus(SaveSnapshotFailure snapshotFailure)
         {
-            Logger.Error($"Aggregate [{Name}] With Id={Id} Failed to save snapshot at version {snapshotFailure.Metadata.SequenceNr} because of {snapshotFailure.Cause}");
+            Logger.Error(snapshotFailure.Cause,"Aggregate of Name={0}, and Id={1}; failed to save snapshot at Version={2}.", Name, Id, snapshotFailure.Metadata.SequenceNr);
             return true;
         }
 
 
         protected virtual bool Recover(RecoveryCompleted recoveryCompleted)
         {
-            Logger.Info($"Aggregate [{Name}] With Id={Id} has completed recovering from it's journal(s)");
+            Logger.Debug("Aggregate of Name={0}, and Id={1}; has completed recovering from it's event journal at Version={2}.", Name, Id, Version);
             return true;
         }
 
@@ -400,9 +401,9 @@ namespace Akkatecture.Aggregates
                 var handler = (TCommandHandler) Activator.CreateInstance(typeof(TCommandHandler));
                 Command<TCommand>(x => handler.HandleCommand(this as TAggregate, Context, x),shouldHandle);
             }
-            catch
+            catch (Exception exception)
             {
-                Logger.Error($"Unable to Activate CommandHandler {typeof(TCommandHandler).PrettyPrint()} for {typeof(TAggregate).PrettyPrint()}");
+                Logger.Error(exception,"Unable to activate CommandHandler of Type={0} for Aggregate of Type={1}.",typeof(TCommandHandler).PrettyPrint(), typeof(TAggregate).PrettyPrint());
             }
 
         }

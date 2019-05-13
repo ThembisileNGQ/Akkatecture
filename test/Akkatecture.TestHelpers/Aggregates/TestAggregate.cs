@@ -253,8 +253,6 @@ namespace Akkatecture.TestHelpers.Aggregates
                 eventMetadata.AddRange(metadata);
             }
 
-            Logger.Info($"[{Name}] With Id={Id} Commited [{typeof(TAggregateEvent).PrettyPrint()}]");
-
             var domainEvent = new DomainEvent<TestAggregate, TestAggregateId, TAggregateEvent>(Id, aggregateEvent, eventMetadata, now, Version);
 
             Publish(domainEvent);

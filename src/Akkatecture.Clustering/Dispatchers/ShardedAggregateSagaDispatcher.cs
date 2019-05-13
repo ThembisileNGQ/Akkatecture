@@ -65,7 +65,7 @@ namespace Akkatecture.Clustering.Dispatchers
         {
             AggregateSagaManager.Tell(domainEvent);
 
-            Logger.Debug($"{GetType().PrettyPrint()} just dispatched {domainEvent.GetType().PrettyPrint()} to {AggregateSagaManager}");
+            Logger.Debug("{0} just dispatched {1} to {2}",GetType().PrettyPrint(),domainEvent.GetType().PrettyPrint(),AggregateSagaManager.Path.Name);
             return true;
         }
         
