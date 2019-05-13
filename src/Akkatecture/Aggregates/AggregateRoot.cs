@@ -263,6 +263,14 @@ namespace Akkatecture.Aggregates
                 PinnedReply = replyMessage;
             }
         }
+        
+        protected virtual void ReplyFailure(object replyMessage)
+        {
+            if(!Sender.IsNobody())
+            {
+                Context.Sender.Tell(replyMessage);
+            }
+        }
 
         protected virtual void ReplyIfAvailable()
         {

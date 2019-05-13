@@ -78,7 +78,7 @@ namespace Akkatecture.TestHelpers.Aggregates
             {
                 TestErrors++;
                 Throw(new TestedErrorEvent(TestErrors));
-                Reply(TestExecutionResult.FailedWith(command.SourceId));
+                ReplyFailure(TestExecutionResult.FailedWith(command.SourceId));
             }
 
             return true;
@@ -97,7 +97,7 @@ namespace Akkatecture.TestHelpers.Aggregates
             {
                 TestErrors++;
                 Throw(new TestedErrorEvent(TestErrors));
-                Reply(TestExecutionResult.FailedWith(command.SourceId));
+                ReplyFailure(TestExecutionResult.FailedWith(command.SourceId));
             }
             return true;
         }
@@ -118,7 +118,7 @@ namespace Akkatecture.TestHelpers.Aggregates
             {
                 TestErrors++;
                 Throw(new TestedErrorEvent(TestErrors));
-                Reply(TestExecutionResult.FailedWith(command.SourceId));
+                ReplyFailure(TestExecutionResult.FailedWith(command.SourceId));
             }
             return true;
         }
@@ -138,7 +138,7 @@ namespace Akkatecture.TestHelpers.Aggregates
             {
                 TestErrors++;
                 Throw(new TestedErrorEvent(TestErrors));
-                Reply(TestExecutionResult.FailedWith(command.SourceId));
+                ReplyFailure(TestExecutionResult.FailedWith(command.SourceId));
             }
 
             return true;
@@ -155,7 +155,7 @@ namespace Akkatecture.TestHelpers.Aggregates
             {
                 TestErrors++;
                 Throw(new TestedErrorEvent(TestErrors));
-                Reply(TestExecutionResult.FailedWith(command.SourceId));
+                ReplyFailure(TestExecutionResult.FailedWith(command.SourceId));
             }
 
             return true;
@@ -186,7 +186,7 @@ namespace Akkatecture.TestHelpers.Aggregates
             {
                 TestErrors++;
                 Throw(new TestedErrorEvent(TestErrors));
-                Reply(TestExecutionResult.FailedWith(command.SourceId));
+                ReplyFailure(TestExecutionResult.FailedWith(command.SourceId));
             }
 
             return true;
