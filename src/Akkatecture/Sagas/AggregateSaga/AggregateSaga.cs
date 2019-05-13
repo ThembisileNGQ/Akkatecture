@@ -231,15 +231,15 @@ namespace Akkatecture.Sagas.AggregateSaga
             where TAggregateEvent : IAggregateEvent<TAggregateSaga, TIdentity>
         {
             long version = Version;
-            var comittedEvents = new List<CommittedEvent<TAggregateSaga, TIdentity, TAggregateEvent>>();
+            var committedEvents = new List<CommittedEvent<TAggregateSaga, TIdentity, TAggregateEvent>>();
             foreach (var aggregateEvent in aggregateEvents)
             {
                 var committedEvent = From(aggregateEvent, version + 1, metadata);
-                comittedEvents.Add(committedEvent);
+                committedEvents.Add(committedEvent);
                 version++;
             }
 
-            PersistAll(comittedEvents, ApplyCommittedEvent);
+            PersistAll(committedEvents, ApplyCommittedEvent);
         }
 
         public virtual CommittedEvent<TAggregateSaga, TIdentity, TAggregateEvent> From<TAggregateEvent>(TAggregateEvent aggregateEvent,
@@ -313,14 +313,14 @@ namespace Akkatecture.Sagas.AggregateSaga
                         SnapshotVersion = snapshotDefinition.Version
                     };
 
-                    var commitedSnapshot =
+                    var committedSnapshot =
                         new ComittedSnapshot<TAggregateSaga, TIdentity, IAggregateSnapshot<TAggregateSaga, TIdentity>>(
                             Id,
                             aggregateSnapshot,
                             snapshotMetadata,
                             committedEvent.Timestamp, Version);
 
-                    SaveSnapshot(commitedSnapshot);
+                    SaveSnapshot(committedSnapshot);
                 }
             }
 
@@ -377,8 +377,8 @@ namespace Akkatecture.Sagas.AggregateSaga
             try
             {
                 Logger.Debug("AggregateSaga of Name={0}, and Id={1}; has received a SnapshotOffer of Type={2}.", Name, Id, aggregateSnapshotOffer.Snapshot.GetType().PrettyPrint());
-                var comittedSnapshot = aggregateSnapshotOffer.Snapshot as ComittedSnapshot<TAggregateSaga, TIdentity, IAggregateSnapshot<TAggregateSaga, TIdentity>>;
-                HydrateSnapshot(comittedSnapshot.AggregateSnapshot, aggregateSnapshotOffer.Metadata.SequenceNr);
+                var committedSnapshot = aggregateSnapshotOffer.Snapshot as ComittedSnapshot<TAggregateSaga, TIdentity, IAggregateSnapshot<TAggregateSaga, TIdentity>>;
+                HydrateSnapshot(committedSnapshot.AggregateSnapshot, aggregateSnapshotOffer.Metadata.SequenceNr);
             }
             catch (Exception exception)
             {

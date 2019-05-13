@@ -68,7 +68,7 @@ namespace Akkatecture.Events
         {
             var type = potentialUpcast.GetType();
             
-            if (potentialUpcast is ICommittedEvent<TAggregate,TIdentity> comittedEvent)
+            if (potentialUpcast is ICommittedEvent<TAggregate,TIdentity> committedEvent)
             {
                 var eventType = type.GenericTypeArguments[2];
 
