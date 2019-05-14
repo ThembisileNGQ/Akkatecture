@@ -299,6 +299,12 @@ namespace Akkatecture.Aggregates
         {
             
             var methodInfo = GetType().GetMethod("ApplyCommittedEvent", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+            
+            var methods = GetType()
+                .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                .Where(m => m.IsFamily || m.IsPublic)
+                .Where(m => m.Name.Equals("ApplyCommittedEvent"));
+            
             if (committedEvent is ICommittedEvent matchedEvent)
             {
                 var d = (dynamic) committedEvent;
