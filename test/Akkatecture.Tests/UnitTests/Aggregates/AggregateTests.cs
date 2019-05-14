@@ -64,7 +64,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             aggregateManager.Tell(command);
             
             eventProbe
-                .ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent>>(
+                .ExpectMsg<IDomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent>>(
                 x => x.AggregateEvent.TestAggregateId.Equals(aggregateId) &&
                      x.Metadata.ContainsKey("some-key"));
         }
@@ -130,7 +130,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             aggregateManager.Tell(nextCommand);
 
             eventProbe
-                .ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>>(
+                .ExpectMsg<IDomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>>(
                 x => x.AggregateEvent.LastSequenceNr == 1
                      && x.AggregateEvent.Version == 1
                      && x.AggregateEvent.AggregateState.TestCollection.Count == 0);
@@ -155,7 +155,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             aggregateManager.Tell(nextCommand);
 
             eventProbe
-                .ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>>(
+                .ExpectMsg<IDomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>>(
                 x => x.AggregateEvent.Test.Equals(test));
         }
 
@@ -185,12 +185,12 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
 
 
             eventProbe
-                .ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>>(
+                .ExpectMsg<IDomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>>(
                 x => x.AggregateEvent.Test.Equals(test)
                      && x.AggregateSequenceNumber == 2);
 
             eventProbe
-                .ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>>(
+                .ExpectMsg<IDomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>>(
                 x => x.AggregateEvent.Test.Equals(test2)
                      && x.AggregateSequenceNumber == 3);
         }
@@ -224,9 +224,8 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             aggregateManager.Tell(reviveCommand);
 
 
-
             eventProbe
-                .ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>>(
+                .ExpectMsg<IDomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>>(
                 x => x.AggregateEvent.LastSequenceNr == 6
                      && x.AggregateEvent.Version == 6
                      && x.AggregateEvent.AggregateState.TestCollection.Count == 5);
@@ -236,7 +235,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         [Category(Category)]
         public void TestEventMultipleEmitSourcing_AfterManyMultiCreateCommand_EventsEmitted()
         {
-            /*var eventProbe = CreateTestProbe("event-probe");
+            var eventProbe = CreateTestProbe("event-probe");
             Sys.EventStream.Subscribe(eventProbe, typeof(IDomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent>));
             Sys.EventStream.Subscribe(eventProbe, typeof(IDomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
@@ -251,7 +250,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
 
             eventProbe.ExpectMsg<IDomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent>>(TimeSpan.FromMinutes(1));
             eventProbe.ExpectMsg<IDomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>>(TimeSpan.FromMinutes(1));
-            eventProbe.ExpectMsg<IDomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>>(TimeSpan.FromMinutes(1));*/
+            eventProbe.ExpectMsg<IDomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>>(TimeSpan.FromMinutes(1));
 
         }
         
@@ -261,6 +260,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         {
             
             var eventProbe = CreateTestProbe("event-probe");
+            Sys.EventStream.Subscribe(eventProbe, typeof(IDomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>));
             Sys.EventStream.Subscribe(eventProbe, typeof(IDomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
             var aggregateId = TestAggregateId.New;
@@ -281,9 +281,17 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             var reviveCommand = new PublishTestStateCommand(aggregateId);
             aggregateManager.Tell(reviveCommand);
 
+            eventProbe
+                .ExpectMsg<IDomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>>();
+            eventProbe
+                .ExpectMsg<IDomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>>();
+            eventProbe
+                .ExpectMsg<IDomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>>();
+            eventProbe
+                .ExpectMsg<IDomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>>();
 
             eventProbe
-                .ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>>(
+                .ExpectMsg<IDomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>>(
                 x => x.AggregateEvent.LastSequenceNr == 5
                      && x.AggregateEvent.Version == 5
                      && x.AggregateEvent.AggregateState.TestCollection.Count == 4);
@@ -313,7 +321,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             }
             
             eventProbe
-                .ExpectMsg<DomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>>(
+                .ExpectMsg<IDomainEvent<TestAggregate, TestAggregateId, TestStateSignalEvent>>(
                 x => x.AggregateEvent.LastSequenceNr == 11
                      && x.AggregateEvent.Version == 11
                      && x.AggregateEvent.AggregateState.TestCollection.Count == 10

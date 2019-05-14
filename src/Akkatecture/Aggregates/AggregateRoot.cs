@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using Akka.Actor;
 using Akka.Event;
 using Akka.Persistence;
@@ -142,25 +143,74 @@ namespace Akkatecture.Aggregates
 
         
         
-        public virtual void EmitAll(params IAggregateEvent<TAggregate, TIdentity>[] aggregateEvents)
+        public virtual void EmitAll(params object[] aggregateEvents)
         {
             var version = Version;
             
-            var committedEvents = new List<CommittedEvent<TAggregate,TIdentity, IAggregateEvent<TAggregate, TIdentity>>>();
+            var committedEvents = new List<object>();
             var events = new List<object>();
             foreach (var aggregateEvent in aggregateEvents)
             {
-                var committedEvent = From(aggregateEvent, version + 1);
+                var committedEvent = FromObject(aggregateEvent, version + 1);
                 events.Add(committedEvent);
                 committedEvents.Add(committedEvent);
                 version++;
             }
 
-            PersistAll(committedEvents, ApplyCommittedEvent);
+            PersistAll(committedEvents, ApplyDynamicCommittedEvent);
+        }
+         
+
+        public virtual object FromObject(object aggregateEvent, long version, IMetadata metadata = null)
+        {
+            if (aggregateEvent is IAggregateEvent)
+            {
+                EventDefinitionService.Load(aggregateEvent.GetType());
+                var eventDefinition = EventDefinitionService.GetDefinition(aggregateEvent.GetType());
+                var aggregateSequenceNumber = version + 1;
+                var eventId = EventId.NewDeterministic(
+                    GuidFactories.Deterministic.Namespaces.Events,
+                    $"{Id.Value}-v{aggregateSequenceNumber}");
+                var now = DateTimeOffset.UtcNow;
+                var eventMetadata = new Metadata
+                {
+                    Timestamp = now,
+                    AggregateSequenceNumber = aggregateSequenceNumber,
+                    AggregateName = Name.Value,
+                    AggregateId = Id.Value,
+                    SourceId = PinnedCommand.SourceId,
+                    EventId = eventId,
+                    EventName = eventDefinition.Name,
+                    EventVersion = eventDefinition.Version
+                };
+                eventMetadata.Add(MetadataKeys.TimestampEpoch, now.ToUnixTime().ToString());
+                if (metadata != null)
+                {
+                    eventMetadata.AddRange(metadata);
+                }
+                var genericType = typeof(CommittedEvent<,,>)
+                    .MakeGenericType(typeof(TAggregate), typeof(TIdentity),aggregateEvent.GetType());
+
+
+                var committedEvent = Activator.CreateInstance(
+                    genericType,
+                    Id,
+                    aggregateEvent,
+                    eventMetadata,
+                    now,
+                    aggregateSequenceNumber);
+                /*
+                dynamic dynamicEvent = aggregateEvent;
+                var committedEvent = new CommittedEvent<TAggregate, TIdentity, TAggregateEvent>(Id, dynamicEvent,eventMetadata,now,aggregateSequenceNumber);
+                return committedEvent; */
+
+                return committedEvent;
+            }
+            
+            throw new InvalidCastException();
+            
         }
         
-        
-
         public virtual CommittedEvent<TAggregate, TIdentity, TAggregateEvent> From<TAggregateEvent>(TAggregateEvent aggregateEvent,
             long version, IMetadata metadata = null)
             where TAggregateEvent : class, IAggregateEvent<TAggregate, TIdentity>
@@ -243,7 +293,22 @@ namespace Akkatecture.Aggregates
                     SaveSnapshot(commitedSnapshot);
                 }
             }
+        }
 
+        protected void ApplyDynamicCommittedEvent(object committedEvent)
+        {
+            
+            var methodInfo = GetType().GetMethod("ApplyCommittedEvent", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+            if (committedEvent is ICommittedEvent matchedEvent)
+            {
+                var d = (dynamic) committedEvent;
+                ApplyCommittedEvent<IAggregateEvent<TAggregate,TIdentity>>(d);
+
+            }
+            else
+            {
+                Logger.Warning("Aggregate of Name={0}, and Id={1}; could not apply dynamic committed event.", Name, Id);
+            }
         }
 
         protected virtual void Publish<TEvent>(TEvent aggregateEvent)

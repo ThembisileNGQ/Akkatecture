@@ -91,10 +91,10 @@ namespace Akkatecture.TestHelpers.Aggregates
             {
                 var createdEvent = new TestCreatedEvent(command.AggregateId);
                 var firstTestAddedEvent = new TestAddedEvent(command.FirstTest);
-                var seconcTestAddedEvent = new TestAddedEvent(command.SecondTest);
-                var events = Events(createdEvent, firstTestAddedEvent, seconcTestAddedEvent);
+                var secondTestAddedEvent = new TestAddedEvent(command.SecondTest);
+                var events = Events(createdEvent, firstTestAddedEvent, secondTestAddedEvent);
                 //EmitAll(events, new Metadata {{"some-key","some-value"}});
-                EmitAll(createdEvent, firstTestAddedEvent, seconcTestAddedEvent);
+                EmitAll(createdEvent, firstTestAddedEvent, secondTestAddedEvent);
                 Reply(TestExecutionResult.SucceededWith(command.SourceId));
             }
             else
