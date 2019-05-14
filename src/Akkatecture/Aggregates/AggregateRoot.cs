@@ -134,30 +134,36 @@ namespace Akkatecture.Aggregates
         }
 
         public virtual void Emit<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+            where TAggregateEvent : class, IAggregateEvent<TAggregate, TIdentity>
         {
             var committedEvent = From(aggregateEvent, Version, metadata);
             Persist(committedEvent, ApplyCommittedEvent);
         }
 
-        public virtual void EmitAll<TAggregateEvent>(IEnumerable<TAggregateEvent> aggregateEvents, IMetadata metadata = null)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+        
+        
+        public virtual void EmitAll(params IAggregateEvent<TAggregate, TIdentity>[] aggregateEvents)
         {
-            long version = Version;
-            var comittedEvents = new List<CommittedEvent<TAggregate, TIdentity, TAggregateEvent>>();
+            var version = Version;
+            
+            var committedEvents = new List<CommittedEvent<TAggregate,TIdentity, IAggregateEvent<TAggregate, TIdentity>>>();
+            var events = new List<object>();
             foreach (var aggregateEvent in aggregateEvents)
             {
-                var committedEvent = From(aggregateEvent, version + 1, metadata);
-                comittedEvents.Add(committedEvent);
+                var committedEvent = From(aggregateEvent, version + 1);
+                events.Add(committedEvent);
+                committedEvents.Add(committedEvent);
                 version++;
             }
 
-            PersistAll(comittedEvents, ApplyCommittedEvent);
+            PersistAll(committedEvents, ApplyCommittedEvent);
         }
+        
+        
 
         public virtual CommittedEvent<TAggregate, TIdentity, TAggregateEvent> From<TAggregateEvent>(TAggregateEvent aggregateEvent,
             long version, IMetadata metadata = null)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+            where TAggregateEvent : class, IAggregateEvent<TAggregate, TIdentity>
         {
             if (aggregateEvent == null)
             {
@@ -197,7 +203,7 @@ namespace Akkatecture.Aggregates
         }
 
         protected void  ApplyCommittedEvent<TAggregateEvent>(ICommittedEvent<TAggregate, TIdentity, TAggregateEvent> committedEvent)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+            where TAggregateEvent : class, IAggregateEvent<TAggregate, TIdentity>
         {
             var applyMethods = GetEventApplyMethods(committedEvent.AggregateEvent);
             applyMethods(committedEvent.AggregateEvent);
@@ -228,7 +234,7 @@ namespace Akkatecture.Aggregates
                     };
 
                     var commitedSnapshot =
-                        new ComittedSnapshot<TAggregate, TIdentity, IAggregateSnapshot<TAggregate, TIdentity>>(
+                        new CommittedSnapshot<TAggregate, TIdentity, IAggregateSnapshot<TAggregate, TIdentity>>(
                             Id,
                             aggregateSnapshot,
                             snapshotMetadata,
@@ -287,8 +293,13 @@ namespace Akkatecture.Aggregates
             base.Unhandled(message);
         }
 
+        protected IEnumerable<IAggregateEvent<TAggregate, TIdentity>> Events(params IAggregateEvent<TAggregate, TIdentity>[] events)
+        {
+            return events.ToList();
+        }
+
         protected Action<IAggregateEvent> GetEventApplyMethods<TAggregateEvent>(TAggregateEvent aggregateEvent)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+            where TAggregateEvent : class, IAggregateEvent<TAggregate, TIdentity>
         {
             var eventType = aggregateEvent.GetType();
 
@@ -302,7 +313,7 @@ namespace Akkatecture.Aggregates
         }
 
         protected Action<IAggregateSnapshot> GetSnapshotHydrateMethods<TAggregateSnapshot>(TAggregateSnapshot aggregateEvent)
-            where TAggregateSnapshot : IAggregateSnapshot<TAggregate, TIdentity>
+            where TAggregateSnapshot : class, IAggregateSnapshot<TAggregate, TIdentity>
         {
             var snapshotType = aggregateEvent.GetType();
 
@@ -356,7 +367,7 @@ namespace Akkatecture.Aggregates
             try
             {
                 Logger.Debug("Aggregate of Name={0}, and Id={1}; has received a SnapshotOffer of Type={2}.", Name, Id, aggregateSnapshotOffer.Snapshot.GetType().PrettyPrint());
-                var comittedSnapshot = aggregateSnapshotOffer.Snapshot as ComittedSnapshot<TAggregate,TIdentity, IAggregateSnapshot<TAggregate, TIdentity>>;
+                var comittedSnapshot = aggregateSnapshotOffer.Snapshot as CommittedSnapshot<TAggregate,TIdentity, IAggregateSnapshot<TAggregate, TIdentity>>;
                 HydrateSnapshot(comittedSnapshot.AggregateSnapshot, aggregateSnapshotOffer.Metadata.SequenceNr);
             }
             catch (Exception exception)

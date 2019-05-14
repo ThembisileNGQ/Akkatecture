@@ -130,7 +130,7 @@ namespace Akkatecture.Tests.UnitTests.Serialization
                 AggregateId = aggregateId.Value,
             };
             var committedEvent =
-                new ComittedSnapshot<TestAggregate, TestAggregateId, TestAggregateSnapshot>(
+                new CommittedSnapshot<TestAggregate, TestAggregateId, TestAggregateSnapshot>(
                     aggregateId, 
                     aggregateSnapshot,
                     snapshotMetadata,

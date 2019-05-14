@@ -262,6 +262,21 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
                          && x.AggregateEvent.AggregateState.TestCollection.Count == 5);
         }
         
+        /*[Fact]
+        [Category(Category)]
+        public void TestEventMultipleEmitSourcing_AfterManyMultiCreateCommand_EventsEmitted()
+        {
+            var aggregateId = TestAggregateId.New;
+            var commandId = CommandId.New;
+            var firstTest = new Test(TestId.New);
+            var secondTest = new Test(TestId.New);
+
+            this.FixtureFor<TestAggregate, TestAggregateId>(aggregateId)
+                .GivenNothing()
+                .When(new CreateAndAddTwoTestsCommand(aggregateId, commandId, firstTest, secondTest))
+                .ThenExpectDomainEvent<TestCreatedEvent>();
+        }*/
+        
         [Fact]
         [Category(Category)]
         public void TestEventMultipleEmitSourcing_AfterManyMultiCommand_TestStateSignalled()
