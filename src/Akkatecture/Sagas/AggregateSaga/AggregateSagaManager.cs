@@ -91,7 +91,7 @@ namespace Akkatecture.Sagas.AggregateSaga
 
         protected virtual bool Terminate(Terminated message)
         {
-            Logger.Warning($"{GetType().PrettyPrint()}: {message.ActorRef.Path} has terminated.");
+            Logger.Warning("AggregateSaga of Type={0}, and Id={1}; has terminated.",typeof(TAggregateSaga).PrettyPrint(), message.ActorRef.Path.Name);
             Context.Unwatch(message.ActorRef);
             return true;
         }
@@ -104,7 +104,7 @@ namespace Akkatecture.Sagas.AggregateSaga
                 localOnlyDecider: x =>
                 {
 
-                    Logger.Error($"[{GetType().PrettyPrint()}] Exception={x.ToString()} to be decided.");
+                    Logger.Warning("{0} will supervise Exception={1} to be decided as {2}.",GetType().PrettyPrint(), x.ToString(),Directive.Restart);
                     return Directive.Restart;
                 });
         }
@@ -112,7 +112,7 @@ namespace Akkatecture.Sagas.AggregateSaga
         protected IActorRef FindOrSpawn(TIdentity sagaId)
         {
             var saga = Context.Child(sagaId);
-            if (Equals(saga, ActorRefs.Nobody))
+            if (saga.IsNobody())
             {
                 return Spawn(sagaId);
             }

@@ -18,7 +18,7 @@
         <Description>
             bdd style test fixtures for akkatecture
         </Description>
-        <PackageTags>akka cqrs es eventsourcing tdd actors testing actor-model</PackageTags>
+        <PackageTags>akka cqrs es eventsourcing tdd bdd actors testing actor-model</PackageTags>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/Lutando/Akkatecture</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>

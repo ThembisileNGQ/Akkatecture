@@ -51,7 +51,7 @@ namespace Akkatecture.Aggregates
     public interface ICommittedEvent<TAggregate, out TIdentity, out TAggregateEvent> : ICommittedEvent<TAggregate, TIdentity>
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
-        where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+        where TAggregateEvent : class, IAggregateEvent<TAggregate, TIdentity>
     {
         TAggregateEvent AggregateEvent { get; }
     }

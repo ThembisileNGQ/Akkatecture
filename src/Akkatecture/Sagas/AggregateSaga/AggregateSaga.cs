@@ -81,7 +81,7 @@ namespace Akkatecture.Sagas.AggregateSaga
             if ((this as TAggregateSaga) == null)
             {
                 throw new InvalidOperationException(
-                    $"AggregateSaga '{GetType().PrettyPrint()}' specifies '{typeof(TAggregateSaga).PrettyPrint()}' as generic argument, it should be its own type");
+                    $"AggregateSaga {Name} specifies Type={typeof(TAggregateSaga).PrettyPrint()} as generic argument, it should be its own type.");
             }
 
             if (State == null)
@@ -90,9 +90,9 @@ namespace Akkatecture.Sagas.AggregateSaga
                 {
                     State = (TSagaState)Activator.CreateInstance(typeof(TSagaState));
                 }
-                catch
+                catch (Exception exception)
                 {
-                    Logger.Warning($"Unable to activate State for {GetType()}");
+                    Logger.Error(exception,"AggregateSaga of Name={1}; was unable to activate SagaState of Type={0}.", Name, typeof(TSagaState).PrettyPrint());
                 }
 
             }
@@ -220,31 +220,95 @@ namespace Akkatecture.Sagas.AggregateSaga
 
 
         protected virtual void Emit<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
-            where TAggregateEvent : IAggregateEvent<TAggregateSaga, TIdentity>
+            where TAggregateEvent : class, IAggregateEvent<TAggregateSaga, TIdentity>
         {
             var committedEvent = From(aggregateEvent, Version, metadata);
             Persist(committedEvent, ApplyCommittedEvent);
 
         }
 
-        public virtual void EmitAll<TAggregateEvent>(IEnumerable<TAggregateEvent> aggregateEvents, IMetadata metadata = null)
-            where TAggregateEvent : IAggregateEvent<TAggregateSaga, TIdentity>
+        public virtual void EmitAll(params IAggregateEvent<TAggregateSaga, TIdentity>[] aggregateEvents)
         {
-            long version = Version;
-            var comittedEvents = new List<CommittedEvent<TAggregateSaga, TIdentity, TAggregateEvent>>();
+            var version = Version;
+            
+            var committedEvents = new List<object>();
             foreach (var aggregateEvent in aggregateEvents)
             {
-                var committedEvent = From(aggregateEvent, version + 1, metadata);
-                comittedEvents.Add(committedEvent);
+                var committedEvent = FromObject(aggregateEvent, version + 1);
+                committedEvents.Add(committedEvent);
                 version++;
             }
 
-            PersistAll(comittedEvents, ApplyCommittedEvent);
+            PersistAll(committedEvents, ApplyObjectCommittedEvent);
+        }
+        
+        private object FromObject(object aggregateEvent, long version, IMetadata metadata = null)
+        {
+            if (aggregateEvent is IAggregateEvent)
+            {
+                _eventDefinitionService.Load(aggregateEvent.GetType());
+                var eventDefinition = _eventDefinitionService.GetDefinition(aggregateEvent.GetType());
+                var aggregateSequenceNumber = version + 1;
+                var eventId = EventId.NewDeterministic(
+                    GuidFactories.Deterministic.Namespaces.Events,
+                    $"{Id.Value}-v{aggregateSequenceNumber}");
+                var now = DateTimeOffset.UtcNow;
+                var eventMetadata = new Metadata
+                {
+                    Timestamp = now,
+                    AggregateSequenceNumber = aggregateSequenceNumber,
+                    AggregateName = Name.Value,
+                    AggregateId = Id.Value,
+                    EventId = eventId,
+                    EventName = eventDefinition.Name,
+                    EventVersion = eventDefinition.Version
+                };
+                eventMetadata.Add(MetadataKeys.TimestampEpoch, now.ToUnixTime().ToString());
+                if (metadata != null)
+                {
+                    eventMetadata.AddRange(metadata);
+                }
+                var genericType = typeof(CommittedEvent<,,>)
+                    .MakeGenericType(typeof(TAggregateSaga), typeof(TIdentity),aggregateEvent.GetType());
+
+
+                var committedEvent = Activator.CreateInstance(
+                    genericType,
+                    Id,
+                    aggregateEvent,
+                    eventMetadata,
+                    now,
+                    aggregateSequenceNumber);
+
+                return committedEvent;
+            }
+            
+            throw new InvalidOperationException("could not perform the required mapping for committed event.");
+            
+        }
+        
+        private void ApplyObjectCommittedEvent(object committedEvent)
+        {
+            try
+            {
+                var method = GetType()
+                    .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                    .Where(m => m.IsFamily || m.IsPublic)
+                    .Single(m => m.Name.Equals("ApplyCommittedEvent"));
+
+                var genericMethod = method.MakeGenericMethod(committedEvent.GetType().GenericTypeArguments[2]);
+
+                genericMethod.Invoke(this, new[] {committedEvent});
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception, "Aggregate of Name={0}, and Id={1}; tried to invoke Method={2} with object Type={3} .",Name, Id, nameof(ApplyCommittedEvent), committedEvent.GetType().PrettyPrint());
+            }
         }
 
         public virtual CommittedEvent<TAggregateSaga, TIdentity, TAggregateEvent> From<TAggregateEvent>(TAggregateEvent aggregateEvent,
             long version, IMetadata metadata = null)
-            where TAggregateEvent : IAggregateEvent<TAggregateSaga, TIdentity>
+            where TAggregateEvent : class, IAggregateEvent<TAggregateSaga, TIdentity>
         {
             if (aggregateEvent == null)
             {
@@ -279,17 +343,17 @@ namespace Akkatecture.Sagas.AggregateSaga
 
         protected virtual IAggregateSnapshot<TAggregateSaga, TIdentity> CreateSnapshot()
         {
-            Logger.Info($"[{Name}] With Id={Id} Attempted to Create a Snapshot, override the CreateSnapshot() method to return the snapshot data model.");
+            Logger.Info("AggregateSaga of Name={0}, and Id={2}; attempted to create a snapshot, override the {2}() method to get snapshotting to function.", Name, Id, nameof(CreateSnapshot));
             return null;
         }
 
         protected void ApplyCommittedEvent<TAggregateEvent>(ICommittedEvent<TAggregateSaga, TIdentity, TAggregateEvent> committedEvent)
-            where TAggregateEvent : IAggregateEvent<TAggregateSaga, TIdentity>
+            where TAggregateEvent : class, IAggregateEvent<TAggregateSaga, TIdentity>
         {
             var applyMethods = GetEventApplyMethods(committedEvent.AggregateEvent);
             applyMethods(committedEvent.AggregateEvent);
 
-            Logger.Info($"[{Name}] With Id={Id} Commited and Applied [{typeof(TAggregateEvent).PrettyPrint()}]");
+            Logger.Info("AggregateSaga of Name={0}, and Id={1}; committed and applied an AggregateEvent of Type={2}", Name, Id, typeof(TAggregateEvent).PrettyPrint());
 
             Version++;
 
@@ -313,14 +377,14 @@ namespace Akkatecture.Sagas.AggregateSaga
                         SnapshotVersion = snapshotDefinition.Version
                     };
 
-                    var commitedSnapshot =
-                        new ComittedSnapshot<TAggregateSaga, TIdentity, IAggregateSnapshot<TAggregateSaga, TIdentity>>(
+                    var committedSnapshot =
+                        new CommittedSnapshot<TAggregateSaga, TIdentity, IAggregateSnapshot<TAggregateSaga, TIdentity>>(
                             Id,
                             aggregateSnapshot,
                             snapshotMetadata,
                             committedEvent.Timestamp, Version);
 
-                    SaveSnapshot(commitedSnapshot);
+                    SaveSnapshot(committedSnapshot);
                 }
             }
 
@@ -330,7 +394,7 @@ namespace Akkatecture.Sagas.AggregateSaga
         protected virtual void Publish<TEvent>(TEvent aggregateEvent)
         {
             Context.System.EventStream.Publish(aggregateEvent);
-            Logger.Info($"[{Name}] With Id={Id} Published [{typeof(TEvent).PrettyPrint()}]");
+            Logger.Info("Aggregate of Name={0}, and Id={1}; published DomainEvent of Type={2}.",Name, Id, typeof(TEvent).PrettyPrint());
         }
 
         protected Action<IAggregateEvent> GetEventApplyMethods<TAggregateEvent>(TAggregateEvent aggregateEvent)
@@ -340,11 +404,8 @@ namespace Akkatecture.Sagas.AggregateSaga
 
             Action<TSagaState, IAggregateEvent> applyMethod;
             if (!ApplyMethodsFromState.TryGetValue(eventType, out applyMethod))
-            {
-                throw new NotImplementedException(
-                    $"Aggregate State '{State.GetType().PrettyPrint()}' does not have an 'Apply' method that takes aggregate event type '{eventType.PrettyPrint()}' as argument");
-            }
-
+                throw new NotImplementedException($"SagaState of Type={State.GetType().PrettyPrint()} does not have an 'Apply' method that takes in an aggregate event of Type={eventType.PrettyPrint()} as an argument.");
+            
             var aggregateApplyMethod = applyMethod.Bind(State);
 
             return aggregateApplyMethod;
@@ -359,16 +420,16 @@ namespace Akkatecture.Sagas.AggregateSaga
             Version++;
         }
 
-        protected virtual bool Recover(ICommittedEvent<TAggregateSaga, TIdentity, IAggregateEvent<TAggregateSaga, TIdentity>> domainEvent)
+        protected virtual bool Recover(ICommittedEvent<TAggregateSaga, TIdentity, IAggregateEvent<TAggregateSaga, TIdentity>> committedEvent)
         {
             try
             {
-                Logger.Debug($"Recovering with event of type [{domainEvent.GetType().PrettyPrint()}] ");
-                ApplyEvent(domainEvent.AggregateEvent);
+                Logger.Debug("AggregateSaga of Name={0}, Id={1}, and Version={2}, is recovering with CommittedEvent of Type={3}.", Name, Id, Version, committedEvent.GetType().PrettyPrint());
+                ApplyEvent(committedEvent.AggregateEvent);
             }
             catch (Exception exception)
             {
-                Logger.Error($"Recovering with event of type [{domainEvent.GetType().PrettyPrint()}] caused an exception {exception.GetType().PrettyPrint()}");
+                Logger.Error(exception,"Aggregate of Name={0}, Id={1}; while recovering with event of Type={2} caused an exception.", Name, Id, committedEvent.GetType().PrettyPrint());
                 return false;
             }
 
@@ -377,15 +438,15 @@ namespace Akkatecture.Sagas.AggregateSaga
 
         protected virtual bool Recover(SnapshotOffer aggregateSnapshotOffer)
         {
-            Logger.Info($"Aggregate [{Name}] With Id={Id} has received a SnapshotOffer of type {aggregateSnapshotOffer.Snapshot.GetType().PrettyPrint()}");
             try
             {
-                var comittedSnapshot = aggregateSnapshotOffer.Snapshot as ComittedSnapshot<TAggregateSaga, TIdentity, IAggregateSnapshot<TAggregateSaga, TIdentity>>;
+                Logger.Debug("AggregateSaga of Name={0}, and Id={1}; has received a SnapshotOffer of Type={2}.", Name, Id, aggregateSnapshotOffer.Snapshot.GetType().PrettyPrint());
+                var comittedSnapshot = aggregateSnapshotOffer.Snapshot as CommittedSnapshot<TAggregateSaga, TIdentity, IAggregateSnapshot<TAggregateSaga, TIdentity>>;
                 HydrateSnapshot(comittedSnapshot.AggregateSnapshot, aggregateSnapshotOffer.Metadata.SequenceNr);
             }
             catch (Exception exception)
             {
-                Logger.Error($"Recovering with snapshot of type [{aggregateSnapshotOffer.Snapshot.GetType().PrettyPrint()}] caused an exception {exception.GetType().PrettyPrint()}");
+                Logger.Error(exception,"AggregateSaga of Name={0}, Id={1}; recovering with snapshot of Type={2} caused an exception.", Name, Id, aggregateSnapshotOffer.Snapshot.GetType().PrettyPrint());
 
                 return false;
             }
@@ -409,10 +470,7 @@ namespace Akkatecture.Sagas.AggregateSaga
 
             Action<TSagaState, IAggregateSnapshot> hydrateMethod;
             if (!HydrateMethodsFromState.TryGetValue(snapshotType, out hydrateMethod))
-            {
-                throw new NotImplementedException(
-                    $"Aggregate State '{State.GetType().PrettyPrint()}' does not have an 'Hydrate' method that takes aggregate snapshot type '{snapshotType.PrettyPrint()}' as argument");
-            }
+                throw new NotImplementedException($"SagaState of Type={State.GetType().PrettyPrint()} does not have a 'Hydrate' method that takes in an aggregate snapshot of Type={snapshotType.PrettyPrint()} as an argument.");
 
             var snapshotHydrateMethod = hydrateMethod.Bind(State);
 
@@ -443,20 +501,20 @@ namespace Akkatecture.Sagas.AggregateSaga
         }
         protected virtual bool SnapshotStatus(SaveSnapshotSuccess snapshotSuccess)
         {
-            Logger.Info($"Aggregate [{Name}] With Id={Id} Saved Snapshot at Version {snapshotSuccess.Metadata.SequenceNr}");
+            Logger.Debug("Aggregate of Name={0}, and Id={1}; saved a snapshot at Version={2}.", Name, Id, snapshotSuccess.Metadata.SequenceNr);
             return true;
         }
 
         protected virtual bool SnapshotStatus(SaveSnapshotFailure snapshotFailure)
         {
-            Logger.Error($"Aggregate [{Name}] With Id={Id} Failed to save snapshot at version {snapshotFailure.Metadata.SequenceNr} because of {snapshotFailure.Cause}");
+            Logger.Error(snapshotFailure.Cause,"Aggregate of Name={0}, and Id={1}; failed to save snapshot at Version={2}.", Name, Id, snapshotFailure.Metadata.SequenceNr);
             return true;
         }
 
 
         protected virtual bool Recover(RecoveryCompleted recoveryCompleted)
         {
-            Logger.Info($"Aggregate [{Name}] With Id={Id} has completed recovering from it's journal(s)");
+            Logger.Debug("Aggregate of Name={0}, and Id={1}; has completed recovering from it's event journal at Version={2}.", Name, Id, Version);
             return true;
         }
     }

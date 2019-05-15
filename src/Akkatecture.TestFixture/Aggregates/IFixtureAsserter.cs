@@ -35,9 +35,11 @@ namespace Akkatecture.TestFixture.Aggregates
     {
         IFixtureAsserter<TAggregate, TIdentity> AndWhen(params ICommand<TAggregate, TIdentity>[] commands);
         IFixtureAsserter<TAggregate, TIdentity> ThenExpect<TAggregateEvent>(Predicate<TAggregateEvent> aggregateEventPredicate = null)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>;
+            where TAggregateEvent : class, IAggregateEvent<TAggregate, TIdentity>;
+
+        IFixtureAsserter<TAggregate, TIdentity> ThenExpectReply<TReply>(Predicate<TReply> aggregateReply = null);
         
-        IFixtureAsserter<TAggregate, TIdentity> ThenExpectDomainEvent<TAggregateEvent>(Predicate<DomainEvent<TAggregate, TIdentity, TAggregateEvent>> domainEventPredicate = null)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>;
+        IFixtureAsserter<TAggregate, TIdentity> ThenExpectDomainEvent<TAggregateEvent>(Predicate<IDomainEvent<TAggregate, TIdentity, TAggregateEvent>> domainEventPredicate = null)
+            where TAggregateEvent : class, IAggregateEvent<TAggregate, TIdentity>;
     }
 }

@@ -26,7 +26,7 @@ using Akkatecture.Core;
 
 namespace Akkatecture.Aggregates.Snapshot
 {
-    public class ComittedSnapshot<TAggregate, TIdentity, TAggregateSnapshot>
+    public class CommittedSnapshot<TAggregate, TIdentity, TAggregateSnapshot>
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
         where TAggregateSnapshot : IAggregateSnapshot<TAggregate, TIdentity>
@@ -37,7 +37,7 @@ namespace Akkatecture.Aggregates.Snapshot
         public long AggregateSequenceNumber { get; }
         public DateTimeOffset Timestamp { get; }
 
-        public ComittedSnapshot(
+        public CommittedSnapshot(
             TIdentity aggregateIdentity,
             TAggregateSnapshot aggregateSnapshot,
             SnapshotMetadata metadata,

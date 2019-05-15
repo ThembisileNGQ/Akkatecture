@@ -60,7 +60,7 @@ namespace Akkatecture.Aggregates
 
         protected virtual bool Dispatch(TCommand command)
         {
-            Logger.Info($"{GetType().PrettyPrint()} received {command.GetType().PrettyPrint()}");
+            Logger.Info("{0} received {1}", GetType().PrettyPrint(),command.GetType().PrettyPrint());
 
             var aggregateRef = FindOrCreate(command.AggregateId);
 
@@ -72,7 +72,7 @@ namespace Akkatecture.Aggregates
 
         protected virtual bool ReDispatch(TCommand command)
         {
-            Logger.Info($"{GetType().PrettyPrint()} as dead letter {command.GetType().PrettyPrint()}");
+            Logger.Info("{0} as dead letter {1}",GetType().PrettyPrint(), command.GetType().PrettyPrint());
 
             var aggregateRef = FindOrCreate(command.AggregateId);
 
@@ -97,7 +97,7 @@ namespace Akkatecture.Aggregates
 
         protected virtual bool Terminate(Terminated message)
         {
-            Logger.Warning($"{typeof(TAggregate).PrettyPrint()}: {message.ActorRef.Path} has terminated.");
+            Logger.Warning("Aggregate of Type={0}, and Id={1}; has terminated.",typeof(TAggregate).PrettyPrint(), message.ActorRef.Path.Name);
             Context.Unwatch(message.ActorRef);
             return true;
         }
@@ -106,7 +106,7 @@ namespace Akkatecture.Aggregates
         {
             var aggregate = Context.Child(aggregateId);
 
-            if(Equals(aggregate, ActorRefs.Nobody))
+            if(aggregate.IsNobody())
             {
                 aggregate = CreateAggregate(aggregateId);
             }
@@ -129,7 +129,7 @@ namespace Akkatecture.Aggregates
                 localOnlyDecider: x =>
                 {
 
-                    Logger.Warning($"[{GetType().PrettyPrint()}] Exception={x.ToString()} to be decided.");
+                    Logger.Warning("{0} will supervise Exception={1} to be decided as {2}.",GetType().PrettyPrint(), x.ToString(), Directive.Restart);
                     return Directive.Restart;
                 });
         }

@@ -27,13 +27,14 @@
 
 using System;
 using Akkatecture.Core;
+using Akkatecture.Extensions;
 
 namespace Akkatecture.Aggregates
 {
     public class CommittedEvent<TAggregate, TIdentity, TAggregateEvent> : ICommittedEvent<TAggregate, TIdentity, TAggregateEvent>
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
-        where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+        where TAggregateEvent : class, IAggregateEvent<TAggregate, TIdentity>
     {
         public TIdentity AggregateIdentity { get; }
         public TAggregateEvent AggregateEvent { get; }
@@ -69,6 +70,11 @@ namespace Akkatecture.Aggregates
         public IAggregateEvent GetAggregateEvent()
         {
             return AggregateEvent;
+        }
+        
+        public override string ToString()
+        {
+            return $"{typeof(TAggregate).PrettyPrint()} v{AggregateSequenceNumber}/{typeof(TAggregateEvent).PrettyPrint()}:{AggregateIdentity}";
         }
     }
 }
