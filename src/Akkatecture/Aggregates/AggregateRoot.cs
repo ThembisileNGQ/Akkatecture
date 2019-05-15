@@ -250,7 +250,8 @@ namespace Akkatecture.Aggregates
         {
             if (message is Command<TAggregate, TIdentity> command)
             {
-                PinnedCommand = command;
+                if(IsNew || Id.Equals(command.AggregateId))
+                    PinnedCommand = command;
             }
 
             return base.AroundReceive(receive, message);
