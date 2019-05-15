@@ -227,18 +227,83 @@ namespace Akkatecture.Sagas.AggregateSaga
 
         }
 
-        public virtual void EmitAll(IEnumerable<IAggregateEvent<TAggregateSaga, TIdentity>> aggregateEvents, IMetadata metadata = null)
+        public virtual void EmitAll(params IAggregateEvent<TAggregateSaga, TIdentity>[] aggregateEvents)
         {
-            long version = Version;
-            var comittedEvents = new List<CommittedEvent<TAggregateSaga, TIdentity, IAggregateEvent<TAggregateSaga, TIdentity>>>();
+            var version = Version;
+            
+            var committedEvents = new List<object>();
             foreach (var aggregateEvent in aggregateEvents)
             {
-                var committedEvent = From(aggregateEvent, version + 1, metadata);
+                var committedEvent = FromObject(aggregateEvent, version + 1);
                 committedEvents.Add(committedEvent);
                 version++;
             }
 
-            PersistAll(committedEvents, ApplyCommittedEvent);
+            PersistAll(committedEvents, ApplyObjectCommittedEvent);
+        }
+        
+        private object FromObject(object aggregateEvent, long version, IMetadata metadata = null)
+        {
+            if (aggregateEvent is IAggregateEvent)
+            {
+                _eventDefinitionService.Load(aggregateEvent.GetType());
+                var eventDefinition = _eventDefinitionService.GetDefinition(aggregateEvent.GetType());
+                var aggregateSequenceNumber = version + 1;
+                var eventId = EventId.NewDeterministic(
+                    GuidFactories.Deterministic.Namespaces.Events,
+                    $"{Id.Value}-v{aggregateSequenceNumber}");
+                var now = DateTimeOffset.UtcNow;
+                var eventMetadata = new Metadata
+                {
+                    Timestamp = now,
+                    AggregateSequenceNumber = aggregateSequenceNumber,
+                    AggregateName = Name.Value,
+                    AggregateId = Id.Value,
+                    EventId = eventId,
+                    EventName = eventDefinition.Name,
+                    EventVersion = eventDefinition.Version
+                };
+                eventMetadata.Add(MetadataKeys.TimestampEpoch, now.ToUnixTime().ToString());
+                if (metadata != null)
+                {
+                    eventMetadata.AddRange(metadata);
+                }
+                var genericType = typeof(CommittedEvent<,,>)
+                    .MakeGenericType(typeof(TAggregateSaga), typeof(TIdentity),aggregateEvent.GetType());
+
+
+                var committedEvent = Activator.CreateInstance(
+                    genericType,
+                    Id,
+                    aggregateEvent,
+                    eventMetadata,
+                    now,
+                    aggregateSequenceNumber);
+
+                return committedEvent;
+            }
+            
+            throw new InvalidOperationException("could not perform the required mapping for committed event.");
+            
+        }
+        
+        private void ApplyObjectCommittedEvent(object committedEvent)
+        {
+            try
+            {
+                var method = GetType()
+                    .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                    .Where(m => m.IsFamily || m.IsPublic)
+                    .Single(m => m.Name.Equals("ApplyCommittedEvent"));
+
+                var genericMethod = method.MakeGenericMethod(committedEvent.GetType().GenericTypeArguments[2]);
+
+                genericMethod.Invoke(this, new[] {committedEvent});
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception, "Aggregate of Name={0}, and Id={1}; tried to invoke Method={2} with object Type={3} .",Name, Id, nameof(ApplyCommittedEvent), committedEvent.GetType().PrettyPrint());
+            }
         }
 
         public virtual CommittedEvent<TAggregateSaga, TIdentity, TAggregateEvent> From<TAggregateEvent>(TAggregateEvent aggregateEvent,
@@ -312,7 +377,7 @@ namespace Akkatecture.Sagas.AggregateSaga
                         SnapshotVersion = snapshotDefinition.Version
                     };
 
-                    var commitedSnapshot =
+                    var committedSnapshot =
                         new CommittedSnapshot<TAggregateSaga, TIdentity, IAggregateSnapshot<TAggregateSaga, TIdentity>>(
                             Id,
                             aggregateSnapshot,

@@ -248,9 +248,9 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             
             aggregateManager.Tell(command);
 
-            eventProbe.ExpectMsg<IDomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent>>(TimeSpan.FromMinutes(1));
-            eventProbe.ExpectMsg<IDomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>>(TimeSpan.FromMinutes(1));
-            eventProbe.ExpectMsg<IDomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>>(TimeSpan.FromMinutes(1));
+            eventProbe.ExpectMsg<IDomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent>>();
+            eventProbe.ExpectMsg<IDomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>>();
+            eventProbe.ExpectMsg<IDomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>>();
 
         }
         

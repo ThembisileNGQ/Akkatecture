@@ -262,7 +262,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
                          && x.AggregateEvent.AggregateState.TestCollection.Count == 5);
         }
         
-        /*[Fact]
+        [Fact]
         [Category(Category)]
         public void TestEventMultipleEmitSourcing_AfterManyMultiCreateCommand_EventsEmitted()
         {
@@ -274,8 +274,10 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             this.FixtureFor<TestAggregate, TestAggregateId>(aggregateId)
                 .GivenNothing()
                 .When(new CreateAndAddTwoTestsCommand(aggregateId, commandId, firstTest, secondTest))
-                .ThenExpectDomainEvent<TestCreatedEvent>();
-        }*/
+                .ThenExpectDomainEvent<TestCreatedEvent>()
+                .ThenExpect<TestAddedEvent>()
+                .ThenExpect<TestAddedEvent>();
+        }
         
         [Fact]
         [Category(Category)]

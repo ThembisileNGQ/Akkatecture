@@ -143,16 +143,14 @@ namespace Akkatecture.Aggregates
 
         
         
-        public virtual void EmitAll(params object[] aggregateEvents)
+        public virtual void EmitAll(params IAggregateEvent<TAggregate, TIdentity>[] aggregateEvents)
         {
             var version = Version;
             
             var committedEvents = new List<object>();
-            var events = new List<object>();
             foreach (var aggregateEvent in aggregateEvents)
             {
                 var committedEvent = FromObject(aggregateEvent, version + 1);
-                events.Add(committedEvent);
                 committedEvents.Add(committedEvent);
                 version++;
             }
@@ -161,7 +159,7 @@ namespace Akkatecture.Aggregates
         }
          
 
-        public virtual object FromObject(object aggregateEvent, long version, IMetadata metadata = null)
+        private object FromObject(object aggregateEvent, long version, IMetadata metadata = null)
         {
             if (aggregateEvent is IAggregateEvent)
             {
@@ -199,15 +197,11 @@ namespace Akkatecture.Aggregates
                     eventMetadata,
                     now,
                     aggregateSequenceNumber);
-                /*
-                dynamic dynamicEvent = aggregateEvent;
-                var committedEvent = new CommittedEvent<TAggregate, TIdentity, TAggregateEvent>(Id, dynamicEvent,eventMetadata,now,aggregateSequenceNumber);
-                return committedEvent; */
 
                 return committedEvent;
             }
             
-            throw new InvalidCastException();
+            throw new InvalidOperationException("could not perform the required mapping for committed event.");
             
         }
         
@@ -295,7 +289,7 @@ namespace Akkatecture.Aggregates
             }
         }
 
-        protected void ApplyObjectCommittedEvent(object committedEvent)
+        private void ApplyObjectCommittedEvent(object committedEvent)
         {
             try
             {
