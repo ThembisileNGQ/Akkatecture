@@ -157,7 +157,7 @@ namespace Akkatecture.Aggregates
                 version++;
             }
 
-            PersistAll(committedEvents, ApplyDynamicCommittedEvent);
+            PersistAll(committedEvents, ApplyObjectCommittedEvent);
         }
          
 
@@ -283,37 +283,34 @@ namespace Akkatecture.Aggregates
                         SnapshotVersion = snapshotDefinition.Version
                     };
 
-                    var commitedSnapshot =
+                    var committedSnapshot =
                         new CommittedSnapshot<TAggregate, TIdentity, IAggregateSnapshot<TAggregate, TIdentity>>(
                             Id,
                             aggregateSnapshot,
                             snapshotMetadata,
                             committedEvent.Timestamp, Version);
 
-                    SaveSnapshot(commitedSnapshot);
+                    SaveSnapshot(committedSnapshot);
                 }
             }
         }
 
-        protected void ApplyDynamicCommittedEvent(object committedEvent)
+        protected void ApplyObjectCommittedEvent(object committedEvent)
         {
-            
-            var methodInfo = GetType().GetMethod("ApplyCommittedEvent", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
-            
-            var methods = GetType()
-                .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                .Where(m => m.IsFamily || m.IsPublic)
-                .Where(m => m.Name.Equals("ApplyCommittedEvent"));
-            
-            if (committedEvent is ICommittedEvent matchedEvent)
+            try
             {
-                var d = (dynamic) committedEvent;
-                ApplyCommittedEvent<IAggregateEvent<TAggregate,TIdentity>>(d);
+                var method = GetType()
+                    .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                    .Where(m => m.IsFamily || m.IsPublic)
+                    .Single(m => m.Name.Equals("ApplyCommittedEvent"));
 
+                var genericMethod = method.MakeGenericMethod(committedEvent.GetType().GenericTypeArguments[2]);
+
+                genericMethod.Invoke(this, new[] {committedEvent});
             }
-            else
+            catch (Exception exception)
             {
-                Logger.Warning("Aggregate of Name={0}, and Id={1}; could not apply dynamic committed event.", Name, Id);
+                Logger.Error(exception, "Aggregate of Name={0}, and Id={1}; tried to invoke Method={2} with object Type={3} .",Name, Id, nameof(ApplyCommittedEvent), committedEvent.GetType().PrettyPrint());
             }
         }
 
