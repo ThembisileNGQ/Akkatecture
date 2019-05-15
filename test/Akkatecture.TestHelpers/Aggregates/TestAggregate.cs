@@ -252,8 +252,6 @@ namespace Akkatecture.TestHelpers.Aggregates
                 throw new ArgumentNullException(nameof(aggregateEvent));
             }
 
-            EventDefinitionService.Load(aggregateEvent.GetType());
-            var eventDefinition = EventDefinitionService.GetDefinition(aggregateEvent.GetType());
             var aggregateSequenceNumber = Version;
             var eventId = EventId.NewDeterministic(
                 GuidFactories.Deterministic.Namespaces.Events,
@@ -265,9 +263,7 @@ namespace Akkatecture.TestHelpers.Aggregates
                 AggregateSequenceNumber = aggregateSequenceNumber,
                 AggregateName = Name.Value,
                 AggregateId = Id.Value,
-                EventId = eventId,
-                EventName = eventDefinition.Name,
-                EventVersion = eventDefinition.Version
+                EventId = eventId
             };
 
             eventMetadata.Add(MetadataKeys.TimestampEpoch, now.ToUnixTime().ToString());

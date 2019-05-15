@@ -57,11 +57,10 @@ namespace Akkatecture.Aggregates
         private object PinnedReply { get; set; }
         
         protected ILoggingAdapter Logger { get; }
-        //TODO This should be private readonly. 
-        protected readonly IEventDefinitionService EventDefinitionService;
+        private readonly IEventDefinitionService _eventDefinitionService;
         private readonly ISnapshotDefinitionService _snapshotDefinitionService;
         private ISnapshotStrategy SnapshotStrategy { get; set; } = SnapshotNeverStrategy.Instance;
-        protected TAggregateState State { get;  }
+        public TAggregateState State { get; }
         public IAggregateName Name => AggregateName;
         public override string PersistenceId { get; }
         public TIdentity Id { get; }
@@ -96,7 +95,7 @@ namespace Akkatecture.Aggregates
             }
 
             PinnedCommand = null;
-            EventDefinitionService = new EventDefinitionService(Logger);
+            _eventDefinitionService = new EventDefinitionService(Logger);
             _snapshotDefinitionService = new SnapshotDefinitionService(Logger);
             Id = id;
             PersistenceId = id.Value;
@@ -163,8 +162,8 @@ namespace Akkatecture.Aggregates
         {
             if (aggregateEvent is IAggregateEvent)
             {
-                EventDefinitionService.Load(aggregateEvent.GetType());
-                var eventDefinition = EventDefinitionService.GetDefinition(aggregateEvent.GetType());
+                _eventDefinitionService.Load(aggregateEvent.GetType());
+                var eventDefinition = _eventDefinitionService.GetDefinition(aggregateEvent.GetType());
                 var aggregateSequenceNumber = version + 1;
                 var eventId = EventId.NewDeterministic(
                     GuidFactories.Deterministic.Namespaces.Events,
@@ -213,8 +212,8 @@ namespace Akkatecture.Aggregates
             {
                 throw new ArgumentNullException(nameof(aggregateEvent));
             }
-            EventDefinitionService.Load(aggregateEvent.GetType());
-            var eventDefinition = EventDefinitionService.GetDefinition(aggregateEvent.GetType());
+            _eventDefinitionService.Load(aggregateEvent.GetType());
+            var eventDefinition = _eventDefinitionService.GetDefinition(aggregateEvent.GetType());
             var aggregateSequenceNumber = version + 1;
             var eventId = EventId.NewDeterministic(
                 GuidFactories.Deterministic.Namespaces.Events,
