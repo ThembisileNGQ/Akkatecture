@@ -114,11 +114,11 @@ namespace Akkatecture.Tests.UnitTests.Fixtures
                 snapshotStore.Tell(new LoadSnapshot(aggregateIdentity.Value, new SnapshotSelectionCriteria(long.MaxValue, DateTime.MaxValue), long.MaxValue), receiverProbe.Ref);
                 
                 receiverProbe.ExpectMsg<LoadSnapshotResult>(x =>
-                    x.Snapshot.Snapshot is ComittedSnapshot<TestAggregate, TestAggregateId, IAggregateSnapshot<TestAggregate, TestAggregateId>> &&
+                    x.Snapshot.Snapshot is CommittedSnapshot<TestAggregate, TestAggregateId, IAggregateSnapshot<TestAggregate, TestAggregateId>> &&
                     x.Snapshot.Metadata.SequenceNr == snapshotSequenceNumber &&
                     x.Snapshot.Metadata.PersistenceId == aggregateIdentity.Value &&
                     x.Snapshot.Snapshot
-                        .As<ComittedSnapshot<TestAggregate, TestAggregateId,IAggregateSnapshot<TestAggregate, TestAggregateId>>>().AggregateSnapshot
+                        .As<CommittedSnapshot<TestAggregate, TestAggregateId,IAggregateSnapshot<TestAggregate, TestAggregateId>>>().AggregateSnapshot
                         .As<TestAggregateSnapshot>().Tests.Count == snapshot.Tests.Count &&
                     x.ToSequenceNr == long.MaxValue);
                 

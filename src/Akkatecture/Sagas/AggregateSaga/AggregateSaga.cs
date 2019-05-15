@@ -220,18 +220,17 @@ namespace Akkatecture.Sagas.AggregateSaga
 
 
         protected virtual void Emit<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
-            where TAggregateEvent : IAggregateEvent<TAggregateSaga, TIdentity>
+            where TAggregateEvent : class, IAggregateEvent<TAggregateSaga, TIdentity>
         {
             var committedEvent = From(aggregateEvent, Version, metadata);
             Persist(committedEvent, ApplyCommittedEvent);
 
         }
 
-        public virtual void EmitAll<TAggregateEvent>(IEnumerable<TAggregateEvent> aggregateEvents, IMetadata metadata = null)
-            where TAggregateEvent : IAggregateEvent<TAggregateSaga, TIdentity>
+        public virtual void EmitAll(IEnumerable<IAggregateEvent<TAggregateSaga, TIdentity>> aggregateEvents, IMetadata metadata = null)
         {
             long version = Version;
-            var committedEvents = new List<CommittedEvent<TAggregateSaga, TIdentity, TAggregateEvent>>();
+            var comittedEvents = new List<CommittedEvent<TAggregateSaga, TIdentity, IAggregateEvent<TAggregateSaga, TIdentity>>>();
             foreach (var aggregateEvent in aggregateEvents)
             {
                 var committedEvent = From(aggregateEvent, version + 1, metadata);
@@ -244,7 +243,7 @@ namespace Akkatecture.Sagas.AggregateSaga
 
         public virtual CommittedEvent<TAggregateSaga, TIdentity, TAggregateEvent> From<TAggregateEvent>(TAggregateEvent aggregateEvent,
             long version, IMetadata metadata = null)
-            where TAggregateEvent : IAggregateEvent<TAggregateSaga, TIdentity>
+            where TAggregateEvent : class, IAggregateEvent<TAggregateSaga, TIdentity>
         {
             if (aggregateEvent == null)
             {
@@ -284,7 +283,7 @@ namespace Akkatecture.Sagas.AggregateSaga
         }
 
         protected void ApplyCommittedEvent<TAggregateEvent>(ICommittedEvent<TAggregateSaga, TIdentity, TAggregateEvent> committedEvent)
-            where TAggregateEvent : IAggregateEvent<TAggregateSaga, TIdentity>
+            where TAggregateEvent : class, IAggregateEvent<TAggregateSaga, TIdentity>
         {
             var applyMethods = GetEventApplyMethods(committedEvent.AggregateEvent);
             applyMethods(committedEvent.AggregateEvent);
@@ -313,8 +312,8 @@ namespace Akkatecture.Sagas.AggregateSaga
                         SnapshotVersion = snapshotDefinition.Version
                     };
 
-                    var committedSnapshot =
-                        new ComittedSnapshot<TAggregateSaga, TIdentity, IAggregateSnapshot<TAggregateSaga, TIdentity>>(
+                    var commitedSnapshot =
+                        new CommittedSnapshot<TAggregateSaga, TIdentity, IAggregateSnapshot<TAggregateSaga, TIdentity>>(
                             Id,
                             aggregateSnapshot,
                             snapshotMetadata,
@@ -377,8 +376,8 @@ namespace Akkatecture.Sagas.AggregateSaga
             try
             {
                 Logger.Debug("AggregateSaga of Name={0}, and Id={1}; has received a SnapshotOffer of Type={2}.", Name, Id, aggregateSnapshotOffer.Snapshot.GetType().PrettyPrint());
-                var committedSnapshot = aggregateSnapshotOffer.Snapshot as ComittedSnapshot<TAggregateSaga, TIdentity, IAggregateSnapshot<TAggregateSaga, TIdentity>>;
-                HydrateSnapshot(committedSnapshot.AggregateSnapshot, aggregateSnapshotOffer.Metadata.SequenceNr);
+                var comittedSnapshot = aggregateSnapshotOffer.Snapshot as CommittedSnapshot<TAggregateSaga, TIdentity, IAggregateSnapshot<TAggregateSaga, TIdentity>>;
+                HydrateSnapshot(comittedSnapshot.AggregateSnapshot, aggregateSnapshotOffer.Metadata.SequenceNr);
             }
             catch (Exception exception)
             {

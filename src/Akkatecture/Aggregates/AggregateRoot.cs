@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using Akka.Actor;
 using Akka.Event;
 using Akka.Persistence;
@@ -134,30 +135,85 @@ namespace Akkatecture.Aggregates
         }
 
         public virtual void Emit<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+            where TAggregateEvent : class, IAggregateEvent<TAggregate, TIdentity>
         {
             var committedEvent = From(aggregateEvent, Version, metadata);
             Persist(committedEvent, ApplyCommittedEvent);
         }
 
-        public virtual void EmitAll<TAggregateEvent>(IEnumerable<TAggregateEvent> aggregateEvents, IMetadata metadata = null)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+        
+        
+        public virtual void EmitAll(params object[] aggregateEvents)
         {
-            long version = Version;
-            var committedEvents = new List<CommittedEvent<TAggregate, TIdentity, TAggregateEvent>>();
+            var version = Version;
+            
+            var committedEvents = new List<object>();
+            var events = new List<object>();
             foreach (var aggregateEvent in aggregateEvents)
             {
-                var committedEvent = From(aggregateEvent, version + 1, metadata);
+                var committedEvent = FromObject(aggregateEvent, version + 1);
+                events.Add(committedEvent);
                 committedEvents.Add(committedEvent);
                 version++;
             }
 
-            PersistAll(committedEvents, ApplyCommittedEvent);
+            PersistAll(committedEvents, ApplyObjectCommittedEvent);
         }
+         
 
+        public virtual object FromObject(object aggregateEvent, long version, IMetadata metadata = null)
+        {
+            if (aggregateEvent is IAggregateEvent)
+            {
+                EventDefinitionService.Load(aggregateEvent.GetType());
+                var eventDefinition = EventDefinitionService.GetDefinition(aggregateEvent.GetType());
+                var aggregateSequenceNumber = version + 1;
+                var eventId = EventId.NewDeterministic(
+                    GuidFactories.Deterministic.Namespaces.Events,
+                    $"{Id.Value}-v{aggregateSequenceNumber}");
+                var now = DateTimeOffset.UtcNow;
+                var eventMetadata = new Metadata
+                {
+                    Timestamp = now,
+                    AggregateSequenceNumber = aggregateSequenceNumber,
+                    AggregateName = Name.Value,
+                    AggregateId = Id.Value,
+                    SourceId = PinnedCommand.SourceId,
+                    EventId = eventId,
+                    EventName = eventDefinition.Name,
+                    EventVersion = eventDefinition.Version
+                };
+                eventMetadata.Add(MetadataKeys.TimestampEpoch, now.ToUnixTime().ToString());
+                if (metadata != null)
+                {
+                    eventMetadata.AddRange(metadata);
+                }
+                var genericType = typeof(CommittedEvent<,,>)
+                    .MakeGenericType(typeof(TAggregate), typeof(TIdentity),aggregateEvent.GetType());
+
+
+                var committedEvent = Activator.CreateInstance(
+                    genericType,
+                    Id,
+                    aggregateEvent,
+                    eventMetadata,
+                    now,
+                    aggregateSequenceNumber);
+                /*
+                dynamic dynamicEvent = aggregateEvent;
+                var committedEvent = new CommittedEvent<TAggregate, TIdentity, TAggregateEvent>(Id, dynamicEvent,eventMetadata,now,aggregateSequenceNumber);
+                return committedEvent; */
+
+                return committedEvent;
+            }
+            
+            throw new InvalidCastException();
+            
+        }
+        
         public virtual CommittedEvent<TAggregate, TIdentity, TAggregateEvent> From<TAggregateEvent>(TAggregateEvent aggregateEvent,
             long version, IMetadata metadata = null)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+            where TAggregateEvent : class, IAggregateEvent<TAggregate, TIdentity>
         {
             if (aggregateEvent == null)
             {
@@ -197,7 +253,7 @@ namespace Akkatecture.Aggregates
         }
 
         protected void  ApplyCommittedEvent<TAggregateEvent>(ICommittedEvent<TAggregate, TIdentity, TAggregateEvent> committedEvent)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+            where TAggregateEvent : class, IAggregateEvent<TAggregate, TIdentity>
         {
             var applyMethods = GetEventApplyMethods(committedEvent.AggregateEvent);
             applyMethods(committedEvent.AggregateEvent);
@@ -228,7 +284,7 @@ namespace Akkatecture.Aggregates
                     };
 
                     var committedSnapshot =
-                        new ComittedSnapshot<TAggregate, TIdentity, IAggregateSnapshot<TAggregate, TIdentity>>(
+                        new CommittedSnapshot<TAggregate, TIdentity, IAggregateSnapshot<TAggregate, TIdentity>>(
                             Id,
                             aggregateSnapshot,
                             snapshotMetadata,
@@ -237,7 +293,25 @@ namespace Akkatecture.Aggregates
                     SaveSnapshot(committedSnapshot);
                 }
             }
+        }
 
+        protected void ApplyObjectCommittedEvent(object committedEvent)
+        {
+            try
+            {
+                var method = GetType()
+                    .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                    .Where(m => m.IsFamily || m.IsPublic)
+                    .Single(m => m.Name.Equals("ApplyCommittedEvent"));
+
+                var genericMethod = method.MakeGenericMethod(committedEvent.GetType().GenericTypeArguments[2]);
+
+                genericMethod.Invoke(this, new[] {committedEvent});
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception, "Aggregate of Name={0}, and Id={1}; tried to invoke Method={2} with object Type={3} .",Name, Id, nameof(ApplyCommittedEvent), committedEvent.GetType().PrettyPrint());
+            }
         }
 
         protected virtual void Publish<TEvent>(TEvent aggregateEvent)
@@ -288,8 +362,13 @@ namespace Akkatecture.Aggregates
             base.Unhandled(message);
         }
 
+        protected IEnumerable<IAggregateEvent<TAggregate, TIdentity>> Events(params IAggregateEvent<TAggregate, TIdentity>[] events)
+        {
+            return events.ToList();
+        }
+
         protected Action<IAggregateEvent> GetEventApplyMethods<TAggregateEvent>(TAggregateEvent aggregateEvent)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+            where TAggregateEvent : class, IAggregateEvent<TAggregate, TIdentity>
         {
             var eventType = aggregateEvent.GetType();
 
@@ -303,7 +382,7 @@ namespace Akkatecture.Aggregates
         }
 
         protected Action<IAggregateSnapshot> GetSnapshotHydrateMethods<TAggregateSnapshot>(TAggregateSnapshot aggregateEvent)
-            where TAggregateSnapshot : IAggregateSnapshot<TAggregate, TIdentity>
+            where TAggregateSnapshot : class, IAggregateSnapshot<TAggregate, TIdentity>
         {
             var snapshotType = aggregateEvent.GetType();
 
@@ -357,8 +436,8 @@ namespace Akkatecture.Aggregates
             try
             {
                 Logger.Debug("Aggregate of Name={0}, and Id={1}; has received a SnapshotOffer of Type={2}.", Name, Id, aggregateSnapshotOffer.Snapshot.GetType().PrettyPrint());
-                var committedSnapshot = aggregateSnapshotOffer.Snapshot as ComittedSnapshot<TAggregate,TIdentity, IAggregateSnapshot<TAggregate, TIdentity>>;
-                HydrateSnapshot(committedSnapshot.AggregateSnapshot, aggregateSnapshotOffer.Metadata.SequenceNr);
+                var comittedSnapshot = aggregateSnapshotOffer.Snapshot as CommittedSnapshot<TAggregate,TIdentity, IAggregateSnapshot<TAggregate, TIdentity>>;
+                HydrateSnapshot(comittedSnapshot.AggregateSnapshot, aggregateSnapshotOffer.Metadata.SequenceNr);
             }
             catch (Exception exception)
             {

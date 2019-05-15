@@ -34,7 +34,7 @@ namespace Akkatecture.Aggregates
     public class DomainEvent<TAggregate, TIdentity, TAggregateEvent> : IDomainEvent<TAggregate, TIdentity, TAggregateEvent>
         where TAggregate : IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
-        where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+        where TAggregateEvent : class, IAggregateEvent<TAggregate, TIdentity>
     {
         public Type AggregateType => typeof(TAggregate);
         public Type IdentityType => typeof(TIdentity);

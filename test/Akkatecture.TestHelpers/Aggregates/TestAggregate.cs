@@ -22,7 +22,6 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Akka.Persistence;
 using Akkatecture.Aggregates;
@@ -49,6 +48,7 @@ namespace Akkatecture.TestHelpers.Aggregates
             TestErrors = 0;
             //Aggregate Commands
             Command<CreateTestCommand>(Execute);
+            Command<CreateAndAddTwoTestsCommand>(Execute);
             Command<AddTestCommand>(Execute);
             Command<AddFourTestsCommand>(Execute);
             Command<GiveTestCommand>(Execute);
@@ -72,6 +72,29 @@ namespace Akkatecture.TestHelpers.Aggregates
             if (IsNew)
             {
                 Emit(new TestCreatedEvent(command.AggregateId), new Metadata {{"some-key","some-value"}});
+                Reply(TestExecutionResult.SucceededWith(command.SourceId));
+            }
+            else
+            {
+                TestErrors++;
+                Throw(new TestedErrorEvent(TestErrors));
+                ReplyFailure(TestExecutionResult.FailedWith(command.SourceId));
+            }
+
+            return true;
+        }
+        
+
+        private bool Execute(CreateAndAddTwoTestsCommand command)
+        {
+            if (IsNew)
+            {
+                var createdEvent = new TestCreatedEvent(command.AggregateId);
+                var firstTestAddedEvent = new TestAddedEvent(command.FirstTest);
+                var secondTestAddedEvent = new TestAddedEvent(command.SecondTest);
+                var events = Events(createdEvent, firstTestAddedEvent, secondTestAddedEvent);
+                //EmitAll(events, new Metadata {{"some-key","some-value"}});
+                EmitAll(createdEvent, firstTestAddedEvent, secondTestAddedEvent);
                 Reply(TestExecutionResult.SucceededWith(command.SourceId));
             }
             else
@@ -110,7 +133,7 @@ namespace Akkatecture.TestHelpers.Aggregates
                     .Range(0, 4)
                     .Select(x => new TestAddedEvent(command.Test));
 
-                EmitAll(events);
+                EmitAll(events.ToArray());
                 Reply(TestExecutionResult.SucceededWith(command.SourceId));
 
             }
@@ -222,7 +245,7 @@ namespace Akkatecture.TestHelpers.Aggregates
         }
 
         private void Signal<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
-            where TAggregateEvent : IAggregateEvent<TestAggregate, TestAggregateId>
+            where TAggregateEvent : class, IAggregateEvent<TestAggregate, TestAggregateId>
         {
             if (aggregateEvent == null)
             {
@@ -259,7 +282,7 @@ namespace Akkatecture.TestHelpers.Aggregates
         }
 
         private void Throw<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
-            where TAggregateEvent : IAggregateEvent<TestAggregate, TestAggregateId>
+            where TAggregateEvent : class, IAggregateEvent<TestAggregate, TestAggregateId>
         {
             Signal(aggregateEvent, metadata);
         }

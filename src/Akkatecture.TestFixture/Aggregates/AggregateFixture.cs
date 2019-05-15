@@ -160,9 +160,9 @@ namespace Akkatecture.TestFixture.Aggregates
         }
         
         public IFixtureAsserter<TAggregate, TIdentity> ThenExpect<TAggregateEvent>(Predicate<TAggregateEvent> aggregateEventPredicate = null)
-            where TAggregateEvent : IAggregateEvent<TAggregate, TIdentity>
+            where TAggregateEvent : class, IAggregateEvent<TAggregate, TIdentity>
         {
-            _testKit.Sys.EventStream.Subscribe(AggregateEventTestProbe, typeof(DomainEvent<TAggregate, TIdentity, TAggregateEvent>));
+            _testKit.Sys.EventStream.Subscribe(AggregateEventTestProbe, typeof(IDomainEvent<TAggregate, TIdentity, TAggregateEvent>));
             
             if(aggregateEventPredicate == null)
                 AggregateEventTestProbe.ExpectMsg<DomainEvent<TAggregate, TIdentity, TAggregateEvent>>();
@@ -178,10 +178,10 @@ namespace Akkatecture.TestFixture.Aggregates
             return this;
         }
         
-        public IFixtureAsserter<TAggregate, TIdentity> ThenExpectDomainEvent<TAggregateEvent>(Predicate<DomainEvent<TAggregate, TIdentity, TAggregateEvent>> domainEventPredicate = null)
-            where TAggregateEvent : IAggregateEvent<TAggregate,TIdentity>
+        public IFixtureAsserter<TAggregate, TIdentity> ThenExpectDomainEvent<TAggregateEvent>(Predicate<IDomainEvent<TAggregate, TIdentity, TAggregateEvent>> domainEventPredicate = null)
+            where TAggregateEvent : class, IAggregateEvent<TAggregate,TIdentity>
         {
-            _testKit.Sys.EventStream.Subscribe(AggregateEventTestProbe, typeof(DomainEvent<TAggregate, TIdentity, TAggregateEvent>));
+            _testKit.Sys.EventStream.Subscribe(AggregateEventTestProbe, typeof(IDomainEvent<TAggregate, TIdentity, TAggregateEvent>));
             
             if(domainEventPredicate == null)
                 AggregateEventTestProbe.ExpectMsg<DomainEvent<TAggregate, TIdentity, TAggregateEvent>>();
@@ -219,7 +219,7 @@ namespace Akkatecture.TestFixture.Aggregates
             where TAggregateSnapshot : IAggregateSnapshot<TAggregate, TIdentity>
         {
             var snapshotStore = Persistence.Instance.Apply(_testKit.Sys).SnapshotStoreFor(null);
-            var committedSnapshot = new ComittedSnapshot<TAggregate, TIdentity, TAggregateSnapshot>(aggregateId, aggregateSnapshot, new SnapshotMetadata(), DateTimeOffset.UtcNow, sequenceNumber);
+            var committedSnapshot = new CommittedSnapshot<TAggregate, TIdentity, TAggregateSnapshot>(aggregateId, aggregateSnapshot, new SnapshotMetadata(), DateTimeOffset.UtcNow, sequenceNumber);
             
             var metadata = new AkkaSnapshotMetadata(aggregateId.ToString(), sequenceNumber);
             snapshotStore.Tell(new SaveSnapshot(metadata, committedSnapshot), AggregateEventTestProbe.Ref);
