@@ -1,4 +1,4 @@
-﻿// The MIT License (MIT)
+// The MIT License (MIT)
 //
 // Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
@@ -23,19 +23,22 @@
 
 using System;
 using System.Linq.Expressions;
+using Akka.Persistence;
+using Akkatecture.Sagas;
+using Akkatecture.Sagas.AggregateSaga;
 
-namespace Akkatecture.Sagas.AggregateSaga
+namespace Akkatecture.Clustering
 {
-    public interface IAggregateSagaManager
-    {
-        
-    }
-
-    public interface IAggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator> : IAggregateSagaManager
-        where TAggregateSaga : IAggregateSaga<TIdentity>
+    //Compose rather than inherit?
+    public class ClusteredAggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator> : AggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator>
+        where TAggregateSaga : ReceivePersistentActor, IAggregateSaga<TIdentity>
         where TIdentity : SagaId<TIdentity>
         where TSagaLocator : class, ISagaLocator<TIdentity>, new()
     {
-        Expression<Func<TAggregateSaga>> SagaFactory { get; }
+        public ClusteredAggregateSagaManager(
+            Expression<Func<TAggregateSaga>> sagaFactory) 
+            : base(sagaFactory, false)
+        {
+        }
     }
 }

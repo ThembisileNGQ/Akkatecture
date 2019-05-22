@@ -40,21 +40,37 @@ namespace Akkatecture.Clustering.Extentions
                 .Select(i => i.GetTypeInfo())
                 .ToList();
 
-            var handleEventTypes = interfaces
+            var handleAsyncEventTypes = interfaces
                 .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISagaHandlesAsync<,,>))
                 .Select(t => typeof(IDomainEvent<,,>).MakeGenericType(t.GetGenericArguments()[0],
                     t.GetGenericArguments()[1], t.GetGenericArguments()[2]))
                 .ToList();
-
-            var startedByEventTypes = interfaces
+            
+            var handleEventTypes = interfaces
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISagaHandles<,,>))
+                .Select(t => typeof(IDomainEvent<,,>).MakeGenericType(t.GetGenericArguments()[0],
+                    t.GetGenericArguments()[1], t.GetGenericArguments()[2]))
+                .ToList();
+            
+            var startedByAsyncEventTypes = interfaces
                 .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISagaIsStartedByAsync<,,>))
                 .Select(t => typeof(IDomainEvent<,,>).MakeGenericType(t.GetGenericArguments()[0],
                     t.GetGenericArguments()[1], t.GetGenericArguments()[2]))
                 .ToList();
+            
+            var startedByEventTypes = interfaces
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISagaIsStartedBy<,,>))
+                .Select(t => typeof(IDomainEvent<,,>).MakeGenericType(t.GetGenericArguments()[0],
+                    t.GetGenericArguments()[1], t.GetGenericArguments()[2]))
+                .ToList();
+            
+            
 
-            startedByEventTypes.AddRange(handleEventTypes);
+            startedByAsyncEventTypes.AddRange(handleAsyncEventTypes);
+            startedByAsyncEventTypes.AddRange(handleEventTypes);
+            startedByAsyncEventTypes.AddRange(startedByEventTypes);
 
-            return startedByEventTypes;
+            return startedByAsyncEventTypes.Distinct().ToList();
         }
     }
 }

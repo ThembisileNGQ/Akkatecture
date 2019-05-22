@@ -32,9 +32,9 @@ using Akkatecture.Extensions;
 namespace Akkatecture.Sagas.AggregateSaga
 {
     public abstract class AggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator> : ReceiveActor, IAggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator>
-        where TIdentity : SagaId<TIdentity>
-        where TSagaLocator : class, ISagaLocator<TIdentity>
         where TAggregateSaga : ReceivePersistentActor, IAggregateSaga<TIdentity>
+        where TIdentity : SagaId<TIdentity>
+        where TSagaLocator : class, ISagaLocator<TIdentity>, new()
     {
         protected ILoggingAdapter Logger { get; }
         public Expression<Func<TAggregateSaga>> SagaFactory { get; }
@@ -46,7 +46,7 @@ namespace Akkatecture.Sagas.AggregateSaga
             Logger = Context.GetLogger();
 
 
-            SagaLocator = (TSagaLocator)Activator.CreateInstance(typeof(TSagaLocator));
+            SagaLocator = new TSagaLocator();
 
             SagaFactory = sagaFactory;
             Settings = new AggregateSagaManagerSettings(Context.System.Settings.Config);

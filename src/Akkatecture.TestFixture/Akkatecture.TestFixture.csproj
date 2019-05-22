@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp2.0</TargetFramework>
+        <TargetFramework>netstandard2.0</TargetFramework>
         <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
         <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>

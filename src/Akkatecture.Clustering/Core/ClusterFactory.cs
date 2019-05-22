@@ -25,8 +25,10 @@ using System;
 using System.Linq.Expressions;
 using Akka.Actor;
 using Akka.Cluster.Sharding;
+using Akka.Persistence;
 using Akkatecture.Aggregates;
 using Akkatecture.Clustering.Dispatchers;
+using Akkatecture.Commands;
 using Akkatecture.Core;
 using Akkatecture.Extensions;
 using Akkatecture.Sagas;
@@ -35,8 +37,8 @@ using Akkatecture.Sagas.AggregateSaga;
 namespace Akkatecture.Clustering.Core
 {
     public static class ClusterFactory<TAggregateManager,TAggregate,TIdentity>
-        where TAggregateManager : ActorBase, IAggregateManager<TAggregate, TIdentity>
-        where TAggregate : IAggregateRoot<TIdentity>
+        where TAggregateManager : ReceiveActor, IAggregateManager<TAggregate, TIdentity>
+        where TAggregate : ReceivePersistentActor, IAggregateRoot<TIdentity>
         where TIdentity : IIdentity
     {
         public static IActorRef StartClusteredAggregate(
@@ -105,10 +107,10 @@ namespace Akkatecture.Clustering.Core
     }
 
     public static class ClusterFactory<TAggregateSagaManager, TAggregateSaga, TIdentity, TSagaLocator>
-        where TAggregateSagaManager : ActorBase, IAggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator>
-        where TAggregateSaga : IAggregateSaga<TIdentity>
+        where TAggregateSagaManager : ClusteredAggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator>
+        where TAggregateSaga : ReceivePersistentActor, IAggregateSaga<TIdentity>
         where TIdentity : SagaId<TIdentity>
-        where TSagaLocator : class, ISagaLocator<TIdentity>
+        where TSagaLocator : class, ISagaLocator<TIdentity>, new()
     {
         public static IActorRef StartClusteredAggregateSaga(
             ActorSystem actorSystem,
@@ -128,7 +130,7 @@ namespace Akkatecture.Clustering.Core
 
             var shardRef = clusterSharding.Start(
                 typeof(TAggregateSagaManager).Name,
-                Props.Create<TAggregateSagaManager>(sagaFactory,false),
+                Props.Create<TAggregateSagaManager>(sagaFactory, false),
                 clusterShardingSettings,
                 ShardIdentityExtractors
                     .AggregateSagaIdentityExtractor<TAggregateSagaManager, TAggregateSaga, TIdentity, TSagaLocator>,

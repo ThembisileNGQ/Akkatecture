@@ -23,6 +23,7 @@
 
 using Akka.Actor;
 using Akka.Event;
+using Akka.Persistence;
 using Akkatecture.Aggregates;
 using Akkatecture.Clustering.Core;
 using Akkatecture.Clustering.Extentions;
@@ -33,10 +34,10 @@ using Akkatecture.Sagas.AggregateSaga;
 namespace Akkatecture.Clustering.Dispatchers
 {
     public class ShardedAggregateSagaDispatcher<TAggregateSagaManager, TAggregateSaga, TIdentity, TSagaLocator> : ReceiveActor
-        where TAggregateSagaManager : ActorBase, IAggregateSagaManager<TAggregateSaga,TIdentity,TSagaLocator>
+        where TAggregateSagaManager : ClusteredAggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator>
+        where TAggregateSaga : ReceivePersistentActor, IAggregateSaga<TIdentity>
         where TIdentity : SagaId<TIdentity>
-        where TSagaLocator : class, ISagaLocator<TIdentity>
-        where TAggregateSaga : IAggregateSaga<TIdentity>
+        where TSagaLocator : class, ISagaLocator<TIdentity>, new()
     {
         public IActorRef AggregateSagaManager { get; }
         private ILoggingAdapter Logger { get; }

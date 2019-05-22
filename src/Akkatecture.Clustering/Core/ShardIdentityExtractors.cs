@@ -49,12 +49,12 @@ namespace Akkatecture.Clustering.Core
             where TAggregateSagaManager : IAggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator>
             where TAggregateSaga : IAggregateSaga<TIdentity>
             where TIdentity : SagaId<TIdentity>
-            where TSagaLocator : ISagaLocator<TIdentity>
+            where TSagaLocator : class, ISagaLocator<TIdentity>, new()
         {
             if (message is null)
                 throw new ArgumentNullException(nameof(message));
 
-            var sagaLocator = (TSagaLocator)Activator.CreateInstance(typeof(TSagaLocator));
+            var sagaLocator = new TSagaLocator();
 
             if (message is IDomainEvent domainEvent)
                 return new Tuple<string, object>(sagaLocator.LocateSaga(domainEvent).Value, message);
