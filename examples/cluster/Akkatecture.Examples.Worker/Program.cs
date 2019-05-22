@@ -25,6 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Configuration;
 using Akkatecture.Clustering.Configuration;
@@ -35,7 +36,7 @@ namespace Akkatecture.Examples.Worker
 {
     public static  class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             //Get configuration file using Akkatecture's defaults as fallback
             var path = Environment.CurrentDirectory;
@@ -51,7 +52,7 @@ namespace Akkatecture.Examples.Worker
             //foreach (var worker in Enumerable.Range(1, 1))
             {
                 //Create worker with port 600X
-                var config = ConfigurationFactory.ParseString($"akka.remote.dot-netty.tcp.port = 600{worker}");
+                var config = ConfigurationFactory.ParseString($"akka.remote.dot-netty.tcp.port = 700{worker}");
                 config = config
                     .WithFallback(baseConfig)
                     .WithFallback(AkkatectureClusteringDefaultSettings.DefaultConfig());
@@ -78,7 +79,7 @@ namespace Akkatecture.Examples.Worker
             //Shut down all the local actor systems
             foreach (var actorsystem in actorSystems)
             {
-                actorsystem.Terminate().Wait();
+                await actorsystem.Terminate();
             }
             Console.WriteLine("Akkatecture.Examples.Workers Exiting.");
         }

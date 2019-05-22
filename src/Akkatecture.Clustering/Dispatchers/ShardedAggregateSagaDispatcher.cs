@@ -57,15 +57,17 @@ namespace Akkatecture.Clustering.Dispatchers
             foreach (var type in sagaHandlesSubscriptionTypes)
             {
                 Context.System.EventStream.Subscribe(Self, type);
+                
             }
             
+            Receive<IDomainEvent>(Dispatch);
         }
 
         protected virtual bool Dispatch(IDomainEvent domainEvent)
         {
             AggregateSagaManager.Tell(domainEvent);
 
-            Logger.Debug("{0} just dispatched {1} to {2}",GetType().PrettyPrint(),domainEvent.GetType().PrettyPrint(),AggregateSagaManager.Path.Name);
+            Logger.Debug("{0} just dispatched {1} to {2}",GetType().PrettyPrint(), domainEvent.GetType().PrettyPrint(), AggregateSagaManager.Path.Name);
             return true;
         }
         
