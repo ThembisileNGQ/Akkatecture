@@ -114,6 +114,9 @@ namespace Akkatecture.Sagas.AggregateSaga
             if (Settings.UseDefaultSnapshotRecover)
                 Recover<SnapshotOffer>(Recover);
 
+            
+            Command<SaveSnapshotSuccess>(SnapshotStatus);
+            Command<SaveSnapshotFailure>(SnapshotStatus);
 
             _eventDefinitionService = new EventDefinitionService(Logger);
             _snapshotDefinitionService = new SnapshotDefinitionService(Logger);
@@ -502,6 +505,7 @@ namespace Akkatecture.Sagas.AggregateSaga
         protected virtual bool SnapshotStatus(SaveSnapshotSuccess snapshotSuccess)
         {
             Logger.Debug("Aggregate of Name={0}, and Id={1}; saved a snapshot at Version={2}.", Name, Id, snapshotSuccess.Metadata.SequenceNr);
+            DeleteSnapshots(new SnapshotSelectionCriteria(snapshotSuccess.Metadata.SequenceNr-1));
             return true;
         }
 

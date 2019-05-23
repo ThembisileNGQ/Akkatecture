@@ -452,6 +452,7 @@ namespace Akkatecture.Aggregates
         protected virtual bool SnapshotStatus(SaveSnapshotSuccess snapshotSuccess)
         {
             Logger.Debug("Aggregate of Name={0}, and Id={1}; saved a snapshot at Version={2}.", Name, Id, snapshotSuccess.Metadata.SequenceNr);
+            DeleteSnapshots(new SnapshotSelectionCriteria(snapshotSuccess.Metadata.SequenceNr-1));
             return true;
         }
 
