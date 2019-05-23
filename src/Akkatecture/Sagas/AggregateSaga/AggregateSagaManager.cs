@@ -22,12 +22,15 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using Akka.Actor;
 using Akka.Event;
 using Akka.Persistence;
 using Akkatecture.Aggregates;
 using Akkatecture.Extensions;
+using Akkatecture.Messages;
 
 namespace Akkatecture.Sagas.AggregateSaga
 {
@@ -36,39 +39,42 @@ namespace Akkatecture.Sagas.AggregateSaga
         where TIdentity : SagaId<TIdentity>
         where TSagaLocator : class, ISagaLocator<TIdentity>, new()
     {
+        private IReadOnlyList<Type> _subscriptionTypes { get; }
         protected ILoggingAdapter Logger { get; }
         public Expression<Func<TAggregateSaga>> SagaFactory { get; }
         protected TSagaLocator SagaLocator { get; }
         public AggregateSagaManagerSettings Settings { get; }
 
-        protected AggregateSagaManager(Expression<Func<TAggregateSaga>> sagaFactory, bool autoSubscribe = true)
+        protected AggregateSagaManager(Expression<Func<TAggregateSaga>> sagaFactory)
         {
             Logger = Context.GetLogger();
 
+            _subscriptionTypes = new List<Type>();
 
             SagaLocator = new TSagaLocator();
-
             SagaFactory = sagaFactory;
             Settings = new AggregateSagaManagerSettings(Context.System.Settings.Config);
 
             var sagaType = typeof(TAggregateSaga);
 
-            if (autoSubscribe && Settings.AutoSubscribe)
+            if (Settings.AutoSubscribe)
             {
                 var sagaEventSubscriptionTypes =
                     sagaType
                         .GetSagaEventSubscriptionTypes();
 
-                foreach (var type in sagaEventSubscriptionTypes)
-                {
-                    Context.System.EventStream.Subscribe(Self, type);
-                }
-                
                 var asyncSagaEventSubscriptionTypes =
                     sagaType
                         .GetAsyncSagaEventSubscriptionTypes();
 
-                foreach (var type in asyncSagaEventSubscriptionTypes)
+                var subscriptionTypes = new List<Type>();
+                
+                subscriptionTypes.AddRange(sagaEventSubscriptionTypes);
+                subscriptionTypes.AddRange(asyncSagaEventSubscriptionTypes);
+
+                _subscriptionTypes = subscriptionTypes.AsReadOnly();
+                
+                foreach (var type in _subscriptionTypes)
                 {
                     Context.System.EventStream.Subscribe(Self, type);
                 }
@@ -78,7 +84,23 @@ namespace Akkatecture.Sagas.AggregateSaga
             {
                 Receive<IDomainEvent>(Handle);
             }
-            
+
+            Receive<UnsubscribeFromAll>(Handle);
+        }
+
+        protected virtual bool Handle(UnsubscribeFromAll command)
+        {
+            UnsubscribeFromAllTopics();
+
+            return true;
+        }
+
+        protected void UnsubscribeFromAllTopics()
+        {
+            foreach (var type in _subscriptionTypes)
+            {
+                Context.System.EventStream.Unsubscribe(Self, type);
+            }
         }
         
         protected virtual bool Handle(IDomainEvent domainEvent)

@@ -22,6 +22,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using Akka.Cluster.Sharding;
 using Akkatecture.Aggregates;
 using Akkatecture.Commands;
 using Akkatecture.Core;
@@ -30,38 +31,49 @@ using Akkatecture.Sagas.AggregateSaga;
 
 namespace Akkatecture.Clustering.Core
 {
-    public static class ShardIdentityExtractors
+    public class MessageExtractor<TAggregateSagaManager, TAggregateSaga, TIdentity, TSagaLocator> : HashCodeMessageExtractor
+        where TAggregateSagaManager : IAggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator>
+        where TAggregateSaga : IAggregateSaga<TIdentity>
+        where TIdentity : SagaId<TIdentity>
+        where TSagaLocator : class, ISagaLocator<TIdentity>, new()
     {
-        public static  Tuple<string, object> AggregateIdentityExtractor<TAggregate,TIdentity>(object message)
-            where TIdentity : IIdentity
-            where TAggregate : IAggregateRoot<TIdentity>
+        private TSagaLocator _sagaLocator { get; }
+        public MessageExtractor(int maxNumberOfShards) 
+            : base(maxNumberOfShards)
         {
-            if(message is null)
-                throw new ArgumentNullException(nameof(message));
-            
-            if (message is ICommand<TAggregate, TIdentity> command)
-                return new Tuple<string, object>(command.AggregateId.Value, message);
-
-            throw new ArgumentException(nameof(message));
+            _sagaLocator = new TSagaLocator();
         }
 
-        public static Tuple<string, object> AggregateSagaIdentityExtractor<TAggregateSagaManager, TAggregateSaga, TIdentity, TSagaLocator>(object message)
-            where TAggregateSagaManager : IAggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator>
-            where TAggregateSaga : IAggregateSaga<TIdentity>
-            where TIdentity : SagaId<TIdentity>
-            where TSagaLocator : class, ISagaLocator<TIdentity>, new()
+        public override string EntityId(object message)
         {
             if (message is null)
                 throw new ArgumentNullException(nameof(message));
 
-            var sagaLocator = new TSagaLocator();
 
             if (message is IDomainEvent domainEvent)
-                return new Tuple<string, object>(sagaLocator.LocateSaga(domainEvent).Value, message);
+                return _sagaLocator.LocateSaga(domainEvent).Value;
 
             throw new ArgumentException(nameof(message));
         }
-
     }
-    
+    public class MessageExtractor<TAggregate, TIdentity> : HashCodeMessageExtractor
+        where TAggregate : IAggregateRoot<TIdentity>
+        where TIdentity : IIdentity
+    {
+        public MessageExtractor(int maxNumberOfShards) 
+            : base(maxNumberOfShards)
+        {
+        }
+
+        public override string EntityId(object message)
+        {
+            if (message is null)
+                throw new ArgumentNullException(nameof(message));
+
+            if (message is ICommand<TAggregate, TIdentity> command)
+                return command.AggregateId.Value;
+
+            throw new ArgumentException(nameof(message));
+        }
+    }
 }

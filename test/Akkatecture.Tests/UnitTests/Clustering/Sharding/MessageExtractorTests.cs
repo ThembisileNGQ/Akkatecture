@@ -36,56 +36,62 @@ using Xunit;
 
 namespace Akkatecture.Tests.UnitTests.Clustering.Sharding
 {
-    public class ShardIdentityExtractorTests
+    public class MessageExtractorTests
     {
-        [Fact]
-        public void AggregateIdentityExtractor_ValidMessage_ExtractsIdentity()
+        //Aggregates
+        [Theory]
+        [InlineData(1)]
+        [InlineData(3)]
+        [InlineData(4)]
+        [InlineData(55)]
+        [InlineData(89)]
+        [InlineData(120)]
+        [InlineData(500)]
+        public void AggregateCommandIdentityExtractor_ValidMessage_ExtractsShardValue(int shardSize)
         {
             var aggregateId = TestAggregateId.New;
             var commandId = CommandId.New;
             var message = new CreateTestCommand(aggregateId, commandId);
+            var shardResolver = new MessageExtractor<TestAggregate, TestAggregateId>(shardSize);
 
-            var extractedIdentity =
-                ShardIdentityExtractors.AggregateIdentityExtractor<TestAggregate, TestAggregateId>(message).Item1;
+            var extractedShard = shardResolver.ShardId(message);
+            var extractedShardValue = int.Parse(extractedShard);
 
-            extractedIdentity.Should().BeEquivalentTo(message.AggregateId.Value);
+            extractedShardValue.Should().BeInRange(0, shardSize);
         }
 
         [Fact]
-        public void AggregateIdentityExtractor_ValidObject_ExtractsObject()
-        {
-            var aggregateId = TestAggregateId.New;
-            var commandId = CommandId.New;
-            var message = new CreateTestCommand(aggregateId, commandId);
-
-            var extractedObject = ShardIdentityExtractors.AggregateIdentityExtractor<TestAggregate, TestAggregateId>(message).Item2;
-
-            extractedObject.GetHashCode().Should().Be(message.GetHashCode());
-        }
-
-        [Fact]
-        public void AggregateIdentityExtractor_InValidObject_ThrowsArgumentException()
+        public void AggregateCommandIdentityExtractor_InValidObject_ThrowsArgumentException()
         {
             var message = string.Empty;
+            var shardResolver = new MessageExtractor<TestAggregate, TestAggregateId>(10);
 
-            this.Invoking(test => ShardIdentityExtractors.AggregateIdentityExtractor<TestAggregate, TestAggregateId>(message))
+            this.Invoking(test => shardResolver.EntityId(message))
                 .Should().Throw<ArgumentException>()
                 .WithMessage(nameof(message));
         }
 
         [Fact]
-        public void AggregateIdentityExtractor_InValidObject_ThrowsArgumentNullException()
+        public void AggregateCommandIdentityExtractor_InValidObject_ThrowsArgumentNullException()
         {
             CreateTestCommand message = null;
+            var shardResolver = new MessageExtractor<TestAggregate, TestAggregateId>(10);
 
             // ReSharper disable once ExpressionIsAlwaysNull
-            this.Invoking(test => ShardIdentityExtractors.AggregateIdentityExtractor<TestAggregate, TestAggregateId>(message))
+            this.Invoking(test => shardResolver.EntityId(message))
                 .Should().Throw<ArgumentNullException>();
         }
-
-
-        [Fact]
-        public void AggregateSagaIdentityExtractor_ValidMessage_ExtractsIdentity()
+        
+        //Sagas
+        [Theory]
+        [InlineData(1)]
+        [InlineData(3)]
+        [InlineData(4)]
+        [InlineData(55)]
+        [InlineData(89)]
+        [InlineData(120)]
+        [InlineData(500)]
+        public void AggregateSagaIdentityExtractor_ValidMessage_ExtractsShardValue(int shardSize)
         {
             var aggregateId = TestAggregateId.New;
             var receiverId = TestAggregateId.New;
@@ -93,43 +99,41 @@ namespace Akkatecture.Tests.UnitTests.Clustering.Sharding
             var test = new Test(testId);
             var now = DateTimeOffset.UtcNow;
             var aggregateSequenceNumber = 3;
-            var domainEvent =
+            var message =
                 new DomainEvent<TestAggregate, TestAggregateId, TestSentEvent>(
                     aggregateId,
                     new TestSentEvent(test, receiverId),
                     new Metadata(),
                     now,
                     aggregateSequenceNumber);
+            var shardResolver = new MessageExtractor<TestSagaManager, TestSaga, TestSagaId, TestSagaLocator>(shardSize);
 
-            var extractedIdentity =
-                ShardIdentityExtractors.AggregateSagaIdentityExtractor<TestSagaManager,TestSaga,TestSagaId, TestSagaLocator>(domainEvent);
+            var extractedShard = shardResolver.ShardId(message);
+            var extractedShardValue = int.Parse(extractedShard);
 
-            extractedIdentity.Item1.Should().Contain(test.Id.Value);
-            extractedIdentity.Item2
-                .As<DomainEvent<TestAggregate, TestAggregateId, TestSentEvent>>().AggregateEvent.Test
-                .Should().Be(test);
+            extractedShardValue.Should().BeInRange(0, shardSize);
         }
-        
-        [Fact]
-        public void AggregateSagaIdentityExtractor_InValidMessage_ExceptionIsThrown()
-        {
-            var aggregateId = TestAggregateId.New;
-            var commandId = CommandId.New;
-            var message = new CreateTestCommand(aggregateId, commandId);
 
-            this.Invoking(test => ShardIdentityExtractors.AggregateSagaIdentityExtractor<TestSagaManager,TestSaga,TestSagaId, TestSagaLocator>(message))
-                .Should().Throw<ArgumentException>();
+        [Fact]
+        public void AggregateSagaIdentityExtractor_InValidObject_ThrowsArgumentException()
+        {
+            var message = string.Empty;
+            var shardResolver = new MessageExtractor<TestSagaManager, TestSaga, TestSagaId, TestSagaLocator>(10);
+
+            this.Invoking(test => shardResolver.EntityId(message))
+                .Should().Throw<ArgumentException>()
+                .WithMessage(nameof(message));
         }
-        
-        [Fact]
-        public void AggregateSagaIdentityExtractor_NullMessage_ExceptionIsThrown()
-        {
 
-            this.Invoking(test => ShardIdentityExtractors.AggregateSagaIdentityExtractor<TestSagaManager,TestSaga,TestSagaId, TestSagaLocator>(null))
+        [Fact]
+        public void AggregateSagaIdentityExtractor_InValidObject_ThrowsArgumentNullException()
+        {
+            DomainEvent<TestAggregate, TestAggregateId, TestSentEvent> message = null;
+            var shardResolver = new MessageExtractor<TestSagaManager, TestSaga, TestSagaId, TestSagaLocator>(10);
+
+            // ReSharper disable once ExpressionIsAlwaysNull
+            this.Invoking(test => shardResolver.EntityId(message))
                 .Should().Throw<ArgumentNullException>();
         }
-        
-        
     }
-    
 }

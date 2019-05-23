@@ -27,6 +27,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Akka.Actor;
+using Akka.Cluster;
 using Akka.Configuration;
 using Akkatecture.Clustering.Configuration;
 using Akkatecture.Clustering.Core;
@@ -44,12 +45,11 @@ namespace Akkatecture.Examples.Worker
             var baseConfig = ConfigurationFactory.ParseString(File.ReadAllText(configPath));
             
             //specified amount of workers running on their own thread
-            var amountOfWorkers = 10;
+            var amountOfWorkers = 1;
 
             //Create several workers with each worker port will be 6001, 6002,...
             var actorSystems = new List<ActorSystem>();
             foreach (var worker in Enumerable.Range(1, amountOfWorkers+1))
-            //foreach (var worker in Enumerable.Range(1, 1))
             {
                 //Create worker with port 700X
                 var config = ConfigurationFactory.ParseString($"akka.remote.dot-netty.tcp.port = 700{worker}");
@@ -60,9 +60,13 @@ namespace Akkatecture.Examples.Worker
                 var actorSystem = ActorSystem.Create(clustername, config);
                 actorSystems.Add(actorSystem);
                 
-                //Start the aggregate cluster, all requests being proxied to this cluster will be 
-                //sent here to be processed
-                StartUserAccountCluster(actorSystem);
+                
+                Cluster.Get(actorSystem).RegisterOnMemberUp(() =>
+                {
+                    //Start the aggregate cluster when the actorsystem is part of a cluster.
+                    //all requests being proxied to this cluster will be sent here to be processed.
+                    StartUserAccountCluster(actorSystem);
+                });
             }
 
             Console.WriteLine("Akkatecture.Examples.Workers Running");

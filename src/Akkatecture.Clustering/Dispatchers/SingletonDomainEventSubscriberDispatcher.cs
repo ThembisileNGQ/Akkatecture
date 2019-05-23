@@ -1,4 +1,4 @@
-﻿// The MIT License (MIT)
+// The MIT License (MIT)
 //
 // Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
@@ -23,51 +23,42 @@
 
 using Akka.Actor;
 using Akka.Event;
-using Akka.Persistence;
 using Akkatecture.Aggregates;
-using Akkatecture.Clustering.Core;
 using Akkatecture.Clustering.Extentions;
 using Akkatecture.Extensions;
-using Akkatecture.Sagas;
-using Akkatecture.Sagas.AggregateSaga;
+using Akkatecture.Subscribers;
 
 namespace Akkatecture.Clustering.Dispatchers
 {
-    public class ShardedAggregateSagaDispatcher<TAggregateSagaManager, TAggregateSaga, TIdentity, TSagaLocator> : ReceiveActor
-        where TAggregateSagaManager : ReceiveActor ,IAggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator>
-        where TAggregateSaga : ReceivePersistentActor, IAggregateSaga<TIdentity>
-        where TIdentity : SagaId<TIdentity>
-        where TSagaLocator : class, ISagaLocator<TIdentity>, new()
+    public class SingletonDomainEventSubscriberDispatcher<TDomainEventSubscriber> : ReceiveActor
+        where TDomainEventSubscriber : DomainEventSubscriber
     {
-        public IActorRef AggregateSagaManager { get; }
-        private ILoggingAdapter Logger { get; }
-        public ShardedAggregateSagaDispatcher(string proxyRoleName, int numberOfShards)
+        public ILoggingAdapter Logger { get; }
+        public IActorRef DomainEventProxy { get; }
+        
+        public SingletonDomainEventSubscriberDispatcher(IActorRef domainEventProxy)
         {
             Logger = Context.GetLogger();
+            DomainEventProxy = domainEventProxy;
+            var subscriberType = typeof(TDomainEventSubscriber);
 
-            AggregateSagaManager =
-                ClusterFactory<TAggregateSagaManager, TAggregateSaga, TIdentity, TSagaLocator>
-                    .StartAggregateSagaClusterProxy(Context.System, proxyRoleName, numberOfShards);
-
-            var sagaType = typeof(TAggregateSaga);
-
-            var sagaHandlesSubscriptionTypes =
-                sagaType
-                    .GetSagaEventSubscriptionTypes();
-
-            foreach (var type in sagaHandlesSubscriptionTypes)
+            var subscriptionTypes =
+                subscriberType
+                    .GetDomainEventSubscriptionTypes();
+            
+            foreach (var type in subscriptionTypes)
             {
                 Context.System.EventStream.Subscribe(Self, type);
             }
             
             Receive<IDomainEvent>(Dispatch);
         }
-
+        
         protected virtual bool Dispatch(IDomainEvent domainEvent)
         {
-            AggregateSagaManager.Tell(domainEvent);
+            DomainEventProxy.Tell(domainEvent);
 
-            Logger.Debug("{0} just dispatched {1} to {2}",GetType().PrettyPrint(), domainEvent.GetType().PrettyPrint(), AggregateSagaManager.Path.Name);
+            Logger.Debug("{0} just dispatched {1} to {2}",GetType().PrettyPrint(), domainEvent.GetType().PrettyPrint(), DomainEventProxy.Path.Name);
             return true;
         }
     }
