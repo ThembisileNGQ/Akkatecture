@@ -51,7 +51,7 @@ namespace Akkatecture.Examples.Worker
             foreach (var worker in Enumerable.Range(1, amountOfWorkers+1))
             //foreach (var worker in Enumerable.Range(1, 1))
             {
-                //Create worker with port 600X
+                //Create worker with port 700X
                 var config = ConfigurationFactory.ParseString($"akka.remote.dot-netty.tcp.port = 700{worker}");
                 config = config
                     .WithFallback(baseConfig)
