@@ -116,6 +116,10 @@ Akkatecture gives you a set of opinionated generic constructs that you can use t
 
 Akka.net gives us a wealth of good APIs out of the box that can be used to build entire systems out of. It also has a decent ecosystem and [community](https://gitter.im/akkadotnet/akka.net) for support. Akkatecture is also of the opinion that commands translate well semantically in actor systems since telling commands is a form of message passing that fits well into the actor model paradigm.
 
+## Changelog
+
+Akkatecture uses the methods of [Keep A Changelog](https://github.com/olivierlacan/keep-a-changelog) to keep track of features or functionality that has been added, changed, deprecated, removed, fixed, or patched for security reasons. The changelog also serves as a source of truth for the project's [release notes](https://github.com/Lutando/Akkatecture/releases).
+
 ## Acknowledgements
 
 - [Akka.NET](https://github.com/akkadotnet/akka.net) - The project which AKkatecture builds ontop of, without akka.net, Akkatecture wouldnt exist.
@@ -123,7 +127,6 @@ Akka.net gives us a wealth of good APIs out of the box that can be used to build
 - [Nact](https://nact.io/) - For giving us basis to write our [documentation](https://akkatecture.net). Powered by [gatsbyjs](https://www.gatsbyjs.org/).
 
 ## License
-
 
 ```
 The MIT License (MIT)
