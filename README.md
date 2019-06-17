@@ -75,6 +75,7 @@ akkatecture is currently missing these crucial features:
 ### Contributing
 
 **Code** - If you want to contribute to the framework, do so on the `dev` branch and submit a PR. 
+
 **Documentation** - Akkatecture's documentation source is [here](https://github.com/Akkatecture/Documentation), if you have any suggestions or improvements that can be made to them.
 
 All contributions big or small are greatly appreciated!
