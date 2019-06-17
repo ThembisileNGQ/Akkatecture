@@ -74,7 +74,7 @@ jobs:
         ArtifactName: Source
 
     - task: GitHubRelease@0
-      displayName: 'GitHub release (create)'
+      displayName: 'Create GitHub Release'
       inputs:
         gitHubConnection: 'Akkatecture-GitHub'
         tagSource: manual

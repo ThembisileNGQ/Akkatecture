@@ -266,3 +266,6 @@ __pycache__/
 
 # OSX 
 .DS_Store
+
+# Multinode Test Runner outputs
+*_netcore.txt
