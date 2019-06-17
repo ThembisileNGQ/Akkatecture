@@ -29,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Access levels for aggregate root properties to be more private.
 
 ### Fixed
-- Many hygenic code factors reported by sonar cloud.
+- Many hygienic  code factors reported by sonar cloud.
 
 ## [0.4.3] - 2019-04-28
 
@@ -139,7 +139,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Identity model.
 - Entity model.
-- AggregateRoot model which will be modelled as an actor.
+- AggregateRoot model which will be modeled as an actor.
 - AggregateManager model to ensure singleton aggregate incarnations.
 - Saga model which is modelled similarly to the AggregateRoot.
 - SagaManager model to ensure singleton saga incarnations.

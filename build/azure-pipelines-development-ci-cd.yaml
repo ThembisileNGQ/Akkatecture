@@ -28,13 +28,6 @@ jobs:
       buildConfiguration: 'Release'
 
     steps:
-    - task: ArchiveFiles@2
-      inputs:
-        rootFolderOrFile: '$(Build.SourcesDirectory)'
-        includeRootFolder: true
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildNumber).zip'
-
     - task: DotNetCoreCLI@2
       displayName: 'Restore [Akkatecture]'
       inputs:
@@ -94,17 +87,3 @@ jobs:
         packagesToPush: ${{ format('src/Akkatecture.Clustering/bin/{0}/*.nupkg', variables.buildConfiguration) }}
         nuGetFeedType: 'internal'
         publishVstsFeed: 'akkatecture'
-
-    - task: GitHubRelease@0
-      displayName: 'Create GitHub Release'
-      inputs:
-        gitHubConnection: 'Akkatecture-GitHub'
-        tagSource: manual
-        tag: $(Build.BuildNumber)
-        isPreRelease: true
-        isDraft: true
-        assets: |
-          $(Build.ArtifactStagingDirectory)/$(Build.BuildNumber).zip
-          ${{ format('src/Akkatecture/bin/{0}/*.nupkg', variables.buildConfiguration) }}
-          ${{ format('src/Akkatecture.TestFixture/bin/{0}/*.nupkg', variables.buildConfiguration) }}
-          ${{ format('src/Akkatecture.Clustering/bin/{0}/*.nupkg', variables.buildConfiguration) }}
