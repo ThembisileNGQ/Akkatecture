@@ -97,6 +97,7 @@ jobs:
         isPreRelease: true
         isDraft: true
         assets: |
+          $(Build.SourcesDirectory)/*
           ${{ format('src/Akkatecture/bin/{0}/*.nupkg', variables.buildConfiguration) }}
           ${{ format('src/Akkatecture.TestFixture/bin/{0}/*.nupkg', variables.buildConfiguration) }}
           ${{ format('src/Akkatecture.Clustering/bin/{0}/*.nupkg', variables.buildConfiguration) }}
