@@ -17,11 +17,8 @@ using IMessageSink = Xunit.Abstractions.IMessageSink;
 
 namespace Akka.NodeTestRunner
 {
-#if CORECLR
+    
     class Sink : IMessageSink, IDisposable
-#else
-    class Sink : MarshalByRefObject, IMessageSink, IDisposable
-#endif
     {
         public bool Passed { get; private set; }
         public ManualResetEvent Finished { get; private set; }

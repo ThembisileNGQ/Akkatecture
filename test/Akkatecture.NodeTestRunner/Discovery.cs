@@ -13,7 +13,7 @@ using Xunit.Abstractions;
 
 namespace Akka.NodeTestRunner
 {
-    [Serializable]
+    //[Serializable]
     public class Discovery : TestMessageVisitor<IDiscoveryCompleteMessage>
     {
         private readonly string _assemblyName;

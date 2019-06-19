@@ -17,4 +17,8 @@
       <PackageReference Include="xunit.runner.utility" Version="2.4.1" />
     </ItemGroup>
 
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.2' ">
+        <DefineConstants>CORECLR</DefineConstants>
+    </PropertyGroup>
+
 </Project>

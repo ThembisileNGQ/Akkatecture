@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Runtime.Loader;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,11 +18,10 @@ using Akka.Actor;
 using Akka.IO;
 using Akka.MultiNodeTestRunner.Shared.Sinks;
 using Akka.Remote.TestKit;
+using Microsoft.Extensions.DependencyModel;
 using Xunit;
-#if CORECLR
 using System.Runtime.Loader;
 using Microsoft.Extensions.DependencyModel;
-#endif
 
 namespace Akka.NodeTestRunner
 {
@@ -51,7 +51,7 @@ namespace Akka.NodeTestRunner
             var tcpClient = _logger = system.ActorOf<RunnerTcpClient>();
             system.Tcp().Tell(new Tcp.Connect(listenEndpoint), tcpClient);
 
-#if CORECLR
+
             // In NetCore, if the assembly file hasn't been touched, 
             // XunitFrontController would fail loading external assemblies and its dependencies.
             AssemblyLoadContext.Default.Resolving += (assemblyLoadContext, assemblyName) => DefaultOnResolving(assemblyLoadContext, assemblyName, assemblyFileName);
@@ -61,7 +61,6 @@ namespace Akka.NodeTestRunner
                 .Where(dep => dep.Name.ToLower()
                     .Contains(assembly.FullName.Split(new[] { ',' })[0].ToLower()))
                 .Select(dependency => AssemblyLoadContext.Default.LoadFromAssemblyName(new AssemblyName(dependency.Name)));
-#endif
 
             Thread.Sleep(TimeSpan.FromSeconds(10));
             using (var controller = new XunitFrontController(AppDomainSupport.IfAvailable, assemblyFileName))
@@ -150,13 +149,13 @@ namespace Akka.NodeTestRunner
             }
         }
 
-#if CORECLR
+
         private static Assembly DefaultOnResolving(AssemblyLoadContext assemblyLoadContext, AssemblyName assemblyName, string assemblyPath)
         {
             string dllName = assemblyName.Name.Split(new[] { ',' })[0] + ".dll";
             return assemblyLoadContext.LoadFromAssemblyPath(Path.Combine(Path.GetDirectoryName(assemblyPath), dllName));
         }
-#endif
+
     }
 
     class RunnerTcpClient : ReceiveActor, IWithUnboundedStash

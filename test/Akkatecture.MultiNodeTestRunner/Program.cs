@@ -129,17 +129,11 @@ namespace Akka.MultiNodeTestRunner
             var specName = CommandLine.GetPropertyOrDefault("multinode.spec", "");
             var platform = CommandLine.GetPropertyOrDefault("multinode.platform", "net");
 
-#if CORECLR
+
             if (!_validNetCorePlatform.Contains(platform))
             {
                 throw new Exception($"Target platform not supported: {platform}. Supported platforms are net and netcore");
             }
-#else
-            if (platform != "net")
-            {
-                throw new Exception($"Target platform not supported: {platform}. Supported platforms are net");
-            }
-#endif
 
             var tcpLogger = TestRunSystem.ActorOf(Props.Create(() => new TcpLoggingServer(SinkCoordinator)), "TcpLogger");
             TestRunSystem.Tcp().Tell(new Tcp.Bind(tcpLogger, listenEndpoint));
@@ -148,7 +142,7 @@ namespace Akka.MultiNodeTestRunner
 
             EnableAllSinks(assemblyPath, platform);
             PublishRunnerMessage($"Running MultiNodeTests for {assemblyPath}");
-#if CORECLR
+
             // In NetCore, if the assembly file hasn't been touched, 
             // XunitFrontController would fail loading external assemblies and its dependencies.
             var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath);
@@ -173,7 +167,7 @@ namespace Akka.MultiNodeTestRunner
                     }
                 }
             }
-#endif
+
 
             using (var controller = new XunitFrontController(AppDomainSupport.IfAvailable, assemblyPath))
             {
@@ -207,11 +201,11 @@ namespace Akka.MultiNodeTestRunner
                             Console.Out.WriteLine($"Starting test {test.Value.First().MethodName}");
 
                             StartNewSpec(test.Value);
-#if CORECLR
+
                             var ntrNetPath = Path.Combine(AppContext.BaseDirectory, "Akka.NodeTestRunner.exe");
                             var ntrNetCorePath = Path.Combine(AppContext.BaseDirectory, "Akka.NodeTestRunner.dll");
                             var alternateIndex = 0;
-#endif
+
                             foreach (var nodeTest in test.Value)
                             {
                                 //Loop through each test, work out number of nodes to run on and kick off process
@@ -227,7 +221,7 @@ namespace Akka.MultiNodeTestRunner
                                     .Append($@"-Dmultinode.listen-address={listenAddress} ")
                                     .Append($@"-Dmultinode.listen-port={listenPort} ");
 
-#if CORECLR
+
                                 string fileName = null;
                                 switch (platform)
                                 {
@@ -252,32 +246,19 @@ namespace Akka.MultiNodeTestRunner
                                         WorkingDirectory = Path.GetDirectoryName(assemblyPath)
                                     }
                                 };
-#else
-                                sbArguments.Insert(0, $@"-Dmultinode.test-assembly=""{assemblyPath}"" ");
-                                var process = new Process
-                                {
-                                    StartInfo = new ProcessStartInfo
-                                    {
-                                        FileName = "Akka.NodeTestRunner.exe",
-                                        UseShellExecute = false,
-                                        RedirectStandardOutput = true,
-                                        Arguments = sbArguments.ToString()
-                                    }
-                                };
-#endif
 
                                 processes.Add(process);
                                 var nodeIndex = nodeTest.Node;
                                 var nodeRole = nodeTest.Role;
 
-#if CORECLR
+
                             if (platform == "netcore")
                             {
                                 process.StartInfo.FileName = "dotnet";
                                 process.StartInfo.Arguments = ntrNetCorePath + " " + process.StartInfo.Arguments;
                                 process.StartInfo.WorkingDirectory = Path.GetDirectoryName(assemblyPath);
                             }
-#endif
+
 
                                 //TODO: might need to do some validation here to avoid the 260 character max path error on Windows
                                 var folder = Directory.CreateDirectory(Path.Combine(OutputDirectory, nodeTest.TestName));
