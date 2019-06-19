@@ -49,7 +49,6 @@ namespace Akka.MultiNodeTestRunner
         protected static string OutputDirectory;
 
         protected static bool TeamCityFormattingOn;
-        protected static bool MultiPlatform;
 
         /// <summary>
         /// MultiNodeTestRunner takes the following <see cref="args"/>:
@@ -163,7 +162,7 @@ namespace Akka.MultiNodeTestRunner
                     }
                     catch (Exception e)
                     {
-                        Console.Out.WriteLine($"Failed to load dll: {path}");
+                        Console.Out.WriteLine($"Failed to load dll: {path}, {e}");
                     }
                 }
             }
@@ -204,7 +203,6 @@ namespace Akka.MultiNodeTestRunner
 
                             var ntrNetPath = Path.Combine(AppContext.BaseDirectory, "Akka.NodeTestRunner.exe");
                             var ntrNetCorePath = Path.Combine(AppContext.BaseDirectory, "Akka.NodeTestRunner.dll");
-                            var alternateIndex = 0;
 
                             foreach (var nodeTest in test.Value)
                             {
