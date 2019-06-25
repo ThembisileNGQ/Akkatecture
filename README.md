@@ -25,16 +25,16 @@ Go ahead and take a look at [our documentation](http://akkatecture.net/docs/gett
 
 Akkatecture comes with a few prescribed examples on how one might use it:
 
-* **[Simple](https://github.com/Lutando/Akkatecture/tree/master/examples/simple):** A simple console based example that shows the most simple example of how to create an aggregate and issue commands to it.
+* **[Simple](https://github.com/Lutando/Akkatecture/tree/dev/examples/simple):** A simple console based example that shows the most simple example of how to create an aggregate and issue commands to it.
 
 * **[Walkthrough](https://github.com/Akkatecture/Walkthrough):** Tutorial style sample based on the walkthrough in the Akkatecture documentation. The walkthrough proposes domain that should be modelled based on some business requirements. The walkthrough goes step by step covering all the primitives and features covered in Akkatecture to give you an understanding of the framework. The beginning of the walkthrough can be found [here](https://akkatecture.net/docs/walkthrough-introduction).
 
 
-* **[Cluster](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster):** A more involved sample that shows you how to do distributed aggregates using clustering. Read the [readme](https://github.com/Lutando/Akkatecture/tree/master/examples/cluster/README.md) for the sample for a good overview of the example.
+* **[Cluster](https://github.com/Lutando/Akkatecture/tree/dev/examples/cluster):** A more involved sample that shows you how to do distributed aggregates using clustering. Read the [readme](https://github.com/Lutando/Akkatecture/tree/dev/examples/cluster/README.md) for the sample for a good overview of the example.
 
-* **[Web](https://github.com/Lutando/Akkatecture/tree/master/examples/web):** This sample shows how to integrate akka into an aspnet core project, specifically how to inject actor references when using akkatecture. Furthermore this project models a long running process that might be run behind a web application or something similar. Read the [readme](https://github.com/Lutando/Akkatecture/tree/master/examples/web/README.md) for more detailed information about the example.
+* **[Web](https://github.com/Lutando/Akkatecture/tree/dev/examples/web):** This sample shows how to integrate akka into an aspnet core project, specifically how to inject actor references when using akkatecture. Furthermore this project models a long running process that might be run behind a web application or something similar. Read the [readme](https://github.com/Lutando/Akkatecture/tree/dev/examples/web/README.md) for more detailed information about the example.
 
-* **[Tests](https://github.com/Lutando/Akkatecture/tree/master/test/Akkatecture.Tests):** The test examples found in the Akkatecture.Test project is there to provide assistance when doing testing for Akkatecture. There is a simple domain modelled within the [Akkatecture.TestHelpers](https://github.com/Lutando/Akkatecture/tree/master/test/Akkatecture.TestHelpers) project that includes a model of an aggregate with a simple aggregate saga, and these are used to do simple black box style testing on Akkatecture using akka.net's TestKit.
+* **[Tests](https://github.com/Lutando/Akkatecture/tree/dev/test/Akkatecture.Tests):** The test examples found in the Akkatecture.Test project is there to provide assistance when doing testing for Akkatecture. There is a simple domain modelled within the [Akkatecture.TestHelpers](https://github.com/Lutando/Akkatecture/tree/dev/test/Akkatecture.TestHelpers) project that includes a model of an aggregate with a simple aggregate saga, and these are used to do simple black box style testing on Akkatecture using akka.net's TestKit.
 
 
 **Note:** This example is part of the Akkatecture simple example project, so checkout [the
