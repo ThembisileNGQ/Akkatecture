@@ -181,7 +181,7 @@ namespace Akkatecture.Tests.MultiNode
 
         public void Aggregates_can_be_hydrated()
         {
-            var senderTestId = TestId.New;
+            var senderTestId = TestId.NewDeterministic(TestIdNamespace, (DateTime.UtcNow.Day - 1).ToString());
             var senderTest = new Test(senderTestId);
             var receiver = TestAggregateId.NewDeterministic(TestIdNamespace, (DateTime.UtcNow.Day + 1).ToString());
             var sender = TestAggregateId.NewDeterministic(TestIdNamespace, DateTime.UtcNow.Day.ToString());
