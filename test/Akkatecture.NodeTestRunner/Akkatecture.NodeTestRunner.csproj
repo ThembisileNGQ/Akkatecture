@@ -19,7 +19,7 @@
     <PackageReference Include="Akkatecture.MultiNode.Shared" Version="0.2.0" />
     <PackageReference Include="xunit.runner.utility" Version="2.4.1" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.1.0" />
     <PackageReference Include="coverlet.msbuild" Version="2.6.2" />
   </ItemGroup>
 
