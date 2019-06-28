@@ -48,6 +48,7 @@ jobs:
       inputs:
         command: 'test'
         configuration: $(BuildConfiguration)
+        nobuild: true
         projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
         publishTestResults: true
 
