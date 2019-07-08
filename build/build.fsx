@@ -7,6 +7,7 @@ open Fake.IO
 open Fake.IO.FileSystemOperators
 open Fake.IO.Globbing.Operators
 open Fake.Core.TargetOperators
+open Fake.BuildServer.TeamFoundation
 
 
 Target.initEnvironment()
@@ -58,6 +59,9 @@ let configuration = DotNet.BuildConfiguration.Release
 let solution = System.IO.Path.GetFullPath(string "../Akkatecture.sln")
 let sourceDirectory =  System.IO.Path.GetFullPath(string "../")
 let testResults = sourceDirectory @@ "testresults"
+let pushesToFeed = match host with 
+                    | AzureDevOps -> true
+                    | _ -> false
 
 // --------------------------------------------------------------------------------------
 // Build Current Working Directory
@@ -155,7 +159,7 @@ Target.create "All" ignore
   ==> "Build"
   ==> "Test"
   ==> "MultiNodeTest"
-  ==> "Push"
+  =?> ("Push", pushesToFeed)
   ==> "All"
 
 Target.runOrDefault "Build"
