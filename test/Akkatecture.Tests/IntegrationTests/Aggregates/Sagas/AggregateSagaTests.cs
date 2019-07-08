@@ -35,6 +35,7 @@ using Akkatecture.TestHelpers.Aggregates.Sagas.Test;
 using Akkatecture.TestHelpers.Aggregates.Sagas.TestAsync;
 using FluentAssertions;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
 {
@@ -42,8 +43,8 @@ namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
     public class AggregateSagaTests : TestKit
     {
         private const string Category = "Sagas";
-        public AggregateSagaTests()
-            : base(TestHelpers.Akka.Configuration.Config,"aggregate-saga-tests")
+        public AggregateSagaTests(ITestOutputHelper testOutputHelper)
+            : base(TestHelpers.Akka.Configuration.Config,"aggregate-saga-tests", testOutputHelper)
         {
             
         }
