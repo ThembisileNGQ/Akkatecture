@@ -79,7 +79,7 @@ jobs:
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact Source'
       inputs:
-        PathtoPublish: '$(Agent.BuildDirectory)'
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildNumber)-source.zip'
         ArtifactName: Source
 
     - task: GitHubRelease@0
