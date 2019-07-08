@@ -5,3 +5,4 @@ group Build
     nuget Fake.DotNet.Cli
     nuget Fake.IO.FileSystem
     nuget Fake.Core.Target
+    nuget Fake.BuildServer.TeamFoundation

@@ -274,4 +274,4 @@ __pycache__/
 .ionide/
 
 # Opencover
-opencover.xml
+*opencover.xml
