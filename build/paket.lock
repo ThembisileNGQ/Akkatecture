@@ -120,6 +120,11 @@ NUGET
       Fake.Core.Trace (>= 5.15.3) - restriction: || (>= net46) (>= netstandard1.6)
       FSharp.Core (>= 4.3.4) - restriction: || (>= net46) (>= netstandard1.6)
       System.Net.Http (>= 4.3.4) - restriction: || (>= net46) (>= netstandard1.6)
+    Fake.Testing.SonarQube (5.15.3)
+      Fake.Core.Process (>= 5.15.3) - restriction: || (>= net46) (>= netstandard2.0)
+      Fake.Core.Trace (>= 5.15.3) - restriction: || (>= net46) (>= netstandard2.0)
+      Fake.IO.FileSystem (>= 5.15.3) - restriction: || (>= net46) (>= netstandard2.0)
+      FSharp.Core (>= 4.3.4) - restriction: || (>= net46) (>= netstandard2.0)
     FParsec (1.0.3) - restriction: || (>= net46) (>= netstandard2.0)
       FSharp.Core (>= 4.0.0.1) - restriction: >= net40
       FSharp.Core (>= 4.2.3) - restriction: && (< net40) (>= netstandard1.6)

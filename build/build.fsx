@@ -1,14 +1,15 @@
 #r "paket: groupref build //"
 #load ".fake/build.fsx/intellisense.fsx"
 
+open System
 open Fake.Core
 open Fake.DotNet
 open Fake.IO
 open Fake.IO.FileSystemOperators
 open Fake.IO.Globbing.Operators
 open Fake.Core.TargetOperators
-open Fake.BuildServer.TeamFoundation
-
+open Fake.Testing
+open Fake.BuildServer
 
 Target.initEnvironment()
 
@@ -38,26 +39,26 @@ type FeedVersion =
 // Build variables
 // --------------------------------------------------------------------------------------
 
-let host = match Environment.hasEnvironVar("BUILD_BUILDID") with
+let host = match TeamFoundation.detect() with
             | true -> AzureDevOps
             | false -> Local
-
-//let feedVersion = match Environment.hasEnvironVar("BUILD_BUILDID") with
 
 let platform =
     if Environment.isMacOS then OSX
     elif Environment.isLinux then Linux
     else Windows
 
+let date = DateTime.UtcNow
+let defaultBuildNumber = sprintf "%i.%i.%i%i%i%i" 0 1 date.DayOfYear date.Hour date.Minute date.Second 
 let buildNumber = match host with
                     | Local -> "0.0.1"
-                    | AzureDevOps -> Environment.environVarOrDefault "BUILD_BUILDNUMBER" "0.0.1"
-
+                    | AzureDevOps -> Environment.environVarOrDefault "BUILD_BUILDNUMBER" defaultBuildNumber
+let DoNothing = ignore
 let runtimeIds = dict[Windows, "win-x64"; Linux, "linux-x64"; OSX, "osx-x64"]
 let runtimeId = runtimeIds.Item(platform);
 let configuration = DotNet.BuildConfiguration.Release
-let solution = System.IO.Path.GetFullPath(string "../Akkatecture.sln")
-let sourceDirectory =  System.IO.Path.GetFullPath(string "../")
+let solution = IO.Path.GetFullPath(string "../Akkatecture.sln")
+let sourceDirectory =  IO.Path.GetFullPath(string "../")
 let testResults = sourceDirectory @@ "testresults"
 let pushesToFeed = match host with 
                     | AzureDevOps -> true
@@ -66,7 +67,8 @@ let pushesToFeed = match host with
 // --------------------------------------------------------------------------------------
 // Build Current Working Directory
 // --------------------------------------------------------------------------------------
-System.Environment.CurrentDirectory <- sourceDirectory
+
+Environment.CurrentDirectory <- sourceDirectory
 
 // --------------------------------------------------------------------------------------
 // Build Targets
@@ -89,15 +91,16 @@ Target.create "Clean" (fun _ ->
     Trace.logfn "RuntimeId: %s" runtimeId
     Trace.logfn "Host: %A" host
     Trace.logfn "BuildNumber: %s" buildNumber
-
-    //cleanables |> Seq.iter Trace.log 
-
 )
 
 Target.create "Restore" (fun _ ->
     Trace.log " --- Restoring Solution --- "
 
     DotNet.restore id solution
+)
+
+Target.create "SonarQubeStart" (fun _ ->
+    Trace.log " --- Sonar Qube Starting --- "
 )
 
 Target.create "Build" (fun _ ->
@@ -137,6 +140,11 @@ Target.create "MultiNodeTest" (fun _ ->
     Trace.log " --- Multi Node Tests --- "
 )
 
+Target.create "SonarQubeEnd" (fun _ ->
+    Trace.log " --- Sonar Qube Ending --- "
+    SonarQube.finish (Some (fun p -> {p with Settings = ["sonar.login=login"; "sonar.password=password"] }))
+)
+
 Target.create "Push" (fun _ ->
     Trace.log " --- Publish Packages --- "
 
@@ -148,18 +156,26 @@ Target.create "Push" (fun _ ->
     pushables |> Seq.iter Trace.log 
 )
 
-Target.create "All" ignore
-
 // --------------------------------------------------------------------------------------
 // Build order
 // --------------------------------------------------------------------------------------
+
+Target.create "Release" DoNothing
+Target.create "Default" DoNothing
+
+"Clean"
+  ==> "Restore"
+  ==> "SonarQubeStart"
+  ?=> "Build"
+  ==> "Test"
+  ==> "SonarQubeEnd"
+  ?=> "Push"
+  ==> "Release"
 
 "Clean"
   ==> "Restore"
   ==> "Build"
   ==> "Test"
-  ==> "MultiNodeTest"
-  =?> ("Push", pushesToFeed)
-  ==> "All"
+  ==> "Default"
 
 Target.runOrDefault "Build"
