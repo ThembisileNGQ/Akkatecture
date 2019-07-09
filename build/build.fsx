@@ -142,7 +142,7 @@ Target.create "MultiNodeTest" (fun _ ->
 
 Target.create "SonarQubeEnd" (fun _ ->
     Trace.log " --- Sonar Qube Ending --- "
-    SonarQube.finish (Some (fun p -> {p with Settings = ["sonar.login=login"; "sonar.password=password"] }))
+    //SonarQube.finish (Some (fun p -> {p with Settings = ["sonar.login=login"; "sonar.password=password"] }))
 )
 
 Target.create "Push" (fun _ ->
