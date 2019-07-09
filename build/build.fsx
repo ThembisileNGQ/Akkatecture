@@ -13,7 +13,16 @@ open Fake.BuildServer
 
 Target.initEnvironment()
 let DoNothing = ignore
-let env = Environment.environVarOrFail
+let vault = 
+    match Vault.fromFakeEnvironmentOrNone() with
+        | Some v -> v
+        | None -> TeamFoundation.variables
+
+let env value =
+    match vault.TryGet value with
+        | Some v -> v
+        | None -> Environment.environVarOrFail value
+    
 
 // --------------------------------------------------------------------------------------
 // Build types
@@ -55,10 +64,11 @@ let feedVersion = match env "FEEDVERSION" with
                     | _ -> None
 
 let buildNumber = 
+    let dayOfYear = DateTime.UtcNow.DayOfYear.ToString() 
     let numberTemplate major minor patch feed revision = sprintf "%s.%s.%s-%s-%s%s" major minor patch feed revision
     match host with
         | Local -> "0.0.1"
-        | AzureDevOps -> numberTemplate (env "MAJORVERSION") (env "MINORVERSION") (env "PATCHVERSION") (env "FEEDVERSION") (env "DAYOFYEAR") (env "REVISION")
+        | AzureDevOps -> numberTemplate (env "MAJORVERSION") (env "MINORVERSION") (env "PATCHVERSION") (env "FEEDVERSION") dayOfYear (env "REVISION")
 
 let runtimeIds = dict[Windows, "win-x64"; Linux, "linux-x64"; OSX, "osx-x64"]
 let runtimeId = runtimeIds.Item(platform);

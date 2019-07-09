@@ -15,8 +15,7 @@ variables:
   minorVersion: '4'
   patchVersion: '5'
   feedVersion: 'fake'
-  dayOfYear: '$(DayOfYear)'
-  revision: '$(Rev:r)'
+  revision: ${{ format('{0}{1}, $(DayOfYear, $[counter('', 1)])
 
 name: ${{ format('{0}.{1}.{2}-{3}-{4}{5}', variables.majorVersion, variables.minorVersion, variables.patchVersion, variables.feedVersion, variables.dayOfYear, variables.revision) }}
 
