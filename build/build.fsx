@@ -68,7 +68,7 @@ let buildNumber =
     let numberTemplate major minor patch feed revision = sprintf "%s.%s.%s-%s-%s%s" major minor patch feed revision
     match host with
         | Local -> "0.0.1"
-        | AzureDevOps -> Environment.environVarOrFail "BUILD.BUILDNUMBER"//numberTemplate (env "MAJORVERSION") (env "MINORVERSION") (env "PATCHVERSION") (env "FEEDVERSION") dayOfYear (env "REVISION")
+        | AzureDevOps -> Environment.environVarOrFail "BUILD_BUILDNUMBER"//numberTemplate (env "MAJORVERSION") (env "MINORVERSION") (env "PATCHVERSION") (env "FEEDVERSION") dayOfYear (env "REVISION")
 
 let runtimeIds = dict[Windows, "win-x64"; Linux, "linux-x64"; OSX, "osx-x64"]
 let runtimeId = runtimeIds.Item(platform);
