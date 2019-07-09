@@ -166,10 +166,10 @@ Target.create "Default" DoNothing
 "Clean"
   ==> "Restore"
   ==> "SonarQubeStart"
-  ?=> "Build"
+  ==> "Build"
   ==> "Test"
   ==> "SonarQubeEnd"
-  ?=> "Push"
+  ==> "Push"
   ==> "Release"
 
 "Clean"
