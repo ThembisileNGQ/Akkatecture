@@ -61,10 +61,10 @@ and EndpointCredentials =
 Trace.logfn "// --------------------------------------------------------------------------------------"
 Trace.logfn "// Build variables"
 Trace.logfn "// --------------------------------------------------------------------------------------"
-let test = match envOrNone "nugetFeedPat" with
-            | Some s -> Trace.logfn "IT WAS nugetFeedPat %s" s
+let test = match envOrNone "nugetfeedpat" with
+            | Some s -> Trace.logfn "IT WAS nugetfeedpat %s" s
             | None -> match envOrNone "NUGETFEEDPAT" with
-                        | Some s -> Trace.logfn "IT WAS nugetFeedPat %s" s
+                        | Some s -> Trace.logfn "IT WAS NUGETFEEDPAT %s" s
                         | None -> match envOrNone "NUGET_FEED_PAT" with
                                     | Some s -> Trace.logfn "IT WAS NUGET_FEED_PAT %s" s
                                     | None -> Trace.log "IT WAS NOTHING"
@@ -95,7 +95,7 @@ let buildNumber =
     let dayOfYear = DateTime.UtcNow.DayOfYear.ToString() 
     let numberTemplate major minor patch feed revision = sprintf "%s.%s.%s-%s-%s%s" major minor patch feed revision
     match host with
-        | Local -> "0.0.100"
+        | Local -> "0.0.101"
         | AzureDevOps -> Environment.environVarOrFail "BUILD_BUILDNUMBER"//numberTemplate (env "MAJORVERSION") (env "MINORVERSION") (env "PATCHVERSION") (env "FEEDVERSION") dayOfYear (env "REVISION")
 
 let runtimeIds = dict[Windows, "win-x64"; Linux, "linux-x64"; OSX, "osx-x64"]
@@ -108,8 +108,8 @@ let pushesToFeed = match host with
                     | AzureDevOps -> true
                     | _ -> false
 
-let internalCredential = {Endpoint = "https://pkgs.dev.azure.com/lutando/_packaging/akkatecture/nuget/v3/index.json"; Username = "lutando"; Password = env "INTERNALFEEDPAT"}
-let nugetCredential = {Endpoint = "https://api.nuget.org/v3/index.json"; Username = "lutando"; Password = env "NUGETFEEDPAT"}
+let internalCredential = {Endpoint = "https://pkgs.dev.azure.com/lutando/_packaging/akkatecture/nuget/v3/index.json"; Username = "lutando"; Password = env "internalfeedpat"}
+let nugetCredential = {Endpoint = "https://api.nuget.org/v3/index.json"; Username = "lutando"; Password = env "internalfeedpat"}
 
 let endpointCredentials : EndpointCredentials = {endpointCredentials = [internalCredential;nugetCredential]}
 
@@ -201,7 +201,7 @@ Target.create "SonarQubeEnd" (fun _ ->
 
 Target.create "Push" (fun _ ->
     Trace.log " --- Publish Packages --- "
-    
+
     let script = sourceDirectory </> "build/installcredprovider.sh"
     let execution = Shell.Exec ("sh", script )
     
