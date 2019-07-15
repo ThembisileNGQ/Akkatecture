@@ -52,7 +52,8 @@ type EndpointCredential =
     { [<JsonField("endpoint")>]Endpoint: string 
       [<JsonField("username")>]Username: string
       [<JsonField("password")>]Password: string }
-and EndpointCredentials =  EndpointCredential list
+and EndpointCredentials =  
+    { endpointCredentials : EndpointCredential list }
 
 // --------------------------------------------------------------------------------------
 // Build variables
@@ -110,7 +111,7 @@ let pushesToFeed = match host with
 let internalCredential = {Endpoint = "https://pkgs.dev.azure.com/lutando/_packaging/akkatecture/nuget/v3/index.json"; Username = "lutando"; Password = env "INTERNALFEEDPAT"}
 let nugetCredential = {Endpoint = "https://api.nuget.org/v3/index.json"; Username = "lutando"; Password = env "NUGETFEEDPAT"}
 
-let endpointCredentials : EndpointCredentials = [internalCredential;nugetCredential]
+let endpointCredentials : EndpointCredentials = {endpointCredentials = [internalCredential;nugetCredential]}
 
 // --------------------------------------------------------------------------------------
 // Build Current Working Directory
@@ -201,7 +202,8 @@ Target.create "SonarQubeEnd" (fun _ ->
 Target.create "Push" (fun _ ->
     Trace.log " --- Publish Packages --- "
     
-    let execution = Shell.Exec (sourceDirectory </> "build/installcredprovider.sh")
+    let script = sourceDirectory </> "build/installcredprovider.sh"
+    let execution = Shell.Exec ("sh", script )
     
     match execution with 
         | 0 -> printf "NuGet Credential Provider installed"
@@ -238,7 +240,7 @@ Target.create "Default" DoNothing
   ==> "Restore"
   ==> "SonarQubeStart"
   ==> "Build"
-  ==> "Test"
+ // ==> "Test"
   ==> "SonarQubeEnd"
   ==> "Push"
   ==> "Release"
@@ -246,7 +248,7 @@ Target.create "Default" DoNothing
 "Clean"
   ==> "Restore"
   ==> "Build"
-  ==> "Test"
+//  ==> "Test"
   ==> "Default"
 
 Target.runOrDefault "Build"
