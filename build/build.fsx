@@ -111,7 +111,6 @@ Target.create "Clean" (fun _ ->
     Trace.logfn "RuntimeId: %s" runtimeId
     Trace.logfn "Host: %A" host
     Trace.logfn "BuildNumber: %s" buildNumber
-    Trace.logfn "NugetPluginPaths: %s" (env "NUGET_PLUGIN_PATHS")
     Trace.logfn "Home: %s" (env "HOME")
     match feedVersion with
         | Some fv -> Trace.logfn "FeedVersion: %A" fv
