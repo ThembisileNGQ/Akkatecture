@@ -8,7 +8,6 @@ open Fake.IO
 open Fake.IO.FileSystemOperators
 open Fake.IO.Globbing.Operators
 open Fake.Core.TargetOperators
-open Fake.Testing
 open Fake.BuildServer
 open FSharp.Json
 
@@ -68,12 +67,6 @@ let test = match envOrNone "nugetfeedpat" with
                         | None -> match envOrNone "NUGET_FEED_PAT" with
                                     | Some s -> Trace.logfn "IT WAS NUGET_FEED_PAT %s" s
                                     | None -> Trace.log "IT WAS NOTHING"
-
-let test2 = match envOrNone "TEST" with
-            | Some s -> Trace.logfn "IT WAS TEST %s" s
-            | None -> match envOrNone "test" with
-                        | Some s -> Trace.logfn "IT WAS test %s" s
-                        | None -> Trace.log "IT WAS NOTHING"
                     
 let host = match TeamFoundation.detect() with
             | true -> AzureDevOps
@@ -108,8 +101,8 @@ let pushesToFeed = match host with
                     | AzureDevOps -> true
                     | _ -> false
 
-let internalCredential = {Endpoint = "https://pkgs.dev.azure.com/lutando/_packaging/akkatecture/nuget/v3/index.json"; Username = "lutando"; Password = env "internalfeedpat"}
-let nugetCredential = {Endpoint = "https://api.nuget.org/v3/index.json"; Username = "lutando"; Password = env "internalfeedpat"}
+let internalCredential = {Endpoint = "https://pkgs.dev.azure.com/lutando/_packaging/akkatecture/nuget/v3/index.json"; Username = "lutando"; Password = env "INTERNAL_FEED_PAT"}
+let nugetCredential = {Endpoint = "https://api.nuget.org/v3/index.json"; Username = "lutando"; Password = env "NUGET_FEED_PAT"}
 
 let endpointCredentials : EndpointCredentials = {endpointCredentials = [internalCredential;nugetCredential]}
 
@@ -240,7 +233,7 @@ Target.create "Default" DoNothing
   ==> "Restore"
   ==> "SonarQubeStart"
   ==> "Build"
- // ==> "Test"
+  ==> "Test"
   ==> "SonarQubeEnd"
   ==> "Push"
   ==> "Release"
@@ -248,7 +241,7 @@ Target.create "Default" DoNothing
 "Clean"
   ==> "Restore"
   ==> "Build"
-//  ==> "Test"
+  ==> "Test"
   ==> "Default"
 
 Target.runOrDefault "Build"
