@@ -133,6 +133,8 @@ NUGET
       FSharp.Core (>= 4.2.3) - restriction: || (>= net46) (>= netstandard2.0)
       System.Reactive (>= 4.0) - restriction: || (>= net46) (>= netstandard2.0)
     FSharp.Core (4.6.2) - restriction: || (>= net46) (>= netstandard1.6)
+    FSharp.Json (0.3.7)
+      FSharp.Core (>= 4.3.4) - restriction: >= netstandard2.0
     Microsoft.Build (16.0.461) - restriction: || (>= net462) (>= netstandard2.0)
       Microsoft.Build.Framework (>= 16.0.461) - restriction: || (>= net472) (>= netcoreapp2.1)
       Microsoft.VisualStudio.Setup.Configuration.Interop (>= 1.16.30) - restriction: >= net472
