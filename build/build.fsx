@@ -10,6 +10,7 @@ open Fake.IO.Globbing.Operators
 open Fake.Core.TargetOperators
 open Fake.Testing
 open Fake.BuildServer
+open FSharp.Json
 
 Target.initEnvironment()
 let DoNothing = ignore
@@ -47,6 +48,12 @@ type FeedVersion =
     | PreRelease
     | NuGet
 
+type EndpointCredential = 
+    { [<JsonField("endpoint")>]Endpoint: string 
+      [<JsonField("username")>]Username: string
+      [<JsonField("password")>]Password: string }
+and EndpointCredentials =  EndpointCredential list
+
 // --------------------------------------------------------------------------------------
 // Build variables
 // --------------------------------------------------------------------------------------
@@ -71,7 +78,7 @@ let buildNumber =
     let dayOfYear = DateTime.UtcNow.DayOfYear.ToString() 
     let numberTemplate major minor patch feed revision = sprintf "%s.%s.%s-%s-%s%s" major minor patch feed revision
     match host with
-        | Local -> "0.0.1"
+        | Local -> "0.0.100"
         | AzureDevOps -> Environment.environVarOrFail "BUILD_BUILDNUMBER"//numberTemplate (env "MAJORVERSION") (env "MINORVERSION") (env "PATCHVERSION") (env "FEEDVERSION") dayOfYear (env "REVISION")
 
 let runtimeIds = dict[Windows, "win-x64"; Linux, "linux-x64"; OSX, "osx-x64"]
@@ -83,6 +90,11 @@ let testResults = sourceDirectory @@ "testresults"
 let pushesToFeed = match host with 
                     | AzureDevOps -> true
                     | _ -> false
+
+let internalCredential = {Endpoint = "https://pkgs.dev.azure.com/lutando/_packaging/akkatecture/nuget/v3/index.json"; Username = "lutando"; Password = env "INTERNAL_FEED_PAT"}
+let nugetCredential = {Endpoint = "https://api.nuget.org/v3/index.json"; Username = "lutando"; Password = env "NUGET_FEED_PAT"}
+
+let endpointCredentials : EndpointCredentials = [internalCredential;nugetCredential]
 
 // --------------------------------------------------------------------------------------
 // Build Current Working Directory
@@ -112,6 +124,7 @@ Target.create "Clean" (fun _ ->
     Trace.logfn "Host: %A" host
     Trace.logfn "BuildNumber: %s" buildNumber
     Trace.logfn "Home: %s" (env "HOME")
+    Trace.logfn "NugetFeedUrls: %s" (Json.serialize endpointCredentials)
     match feedVersion with
         | Some fv -> Trace.logfn "FeedVersion: %A" fv
         | None -> ()
@@ -171,7 +184,15 @@ Target.create "SonarQubeEnd" (fun _ ->
 
 Target.create "Push" (fun _ ->
     Trace.log " --- Publish Packages --- "
-    NuGet.NuGet.NuGetPublish
+    
+    let execution = Shell.Exec "installcredprovider.sh"
+    
+    match execution with 
+        | 0 -> printf "NuGet Credential Provider installed"
+        | _ -> failwith "NuGet Credential Provider failed to install"
+
+    Environment.setEnvironVar "VSS_NUGET_EXTERNAL_FEED_ENDPOINTS" (Json.serialize endpointCredentials)
+    
     let glob = sprintf "src/**/bin/%A/*.nupkg" configuration
     let nugetPushParams (defaults:NuGet.NuGet.NuGetPushParams) =
         { defaults with
