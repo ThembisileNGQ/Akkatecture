@@ -91,8 +91,8 @@ let pushesToFeed = match host with
                     | AzureDevOps -> true
                     | _ -> false
 
-let internalCredential = {Endpoint = "https://pkgs.dev.azure.com/lutando/_packaging/akkatecture/nuget/v3/index.json"; Username = "lutando"; Password = env "INTERNAL_FEED_PAT"}
-let nugetCredential = {Endpoint = "https://api.nuget.org/v3/index.json"; Username = "lutando"; Password = env "NUGET_FEED_PAT"}
+let internalCredential = {Endpoint = "https://pkgs.dev.azure.com/lutando/_packaging/akkatecture/nuget/v3/index.json"; Username = "lutando"; Password = env "INTERNALFEEDPAT"}
+let nugetCredential = {Endpoint = "https://api.nuget.org/v3/index.json"; Username = "lutando"; Password = env "NUGETFEEDPAT"}
 
 let endpointCredentials : EndpointCredentials = [internalCredential;nugetCredential]
 
@@ -192,7 +192,7 @@ Target.create "Push" (fun _ ->
         | _ -> failwith "NuGet Credential Provider failed to install"
 
     Environment.setEnvironVar "VSS_NUGET_EXTERNAL_FEED_ENDPOINTS" (Json.serialize endpointCredentials)
-    
+
     let glob = sprintf "src/**/bin/%A/*.nupkg" configuration
     let nugetPushParams (defaults:NuGet.NuGet.NuGetPushParams) =
         { defaults with
