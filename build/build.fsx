@@ -22,7 +22,11 @@ let env value =
     match vault.TryGet value with
         | Some v -> v
         | None -> Environment.environVarOrFail value
-    
+
+let envOrNone value = 
+    match vault.TryGet value with
+        | Some v -> Some v
+        | None -> Environment.environVarOrNone value
 
 // --------------------------------------------------------------------------------------
 // Build types
@@ -56,11 +60,11 @@ let platform =
     elif Environment.isLinux then Linux
     else Windows
 
-let feedVersion = match env "FEEDVERSION" with
-                    | "fake" -> Some Fake
-                    | "alpha" -> Some Alpha
-                    | "prerelease" -> Some PreRelease
-                    | "release" -> Some NuGet
+let feedVersion = match envOrNone "FEEDVERSION" with
+                    | Some "fake" -> Some Fake
+                    | Some "alpha" -> Some Alpha
+                    | Some "prerelease" -> Some PreRelease
+                    | Some "release" -> Some NuGet
                     | _ -> None
 
 let buildNumber = 
@@ -107,6 +111,8 @@ Target.create "Clean" (fun _ ->
     Trace.logfn "RuntimeId: %s" runtimeId
     Trace.logfn "Host: %A" host
     Trace.logfn "BuildNumber: %s" buildNumber
+    Trace.logfn "NugetPluginPaths: %s" (env "NUGET_PLUGIN_PATHS")
+    Trace.logfn "Home: %s" (env "HOME")
     match feedVersion with
         | Some fv -> Trace.logfn "FeedVersion: %A" fv
         | None -> ()
@@ -166,7 +172,7 @@ Target.create "SonarQubeEnd" (fun _ ->
 
 Target.create "Push" (fun _ ->
     Trace.log " --- Publish Packages --- "
-
+    NuGet.NuGet.NuGetPublish
     let glob = sprintf "src/**/bin/%A/*.nupkg" configuration
     let nugetPushParams (defaults:NuGet.NuGet.NuGetPushParams) =
         { defaults with
