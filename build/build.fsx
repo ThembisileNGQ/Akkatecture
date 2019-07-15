@@ -67,6 +67,12 @@ let test = match envOrNone "nugetFeedPat" with
                         | None -> match envOrNone "NUGET_FEED_PAT" with
                                     | Some s -> Trace.logfn "IT WAS NUGET_FEED_PAT %s" s
                                     | None -> Trace.log "IT WAS NOTHING"
+
+let test2 = match envOrNone "TEST" with
+            | Some s -> Trace.logfn "IT WAS TEST %s" s
+            | None -> match envOrNone "test" with
+                        | Some s -> Trace.logfn "IT WAS test %s" s
+                        | None -> Trace.log "IT WAS NOTHING"
                     
 let host = match TeamFoundation.detect() with
             | true -> AzureDevOps
