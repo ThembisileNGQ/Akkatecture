@@ -27,9 +27,6 @@ jobs:
       vmImage: 'Ubuntu 16.04'
     variables:
       buildConfiguration: 'Release'
-      internalFeedPAT: $(InternalFeedPAT)
-      nugetFeedPAT: $(NugetFeedPAT)
-      test: 'testvalue'
 
     steps:
     - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
