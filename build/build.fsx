@@ -57,7 +57,17 @@ and EndpointCredentials =  EndpointCredential list
 // --------------------------------------------------------------------------------------
 // Build variables
 // --------------------------------------------------------------------------------------
-
+Trace.logfn "// --------------------------------------------------------------------------------------"
+Trace.logfn "// Build variables"
+Trace.logfn "// --------------------------------------------------------------------------------------"
+let test = match envOrNone "nugetFeedPat" with
+            | Some s -> Trace.logfn "IT WAS nugetFeedPat %s" s
+            | None -> match envOrNone "NUGETFEEDPAT" with
+                        | Some s -> Trace.logfn "IT WAS nugetFeedPat %s" s
+                        | None -> match envOrNone "NUGET_FEED_PAT" with
+                                    | Some s -> Trace.logfn "IT WAS NUGET_FEED_PAT %s" s
+                                    | None -> Trace.log "IT WAS NOTHING"
+                    
 let host = match TeamFoundation.detect() with
             | true -> AzureDevOps
             | false -> Local
