@@ -15,8 +15,6 @@ variables:
   minorVersion: '4'
   patchVersion: '5'
   feedVersion: 'fake'
-  internalFeedPAT: $(InternalFeedPAT)
-  nugetFeedPAT: $(NugetFeedPAT)
   dayOfYear: $(DayOfYear)
   revCounter: $(BuildRevision)
   revision: ${{ format('{0}{1}', variables.dayOfYear, variables.revCounter) }}
@@ -29,6 +27,8 @@ jobs:
       vmImage: 'Ubuntu 16.04'
     variables:
       buildConfiguration: 'Release'
+      internalFeedPAT: $(InternalFeedPAT)
+      nugetFeedPAT: $(NugetFeedPAT)
 
     steps:
     - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
