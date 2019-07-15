@@ -27,8 +27,8 @@ jobs:
       vmImage: 'Ubuntu 16.04'
     variables:
       buildConfiguration: 'Release'
-      internalFeedPAT: ${InternalFeedPAT}
-      nugetFeedPAT: '$(NugetFeedPAT)'
+      internalFeedPAT: $(InternalFeedPAT)
+      nugetFeedPAT: $(NugetFeedPAT)
       test: 'testvalue'
 
     steps:
