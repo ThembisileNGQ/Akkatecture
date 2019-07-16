@@ -19,20 +19,10 @@ jobs:
       buildConfiguration: 'Release'
 
     steps:
-    - task: DotNetCoreCLI@2
-      displayName: 'Restore [Akkatecture]'
+    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
+      displayName: 'Execute Fake 5 Build Script'
       inputs:
-        command: 'restore'
-        projects: 'Akkatecture.sln'
-
-    - task: DotNetCoreCLI@2
-      displayName: 'Build [Akkatecture]'
-      inputs:
-        command: 'restore'
-        projects: 'Akkatecture.sln'
-
-    - task: DotNetCoreCLI@2
-      displayName: 'Test [Akkatecture.Tests]'
-      inputs:
-        command: 'test'
-        projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
+        FakeVersion: 5.15.3
+        FakeScript: build/build.fsx
+        ScriptArguments: '--target Default'
+        WorkingDirectory: build/

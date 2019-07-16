@@ -9,6 +9,7 @@ open Fake.IO.FileSystemOperators
 open Fake.IO.Globbing.Operators
 open Fake.Core.TargetOperators
 open Fake.BuildServer
+open Fake.Testing
 open FSharp.Json
 
 Target.initEnvironment()
@@ -38,6 +39,15 @@ let installCredentialProvider sourceDirectory endpointCredentials =
 
     Environment.setEnvironVar "VSS_NUGET_EXTERNAL_FEED_ENDPOINTS" (Json.serialize endpointCredentials)
     Trace.logfn "Nugetfeedurls: %s" (env "VSS_NUGET_EXTERNAL_FEED_ENDPOINTS")
+
+let installSonarScanner toolsDirectory =
+    let arg = sprintf "tool install dotnet-sonarscanner --tool-path %s" toolsDirectory
+
+    let execution = Shell.Exec (cmd = "dotnet", args = arg) 
+
+    match execution with 
+        | 0 -> Trace.log  "SonarScanner installed"
+        | _ -> failwith "SonarScanner failed to install"
 
 // --------------------------------------------------------------------------------------
 // Build types
@@ -86,12 +96,11 @@ let feedVersion = match envOrNone "FEEDVERSION" with
                     | _ -> None
 
 let buildNumber = 
-    let dayOfYear = DateTime.UtcNow.DayOfYear.ToString() 
-    let numberTemplate major minor patch feed revision = sprintf "%s.%s.%s-%s-%s%s" major minor patch feed revision
     match host with
-        | Local -> "0.0.1"
-        | AzureDevOps -> Environment.environVarOrFail "BUILD_BUILDNUMBER"//numberTemplate (env "MAJORVERSION") (env "MINORVERSION") (env "PATCHVERSION") (env "FEEDVERSION") dayOfYear (env "REVISION")
+        | Local -> "0.0.2"
+        | AzureDevOps -> Environment.environVarOrFail "BUILD_BUILDNUMBER"
 
+//Todo make variables lazy so that they wont be evaluated in production builds
 let runtimeIds = dict[Windows, "win-x64"; Linux, "linux-x64"; OSX, "osx-x64"]
 let runtimeId = runtimeIds.Item(platform);
 let configuration = DotNet.BuildConfiguration.Release
@@ -99,13 +108,9 @@ let solution = IO.Path.GetFullPath(string "../Akkatecture.sln")
 let sourceDirectory =  IO.Path.GetFullPath(string "../")
 let toolsDirectory = sourceDirectory @@ "build" @@ "tools"
 let testResults = sourceDirectory @@ "testresults"
-let pushesToFeed = match host with 
-                    | AzureDevOps -> true
-                    | _ -> false
-
-let internalCredential = {Endpoint = "https://pkgs.dev.azure.com/lutando/_packaging/akkatecture/nuget/v3/index.json"; Username = "lutando"; Password = env "INTERNAL_FEED_PAT"}
-let nugetCredential = {Endpoint = "https://api.nuget.org/v3/index.json"; Username = "lutando"; Password = env "NUGET_FEED_PAT"}
-
+let internalCredential = { Endpoint = "https://pkgs.dev.azure.com/lutando/_packaging/akkatecture/nuget/v3/index.json"; Username = "lutando"; Password = env "INTERNAL_FEED_PAT"}
+let nugetCredential = { Endpoint = "https://api.nuget.org/v3/index.json"; Username = "lutando"; Password = env "NUGET_FEED_PAT"}
+let sonarQubeKey = env "SONARCLOUD_TOKEN"
 let endpointCredentials : EndpointCredentials = { EndpointCredentials = [internalCredential; nugetCredential] }
 
 // --------------------------------------------------------------------------------------
@@ -152,18 +157,29 @@ Target.create "Restore" (fun _ ->
 Target.create "SonarQubeStart" (fun _ ->
     Trace.log " --- Sonar Qube Starting --- "
 
-    let arg = sprintf "tool install dotnet-sonarscanner --tool-path %s" toolsDirectory
+    installSonarScanner toolsDirectory
 
-    let execution = Shell.Exec (cmd = "dotnet", args = arg) 
+    let sonarQubeOptions (defaults:SonarQube.SonarQubeParams) =
+        {defaults with
+            ToolsPath = toolsDirectory </> "dotnet-sonarscanner"
+            Key = "Lutando_Akkatecture"
+            Name = "Akkatecture"
+            Version = buildNumber
+            Settings = [
+                "sonar.verbose=true /o:lutando-github";
+                "sonar.host.url=https://sonarcloud.io/";
+                "sonar.branch.name=dev";
+                sprintf "sonar.login=%s" sonarQubeKey;
+                sprintf "sonar.cs.opencover.reportsPaths=\"%s\"" testResults </> "opencover.xml";
+                "sonar.visualstudio.enable=false"]}
 
-    match execution with 
-        | 0 -> Trace.log  "SonarScanner installed"
-        | _ -> failwith "SonarScanner failed to install"
+    SonarQube.start sonarQubeOptions
 
 )
 
 Target.create "Build" (fun _ ->
     Trace.log " --- Building Projects --- "
+
     let projects = 
         !! "src/**/*.*proj"
         ++ "test/Akkatecture.Tests/Akkatecture.Tests.csproj"
@@ -182,13 +198,18 @@ Target.create "Build" (fun _ ->
 
 Target.create "Test" (fun _ ->
     Trace.log " --- Unit Tests --- "
+
     let projects = !! "test/Akkatecture.Tests/Akkatecture.Tests.csproj"
     let coverletOutput = testResults </> "opencover.xml"
     let testOptions (defaults:DotNet.TestOptions) =
         { defaults with
             MSBuildParams = 
                 { defaults.MSBuildParams with
-                    Properties = ["CollectCoverage", "true"; "CoverletOutputFormat", "opencover"; "CoverletOutput", coverletOutput; "Exclude", @"[xunit*]*,[Akkatecture.TestHelpers]*,[Akkatecture.Tests*]*,[*TestRunner*]*"] }
+                    Properties = [
+                        "CollectCoverage", "true";
+                        "CoverletOutputFormat", "opencover";
+                        "CoverletOutput", coverletOutput;
+                        "Exclude", @"[xunit*]*,[Akkatecture.TestHelpers]*,[Akkatecture.Tests*]*,[*TestRunner*]*"] }
             Configuration = configuration
             NoBuild = true}
 
@@ -202,6 +223,16 @@ Target.create "MultiNodeTest" (fun _ ->
 Target.create "SonarQubeEnd" (fun _ ->
     Trace.log " --- Sonar Qube Ending --- "
     
+    let sonarQubeOptions (defaults:SonarQube.SonarQubeParams) =
+        {defaults with
+            ToolsPath = toolsDirectory </> "dotnet-sonarscanner"
+            Key = "Lutando_Akkatecture"
+            Name = "Akkatecture"
+            Version = buildNumber
+            Settings = [
+                sprintf "sonar.login=%s" sonarQubeKey;]}
+
+    SonarQube.finish (Some sonarQubeOptions)
 )
 
 Target.create "Push" (fun _ ->
@@ -209,21 +240,22 @@ Target.create "Push" (fun _ ->
 
     match feedVersion with 
         | Some NuGet  -> ()
-        | Some feed -> installCredentialProvider sourceDirectory endpointCredentials
+        | Some _ -> installCredentialProvider sourceDirectory endpointCredentials
         | None -> ()
 
 
     let source = match feedVersion with
                     | Some NuGet -> Some nugetCredential.Endpoint
-                    | Some feed -> Some internalCredential.Endpoint
+                    | Some _ -> Some internalCredential.Endpoint
                     | _ -> None
 
     let apiKey = match feedVersion with
                     | Some NuGet -> Some nugetCredential.Password
-                    | Some feed -> Some "VSTS"
+                    | Some _ -> Some internalCredential.Password
                     | _ -> None
 
-    let glob = sprintf "src/**/bin/%A/*.nupkg" configuration
+    let packagesGlob = sprintf "src/**/bin/%A/*.nupkg" configuration
+
     let nugetPushParams (defaults:NuGet.NuGet.NuGetPushParams) =
         { defaults with
             Source = source
@@ -231,12 +263,16 @@ Target.create "Push" (fun _ ->
             
     let nugetPushOptions (defaults:DotNet.NuGetPushOptions) =
         { defaults with
-            PushParams =  nugetPushParams defaults.PushParams}
+            PushParams =  nugetPushParams defaults.PushParams }
 
-    let pushables =
-        !! glob
+    let packages =
+        !! packagesGlob
 
-    pushables |> Seq.iter (DotNet.nugetPush nugetPushOptions)
+    packages |> Seq.iter (DotNet.nugetPush nugetPushOptions)
+)
+
+Target.create "GitHubRelease" (fun _ ->
+    Trace.log " --- GitHubRelease --- "
 )
 
 // --------------------------------------------------------------------------------------
@@ -253,6 +289,7 @@ Target.create "Default" DoNothing
   ==> "Test"
   ==> "SonarQubeEnd"
   ==> "Push"
+  ==> "GitHubRelease"
   ==> "Release"
 
 "Clean"

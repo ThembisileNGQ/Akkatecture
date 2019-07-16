@@ -276,5 +276,8 @@ __pycache__/
 # Opencover
 *opencover.xml
 
+# Opencover
+*.sonarqube/*
+
 # tools
 */tools

@@ -12,11 +12,19 @@ Akkatecture is built in azure pipelines. A description of each of the build pipe
 
 # FAKE Build Scripts
 
-Right now it is still under development.
+Right now the shell scripts are under development.
 
 The point of these build scripts is to enable cross plat testing scenarios. Run the following to get the Fake builder to work:
 
 `fake build`
 `fake run build.fsx --target Build` 
 
-This assumes that you have fake installed, and that you have followeded [these](http://fake.build/fake-commandline.html) steps. If not then run the shell or command scripts
+This assumes that you have fake installed, and that you have followeded [these](http://fake.build/fake-commandline.html) steps. If not then run the shell or command scripts.
+
+# Environment Secrets
+
+INTERNAL_FEED_PAT is the environment secret that holds the azure dev ops personal access token. This access token needs rights to manage the azure dev ops artifacts resource
+
+NUGET_FEED_PAT is the standard NuGet API Key, it too, requires the rights to add new packages
+
+SONARCLOUD_TOKEN is the toke that sonarscanner uses to upload results to https://sonarcloud.io
