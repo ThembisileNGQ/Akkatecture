@@ -28,6 +28,17 @@ let envOrNone value =
         | Some v -> Some v
         | None -> Environment.environVarOrNone value
 
+let installCredentialProvider sourceDirectory endpointCredentials =
+    let script = sourceDirectory </> "build/installcredprovider.sh"
+    let execution = Shell.Exec ("sh", script )
+    
+    match execution with 
+        | 0 -> printf "NuGet Credential Provider installed"
+        | _ -> failwith "NuGet Credential Provider failed to install"
+
+    Environment.setEnvironVar "VSS_NUGET_EXTERNAL_FEED_ENDPOINTS" (Json.serialize endpointCredentials)
+    Trace.logfn "Nugetfeedurls: %s" (env "VSS_NUGET_EXTERNAL_FEED_ENDPOINTS")
+
 // --------------------------------------------------------------------------------------
 // Build types
 // --------------------------------------------------------------------------------------
@@ -52,21 +63,11 @@ type EndpointCredential =
       [<JsonField("username")>]Username: string
       [<JsonField("password")>]Password: string }
 and EndpointCredentials =  
-    { endpointCredentials : EndpointCredential list }
+    { [<JsonField("endpointCredentials")>]EndpointCredentials : EndpointCredential list }
 
 // --------------------------------------------------------------------------------------
 // Build variables
 // --------------------------------------------------------------------------------------
-Trace.logfn "// --------------------------------------------------------------------------------------"
-Trace.logfn "// Build variables"
-Trace.logfn "// --------------------------------------------------------------------------------------"
-let test = match envOrNone "nugetfeedpat" with
-            | Some s -> Trace.logfn "IT WAS nugetfeedpat %s" s
-            | None -> match envOrNone "NUGETFEEDPAT" with
-                        | Some s -> Trace.logfn "IT WAS NUGETFEEDPAT %s" s
-                        | None -> match envOrNone "NUGET_FEED_PAT" with
-                                    | Some s -> Trace.logfn "IT WAS NUGET_FEED_PAT %s" s
-                                    | None -> Trace.log "IT WAS NOTHING"
                     
 let host = match TeamFoundation.detect() with
             | true -> AzureDevOps
@@ -88,7 +89,7 @@ let buildNumber =
     let dayOfYear = DateTime.UtcNow.DayOfYear.ToString() 
     let numberTemplate major minor patch feed revision = sprintf "%s.%s.%s-%s-%s%s" major minor patch feed revision
     match host with
-        | Local -> "0.0.101"
+        | Local -> "0.0.1"
         | AzureDevOps -> Environment.environVarOrFail "BUILD_BUILDNUMBER"//numberTemplate (env "MAJORVERSION") (env "MINORVERSION") (env "PATCHVERSION") (env "FEEDVERSION") dayOfYear (env "REVISION")
 
 let runtimeIds = dict[Windows, "win-x64"; Linux, "linux-x64"; OSX, "osx-x64"]
@@ -96,6 +97,7 @@ let runtimeId = runtimeIds.Item(platform);
 let configuration = DotNet.BuildConfiguration.Release
 let solution = IO.Path.GetFullPath(string "../Akkatecture.sln")
 let sourceDirectory =  IO.Path.GetFullPath(string "../")
+let toolsDirectory = sourceDirectory @@ "build" @@ "tools"
 let testResults = sourceDirectory @@ "testresults"
 let pushesToFeed = match host with 
                     | AzureDevOps -> true
@@ -104,7 +106,7 @@ let pushesToFeed = match host with
 let internalCredential = {Endpoint = "https://pkgs.dev.azure.com/lutando/_packaging/akkatecture/nuget/v3/index.json"; Username = "lutando"; Password = env "INTERNAL_FEED_PAT"}
 let nugetCredential = {Endpoint = "https://api.nuget.org/v3/index.json"; Username = "lutando"; Password = env "NUGET_FEED_PAT"}
 
-let endpointCredentials : EndpointCredentials = {endpointCredentials = [internalCredential;nugetCredential]}
+let endpointCredentials : EndpointCredentials = { EndpointCredentials = [internalCredential; nugetCredential] }
 
 // --------------------------------------------------------------------------------------
 // Build Current Working Directory
@@ -125,6 +127,7 @@ Target.create "Clean" (fun _ ->
         ++ "test/**/bin"
         ++ "test/**/obj"
         ++ testResults
+        ++ toolsDirectory
         
     cleanables |> Shell.cleanDirs   
 
@@ -148,6 +151,15 @@ Target.create "Restore" (fun _ ->
 
 Target.create "SonarQubeStart" (fun _ ->
     Trace.log " --- Sonar Qube Starting --- "
+
+    let arg = sprintf "tool install dotnet-sonarscanner --tool-path %s" toolsDirectory
+
+    let execution = Shell.Exec (cmd = "dotnet", args = arg) 
+
+    match execution with 
+        | 0 -> Trace.log  "SonarScanner installed"
+        | _ -> failwith "SonarScanner failed to install"
+
 )
 
 Target.create "Build" (fun _ ->
@@ -189,28 +201,33 @@ Target.create "MultiNodeTest" (fun _ ->
 
 Target.create "SonarQubeEnd" (fun _ ->
     Trace.log " --- Sonar Qube Ending --- "
-    //SonarQube.finish (Some (fun p -> {p with Settings = ["sonar.login=login"; "sonar.password=password"] }))
+    
 )
 
 Target.create "Push" (fun _ ->
     Trace.log " --- Publish Packages --- "
 
-    let script = sourceDirectory </> "build/installcredprovider.sh"
-    let execution = Shell.Exec ("sh", script )
-    
-    match execution with 
-        | 0 -> printf "NuGet Credential Provider installed"
-        | _ -> failwith "NuGet Credential Provider failed to install"
+    match feedVersion with 
+        | Some NuGet  -> ()
+        | Some feed -> installCredentialProvider sourceDirectory endpointCredentials
+        | None -> ()
 
-    Environment.setEnvironVar "VSS_NUGET_EXTERNAL_FEED_ENDPOINTS" (Json.serialize endpointCredentials)
-    Trace.logfn "Nugetfeedurls: %s" (env "VSS_NUGET_EXTERNAL_FEED_ENDPOINTS")
 
+    let source = match feedVersion with
+                    | Some NuGet -> Some nugetCredential.Endpoint
+                    | Some feed -> Some internalCredential.Endpoint
+                    | _ -> None
+
+    let apiKey = match feedVersion with
+                    | Some NuGet -> Some nugetCredential.Password
+                    | Some feed -> Some "VSTS"
+                    | _ -> None
 
     let glob = sprintf "src/**/bin/%A/*.nupkg" configuration
     let nugetPushParams (defaults:NuGet.NuGet.NuGetPushParams) =
         { defaults with
-            Source = Some "https://pkgs.dev.azure.com/lutando/_packaging/akkatecture/nuget/v3/index.json"
-            ApiKey = Some "VSTS" }
+            Source = source
+            ApiKey = apiKey }
             
     let nugetPushOptions (defaults:DotNet.NuGetPushOptions) =
         { defaults with
