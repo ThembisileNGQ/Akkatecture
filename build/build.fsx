@@ -149,7 +149,11 @@ Target.create "Clean" (fun _ ->
     Trace.logfn "Host: %A" host
     Trace.logfn "BuildNumber: %s" buildNumber
     Trace.logfn "Home: %s" (env "HOME")
-    Trace.logfn "NugetFeedUrls: %s" (Json.serialize endpointCredentials)
+    
+    match host with
+        | AzureDevOps _ -> ()
+        | Local -> Trace.logfn "NugetFeedUrls: %s" (Json.serialize endpointCredentials)
+
     match feedVersion with
         | Some fv -> Trace.logfn "FeedVersion: %A" fv
         | None -> ()
@@ -158,17 +162,6 @@ Target.create "Clean" (fun _ ->
 Target.create "Archive" (fun _ ->
     Trace.log " --- Archiving Solution --- "
 
-    let allFiles = 
-        !! "*"
-        ++ "*/**"
-        -- ".*/**"
-        -- "*/**/.*"
-        -- "build/.*/**"
-
-    allFiles |> Seq.iter Trace.log
-    //()
-    Directory.create archiveDirectory
-    Zip.createZip sourceDirectory (sprintf "%s.zip" buildNumber) "random comment" 5 false allFiles
 )
 
 Target.create "Restore" (fun _ ->
