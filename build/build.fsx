@@ -97,7 +97,7 @@ let feedVersion = match envOrNone "FEEDVERSION" with
 
 let buildNumber = 
     match host with
-        | Local -> "0.0.2"
+        | Local -> "0.0.1"
         | AzureDevOps -> Environment.environVarOrFail "BUILD_BUILDNUMBER"
 
 //Todo make variables lazy so that they wont be evaluated in production builds
@@ -106,8 +106,10 @@ let runtimeId = runtimeIds.Item(platform);
 let configuration = DotNet.BuildConfiguration.Release
 let solution = IO.Path.GetFullPath(string "../Akkatecture.sln")
 let sourceDirectory =  IO.Path.GetFullPath(string "../")
+let archiveDirectory = sourceDirectory @@ "archive"
 let toolsDirectory = sourceDirectory @@ "build" @@ "tools"
-let testResults = sourceDirectory @@ "testresults"
+let testResults = sourceDirectory @@ "test-results"
+let multinodeTestResults = sourceDirectory @@ "multinode-testresults"
 let internalCredential = { Endpoint = "https://pkgs.dev.azure.com/lutando/_packaging/akkatecture/nuget/v3/index.json"; Username = "lutando"; Password = env "INTERNAL_FEED_PAT"}
 let nugetCredential = { Endpoint = "https://api.nuget.org/v3/index.json"; Username = "lutando"; Password = env "NUGET_FEED_PAT"}
 let sonarQubeKey = env "SONARCLOUD_TOKEN"
@@ -131,8 +133,13 @@ Target.create "Clean" (fun _ ->
         ++ "src/**/obj"
         ++ "test/**/bin"
         ++ "test/**/obj"
+        ++ "examples/**/bin"
+        ++ "examples/**/obj"
+        ++ multinodeTestResults
+        ++ archiveDirectory
         ++ testResults
         ++ toolsDirectory
+
         
     cleanables |> Shell.cleanDirs   
 
@@ -146,6 +153,22 @@ Target.create "Clean" (fun _ ->
     match feedVersion with
         | Some fv -> Trace.logfn "FeedVersion: %A" fv
         | None -> ()
+)
+
+Target.create "Archive" (fun _ ->
+    Trace.log " --- Archiving Solution --- "
+
+    let allFiles = 
+        !! "*"
+        ++ "*/**"
+        -- ".*/**"
+        -- "*/**/.*"
+        -- "build/.*/**"
+
+    allFiles |> Seq.iter Trace.log
+    //()
+    Directory.create archiveDirectory
+    Zip.createZip sourceDirectory (sprintf "%s.zip" buildNumber) "random comment" 5 false allFiles
 )
 
 Target.create "Restore" (fun _ ->
@@ -273,6 +296,8 @@ Target.create "Push" (fun _ ->
 
 Target.create "GitHubRelease" (fun _ ->
     Trace.log " --- GitHubRelease --- "
+
+
 )
 
 // --------------------------------------------------------------------------------------
@@ -289,7 +314,6 @@ Target.create "Default" DoNothing
   ==> "Test"
   ==> "SonarQubeEnd"
   ==> "Push"
-  ==> "GitHubRelease"
   ==> "Release"
 
 "Clean"
@@ -297,5 +321,15 @@ Target.create "Default" DoNothing
   ==> "Build"
   ==> "Test"
   ==> "Default"
+
+"Clean"
+  ==> "Archive"
+  ==> "Restore"
+  ==> "SonarQubeStart"
+  ==> "Build"
+  ==> "Test"
+  ==> "SonarQubeEnd"
+  ==> "Push"
+  ==> "GitHubRelease"
 
 Target.runOrDefault "Build"

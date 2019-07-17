@@ -143,7 +143,7 @@ namespace Akkatecture.MultiNodeTestRunner
             var listenPort = CommandLine.GetInt32OrDefault("multinode.listen-port", 6577);
             var listenEndpoint = new IPEndPoint(listenAddress, listenPort);
             var specName = CommandLine.GetPropertyOrDefault("multinode.spec", "");
-            var platform = CommandLine.GetPropertyOrDefault("multinode.platform", "net");
+            var platform = CommandLine.GetPropertyOrDefault("multinode.platform", "netcore");
 
 
             if (!_validNetCorePlatform.Contains(platform))

@@ -6,6 +6,7 @@ group Build
     nuget Fake.DotNet.Cli
     nuget Fake.DotNet.NuGet
     nuget Fake.IO.FileSystem
+    nuget Fake.IO.Zip
     nuget Fake.Core.Target
     nuget Fake.BuildServer.TeamFoundation
     nuget Fake.Testing.SonarQube
