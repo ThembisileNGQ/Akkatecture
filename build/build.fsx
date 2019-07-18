@@ -49,6 +49,15 @@ let installSonarScanner toolsDirectory =
         | 0 -> Trace.log  "SonarScanner installed"
         | _ -> failwith "SonarScanner failed to install"
 
+let installCoverlet toolsDirectory =
+    let arg = sprintf "tool install coverlet.console --tool-path %s" toolsDirectory
+
+    let execution = Shell.Exec (cmd = "dotnet", args = arg) 
+
+    match execution with 
+        | 0 -> Trace.log  "Coverlet Console installed"
+        | _ -> failwith "Coverlet Console failed to install"
+
 // --------------------------------------------------------------------------------------
 // Build types
 // --------------------------------------------------------------------------------------
@@ -108,8 +117,8 @@ let solution = IO.Path.GetFullPath(string "../Akkatecture.sln")
 let sourceDirectory =  IO.Path.GetFullPath(string "../")
 let archiveDirectory = sourceDirectory @@ "archive"
 let toolsDirectory = sourceDirectory @@ "build" @@ "tools"
-let testResults = sourceDirectory @@ "test-results"
-let multinodeTestResults = sourceDirectory @@ "multinode-testresults"
+let coverageResults = sourceDirectory @@ "coverageresults"
+let multiNodeLogs = sourceDirectory @@ "multinodelogs"
 let internalCredential = { Endpoint = "https://pkgs.dev.azure.com/lutando/_packaging/akkatecture/nuget/v3/index.json"; Username = "lutando"; Password = env "INTERNAL_FEED_PAT"}
 let nugetCredential = { Endpoint = "https://api.nuget.org/v3/index.json"; Username = "lutando"; Password = env "NUGET_FEED_PAT"}
 let sonarQubeKey = env "SONARCLOUD_TOKEN"
@@ -135,9 +144,9 @@ Target.create "Clean" (fun _ ->
         ++ "test/**/obj"
         ++ "examples/**/bin"
         ++ "examples/**/obj"
-        ++ multinodeTestResults
+        ++ multiNodeLogs
         ++ archiveDirectory
-        ++ testResults
+        ++ coverageResults
         ++ toolsDirectory
 
         
@@ -174,6 +183,8 @@ Target.create "SonarQubeStart" (fun _ ->
     Trace.log " --- Sonar Qube Starting --- "
 
     installSonarScanner toolsDirectory
+    let sonarLogin = sprintf "sonar.login=%s" sonarQubeKey;
+    let sonarReportPaths = sprintf "sonar.cs.opencover.reportsPaths=\"%s\",\"%s\"" (coverageResults </> "unit.opencover.xml") (coverageResults </> "multinode.opencover.xml");
 
     let sonarQubeOptions (defaults:SonarQube.SonarQubeParams) =
         {defaults with
@@ -185,8 +196,8 @@ Target.create "SonarQubeStart" (fun _ ->
                 "sonar.verbose=true /o:lutando-github";
                 "sonar.host.url=https://sonarcloud.io/";
                 "sonar.branch.name=dev";
-                sprintf "sonar.login=%s" sonarQubeKey;
-                sprintf "sonar.cs.opencover.reportsPaths=\"%s\"" testResults </> "opencover.xml";
+                sonarLogin;
+                sonarReportPaths;
                 "sonar.visualstudio.enable=false"]}
 
     SonarQube.start sonarQubeOptions
@@ -216,7 +227,7 @@ Target.create "Test" (fun _ ->
     Trace.log " --- Unit Tests --- "
 
     let projects = !! "test/Akkatecture.Tests/Akkatecture.Tests.csproj"
-    let coverletOutput = testResults </> "opencover.xml"
+    let coverletOutput = coverageResults </> "unit.opencover.xml"
     let testOptions (defaults:DotNet.TestOptions) =
         { defaults with
             MSBuildParams = 
@@ -234,6 +245,38 @@ Target.create "Test" (fun _ ->
 
 Target.create "MultiNodeTest" (fun _ ->
     Trace.log " --- Multi Node Tests --- "
+
+    installCoverlet toolsDirectory
+
+    let multiNodeTestProjects = !! "test/Akkatecture.Tests.MultiNode/Akkatecture.Tests.MultiNode.csproj"
+
+    let multiNodeTestbuildOptions (defaults:DotNet.BuildOptions) =
+        { defaults with
+            Configuration = configuration }
+
+    multiNodeTestProjects |> Seq.iter (DotNet.build multiNodeTestbuildOptions)
+
+    let nodeTestRunnerProjects = 
+        !! "test/Akkatecture.NodeTestRunner/Akkatecture.NodeTestRunner.csproj"
+        ++ "test/Akkatecture.MultiNodeTestRunner/Akkatecture.MultiNodeTestRunner.csproj"
+
+    let multiNodeRunnerbuildOptions (defaults:DotNet.BuildOptions) =
+        { defaults with
+            Configuration = configuration 
+            Runtime = Some runtimeId }
+
+    nodeTestRunnerProjects |> Seq.iter (DotNet.build multiNodeRunnerbuildOptions)
+
+    //copy newtonsoft
+    //run build via coverlet
+
+//dotnet build Akkatecture.Tests.MultiNode.csproj --configuration Release
+//dotnet build ../Akkatecture.NodeTestRunner/Akkatecture.NodeTestRunner.csproj --configuration Release --runtime osx-x64
+//dotnet build ../Akkatecture.MultiNodeTestRunner/Akkatecture.MultiNodeTestRunner.csproj --configuration Release --runtime osx-x64
+//bin/cp -rf ./bin/Release/netcoreapp2.2/Newtonsoft.Json.dll ../Akkatecture.MultiNodeTestRunner/bin/Release/netcoreapp2.2/osx-x64/Newtonsoft.Json.dll
+//#dotnet ../Akkatecture.MultiNodeTestRunner/bin/Release/netcoreapp2.2/osx-x64/Akka.MultiNodeTestRunner.dll ./bin/Release/netcoreapp2.2/Akkatecture.Tests.MultiNode.dll -Dmultinode.platform=netcore
+//coverlet '../Akkatecture.MultiNodeTestRunner/bin/Release/netcoreapp2.2/osx-x64/Akka.MultiNodeTestRunner.dll' --target 'dotnet' --targetargs '../Akkatecture.MultiNodeTestRunner/bin/Release/netcoreapp2.2/osx-x64/Akka.MultiNodeTestRunner.dll ./bin/Release/netcoreapp2.2/Akkatecture.Tests.MultiNode.dll -Dmultinode.platform=netcore -Dmultinode.output-directory=/Users/lutandongqakaza/Workspace/Akkatecture/Akkatecture/multinodelogs' --format 'opencover' --include "[Akkatecture]" --include "[Akkatecture.Clustering]" --exclude "[xunit*]*" --exclude "[Akka.NodeTestRunner*]*" --exclude "[Akkatecture.NodeTestRunner*]*" --verbosity detailed --output '/Users/lutandongqakaza/Workspace/Akkatecture/Akkatecture/coverageresults/multinode.opencover.xml'
+
 )
 
 Target.create "SonarQubeEnd" (fun _ ->
