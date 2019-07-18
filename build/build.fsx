@@ -116,6 +116,7 @@ let configuration = DotNet.BuildConfiguration.Release
 let solution = IO.Path.GetFullPath(string "../Akkatecture.sln")
 let sourceDirectory =  IO.Path.GetFullPath(string "../")
 let archiveDirectory = sourceDirectory @@ "archive"
+let sonarqubeDirectory = sourceDirectory @@ ".sonarqube"
 let toolsDirectory = sourceDirectory @@ "build" @@ "tools"
 let coverageResults = sourceDirectory @@ "coverageresults"
 let multiNodeLogs = sourceDirectory @@ "multinodelogs"
@@ -148,6 +149,7 @@ Target.create "Clean" (fun _ ->
         ++ archiveDirectory
         ++ coverageResults
         ++ toolsDirectory
+        ++ sonarqubeDirectory
 
         
     cleanables |> Shell.cleanDirs   
@@ -356,6 +358,7 @@ Target.create "Default" DoNothing
   ==> "Restore"
   ==> "Build"
   ==> "Test"
+  ==> "MultiNodeTest"
   ==> "Default"
 
 "Clean"
