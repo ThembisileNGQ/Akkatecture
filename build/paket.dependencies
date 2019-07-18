@@ -8,6 +8,8 @@ group Build
     nuget Fake.IO.FileSystem
     nuget Fake.IO.Zip
     nuget Fake.Core.Target
+    nuget Fake.Core.Process
     nuget Fake.BuildServer.TeamFoundation
     nuget Fake.Testing.SonarQube
     nuget FSharp.Json
+    nuget BlackFox.CommandLine

@@ -4,6 +4,9 @@ GROUP Build
 STORAGE: NONE
 NUGET
   remote: https://api.nuget.org/v3/index.json
+    BlackFox.CommandLine (1.0)
+      FSharp.Core (>= 4.0.0.1) - restriction: >= net45
+      FSharp.Core (>= 4.2.3) - restriction: && (< net45) (>= netstandard2.0)
     BlackFox.VsWhere (1.0) - restriction: || (>= net462) (>= netstandard2.0)
       FSharp.Core (>= 4.0.0.1) - restriction: >= net45
       FSharp.Core (>= 4.2.3) - restriction: && (< net45) (>= netstandard2.0)
@@ -34,7 +37,7 @@ NUGET
     Fake.Core.FakeVar (5.15.4) - restriction: || (>= net46) (>= netstandard2.0)
       Fake.Core.Context (>= 5.15.4) - restriction: || (>= net46) (>= netstandard1.6)
       FSharp.Core (>= 4.3.4) - restriction: || (>= net46) (>= netstandard1.6)
-    Fake.Core.Process (5.15.4) - restriction: || (>= net46) (>= netstandard2.0)
+    Fake.Core.Process (5.15.4)
       Fake.Core.Environment (>= 5.15.4) - restriction: || (>= net46) (>= netstandard2.0)
       Fake.Core.FakeVar (>= 5.15.4) - restriction: || (>= net46) (>= netstandard2.0)
       Fake.Core.String (>= 5.15.4) - restriction: || (>= net46) (>= netstandard2.0)
@@ -139,7 +142,7 @@ NUGET
     FSharp.Control.Reactive (4.2) - restriction: || (>= net46) (>= netstandard2.0)
       FSharp.Core (>= 4.2.3) - restriction: || (>= net46) (>= netstandard2.0)
       System.Reactive (>= 4.0) - restriction: || (>= net46) (>= netstandard2.0)
-    FSharp.Core (4.6.2) - restriction: || (>= net46) (>= netstandard1.6)
+    FSharp.Core (4.6.2) - restriction: || (>= net45) (>= netstandard1.6)
     FSharp.Json (0.3.7)
       FSharp.Core (>= 4.3.4) - restriction: >= netstandard2.0
     Microsoft.Build (16.0.461) - restriction: || (>= net462) (>= netstandard2.0)
