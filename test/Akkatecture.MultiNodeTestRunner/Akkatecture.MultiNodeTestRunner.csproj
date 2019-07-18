@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Akkatecture.Clustering\Akkatecture.Clustering.csproj" />
     <ProjectReference Include="..\Akkatecture.NodeTestRunner\Akkatecture.NodeTestRunner.csproj" />
   </ItemGroup>
 
