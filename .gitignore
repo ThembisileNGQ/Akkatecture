@@ -281,3 +281,6 @@ __pycache__/
 
 # tools
 */tools
+
+#MultiNodeTest script
+*Run-MultiNodeTests.ps1

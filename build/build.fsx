@@ -12,7 +12,6 @@ open Fake.Core.TargetOperators
 open Fake.BuildServer
 open Fake.Testing
 open FSharp.Json
-open BlackFox.CommandLine
 
 Target.initEnvironment()
 let DoNothing = ignore
@@ -64,41 +63,6 @@ let installCoverlet toolsDirectory =
     match execution with 
         | 0 -> Trace.log  "Coverlet Console installed"
         | _ -> failwith "Coverlet Console failed to install"
-
-let runProc filename args startDir = 
-    let timer = Stopwatch.StartNew()
-    let procStartInfo = 
-        ProcessStartInfo(
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-            FileName = filename,
-            Arguments = args
-        )
-    match startDir with | Some d -> procStartInfo.WorkingDirectory <- d | _ -> ()
-
-    let outputs = System.Collections.Generic.List<string>()
-    let errors = System.Collections.Generic.List<string>()
-    let outputHandler f (_sender:obj) (args:DataReceivedEventArgs) = f args.Data
-    let p = new Process(StartInfo = procStartInfo)
-    p.OutputDataReceived.AddHandler(DataReceivedEventHandler (outputHandler outputs.Add))
-    p.ErrorDataReceived.AddHandler(DataReceivedEventHandler (outputHandler errors.Add))
-    let started = 
-        try
-            p.Start()
-        with | ex ->
-            ex.Data.Add("filename", filename)
-            reraise()
-    if not started then
-        failwithf "Failed to start process %s" filename
-    printfn "Started %s with pid %i" p.ProcessName p.Id
-    p.BeginOutputReadLine()
-    p.BeginErrorReadLine()
-    p.WaitForExit()
-    timer.Stop()
-    printfn "Finished %s after %A milliseconds" filename timer.ElapsedMilliseconds
-    let cleanOut l = l |> Seq.filter (fun o -> String.IsNullOrEmpty o |> not)
-    cleanOut outputs,cleanOut errors
 
 // --------------------------------------------------------------------------------------
 // Build types
@@ -164,6 +128,7 @@ let sonarqubeDirectory = sourceDirectory @@ ".sonarqube"
 let toolsDirectory = sourceDirectory @@ "build" @@ "tools"
 let coverageResults = sourceDirectory @@ "coverageresults"
 let multiNodeLogs = sourceDirectory @@ "multinodelogs"
+let multiNodeTestScript = sourceDirectory @@ "build" @@ "Run-MultiNodeTests.ps1"
 let internalCredential = { Endpoint = "https://pkgs.dev.azure.com/lutando/_packaging/akkatecture/nuget/v3/index.json"; Username = "lutando"; Password = env "INTERNAL_FEED_PAT"}
 let nugetCredential = { Endpoint = "https://api.nuget.org/v3/index.json"; Username = "lutando"; Password = env "NUGET_FEED_PAT"}
 let sonarQubeKey = env "SONARCLOUD_TOKEN"
@@ -196,7 +161,9 @@ Target.create "Clean" (fun _ ->
         ++ sonarqubeDirectory
 
         
-    cleanables |> Shell.cleanDirs   
+    cleanables |> Shell.cleanDirs
+
+    File.delete multiNodeTestScript
 
     Trace.log " --- Build Variables ---"
     Trace.logfn "Platform: %A" platform
@@ -282,7 +249,7 @@ Target.create "Test" (fun _ ->
                 { defaults.MSBuildParams with
                     Properties = [
                         "CollectCoverage", "true";
-                        "CoverletOutputFormat", "opencover";
+                        "CoverletOutputFormat", "opencover"
                         "CoverletOutput", coverletOutput;
                         "Exclude", @"[xunit*]*,[Akkatecture.TestHelpers]*,[Akkatecture.Tests*]*,[*TestRunner*]*"] }
             Configuration = configuration
@@ -322,72 +289,26 @@ Target.create "MultiNodeTest" (fun _ ->
     let target = testRunnerBinaryFolder @@ "Newtonsoft.Json.dll"
     let file = testsBinaryFolder @@ "Newtonsoft.Json.dll"
     let results =(coverageResults </> "multinode.opencover.xml")
+    let mergable = (coverageResults </> "unit.opencover.json")
     
     Shell.copyFile target file
+
+    if File.exists multiNodeTestScript then
+        File.delete multiNodeTestScript
     
     let coverletCommand = toolsDirectory </> "coverlet"
-    let coverletArgs = sprintf "'%s' --target 'dotnet' --targetargs \"'%s %s -Dmultinode.platform=netcore -Dmultinode.output-directory=%s'\" --format 'opencover' --include=\"[Akkatecture]\" --include=\"[Akkatecture.Clustering]\" --exclude=\"[xunit*]*\" --exclude=\"[Akka.NodeTestRunner*]*\" --exclude=\"[Akkatecture.NodeTestRunner*]*\" --verbosity='detailed' --output'%s'" testRunnerDll testRunnerDll testsDll multiNodeLogs results
-    Trace.log "coverlet command"
-    Trace.log coverletCommand
-    Trace.log "coverlet args"
-    Trace.log coverletArgs
-    let execution = Shell.Exec (cmd = coverletCommand, args = coverletArgs) 
-//https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
+    let coverletArgs = sprintf "'%s' --target='dotnet' --targetargs='%s %s -Dmultinode.platform=netcore -Dmultinode.output-directory=%s' --format='opencover' --include='[Akkatecture]' --include='[Akkatecture.Clustering]' --exclude='[xunit*]*' --exclude='[Akka.NodeTestRunner*]*' --exclude='[Akkatecture.NodeTestRunner*]*' --verbosity='detailed' --output='%s' --merge-with='%s'" testRunnerDll testRunnerDll testsDll multiNodeLogs results mergable
+    let expression = sprintf "Invoke-Expression \"%s %s\"" coverletCommand coverletArgs
+    
+    Trace.log expression
 
+    File.write false multiNodeTestScript [expression]
 
+    let execution = Shell.Exec (cmd = "pwsh", args = multiNodeTestScript)
 
     match execution with 
         | 0 -> Trace.log  "MultiNodeTests passed."
         | message -> failwithf "MultiNodeTests failed with %i:" message
-
-//dotnet build Akkatecture.Tests.MultiNode.csproj --configuration Release
-//dotnet build ../Akkatecture.NodeTestRunner/Akkatecture.NodeTestRunner.csproj --configuration Release --runtime osx-x64
-//dotnet build ../Akkatecture.MultiNodeTestRunner/Akkatecture.MultiNodeTestRunner.csproj --configuration Release --runtime osx-x64
-//bin/cp -rf ./bin/Release/netcoreapp2.2/Newtonsoft.Json.dll ../Akkatecture.MultiNodeTestRunner/bin/Release/netcoreapp2.2/osx-x64/Newtonsoft.Json.dll
-//#dotnet ../Akkatecture.MultiNodeTestRunner/bin/Release/netcoreapp2.2/osx-x64/Akka.MultiNodeTestRunner.dll ./bin/Release/netcoreapp2.2/Akkatecture.Tests.MultiNode.dll -Dmultinode.platform=netcore
-//coverlet '../Akkatecture.MultiNodeTestRunner/bin/Release/netcoreapp2.2/osx-x64/Akka.MultiNodeTestRunner.dll' --target 'dotnet' --targetargs ../Akkatecture.MultiNodeTestRunner/bin/Release/netcoreapp2.2/osx-x64/Akka.MultiNodeTestRunner.dll ./bin/Release/netcoreapp2.2/Akkatecture.Tests.MultiNode.dll -Dmultinode.platform=netcore -Dmultinode.output-directory=/Users/lutandongqakaza/Workspace/Akkatecture/Akkatecture/multinodelogs' --format 'opencover' --include "[Akkatecture]" --include "[Akkatecture.Clustering]" --exclude "[xunit*]*" --exclude "[Akka.NodeTestRunner*]*" --exclude "[Akkatecture.NodeTestRunner*]*" --verbosity detailed --output '/Users/lutandongqakaza/Workspace/Akkatecture/Akkatecture/coverageresults/multinode.opencover.xml'
-
-)
-
-Target.create "MultiNodeTestPoC" (fun _ ->
-    Trace.log " --- Multi Node Tests --- "
-
-    let testRunnerBinaryFolder = sourceDirectory @@ "test" @@ "Akkatecture.MultiNodeTestRunner" @@ "bin" @@ configuration.ToString() @@ "netcoreapp2.2" @@ runtimeId
-    let testRunnerDll = testRunnerBinaryFolder @@ "Akka.MultiNodeTestRunner.dll"
-    let testsBinaryFolder = sourceDirectory @@ "test" @@ "Akkatecture.Tests.MultiNode" @@ "bin" @@ configuration.ToString() @@ "netcoreapp2.2"
-    let testsDll = testsBinaryFolder @@ "Akkatecture.Tests.MultiNode.dll"
-    let target = testRunnerBinaryFolder @@ "Newtonsoft.Json.dll"
-    let file = testsBinaryFolder @@ "Newtonsoft.Json.dll"
-    
-    Shell.copyFile target file
-    
-    let coverletCommand =  toolsDirectory </> "coverlet"
-    let coverletArgs = sprintf "--target 'dotnet' --targetargs='%s %s -Dmultinode.platform=netcore -Dmultinode.output-directory=%s' --format='opencover' --include=\"[Akkatecture]\" --include=\"[Akkatecture.Clustering]\" --exclude=\"[xunit*]*\" --exclude=\"[Akka.NodeTestRunner*]*\" --exclude=\"[Akkatecture.NodeTestRunner*]*\" --verbosity detailed --output '%s'" testRunnerDll testsDll multiNodeLogs (coverageResults </> "multinode.opencover.xml")
-    //Trace.log "coverlet command"
-    //Trace.log coverletCommand
-    //Trace.log "coverlet args"
-    //Trace.log coverletArgs
-    
-    CmdLine.empty
-    |> CmdLine.append testRunnerDll
-    |> CmdLine.append (sprintf "--target=dotnet %s" (sprintf "--verbosity=detailed --targetargs=%s '%s'" testRunnerDll testsDll))
-    //|> CmdLine.append (sprintf "--target='dotnet' %s" (sprintf "--targetargs=%s %s --format='opencover'" testRunnerDll testsDll))
-    //|> CmdLine.append (sprintf "--targetargs='%s %s'" testRunnerDll testsDll)
-    //|> CmdLine.append @"--format='opencover'"
-    |> CmdLine.toString
-    //|> Trace.log
-    |> CreateProcess.fromRawCommandLine coverletCommand
-    |> Proc.run
-    |> ignore
-
-    
-//dotnet build Akkatecture.Tests.MultiNode.csproj --configuration Release
-//dotnet build ../Akkatecture.NodeTestRunner/Akkatecture.NodeTestRunner.csproj --configuration Release --runtime osx-x64
-//dotnet build ../Akkatecture.MultiNodeTestRunner/Akkatecture.MultiNodeTestRunner.csproj --configuration Release --runtime osx-x64
-//bin/cp -rf ./bin/Release/netcoreapp2.2/Newtonsoft.Json.dll ../Akkatecture.MultiNodeTestRunner/bin/Release/netcoreapp2.2/osx-x64/Newtonsoft.Json.dll
-//#dotnet ../Akkatecture.MultiNodeTestRunner/bin/Release/netcoreapp2.2/osx-x64/Akka.MultiNodeTestRunner.dll ./bin/Release/netcoreapp2.2/Akkatecture.Tests.MultiNode.dll -Dmultinode.platform=netcore
-//coverlet '../Akkatecture.MultiNodeTestRunner/bin/Release/netcoreapp2.2/osx-x64/Akka.MultiNodeTestRunner.dll' --target 'dotnet' --targetargs ../Akkatecture.MultiNodeTestRunner/bin/Release/netcoreapp2.2/osx-x64/Akka.MultiNodeTestRunner.dll ./bin/Release/netcoreapp2.2/Akkatecture.Tests.MultiNode.dll -Dmultinode.platform=netcore -Dmultinode.output-directory=/Users/lutandongqakaza/Workspace/Akkatecture/Akkatecture/multinodelogs' --format 'opencover' --include "[Akkatecture]" --include "[Akkatecture.Clustering]" --exclude "[xunit*]*" --exclude "[Akka.NodeTestRunner*]*" --exclude "[Akkatecture.NodeTestRunner*]*" --verbosity detailed --output '/Users/lutandongqakaza/Workspace/Akkatecture/Akkatecture/coverageresults/multinode.opencover.xml'
-
 )
 
 Target.create "SonarQubeEnd" (fun _ ->
@@ -460,8 +381,8 @@ Target.create "Default" DoNothing
   ==> "Restore"
   ==> "SonarQubeStart"
   ==> "Build"
-  ==> "MultiNodeTest"
   ==> "Test"
+  ==> "MultiNodeTest"
   ==> "SonarQubeEnd"
   ==> "Push"
   ==> "Release"
@@ -470,7 +391,7 @@ Target.create "Default" DoNothing
   ==> "Restore"
   ==> "Build"
   ==> "Test"
-  //==> "MultiNodeTest"
+  ==> "MultiNodeTest"
   ==> "Default"
 
 "Clean"

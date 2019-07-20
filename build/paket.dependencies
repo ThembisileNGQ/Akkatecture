@@ -12,4 +12,3 @@ group Build
     nuget Fake.BuildServer.TeamFoundation
     nuget Fake.Testing.SonarQube
     nuget FSharp.Json
-    nuget BlackFox.CommandLine
