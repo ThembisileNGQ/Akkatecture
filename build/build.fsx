@@ -235,6 +235,8 @@ Target.create "Build" (fun _ ->
             Configuration = configuration }
 
     projects |> Seq.iter (DotNet.build buildOptions)
+
+    //after build export packages to a folder, it might get rebuilt during the multi node tests
     
 )
 
