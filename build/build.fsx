@@ -2,7 +2,6 @@
 #load ".fake/build.fsx/intellisense.fsx"
 
 open System
-open System.Diagnostics
 open Fake.Core
 open Fake.DotNet
 open Fake.IO
@@ -116,6 +115,7 @@ let buildNumber =
         | AzureDevOps -> Environment.environVarOrFail "BUILD_BUILDNUMBER"
 
 let shouldScan = hasEnv "SONARCLOUD_TOKEN" && host <> Local
+let canPush = hasEnv "NUGET_FEED_PAT" || hasEnv "INTERNAL_FEED_PAT"
 
 //Todo make variables lazy so that they wont be evaluated in production builds
 let runtimeIds = dict[Windows, "win-x64"; Linux, "linux-x64"; OSX, "osx-x64"]
@@ -129,11 +129,18 @@ let artefactsDirectory = sourceDirectory @@ "artefacts"
 let coverageResults = sourceDirectory @@ "coverageresults"
 let multiNodeLogs = sourceDirectory @@ "multinodelogs"
 let multiNodeTestScript = sourceDirectory @@ "build" @@ "Run-MultiNodeTests.ps1"
-let internalCredential = { Endpoint = "https://pkgs.dev.azure.com/lutando/_packaging/akkatecture/nuget/v3/index.json"; Username = "lutando"; Password = env "INTERNAL_FEED_PAT"}
-let nugetCredential = { Endpoint = "https://api.nuget.org/v3/index.json"; Username = "lutando"; Password = env "NUGET_FEED_PAT"}
-let sonarQubeKey = env "SONARCLOUD_TOKEN"
-let endpointCredentials : EndpointCredentials = { EndpointCredentials = [internalCredential; nugetCredential] }
+let internalCredential = lazy ({ Endpoint = "https://pkgs.dev.azure.com/lutando/_packaging/akkatecture/nuget/v3/index.json"; Username = "lutando"; Password = env "INTERNAL_FEED_PAT"})
+let nugetCredential = lazy ({ Endpoint = "https://api.nuget.org/v3/index.json"; Username = "lutando"; Password = env "NUGET_FEED_PAT"})
+let sonarQubeKey =  lazy (env "SONARCLOUD_TOKEN")
 
+let endpointCredentials : EndpointCredentials = 
+    let credentials = 
+        seq { if hasEnv "NUGET_FEED_PAT" then
+                yield nugetCredential.Value
+              if hasEnv "INTERNAL_FEED_PAT" then
+                 yield internalCredential.Value }
+    
+    {EndpointCredentials = Seq.toList credentials}
 // --------------------------------------------------------------------------------------
 // Build Current Working Directory
 // --------------------------------------------------------------------------------------
@@ -199,7 +206,7 @@ Target.create "SonarQubeStart" (fun _ ->
 
         installSonarScanner toolsDirectory
 
-        let sonarLogin = sprintf "sonar.login=%s" sonarQubeKey;
+        let sonarLogin = sprintf "sonar.login=%s" sonarQubeKey.Value;
         let sonarReportPaths = sprintf "sonar.cs.opencover.reportsPaths=\"%s\",\"%s\"" (coverageResults </> "unit.opencover.xml") (coverageResults </> "multinode.opencover.xml");
         let sonarQubeOptions (defaults:SonarQube.SonarQubeParams) =
             {defaults with
@@ -330,7 +337,7 @@ Target.create "SonarQubeEnd" (fun _ ->
                 Name = "Akkatecture"
                 Version = buildNumber
                 Settings = [
-                    sprintf "sonar.login=%s" sonarQubeKey;]}
+                    sprintf "sonar.login=%s" sonarQubeKey.Value;]}
 
         SonarQube.finish (Some sonarQubeOptions)
 )
@@ -338,37 +345,38 @@ Target.create "SonarQubeEnd" (fun _ ->
 Target.create "Push" (fun _ ->
     Trace.log " --- Publish Packages --- "
 
-    match feedVersion with 
-        | Some NuGet  -> ()
-        | Some _ -> installCredentialProvider sourceDirectory endpointCredentials
-        | None -> ()
+    if canPush then
+        match feedVersion with 
+            | Some NuGet  -> ()
+            | Some _ -> installCredentialProvider sourceDirectory endpointCredentials
+            | None -> ()
 
 
-    let source = match feedVersion with
-                    | Some NuGet -> Some nugetCredential.Endpoint
-                    | Some _ -> Some internalCredential.Endpoint
-                    | _ -> None
+        let source = match feedVersion with
+                        | Some NuGet -> Some nugetCredential.Value.Endpoint
+                        | Some _ -> Some internalCredential.Value.Endpoint
+                        | _ -> None
 
-    let apiKey = match feedVersion with
-                    | Some NuGet -> Some nugetCredential.Password
-                    | Some _ -> Some internalCredential.Password
-                    | _ -> None
+        let apiKey = match feedVersion with
+                        | Some NuGet -> Some nugetCredential.Value.Password
+                        | Some _ -> Some internalCredential.Value.Password
+                        | _ -> None
 
-    let packagesGlob = sprintf "%s/*.nupkg" artefactsDirectory
+        let packagesGlob = sprintf "%s/*.nupkg" artefactsDirectory
 
-    let nugetPushParams (defaults:NuGet.NuGet.NuGetPushParams) =
-        { defaults with
-            Source = source
-            ApiKey = apiKey }
-            
-    let nugetPushOptions (defaults:DotNet.NuGetPushOptions) =
-        { defaults with
-            PushParams =  nugetPushParams defaults.PushParams }
+        let nugetPushParams (defaults:NuGet.NuGet.NuGetPushParams) =
+            { defaults with
+                Source = source
+                ApiKey = apiKey }
+                
+        let nugetPushOptions (defaults:DotNet.NuGetPushOptions) =
+            { defaults with
+                PushParams =  nugetPushParams defaults.PushParams }
 
-    let packages =
-        !! packagesGlob
+        let packages =
+            !! packagesGlob
 
-    packages |> Seq.iter (DotNet.nugetPush nugetPushOptions)
+        packages |> Seq.iter (DotNet.nugetPush nugetPushOptions)
 )
 
 Target.create "GitHubRelease" (fun _ ->
