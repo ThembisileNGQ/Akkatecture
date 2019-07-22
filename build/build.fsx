@@ -123,9 +123,9 @@ let runtimeId = runtimeIds.Item(platform);
 let configuration = DotNet.BuildConfiguration.Release
 let solution = IO.Path.GetFullPath(string "../Akkatecture.sln")
 let sourceDirectory =  IO.Path.GetFullPath(string "../")
-let archiveDirectory = sourceDirectory @@ "archive"
 let sonarqubeDirectory = sourceDirectory @@ ".sonarqube"
 let toolsDirectory = sourceDirectory @@ "build" @@ "tools"
+let artefactsDirectory = sourceDirectory @@ "artefacts"
 let coverageResults = sourceDirectory @@ "coverageresults"
 let multiNodeLogs = sourceDirectory @@ "multinodelogs"
 let multiNodeTestScript = sourceDirectory @@ "build" @@ "Run-MultiNodeTests.ps1"
@@ -155,10 +155,10 @@ Target.create "Clean" (fun _ ->
         ++ "examples/**/bin"
         ++ "examples/**/obj"
         ++ multiNodeLogs
-        ++ archiveDirectory
         ++ coverageResults
         ++ toolsDirectory
         ++ sonarqubeDirectory
+        ++ artefactsDirectory
 
         
     cleanables |> Shell.cleanDirs
@@ -263,6 +263,11 @@ Target.create "Test" (fun _ ->
 Target.create "MultiNodeTest" (fun _ ->
     Trace.log " --- Multi Node Tests --- "
 
+    let copyBinaries = 
+        let packagesGlob =  !! (sprintf "src/**/bin/%A/*.nupkg" configuration)
+        packagesGlob |> Seq.iter (Shell.copyFile artefactsDirectory)
+
+    copyBinaries
     installCoverlet toolsDirectory
 
     let multiNodeTestProjects = !! "test/Akkatecture.Tests.MultiNode/Akkatecture.Tests.MultiNode.csproj"
@@ -349,7 +354,7 @@ Target.create "Push" (fun _ ->
                     | Some _ -> Some internalCredential.Password
                     | _ -> None
 
-    let packagesGlob = sprintf "src/**/bin/%A/*.nupkg" configuration
+    let packagesGlob = sprintf "%s/*.nupkg" artefactsDirectory
 
     let nugetPushParams (defaults:NuGet.NuGet.NuGetPushParams) =
         { defaults with

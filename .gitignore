@@ -284,3 +284,5 @@ __pycache__/
 
 #MultiNodeTest script
 *Run-MultiNodeTests.ps1
+
+artefacts/*
