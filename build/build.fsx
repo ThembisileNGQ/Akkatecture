@@ -176,8 +176,7 @@ Target.create "Clean" (fun _ ->
         ++ toolsDirectory
         ++ sonarqubeDirectory
         ++ artefactsDirectory
-
-        
+  
     cleanables |> Shell.cleanDirs
 
     File.delete multiNodeTestScript
