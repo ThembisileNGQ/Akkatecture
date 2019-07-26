@@ -82,6 +82,7 @@ type FeedVersion =
     | Alpha
     | PreRelease
     | NuGet
+    | PR
 
 type EndpointCredential = 
     { [<JsonField("endpoint")>]Endpoint: string 
@@ -105,6 +106,7 @@ let platform =
 
 let feedVersion = match envOrNone "FEEDVERSION" with
                     | Some "fake" -> Some Fake
+                    | Some "pr" -> Some PR
                     | Some "alpha" -> Some Alpha
                     | Some "prerelease" -> Some PreRelease
                     | Some "release" -> Some NuGet
@@ -412,12 +414,13 @@ Target.create "Default" DoNothing
 "Clean"
   ==> "Restore"
   ==> "SonarQubeStart"
-  ==> "Build"
+  ?=> "Build"
   ==> "Test"
   ==> "MultiNodeTest"
   ==> "SonarQubeEnd"
-  ==> "Push"
+  ?=> "Push"
   ==> "Release"
+  ==> "GitHubRelease"
 
 "Clean"
   ==> "Restore"
@@ -425,17 +428,5 @@ Target.create "Default" DoNothing
   ==> "Test"
   ==> "MultiNodeTest"
   ==> "Default"
-
-"Clean"
-  ==> "Archive"
-  ==> "Restore"
-  ==> "SonarQubeStart"
-  ==> "Build"
-  ==> "Test"
-  ==> "SonarQubeEnd"
-  ==> "Push"
-  ==> "GitHubRelease"
-
-"MultiNodeTestPoC"
 
 Target.runOrDefault "Build"
