@@ -3,6 +3,7 @@
 
 open System
 open Fake.Core
+open Fake.Api
 open Fake.DotNet
 open Fake.IO
 open Fake.IO.FileSystemOperators
@@ -114,10 +115,16 @@ let buildNumber =
         | Local -> "0.0.1"
         | AzureDevOps -> Environment.environVarOrFail "BUILD_BUILDNUMBER"
 
+let branch = 
+    match envOrNone "BRANCH" with 
+        | Some "master" -> "master"
+        | Some _ -> "dev"
+        | None -> "dev"
+
 let shouldScan = hasEnv "SONARCLOUD_TOKEN" && host <> Local
 let canPush = hasEnv "NUGET_FEED_PAT" || hasEnv "INTERNAL_FEED_PAT"
+let canGithubRelease = hasEnv "GITHUB_PAT"
 
-//Todo make variables lazy so that they wont be evaluated in production builds
 let runtimeIds = dict[Windows, "win-x64"; Linux, "linux-x64"; OSX, "osx-x64"]
 let runtimeId = runtimeIds.Item(platform);
 let configuration = DotNet.BuildConfiguration.Release
@@ -132,6 +139,7 @@ let multiNodeTestScript = sourceDirectory @@ "build" @@ "Run-MultiNodeTests.ps1"
 let internalCredential = lazy ({ Endpoint = "https://pkgs.dev.azure.com/lutando/_packaging/akkatecture/nuget/v3/index.json"; Username = "lutando"; Password = env "INTERNAL_FEED_PAT"})
 let nugetCredential = lazy ({ Endpoint = "https://api.nuget.org/v3/index.json"; Username = "lutando"; Password = env "NUGET_FEED_PAT"})
 let sonarQubeKey =  lazy (env "SONARCLOUD_TOKEN")
+let githubKey = lazy (env "GITHUB_PAT")
 
 let endpointCredentials : EndpointCredentials = 
     let credentials = 
@@ -208,6 +216,7 @@ Target.create "SonarQubeStart" (fun _ ->
 
         let sonarLogin = sprintf "sonar.login=%s" sonarQubeKey.Value;
         let sonarReportPaths = sprintf "sonar.cs.opencover.reportsPaths=\"%s\",\"%s\"" (coverageResults </> "unit.opencover.xml") (coverageResults </> "multinode.opencover.xml");
+        let sonarBranchName = sprintf "sonar.branch.name=%s" branch
         let sonarQubeOptions (defaults:SonarQube.SonarQubeParams) =
             {defaults with
                 ToolsPath = toolsDirectory </> "dotnet-sonarscanner"
@@ -217,7 +226,7 @@ Target.create "SonarQubeStart" (fun _ ->
                 Settings = [
                     "sonar.verbose=true /o:lutando-github";
                     "sonar.host.url=https://sonarcloud.io/";
-                    "sonar.branch.name=dev";
+                    sonarBranchName;
                     sonarLogin;
                     sonarReportPaths;
                     "sonar.visualstudio.enable=false"]}
@@ -242,8 +251,6 @@ Target.create "Build" (fun _ ->
             Configuration = configuration }
 
     projects |> Seq.iter (DotNet.build buildOptions)
-
-    //after build export packages to a folder, it might get rebuilt during the multi node tests
     
 )
 
@@ -381,6 +388,16 @@ Target.create "Push" (fun _ ->
 
 Target.create "GitHubRelease" (fun _ ->
     Trace.log " --- GitHubRelease --- "
+    
+    if canGithubRelease then
+        let releaseNotes = 
+            seq {
+                yield "*see the [changelog](https://github.com/Lutando/Akkatecture/blob/dev/CHANGELOG.md) for all other release information*"
+            } 
+        GitHub.createClientWithToken githubKey.Value
+        |> GitHub.draftNewRelease "Lutando" "Akkatecture" buildNumber true releaseNotes
+        |> GitHub.publishDraft
+        |> Async.RunSynchronously
 
 
 )

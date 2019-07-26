@@ -11,6 +11,7 @@ trigger:
 pr: none
 
 variables:
+  branch: "dev"
   majorVersion: '0'
   minorVersion: '4'
   patchVersion: '5'
@@ -29,6 +30,14 @@ jobs:
       buildConfiguration: 'Release'
 
     steps:
+    - task: ArchiveFiles@2
+      displayName: 'Archive [Akkatecture]'
+      inputs:
+        rootFolderOrFile: '$(Build.SourcesDirectory)'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildNumber)-source.zip'
+
     - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
       displayName: 'Execute Fake 5 Build Script'
       inputs:
@@ -36,3 +45,9 @@ jobs:
         FakeScript: build/build.fsx
         ScriptArguments: '--target Release'
         WorkingDirectory: build/
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact Source'
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildNumber)-source.zip'
+        ArtifactName: Source

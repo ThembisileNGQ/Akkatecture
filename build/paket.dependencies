@@ -3,6 +3,7 @@ version 5.215.0
 group Build
     storage none
     source https://api.nuget.org/v3/index.json
+    nuget Fake.Api.GitHub
     nuget Fake.DotNet.Cli
     nuget Fake.DotNet.NuGet
     nuget Fake.IO.FileSystem

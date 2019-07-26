@@ -11,6 +11,7 @@ trigger:
 pr: none
 
 variables:
+  branch: "master"
   majorVersion: '0'
   minorVersion: '4'
   patchVersion: '5'
