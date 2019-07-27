@@ -1,22 +1,21 @@
 # Akkatecture Development CI CD pipeline definition
 # This definition is responsible for building and testing
-# the project within the context of pull requests. as a
-# static build it only builds and tests the project.
+# the project in the development branch. It pushes package
+# artefacts to a private nuget feed as alpha packages.
 
-trigger: none
-
-pr:
-  autoCancel: true
+trigger:
   branches:
     include:
-    - '*'
+    - fake-test
+
+pr: none
 
 variables:
-  branch: "master"
+  branch: "dev"
   majorVersion: '0'
   minorVersion: '4'
   patchVersion: '5'
-  feedVersion: 'pr'
+  feedVersion: 'fake'
   dayOfYear: $(DayOfYear)
   revCounter: $(BuildRevision)
   revision: ${{ format('{0}{1}', variables.dayOfYear, variables.revCounter) }}
@@ -31,10 +30,24 @@ jobs:
       buildConfiguration: 'Release'
 
     steps:
+    - task: ArchiveFiles@2
+      displayName: 'Archive [Akkatecture]'
+      inputs:
+        rootFolderOrFile: '$(Build.SourcesDirectory)'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildNumber)-source.zip'
+
     - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
       displayName: 'Execute Fake 5 Build Script'
       inputs:
         FakeVersion: 5.15.3
         FakeScript: build/build.fsx
-        ScriptArguments: '--target Default'
+        ScriptArguments: '--target Release'
         WorkingDirectory: build/
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact Source'
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildNumber)-source.zip'
+        ArtifactName: Source

@@ -274,4 +274,15 @@ __pycache__/
 .ionide/
 
 # Opencover
-opencover.xml
+*opencover.xml
+
+# Opencover
+*.sonarqube/*
+
+# tools
+*/tools
+
+#MultiNodeTest script
+*Run-MultiNodeTests.ps1
+
+artefacts/*

@@ -1,0 +1,15 @@
+version 5.215.0
+// [ FAKE GROUP ]
+group Build
+    storage none
+    source https://api.nuget.org/v3/index.json
+    nuget Fake.Api.GitHub
+    nuget Fake.DotNet.Cli
+    nuget Fake.DotNet.NuGet
+    nuget Fake.IO.FileSystem
+    nuget Fake.IO.Zip
+    nuget Fake.Core.Target
+    nuget Fake.Core.Process
+    nuget Fake.BuildServer.TeamFoundation
+    nuget Fake.Testing.SonarQube
+    nuget FSharp.Json
