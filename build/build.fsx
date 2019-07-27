@@ -137,7 +137,8 @@ let artefactsDirectory = sourceDirectory @@ "artefacts"
 let coverageResults = sourceDirectory @@ "coverageresults"
 let multiNodeLogs = sourceDirectory @@ "multinodelogs"
 let multiNodeTestScript = sourceDirectory @@ "build" @@ "Run-MultiNodeTests.ps1"
-let internalCredential = lazy ({ Endpoint = sprintf "https://pkgs.dev.azure.com/lutando/Akkatecture/_packaging/%s/nuget/v3/index.json" (env "FEEDVERSION"); Username = "lutando"; Password = env "INTERNAL_FEED_PAT"})
+let feed = lazy(env "FEEDVERSION")
+let internalCredential = lazy ({ Endpoint = sprintf "https://pkgs.dev.azure.com/lutando/Akkatecture/_packaging/%s/nuget/v3/index.json" feed.Value; Username = "lutando"; Password = env "INTERNAL_FEED_PAT"})
 let nugetCredential = lazy ({ Endpoint = "https://api.nuget.org/v3/index.json"; Username = "lutando"; Password = env "NUGET_FEED_PAT"})
 let sonarQubeKey =  lazy (env "SONARCLOUD_TOKEN")
 let githubKey = lazy (env "GITHUB_PAT")
@@ -243,6 +244,18 @@ Target.create "Build" (fun _ ->
             Configuration = configuration }
 
     projects |> Seq.iter (DotNet.build buildOptions)
+
+    let copyBinaries = 
+        let packagesGlob =  !! (sprintf "src/**/bin/%A/*.nupkg" configuration)
+        packagesGlob |> Seq.iter (Shell.copyFile artefactsDirectory)
+
+    copyBinaries
+    let packagesGlob = sprintf "%s/*.nupkg" artefactsDirectory
+    let packages =
+            !! packagesGlob
+
+    Trace.log "packages!"
+    packages |> Seq.iter Trace.log
     
 )
 
@@ -269,11 +282,6 @@ Target.create "Test" (fun _ ->
 Target.create "MultiNodeTest" (fun _ ->
     Trace.log " --- Multi Node Tests --- "
 
-    let copyBinaries = 
-        let packagesGlob =  !! (sprintf "src/**/bin/%A/*.nupkg" configuration)
-        packagesGlob |> Seq.iter (Shell.copyFile artefactsDirectory)
-
-    copyBinaries
     installCoverlet toolsDirectory
 
     let multiNodeTestProjects = !! "test/Akkatecture.Tests.MultiNode/Akkatecture.Tests.MultiNode.csproj"
