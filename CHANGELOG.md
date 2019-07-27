@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- xUnit2 TestOutputHelper logging
 - Akkatecture.Clustering Multi Node Tests
 - FAKE build system
 - Delete Previous Snapshot 

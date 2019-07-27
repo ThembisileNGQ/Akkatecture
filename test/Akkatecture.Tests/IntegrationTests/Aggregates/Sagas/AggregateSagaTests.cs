@@ -44,7 +44,7 @@ namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
     {
         private const string Category = "Sagas";
         public AggregateSagaTests(ITestOutputHelper testOutputHelper)
-            : base(TestHelpers.Akka.Configuration.Config,"aggregate-saga-tests", testOutputHelper)
+            : base(TestHelpers.Akka.Configuration.Config, "aggregate-saga-tests", testOutputHelper)
         {
             
         }

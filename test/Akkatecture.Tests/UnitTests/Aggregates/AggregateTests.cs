@@ -36,6 +36,7 @@ using Akkatecture.TestHelpers.Aggregates.Events;
 using Akkatecture.TestHelpers.Aggregates.Events.Signals;
 using FluentAssertions;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Akkatecture.Tests.UnitTests.Aggregates
 {
@@ -44,8 +45,8 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
     {
         private const string Category = "Aggregates";
 
-        public AggregateTests()
-            : base(TestHelpers.Akka.Configuration.Config,"aggregate-tests")
+        public AggregateTests(ITestOutputHelper testOutputHelper)
+            : base(TestHelpers.Akka.Configuration.Config, "aggregate-tests", testOutputHelper)
         {
             
         }

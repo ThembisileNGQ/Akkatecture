@@ -121,6 +121,13 @@ Akka.net gives us a wealth of good APIs out of the box that can be used to build
 
 Akkatecture uses the methods of [Keep A Changelog](https://github.com/olivierlacan/keep-a-changelog) to keep track of features or functionality that has been added, changed, deprecated, removed, fixed, or patched for security reasons. The changelog also serves as a source of truth for the project's [release notes](https://github.com/Lutando/Akkatecture/releases).
 
+## PreRelease and Nightly Builds
+Prerelease feeds and nightly feeds (called alpha feeds in this project). Provide the most up to date packages for the project. Roughly speaking the prerelease feed is the most up to date packages that reflect master, and the nightly feed reflects the most up to packages derived from the dev branch. The feeds are: 
+
+**Prerelease Feed** - https://pkgs.dev.azure.com/lutando/Akkatecture/_packaging/prerelease/nuget/v3/index.json
+
+**Nightly Feed** - https://pkgs.dev.azure.com/lutando/Akkatecture/_packaging/alpha/nuget/v3/index.json
+
 ## Acknowledgements
 
 - [Akka.NET](https://github.com/akkadotnet/akka.net) - The project which AKkatecture builds ontop of, without akka.net, Akkatecture wouldnt exist.
