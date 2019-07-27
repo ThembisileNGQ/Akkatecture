@@ -108,7 +108,7 @@ let feedVersion = match envOrNone "FEEDVERSION" with
                     | Some "pr" -> Some PR
                     | Some "alpha" -> Some Alpha
                     | Some "prerelease" -> Some PreRelease
-                    | Some "release" -> Some NuGet
+                    | Some "nuget" -> Some NuGet
                     | _ -> None
 
 let buildNumber = 
