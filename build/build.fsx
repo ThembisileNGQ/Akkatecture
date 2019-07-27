@@ -105,7 +105,6 @@ let platform =
     else Windows
 
 let feedVersion = match envOrNone "FEEDVERSION" with
-                    | Some "fake" -> Some Fake
                     | Some "pr" -> Some PR
                     | Some "alpha" -> Some Alpha
                     | Some "prerelease" -> Some PreRelease
@@ -138,7 +137,7 @@ let artefactsDirectory = sourceDirectory @@ "artefacts"
 let coverageResults = sourceDirectory @@ "coverageresults"
 let multiNodeLogs = sourceDirectory @@ "multinodelogs"
 let multiNodeTestScript = sourceDirectory @@ "build" @@ "Run-MultiNodeTests.ps1"
-let internalCredential = lazy ({ Endpoint = "https://pkgs.dev.azure.com/lutando/_packaging/akkatecture/nuget/v3/index.json"; Username = "lutando"; Password = env "INTERNAL_FEED_PAT"})
+let internalCredential = lazy ({ Endpoint = sprintf "https://pkgs.dev.azure.com/lutando/Akkatecture/_packaging/%s/nuget/v3/index.json" (env "FEEDVERSION"); Username = "lutando"; Password = env "INTERNAL_FEED_PAT"})
 let nugetCredential = lazy ({ Endpoint = "https://api.nuget.org/v3/index.json"; Username = "lutando"; Password = env "NUGET_FEED_PAT"})
 let sonarQubeKey =  lazy (env "SONARCLOUD_TOKEN")
 let githubKey = lazy (env "GITHUB_PAT")
