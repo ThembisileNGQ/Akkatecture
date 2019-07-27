@@ -43,7 +43,7 @@ jobs:
       inputs:
         FakeVersion: 5.15.3
         FakeScript: build/build.fsx
-        ScriptArguments: '-single-target --target SonarQubeStart'
+        ScriptArguments: '--single-target --target SonarQubeStart'
         WorkingDirectory: build/
 
     - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
@@ -51,7 +51,7 @@ jobs:
       inputs:
         FakeVersion: 5.15.3
         FakeScript: build/build.fsx
-        ScriptArguments: '-single-target --target Build'
+        ScriptArguments: '--single-target --target Build'
         WorkingDirectory: build/
 
     - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
@@ -59,7 +59,7 @@ jobs:
       inputs:
         FakeVersion: 5.15.3
         FakeScript: build/build.fsx
-        ScriptArguments: '-single-target --target Test'
+        ScriptArguments: '--single-target --target Test'
         WorkingDirectory: build/
 
     - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
@@ -67,7 +67,7 @@ jobs:
       inputs:
         FakeVersion: 5.15.3
         FakeScript: build/build.fsx
-        ScriptArguments: '-single-target --target MultiNodeTest'
+        ScriptArguments: '--single-target --target MultiNodeTest'
         WorkingDirectory: build/
 
     - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
@@ -75,7 +75,7 @@ jobs:
       inputs:
         FakeVersion: 5.15.3
         FakeScript: build/build.fsx
-        ScriptArguments: '-single-target --target SonarQubeEnd'
+        ScriptArguments: '--single-target --target SonarQubeEnd'
         WorkingDirectory: build/
 
     - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
@@ -83,5 +83,5 @@ jobs:
       inputs:
         FakeVersion: 5.15.3
         FakeScript: build/build.fsx
-        ScriptArguments: '-single-target --target Push'
+        ScriptArguments: '--single-target --target Push'
         WorkingDirectory: build/
