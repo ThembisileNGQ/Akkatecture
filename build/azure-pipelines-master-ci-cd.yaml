@@ -14,7 +14,7 @@ variables:
   branch: "master"
   majorVersion: '0'
   minorVersion: '4'
-  patchVersion: '5'
+  patchVersion: '6'
   feedVersion: 'prerelease'
   dayOfYear: $(DayOfYear)
   revCounter: $(BuildRevision)
