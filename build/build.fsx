@@ -186,14 +186,6 @@ Target.create "Clean" (fun _ ->
     Trace.logfn "Host: %A" host
     Trace.logfn "BuildNumber: %s" buildNumber
     Trace.logfn "Home: %s" (env "HOME")
-    
-    match host with
-        | AzureDevOps _ -> ()
-        | Local -> Trace.logfn "NugetFeedUrls: %s" (Json.serialize endpointCredentials)
-
-    match feedVersion with
-        | Some fv -> Trace.logfn "FeedVersion: %A" fv
-        | None -> ()
 )
 
 Target.create "Archive" (fun _ ->
@@ -352,6 +344,14 @@ Target.create "SonarQubeEnd" (fun _ ->
 Target.create "Push" (fun _ ->
     Trace.log " --- Publish Packages --- "
 
+    match host with
+        | AzureDevOps _ -> ()
+        | Local -> Trace.logfn "NugetFeedUrls: %s" (Json.serialize endpointCredentials)
+
+    match feedVersion with
+        | Some fv -> Trace.logfn "FeedVersion: %A" fv
+        | None -> ()
+
     if canPush then
         match feedVersion with 
             | Some NuGet  -> ()
@@ -382,6 +382,9 @@ Target.create "Push" (fun _ ->
 
         let packages =
             !! packagesGlob
+
+        Trace.log "packages!"
+        packages |> Seq.iter Trace.log
 
         packages |> Seq.iter (DotNet.nugetPush nugetPushOptions)
 )
