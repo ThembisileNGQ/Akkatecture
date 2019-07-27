@@ -246,6 +246,7 @@ Target.create "Build" (fun _ ->
     projects |> Seq.iter (DotNet.build buildOptions)
 
     let copyBinaries = 
+        Shell.mkdir artefactsDirectory
         let packagesGlob =  !! (sprintf "src/**/bin/%A/*.nupkg" configuration)
         packagesGlob |> Seq.iter (Shell.copyFile artefactsDirectory)
 
