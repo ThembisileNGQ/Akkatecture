@@ -23,6 +23,7 @@
 
 using Akka.Actor;
 using Akka.Event;
+using Akka.Persistence;
 using Akkatecture.Aggregates;
 using Akkatecture.Clustering.Core;
 using Akkatecture.Clustering.Extentions;
@@ -33,10 +34,10 @@ using Akkatecture.Sagas.AggregateSaga;
 namespace Akkatecture.Clustering.Dispatchers
 {
     public class ShardedAggregateSagaDispatcher<TAggregateSagaManager, TAggregateSaga, TIdentity, TSagaLocator> : ReceiveActor
-        where TAggregateSagaManager : ActorBase, IAggregateSagaManager<TAggregateSaga,TIdentity,TSagaLocator>
+        where TAggregateSagaManager : ReceiveActor ,IAggregateSagaManager<TAggregateSaga, TIdentity, TSagaLocator>
+        where TAggregateSaga : ReceivePersistentActor, IAggregateSaga<TIdentity>
         where TIdentity : SagaId<TIdentity>
-        where TSagaLocator : class, ISagaLocator<TIdentity>
-        where TAggregateSaga : IAggregateSaga<TIdentity>
+        where TSagaLocator : class, ISagaLocator<TIdentity>, new()
     {
         public IActorRef AggregateSagaManager { get; }
         private ILoggingAdapter Logger { get; }
@@ -59,15 +60,15 @@ namespace Akkatecture.Clustering.Dispatchers
                 Context.System.EventStream.Subscribe(Self, type);
             }
             
+            Receive<IDomainEvent>(Dispatch);
         }
 
         protected virtual bool Dispatch(IDomainEvent domainEvent)
         {
             AggregateSagaManager.Tell(domainEvent);
 
-            Logger.Debug("{0} just dispatched {1} to {2}",GetType().PrettyPrint(),domainEvent.GetType().PrettyPrint(),AggregateSagaManager.Path.Name);
+            Logger.Debug("{0} just dispatched {1} to {2}",GetType().PrettyPrint(), domainEvent.GetType().PrettyPrint(), AggregateSagaManager.Path.Name);
             return true;
         }
-        
     }
 }

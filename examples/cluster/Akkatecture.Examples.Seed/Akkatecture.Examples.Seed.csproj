@@ -3,11 +3,12 @@
   <PropertyGroup>
     <ProjectGuid>{0E3DB1CF-7A20-43A3-8ACA-9A9410087A9E}</ProjectGuid>
     <SonarQubeExclude>true</SonarQubeExclude>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>

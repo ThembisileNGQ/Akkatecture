@@ -11,14 +11,16 @@ trigger:
 pr: none
 
 variables:
+  branch: "master"
   majorVersion: '0'
   minorVersion: '4'
   patchVersion: '5'
   feedVersion: 'prerelease'
   dayOfYear: $(DayOfYear)
-  revision: $(Rev:r)
+  revCounter: $(BuildRevision)
+  revision: ${{ format('{0}{1}', variables.dayOfYear, variables.revCounter) }}
 
-name: ${{ format('{0}.{1}.{2}-{3}-{4}{5}', variables.majorVersion, variables.minorVersion, variables.patchVersion, variables.feedVersion, variables.dayOfYear, variables.revision) }}
+name: ${{ format('{0}.{1}.{2}-{3}-{4}', variables.majorVersion, variables.minorVersion, variables.patchVersion, variables.feedVersion, variables.revision) }}
 
 jobs:
   - job: Build
@@ -28,62 +30,58 @@ jobs:
       buildConfiguration: 'Release'
 
     steps:
-    - task: DotNetCoreCLI@2
+    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
       displayName: 'Restore [Akkatecture]'
       inputs:
-        command: 'restore'
-        projects: 'Akkatecture.sln'
+        FakeVersion: 5.15.3
+        FakeScript: build/build.fsx
+        ScriptArguments: '--single-target --target Restore'
+        WorkingDirectory: build/
 
-    - task: SonarSource.sonarcloud.14d9cde6-c1da-4d55-aa01-2965cd301255.SonarCloudPrepare@1
+    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
       displayName: 'Prepare Analysis [Akkatecture]'
       inputs:
-        SonarCloud: Akkatecture
-        organization: 'lutando-github'
-        projectKey: Lutando_Akkatecture
-        projectName: Akkatecture
-        projectVersion: $(Build.BuildNumber)
-        extraProperties: |
-          sonar.cs.opencover.reportsPaths="$(Build.SourcesDirectory)/opencover.xml"
+        FakeVersion: 5.15.3
+        FakeScript: build/build.fsx
+        ScriptArguments: '--single-target --target SonarQubeStart'
+        WorkingDirectory: build/
 
-    - task: DotNetCoreCLI@2
+    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
       displayName: 'Build [Akkatecture]'
       inputs:
-        command: 'build'
-        projects: 'Akkatecture.sln'
-        arguments: '--configuration $(BuildConfiguration) --no-restore /p:Version=$(Build.BuildNumber)'
+        FakeVersion: 5.15.3
+        FakeScript: build/build.fsx
+        ScriptArguments: '--single-target --target Build'
+        WorkingDirectory: build/
 
-    - task: DotNetCoreCLI@2
+    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
       displayName: 'Test [Akkatecture.Tests]'
       inputs:
-        command: 'test'
-        projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
-        configuration: $(BuildConfiguration)
-        arguments: '/p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=$(Build.SourcesDirectory)/opencover.xml /p:Exclude="[xunit*]*%2c[Akkatecture.TestHelpers*]*%2[Akkatecture.Tests*]*"'
-        publishTestResults: true
+        FakeVersion: 5.15.3
+        FakeScript: build/build.fsx
+        ScriptArguments: '--single-target --target Test'
+        WorkingDirectory: build/
 
-    - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
+    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
+      displayName: 'Test [Akkatecture.Tests.MultiNode]'
+      inputs:
+        FakeVersion: 5.15.3
+        FakeScript: build/build.fsx
+        ScriptArguments: '--single-target --target MultiNodeTest'
+        WorkingDirectory: build/
+
+    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
       displayName: 'Run Analysis [Akkatecture]'
-
-    - task: DotNetCoreCLI@2
-      displayName: 'Push [Akkatecture]'
       inputs:
-        command: 'push'
-        packagesToPush: ${{ format('src/Akkatecture/bin/{0}/*.nupkg', variables.buildConfiguration) }}
-        nuGetFeedType: 'internal'
-        publishVstsFeed: 'akkatecture'
+        FakeVersion: 5.15.3
+        FakeScript: build/build.fsx
+        ScriptArguments: '--single-target --target SonarQubeEnd'
+        WorkingDirectory: build/
 
-    - task: DotNetCoreCLI@2
-      displayName: 'Push [Akkatecture.TestFixture]'
+    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
+      displayName: 'Push Packages [Akkatecture]'
       inputs:
-        command: 'push'
-        packagesToPush: ${{ format('src/Akkatecture.TestFixture/bin/{0}/*.nupkg', variables.buildConfiguration) }}
-        nuGetFeedType: 'internal'
-        publishVstsFeed: 'akkatecture'
-
-    - task: DotNetCoreCLI@2
-      displayName: 'Push [Akkatecture.Clustering]'
-      inputs:
-        command: 'push'
-        packagesToPush: ${{ format('src/Akkatecture.Clustering/bin/{0}/*.nupkg', variables.buildConfiguration) }}
-        nuGetFeedType: 'internal'
-        publishVstsFeed: 'akkatecture'
+        FakeVersion: 5.15.3
+        FakeScript: build/build.fsx
+        ScriptArguments: '--single-target --target Push'
+        WorkingDirectory: build/

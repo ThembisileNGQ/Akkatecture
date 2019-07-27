@@ -23,7 +23,9 @@
 
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Akka.Actor;
+using Akka.Cluster;
 using Akka.Configuration;
 using Akkatecture.Clustering.Configuration;
 using Akkatecture.Clustering.Core;
@@ -32,9 +34,9 @@ using Akkatecture.Examples.Domain.Model.UserAccount.Commands;
 
 namespace Akkatecture.Examples.ClusterClient
 {
-    public static class Program
+    public static  class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             //Get configuration file using Akkatecture's defaults as fallback
             var path = Environment.CurrentDirectory;
@@ -47,35 +49,45 @@ namespace Akkatecture.Examples.ClusterClient
             var shardProxyRoleName = config.GetString("akka.cluster.singleton-proxy.role");
             var actorSystem = ActorSystem.Create(clustername, config);
 
-            //Instantiate an aggregate proxy reference to the worker node that hosts the 
-            //aggregates. This is the reference to proxy client commands to
-            var aggregateProxy = StartUserAccountClusterProxy(actorSystem, shardProxyRoleName);
+            StartApplication(actorSystem, shardProxyRoleName);
+            await actorSystem.WhenTerminated;
+            Console.WriteLine("Akkatecture.Examples.ClusterClient Exiting.");
+        }
 
-            Console.WriteLine("Press Enter To Create A Random User Account, or Q to quit.");
-            
-            var key = Console.ReadLine();
-            var quit = key?.ToUpper() == "Q";
-
-            while (!quit)
+        public static void StartApplication(ActorSystem actorSystem, string shardProxyRoleName)
+        {
+            Cluster.Get(actorSystem).RegisterOnMemberUp(() =>
             {
-                //Generate random, new UserAccount
-                var aggregateId = UserAccountId.New;
-                var randomUserAccountName = Guid.NewGuid().ToString();
-                var createUserAccountCommand = new CreateUserAccountCommand(aggregateId, randomUserAccountName);
-                
-                //Send the command
-                aggregateProxy.Tell(createUserAccountCommand);
+                //Instantiate an aggregate proxy reference to the worker node that hosts the 
+                //aggregates. This is the reference to proxy client commands to
+                var aggregateProxy = StartUserAccountClusterProxy(actorSystem, shardProxyRoleName);
 
-                Console.WriteLine($"CreateUsrAccountCommand: Id={createUserAccountCommand.AggregateId}; Name={createUserAccountCommand.Name} Sent.");
-
-                Console.WriteLine("Press Enter To Create Another Random User Account, or Q to quit.");
-                key = Console.ReadLine();
-                quit = key?.ToUpper() == "Q";
-            }
+                Console.WriteLine("Press Enter To Create A Random User Account, or Q to quit.");
             
-            //Shut down the local actor system
-            actorSystem.Terminate().Wait();
-            Console.WriteLine("Akkatecture.Examples.ClusterClient Exiting.");         
+                var key = Console.ReadLine();
+                var quit = key?.ToUpper() == "Q";
+
+                while (!quit)
+                {
+                    //Generate random, new UserAccount
+                    var aggregateId = UserAccountId.New;
+                    var randomUserAccountName = Guid.NewGuid().ToString();
+                    var createUserAccountCommand = new CreateUserAccountCommand(aggregateId, randomUserAccountName);
+                
+                    //Send the command
+                    aggregateProxy.Tell(createUserAccountCommand);
+
+                    Console.WriteLine($"CreateUsrAccountCommand: Id={createUserAccountCommand.AggregateId}; Name={createUserAccountCommand.Name} Sent.");
+
+                    Console.WriteLine("Press Enter To Create Another Random User Account, or Q to quit.");
+                    key = Console.ReadLine();
+                    quit = key?.ToUpper() == "Q";
+                }
+            
+                //Shut down the local actor system
+                actorSystem.Terminate().Wait();
+            });
+            
         }
 
         public static IActorRef StartUserAccountClusterProxy(ActorSystem actorSystem, string proxyRoleName)

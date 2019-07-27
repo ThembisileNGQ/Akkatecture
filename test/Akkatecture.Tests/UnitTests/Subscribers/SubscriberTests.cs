@@ -30,6 +30,7 @@ using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Events;
 using Akkatecture.TestHelpers.Subscribers;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Akkatecture.Tests.UnitTests.Subscribers
 {
@@ -38,8 +39,8 @@ namespace Akkatecture.Tests.UnitTests.Subscribers
     {
         private const string Category = "Subscribers";
 
-        public SubscriberTests()
-            :base(TestHelpers.Akka.Configuration.Config, "subscriber-tests")
+        public SubscriberTests(ITestOutputHelper testOutputHelper)
+            :base(TestHelpers.Akka.Configuration.Config, "subscriber-tests", testOutputHelper)
         {
             
         }

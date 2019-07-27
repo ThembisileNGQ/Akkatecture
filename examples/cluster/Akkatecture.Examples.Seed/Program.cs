@@ -23,6 +23,7 @@
 
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Configuration;
 using Akkatecture.Clustering.Configuration;
@@ -31,7 +32,7 @@ namespace Akkatecture.Examples.Seed
 {
     public static class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             //Get configuration file using Akkatecture's defaults as fallback
             var path = Environment.CurrentDirectory;
@@ -55,7 +56,7 @@ namespace Akkatecture.Examples.Seed
             }
 
             //Shut down the local actor system
-            actorSystem.Terminate().Wait();
+            await actorSystem.Terminate();
             Console.WriteLine("Akkatecture.Examples.Seed Exiting.");
         }
     }

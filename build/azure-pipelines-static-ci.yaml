@@ -11,6 +11,18 @@ pr:
     include:
     - '*'
 
+variables:
+  branch: "master"
+  majorVersion: '0'
+  minorVersion: '4'
+  patchVersion: '5'
+  feedVersion: 'pr'
+  dayOfYear: $(DayOfYear)
+  revCounter: $(BuildRevision)
+  revision: ${{ format('{0}{1}', variables.dayOfYear, variables.revCounter) }}
+
+name: ${{ format('{0}.{1}.{2}-{3}-{4}', variables.majorVersion, variables.minorVersion, variables.patchVersion, variables.feedVersion, variables.revision) }}
+
 jobs:
   - job: Build
     pool:
@@ -18,21 +30,36 @@ jobs:
     variables:
       buildConfiguration: 'Release'
 
+
     steps:
-    - task: DotNetCoreCLI@2
+    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
       displayName: 'Restore [Akkatecture]'
       inputs:
-        command: 'restore'
-        projects: 'Akkatecture.sln'
+        FakeVersion: 5.15.3
+        FakeScript: build/build.fsx
+        ScriptArguments: '--single-target --target Restore'
+        WorkingDirectory: build/
 
-    - task: DotNetCoreCLI@2
+    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
       displayName: 'Build [Akkatecture]'
       inputs:
-        command: 'restore'
-        projects: 'Akkatecture.sln'
+        FakeVersion: 5.15.3
+        FakeScript: build/build.fsx
+        ScriptArguments: '--single-target --target Build'
+        WorkingDirectory: build/
 
-    - task: DotNetCoreCLI@2
+    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
       displayName: 'Test [Akkatecture.Tests]'
       inputs:
-        command: 'test'
-        projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
+        FakeVersion: 5.15.3
+        FakeScript: build/build.fsx
+        ScriptArguments: '--single-target --target Test'
+        WorkingDirectory: build/
+
+    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
+      displayName: 'Test [Akkatecture.Tests.MultiNode]'
+      inputs:
+        FakeVersion: 5.15.3
+        FakeScript: build/build.fsx
+        ScriptArguments: '--single-target --target MultiNodeTest'
+        WorkingDirectory: build/
