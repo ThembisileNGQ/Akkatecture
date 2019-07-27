@@ -251,12 +251,6 @@ Target.create "Build" (fun _ ->
         packagesGlob |> Seq.iter (Shell.copyFile artefactsDirectory)
 
     copyBinaries
-    let packagesGlob = sprintf "%s/*.nupkg" artefactsDirectory
-    let packages =
-            !! packagesGlob
-
-    Trace.log "packages!"
-    packages |> Seq.iter Trace.log
     
 )
 
@@ -391,9 +385,6 @@ Target.create "Push" (fun _ ->
 
         let packages =
             !! packagesGlob
-
-        Trace.log "packages!"
-        packages |> Seq.iter Trace.log
 
         packages |> Seq.iter (DotNet.nugetPush nugetPushOptions)
 )
