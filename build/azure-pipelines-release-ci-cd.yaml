@@ -24,76 +24,66 @@ jobs:
       buildConfiguration: 'Release'
 
     steps:
-    - task: ArchiveFiles@2
-      displayName: 'Archive [Akkatecture]'
-      inputs:
-        rootFolderOrFile: '$(Build.SourcesDirectory)'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildNumber)-source.zip'
-
-    - task: DotNetCoreCLI@2
+    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
       displayName: 'Restore [Akkatecture]'
       inputs:
-        command: 'restore'
-        projects: 'Akkatecture.sln'
+        FakeVersion: 5.15.3
+        FakeScript: build/build.fsx
+        ScriptArguments: '--single-target --target Restore'
+        WorkingDirectory: build/
 
-    - task: DotNetCoreCLI@2
+    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
+      displayName: 'Prepare Analysis [Akkatecture]'
+      inputs:
+        FakeVersion: 5.15.3
+        FakeScript: build/build.fsx
+        ScriptArguments: '--single-target --target SonarQubeStart'
+        WorkingDirectory: build/
+
+    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
       displayName: 'Build [Akkatecture]'
       inputs:
-        command: 'build'
-        projects: 'Akkatecture.sln'
-        arguments: '/p:Version=$(Build.BuildNumber) --configuration $(BuildConfiguration)'
+        FakeVersion: 5.15.3
+        FakeScript: build/build.fsx
+        ScriptArguments: '--single-target --target Build'
+        WorkingDirectory: build/
 
-    - task: DotNetCoreCLI@2
+    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
       displayName: 'Test [Akkatecture.Tests]'
       inputs:
-        command: 'test'
-        configuration: $(BuildConfiguration)
-        nobuild: true
-        projects: 'test/Akkatecture.Tests/Akkatecture.Tests.csproj'
-        publishTestResults: true
+        FakeVersion: 5.15.3
+        FakeScript: build/build.fsx
+        ScriptArguments: '--single-target --target Test'
+        WorkingDirectory: build/
 
-    - task: NuGetCommand@2
-      displayName: 'Push [Akkatecture]'
+    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
+      displayName: 'Test [Akkatecture.Tests.MultiNode]'
       inputs:
-        command: push
-        packagesToPush: 'src/Akkatecture/bin/$(BuildConfiguration)/*.nupkg'
-        nuGetFeedType: external
-        publishFeedCredentials: 'Akkatecture-NuGet'
+        FakeVersion: 5.15.3
+        FakeScript: build/build.fsx
+        ScriptArguments: '--single-target --target MultiNodeTest'
+        WorkingDirectory: build/
 
-    - task: NuGetCommand@2
-      displayName: 'Push [Akkatecture.TestFixture]'
+    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
+      displayName: 'Run Analysis [Akkatecture]'
       inputs:
-        command: push
-        packagesToPush: 'src/Akkatecture.TestFixture/bin/$(BuildConfiguration)/*.nupkg'
-        nuGetFeedType: external
-        publishFeedCredentials: 'Akkatecture-NuGet'
+        FakeVersion: 5.15.3
+        FakeScript: build/build.fsx
+        ScriptArguments: '--single-target --target SonarQubeEnd'
+        WorkingDirectory: build/
 
-    - task: NuGetCommand@2
-      displayName: 'Push [Akkatecture.Clustering]'
+    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
+      displayName: 'Push Packages [Akkatecture]'
       inputs:
-        command: push
-        packagesToPush: 'src/Akkatecture.Clustering/bin/$(BuildConfiguration)/*.nupkg'
-        nuGetFeedType: external
-        publishFeedCredentials: 'Akkatecture-NuGet'
+        FakeVersion: 5.15.3
+        FakeScript: build/build.fsx
+        ScriptArguments: '--single-target --target Push'
+        WorkingDirectory: build/
 
-    - task: PublishBuildArtifacts@1
-      displayName: 'Publish Artifact Source'
+    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
+      displayName: 'Push Packages [Akkatecture]'
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildNumber)-source.zip'
-        ArtifactName: Source
-
-    - task: GitHubRelease@0
-      displayName: 'Create GitHub Release'
-      inputs:
-        gitHubConnection: 'Akkatecture-GitHub'
-        tagSource: manual
-        tag: $(Build.BuildNumber)
-        isPreRelease: false
-        isDraft: true
-        assets: |
-          $(Build.ArtifactStagingDirectory)/$(Build.BuildNumber).zip
-          ${{ format('src/Akkatecture/bin/{0}/*.nupkg', variables.buildConfiguration) }}
-          ${{ format('src/Akkatecture.TestFixture/bin/{0}/*.nupkg', variables.buildConfiguration) }}
-          ${{ format('src/Akkatecture.Clustering/bin/{0}/*.nupkg', variables.buildConfiguration) }}
+        FakeVersion: 5.15.3
+        FakeScript: build/build.fsx
+        ScriptArguments: '--single-target --target GitHubRelease'
+        WorkingDirectory: build/

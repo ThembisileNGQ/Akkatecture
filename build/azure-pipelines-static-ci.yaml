@@ -30,11 +30,36 @@ jobs:
     variables:
       buildConfiguration: 'Release'
 
+
     steps:
     - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
-      displayName: 'Execute Fake 5 Build Script'
+      displayName: 'Restore [Akkatecture]'
       inputs:
         FakeVersion: 5.15.3
         FakeScript: build/build.fsx
-        ScriptArguments: '--target Default'
+        ScriptArguments: '--single-target --target Restore'
+        WorkingDirectory: build/
+
+    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
+      displayName: 'Build [Akkatecture]'
+      inputs:
+        FakeVersion: 5.15.3
+        FakeScript: build/build.fsx
+        ScriptArguments: '--single-target --target Build'
+        WorkingDirectory: build/
+
+    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
+      displayName: 'Test [Akkatecture.Tests]'
+      inputs:
+        FakeVersion: 5.15.3
+        FakeScript: build/build.fsx
+        ScriptArguments: '--single-target --target Test'
+        WorkingDirectory: build/
+
+    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
+      displayName: 'Test [Akkatecture.Tests.MultiNode]'
+      inputs:
+        FakeVersion: 5.15.3
+        FakeScript: build/build.fsx
+        ScriptArguments: '--single-target --target MultiNodeTest'
         WorkingDirectory: build/
