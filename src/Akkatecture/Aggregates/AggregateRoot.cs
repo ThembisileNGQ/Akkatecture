@@ -27,13 +27,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Akka.Actor;
 using Akka.Event;
 using Akka.Persistence;
-using Akkatecture.Aggregates.ExecutionResults;
 using Akkatecture.Aggregates.Snapshot;
 using Akkatecture.Aggregates.Snapshot.Strategies;
 using Akkatecture.Commands;

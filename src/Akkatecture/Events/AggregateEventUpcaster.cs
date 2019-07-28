@@ -26,7 +26,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Akka.Persistence.Journal;
-using Akka.Util.Internal;
 using Akkatecture.Aggregates;
 using Akkatecture.Core;
 using Akkatecture.Extensions;
@@ -68,7 +67,7 @@ namespace Akkatecture.Events
         {
             var type = potentialUpcast.GetType();
             
-            if (potentialUpcast is ICommittedEvent<TAggregate,TIdentity> committedEvent)
+            if (potentialUpcast is ICommittedEvent<TAggregate,TIdentity>)
             {
                 var eventType = type.GenericTypeArguments[2];
 

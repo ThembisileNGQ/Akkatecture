@@ -29,11 +29,10 @@ using Akkatecture.Commands;
 using Akkatecture.TestHelpers.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Entities;
-using Akkatecture.TestHelpers.Aggregates.Sagas;
-using Akkatecture.TestHelpers.Aggregates.Sagas.Events;
 using Akkatecture.TestHelpers.Aggregates.Sagas.Test;
+using Akkatecture.TestHelpers.Aggregates.Sagas.Test.Events;
 using Akkatecture.TestHelpers.Aggregates.Sagas.TestAsync;
-using FluentAssertions;
+using Akkatecture.TestHelpers.Aggregates.Sagas.TestAsync.Events;
 using Xunit;
 using Xunit.Abstractions;
 

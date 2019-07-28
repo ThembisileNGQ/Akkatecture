@@ -71,8 +71,6 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         {
             var aggregateSequenceNumber = 3;
             var aggregateId = TestAggregateId.New;
-            var entityId = TestId.New;
-            var entity = new Test(entityId);
             var now = DateTimeOffset.UtcNow;
             var eventId = EventId.NewDeterministic(
                 GuidFactories.Deterministic.Namespaces.Events,
@@ -93,7 +91,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
                         eventMetadata,
                         now,
                         aggregateSequenceNumber))
-                .Should().Throw<ArgumentNullException>().And.Message.Contains("aggregateEvent");
+                .Should().Throw<ArgumentNullException>().And.Message.Contains("aggregateEvent").Should().BeTrue();
         }
         
         [Fact]
@@ -105,9 +103,6 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             var entity = new Test(entityId);
             var aggregateEvent = new TestAddedEvent(entity);
             var now = DateTimeOffset.UtcNow;
-            var eventId = EventId.NewDeterministic(
-                GuidFactories.Deterministic.Namespaces.Events,
-                $"{aggregateId.Value}-v{aggregateSequenceNumber}");
 
             this.Invoking(test =>
                     new DomainEvent<TestAggregate, TestAggregateId, TestAddedEvent>(
@@ -116,7 +111,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
                         null,
                         now,
                         aggregateSequenceNumber))
-                .Should().Throw<ArgumentNullException>().And.Message.Contains("metadata");
+                .Should().Throw<ArgumentNullException>().And.Message.Contains("metadata").Should().BeTrue();
         }
         
         [Fact]
@@ -148,7 +143,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
                         eventMetadata,
                         default(DateTimeOffset),
                         aggregateSequenceNumber))
-                .Should().Throw<ArgumentNullException>().And.Message.Contains("timestamp");
+                .Should().Throw<ArgumentNullException>().And.Message.Contains("timestamp").Should().BeTrue();
         }
         
         [Fact]
@@ -180,7 +175,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
                         eventMetadata,
                         now,
                         aggregateSequenceNumber))
-                .Should().Throw<ArgumentNullException>().And.Message.Contains("aggregateIdentity");
+                .Should().Throw<ArgumentNullException>().And.Message.Contains("aggregateIdentity").Should().BeTrue();
         }
         
         [Fact]
@@ -212,7 +207,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
                         eventMetadata,
                         now,
                         -4))
-                .Should().Throw<ArgumentOutOfRangeException>().And.Message.Contains("aggregateSequenceNumber");
+                .Should().Throw<ArgumentOutOfRangeException>().And.Message.Contains("aggregateSequenceNumber").Should().BeTrue();
         }
     }
 }

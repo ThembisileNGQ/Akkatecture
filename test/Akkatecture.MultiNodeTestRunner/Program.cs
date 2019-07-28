@@ -43,6 +43,7 @@ using Akka.MultiNodeTestRunner.Shared.Persistence;
 using Akka.MultiNodeTestRunner.Shared.Sinks;
 using Akka.Remote.TestKit;
 using Xunit;
+using Xunit.Sdk;
 
 namespace Akkatecture.MultiNodeTestRunner
 {
@@ -50,7 +51,6 @@ namespace Akkatecture.MultiNodeTestRunner
     {
         private static HashSet<string> _validNetCorePlatform = new HashSet<string>
         {
-            "net",
             "netcore"
         };
 
@@ -58,12 +58,11 @@ namespace Akkatecture.MultiNodeTestRunner
         protected static IActorRef SinkCoordinator;
         protected static string OutputDirectory;
         protected static bool TeamCityFormattingOn;
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             OutputDirectory = CommandLine.GetPropertyOrDefault("multinode.output-directory", string.Empty);
             TestRunSystem = ActorSystem.Create("TestRunnerLogging");
 
-            var suiteName = Path.GetFileNameWithoutExtension(Path.GetFullPath(args[0].Trim('"')));
             var teamCityFormattingOn = CommandLine.GetPropertyOrDefault("multinode.teamcity", "false");
             if (!Boolean.TryParse(teamCityFormattingOn, out TeamCityFormattingOn))
                 throw new ArgumentException("Invalid argument provided for -Dteamcity");
@@ -185,8 +184,9 @@ namespace Akkatecture.MultiNodeTestRunner
                                 var process = new Process
                                 {
                                     StartInfo = new ProcessStartInfo
+                                        
                                     {
-                                        FileName = fileName,
+                                        FileName = fileName ?? throw new NullException(nameof(fileName)),
                                         UseShellExecute = false,
                                         RedirectStandardOutput = true,
                                         Arguments = sbArguments.ToString(),
@@ -240,7 +240,6 @@ namespace Akkatecture.MultiNodeTestRunner
                             foreach (var process in processes)
                             {
                                 process.WaitForExit();
-                                var exitCode = process.ExitCode;
                                 process.Dispose();
                             }
 
@@ -283,12 +282,7 @@ namespace Akkatecture.MultiNodeTestRunner
             Environment.Exit(ExitCodeContainer.ExitCode);
         }
 
-        static string ChangeDllPathPlatform(string path, string targetPlatform)
-        {
-            return Path.GetFullPath(Path.Combine(Path.GetDirectoryName(path), "..", targetPlatform, Path.GetFileName(path)));
-        }
-
-        static void EnableAllSinks(string assemblyName, string platform)
+        private static void EnableAllSinks(string assemblyName, string platform)
         {
             var now = DateTime.UtcNow;
 
@@ -344,18 +338,16 @@ namespace Akkatecture.MultiNodeTestRunner
             SinkCoordinator.Tell(new SinkCoordinator.RunnerMessage(message));
         }
 
-        private static void PublishToAllSinks(string message)
-        {
-            SinkCoordinator.Tell(message, ActorRefs.NoSender);
-        }
     }
 
     internal class TcpLoggingServer : ReceiveActor
     {
-        private readonly ILoggingAdapter _log = Context.GetLogger();
+        private readonly ILoggingAdapter _log;
 
         public TcpLoggingServer(IActorRef sinkCoordinator)
         {
+            _log =  Context.GetLogger();
+            
             Receive<Tcp.Connected>(connected =>
             {
                 _log.Info($"Node connected on {Sender}");

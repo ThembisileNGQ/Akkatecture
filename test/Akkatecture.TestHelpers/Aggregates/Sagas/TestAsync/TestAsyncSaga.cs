@@ -8,7 +8,7 @@ using Akkatecture.Sagas;
 using Akkatecture.Sagas.AggregateSaga;
 using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Events;
-using Akkatecture.TestHelpers.Aggregates.Sagas.Events;
+using Akkatecture.TestHelpers.Aggregates.Sagas.TestAsync.Events;
 using Akkatecture.TestHelpers.Aggregates.Snapshots;
 
 namespace Akkatecture.TestHelpers.Aggregates.Sagas.TestAsync

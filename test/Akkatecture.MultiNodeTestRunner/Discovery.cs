@@ -48,7 +48,6 @@ namespace Akkatecture.MultiNodeTestRunner
         }
 
         public ManualResetEvent Finished { get; private set; }
-        public IMessageSink NextSink { get; private set; }
 
         public virtual bool OnMessage(IMessageSinkMessage message)
         {
@@ -79,7 +78,7 @@ namespace Akkatecture.MultiNodeTestRunner
                             Tests.Add(dictKey, details);
                     }
                     break;
-                case IDiscoveryCompleteMessage discoveryComplete:
+                case IDiscoveryCompleteMessage _:
                     Finished.Set();
                     break;
                 case ErrorMessage err:

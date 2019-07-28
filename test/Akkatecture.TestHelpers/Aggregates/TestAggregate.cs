@@ -92,8 +92,6 @@ namespace Akkatecture.TestHelpers.Aggregates
                 var createdEvent = new TestCreatedEvent(command.AggregateId);
                 var firstTestAddedEvent = new TestAddedEvent(command.FirstTest);
                 var secondTestAddedEvent = new TestAddedEvent(command.SecondTest);
-                var events = Events(createdEvent, firstTestAddedEvent, secondTestAddedEvent);
-                //EmitAll(events, new Metadata {{"some-key","some-value"}});
                 EmitAll(createdEvent, firstTestAddedEvent, secondTestAddedEvent);
                 Reply(TestExecutionResult.SucceededWith(command.SourceId));
             }
@@ -133,6 +131,7 @@ namespace Akkatecture.TestHelpers.Aggregates
                     .Range(0, 4)
                     .Select(x => new TestAddedEvent(command.Test));
 
+                // ReSharper disable once CoVariantArrayConversion
                 EmitAll(events.ToArray());
                 Reply(TestExecutionResult.SucceededWith(command.SourceId));
 

@@ -23,7 +23,7 @@
 
 using Akkatecture.Sagas;
 
-namespace Akkatecture.TestHelpers.Aggregates.Sagas
+namespace Akkatecture.TestHelpers.Aggregates.Sagas.Test
 {
     public class TestSagaId : SagaId<TestSagaId>
     {

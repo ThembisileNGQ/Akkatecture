@@ -26,7 +26,7 @@ using Akkatecture.Aggregates;
 using Akkatecture.Sagas;
 using Akkatecture.TestHelpers.Aggregates.Events;
 
-namespace Akkatecture.TestHelpers.Aggregates.Sagas
+namespace Akkatecture.TestHelpers.Aggregates.Sagas.TestAsync
 {
     public class TestAsyncSagaLocator : ISagaLocator<TestAsyncSagaId>
     {

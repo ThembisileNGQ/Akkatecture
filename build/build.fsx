@@ -151,6 +151,7 @@ let endpointCredentials : EndpointCredentials =
                  yield internalCredential.Value }
     
     {EndpointCredentials = Seq.toList credentials}
+    
 // --------------------------------------------------------------------------------------
 // Build Current Working Directory
 // --------------------------------------------------------------------------------------

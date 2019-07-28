@@ -45,7 +45,7 @@ namespace Akkatecture.NodeTestRunner
         private static readonly TimeSpan MaxProcessWaitTimeout = TimeSpan.FromMinutes(5);
         private static IActorRef _logger;
 
-        static int Main(string[] args)
+        public static int Main(string[] args)
         {
             var nodeIndex = CommandLine.GetInt32("multinode.index");
             var nodeRole = CommandLine.GetProperty("multinode.role");

@@ -29,7 +29,6 @@ using Akkatecture.TestHelpers.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Entities;
 using Akkatecture.TestHelpers.Aggregates.Events;
-using Akkatecture.TestHelpers.Aggregates.Sagas;
 using Akkatecture.TestHelpers.Aggregates.Sagas.Test;
 using FluentAssertions;
 using Xunit;
