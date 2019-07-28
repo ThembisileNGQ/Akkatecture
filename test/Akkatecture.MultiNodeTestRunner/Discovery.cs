@@ -41,10 +41,6 @@ namespace Akkatecture.MultiNodeTestRunner
         public Dictionary<string, List<NodeTest>> Tests { get; set; }
         public List<ErrorMessage> Errors { get; } = new List<ErrorMessage>();
         public bool WasSuccessful => Errors.Count == 0;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Discovery"/> class.
-        /// </summary>
         public Discovery()
         {
             Tests = new Dictionary<string, List<NodeTest>>();
