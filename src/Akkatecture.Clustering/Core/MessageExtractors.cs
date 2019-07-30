@@ -37,11 +37,11 @@ namespace Akkatecture.Clustering.Core
         where TIdentity : SagaId<TIdentity>
         where TSagaLocator : class, ISagaLocator<TIdentity>, new()
     {
-        private TSagaLocator _sagaLocator { get; }
+        private TSagaLocator SagaLocator { get; }
         public MessageExtractor(int maxNumberOfShards) 
             : base(maxNumberOfShards)
         {
-            _sagaLocator = new TSagaLocator();
+            SagaLocator = new TSagaLocator();
         }
 
         public override string EntityId(object message)
@@ -51,7 +51,7 @@ namespace Akkatecture.Clustering.Core
 
 
             if (message is IDomainEvent domainEvent)
-                return _sagaLocator.LocateSaga(domainEvent).Value;
+                return SagaLocator.LocateSaga(domainEvent).Value;
 
             throw new ArgumentException(nameof(message));
         }

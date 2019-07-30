@@ -8,24 +8,15 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>$(NetCoreAppVersion)</TargetFramework>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <Title>Akkatecture.Examples.Seed</Title>
-    <Authors>Lutando Ngqakaza</Authors>
-    <Company>Lutando Ngqakaza</Company>
-    <Copyright>Copyright (c) Lutando Ngqakaza 2018 - 2019</Copyright>
     <Description>
       The seed node for Akkatecture.Examples.ClusterClient and Akkatecture.Examples.Worker
     </Description>
-    <PackageTags>akka cqrs es eventsourcing</PackageTags>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/Lutando/Akkatecture</RepositoryUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/Lutando/Akkatecture/master/LICENSE</PackageLicenseUrl>
-    <NeutralLanguage>en-GB</NeutralLanguage>
-    <PackageReleaseNotes>Externally Updated</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

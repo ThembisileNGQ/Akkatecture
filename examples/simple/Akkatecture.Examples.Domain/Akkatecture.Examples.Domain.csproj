@@ -6,24 +6,15 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>$(NetStandardVersion)</TargetFramework>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <Title>Akkatecture.Examples.Domain</Title>
-    <Authors>Lutando Ngqakaza</Authors>
-    <Company>Lutando Ngqakaza</Company>
-    <Copyright>Copyright (c) Lutando Ngqakaza 2018 - 2019</Copyright>
     <Description>
       The domain project for the simple Akkatecture "Hello world" example
     </Description>
-    <PackageTags>akka cqrs es eventsourcing</PackageTags>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/Lutando/Akkatecture</RepositoryUrl>
-      <PackageLicenseUrl>https://raw.githubusercontent.com/Lutando/Akkatecture/master/LICENSE</PackageLicenseUrl>
-    <NeutralLanguage>en-GB</NeutralLanguage>
-    <PackageReleaseNotes>Externally Updated</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

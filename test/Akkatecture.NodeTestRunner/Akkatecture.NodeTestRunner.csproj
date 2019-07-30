@@ -2,7 +2,7 @@
     
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>$(NetCoreAppVersion)</TargetFramework>
     <AssemblyName>Akka.NodeTestRunner</AssemblyName>
   </PropertyGroup>
 
@@ -11,16 +11,16 @@
   </PropertyGroup>
     
   <ItemGroup>
-    <PackageReference Include="Akka" Version="1.3.13" />
-    <PackageReference Include="Akka.Remote" Version="1.3.13" />
-    <PackageReference Include="Akka.Remote.TestKit" Version="1.3.13" />
-    <PackageReference Include="Akka.TestKit" Version="1.3.13" />
-    <PackageReference Include="Akka.TestKit.Xunit2" Version="1.3.13" />
+    <PackageReference Include="Akka" Version="$(AkkaVersion)" />
+    <PackageReference Include="Akka.Remote" Version="$(AkkaRemoteVersion)" />
+    <PackageReference Include="Akka.Remote.TestKit" Version="$(AkkaRemoteTestKitVersion)" />
+    <PackageReference Include="Akka.TestKit" Version="$(AkkaTestKitVersion)" />
+    <PackageReference Include="Akka.TestKit.Xunit2" Version="$(AkkaTestKitXunitVersion)" />
+    <PackageReference Include="xunit.runner.utility" Version="$(XunitRunnerUtilityVersion)" />
+    <PackageReference Include="coverlet.msbuild" Version="$(CoverletMSBuildVersion)" />
     <PackageReference Include="Akkatecture.MultiNode.Shared" Version="0.2.0" />
-    <PackageReference Include="xunit.runner.utility" Version="2.4.1" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.1.0" />
-    <PackageReference Include="coverlet.msbuild" Version="2.6.3" />
   </ItemGroup>
 
   <PropertyGroup>
