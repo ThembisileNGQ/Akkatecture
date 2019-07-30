@@ -14,7 +14,7 @@
     <PackageReference Include="Akka" Version="1.3.13" />
     <PackageReference Include="Akka.Cluster.TestKit" Version="1.3.13" />
     <PackageReference Include="Akka.Remote" Version="1.3.13" />
-    <PackageReference Include="Akka.Remote.TestKit" Version="1.3.13" />
+    <PackageReference Include="Akka.Remote.TestKit" Version="1.3.14" />
     <PackageReference Include="Akka.TestKit" Version="1.3.13" />
     <PackageReference Include="Akka.TestKit.Xunit2" Version="1.3.13" />
     <PackageReference Include="Akkatecture.MultiNode.Shared" Version="0.2.0" />
