@@ -16,7 +16,7 @@
   
   <PropertyGroup>
     <Description>
-      a cqrs and event sourcing framework for akka.net
+      clustering library for akkatecture to enable distributed scenarios
     </Description>
     <PackageTags>
       akka;cqrs;es;eventsourcing;clustering;actors;microservices;actor-model
