@@ -112,6 +112,8 @@ namespace Akkatecture.Aggregates
                 Recover<ICommittedEvent<TAggregate, TIdentity, IAggregateEvent<TAggregate, TIdentity>>>(Recover);
                 Recover<RecoveryCompleted>(Recover);
             }
+            
+            InitReceives();
 
         }
 
@@ -486,6 +488,51 @@ namespace Akkatecture.Aggregates
                 Logger.Error(exception,"Unable to activate CommandHandler of Type={0} for Aggregate of Type={1}.",typeof(TCommandHandler).PrettyPrint(), typeof(TAggregate).PrettyPrint());
             }
 
+        }
+        
+        public void InitReceives()
+        {
+            var type = GetType();
+            
+            var subscriptionTypes =
+                type
+                    .GetAggregateExecuteTypes();
+
+            var methods = type
+                .GetTypeInfo()
+                .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .Where(mi =>
+                {
+                    if (mi.Name != "Execute") return false;
+                    var parameters = mi.GetParameters();
+                    return
+                        parameters.Length == 1;
+                })
+                .ToDictionary(
+                    mi => mi.GetParameters()[0].ParameterType,
+                    mi => mi);
+            
+            var method = type
+                .GetBaseType("ReceivePersistentActor")
+                .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .Where(mi =>
+                {
+                    if (mi.Name != "Command") return false;
+                    var parameters = mi.GetParameters();
+                    return
+                        parameters.Length == 1
+                        && parameters[0].ParameterType.Name.Contains("Func");
+                })
+                .First();
+
+            foreach (var subscriptionType in subscriptionTypes)
+            {
+                var funcType = typeof(Func<,>).MakeGenericType(subscriptionType, typeof(bool));
+                var subscriptionFunction = Delegate.CreateDelegate(funcType, this, methods[subscriptionType]);
+                var actorReceiveMethod = method.MakeGenericMethod(subscriptionType);
+
+                actorReceiveMethod.Invoke(this, new[] { subscriptionFunction });
+            }
         }
         
     }
