@@ -1,4 +1,4 @@
-namespace Akkatecture.ScheduledJobs
+namespace Akkatecture.Jobs
 {
     public interface IJobScheduler
     {

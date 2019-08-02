@@ -1,6 +1,6 @@
 using Akkatecture.Core;
 
-namespace Akkatecture.ScheduledJobs
+namespace Akkatecture.Jobs
 {
     public class JobId : Identity<JobId>, IJobId
     {

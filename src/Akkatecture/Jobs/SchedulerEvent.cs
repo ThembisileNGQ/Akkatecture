@@ -1,6 +1,6 @@
 using Akkatecture.Extensions;
 
-namespace Akkatecture.ScheduledJobs
+namespace Akkatecture.Jobs
 {
     public abstract class SchedulerEvent<TJob, TIdentity> : ISchedulerEvent<TJob, TIdentity>
         where TJob : IJob

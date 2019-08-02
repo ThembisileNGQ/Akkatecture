@@ -2,7 +2,7 @@ using System;
 using Akka.Event;
 using Akkatecture.Core.VersionedTypes;
 
-namespace Akkatecture.ScheduledJobs
+namespace Akkatecture.Jobs
 {
     public class JobDefinitionService : VersionedTypeDefinitionService<IJob, JobVersionAttribute, JobDefinition>, IJobDefinitionService
     {

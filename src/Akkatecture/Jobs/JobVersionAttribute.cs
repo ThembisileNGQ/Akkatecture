@@ -1,7 +1,7 @@
 using System;
 using Akkatecture.Core.VersionedTypes;
 
-namespace Akkatecture.ScheduledJobs
+namespace Akkatecture.Jobs
 {
     [AttributeUsage(AttributeTargets.Class)]
     public class JobVersionAttribute : VersionedTypeAttribute

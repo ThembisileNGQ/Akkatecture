@@ -1,6 +1,6 @@
 using Akkatecture.Core.VersionedTypes;
 
-namespace Akkatecture.ScheduledJobs
+namespace Akkatecture.Jobs
 {
     public interface IJobDefinitionService : IVersionedTypeDefinitionService<JobVersionAttribute, JobDefinition>
     {
