@@ -34,6 +34,7 @@ using Akkatecture.Aggregates;
 using Akkatecture.Aggregates.Snapshot;
 using Akkatecture.Core;
 using Akkatecture.Events;
+using Akkatecture.Jobs;
 using Akkatecture.Sagas;
 using Akkatecture.Subscribers;
 
@@ -116,6 +117,26 @@ namespace Akkatecture.Extensions
 
                     return new AggregateName(
                         t.GetTypeInfo().GetCustomAttributes<SagaNameAttribute>().SingleOrDefault()?.Name ??
+                        t.Name);
+                });
+        }
+        
+        private static readonly ConcurrentDictionary<Type, JobName> JobNames = new ConcurrentDictionary<Type, JobName>();
+
+        public static JobName GetJobName(
+            this Type jobType)
+        {
+            return JobNames.GetOrAdd(
+                jobType,
+                t =>
+                {
+                    if (!typeof(IJob).GetTypeInfo().IsAssignableFrom(jobType))
+                    {
+                        throw new ArgumentException($"Type '{jobType.PrettyPrint()}' is not a job");
+                    }
+
+                    return new JobName(
+                        t.GetTypeInfo().GetCustomAttributes<JobNameAttribute>().SingleOrDefault()?.Name ??
                         t.Name);
                 });
         }

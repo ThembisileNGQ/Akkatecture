@@ -2,7 +2,8 @@ using Akkatecture.Jobs;
 
 namespace Akkatecture.TestHelpers.Jobs
 {
-    public class TestScheduler  : JobScheduler<TestJob, TestJobId>
+    
+    public class TestJobScheduler  : JobScheduler<TestJob, TestJobId>
     {
         
     }
