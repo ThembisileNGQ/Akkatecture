@@ -39,6 +39,10 @@ namespace Akkatecture.Tests.UnitTests.Jobs
             testJobScheduler.Tell(schedule, probe);
             
             probe.ExpectMsg<ScheduleAddedSuccess<TestJobId>>(x => x.Id == jobId,TimeSpan.FromMinutes(1));
+            
+            scheduler.AdvanceTo(when);
+
+            probe.ExpectMsg<TestJob>(x => x.Greeting == "hi");
         }
         
     }
