@@ -119,28 +119,6 @@ namespace Akkatecture.Extensions
                         t.Name);
                 });
         }
-
-        internal static IReadOnlyDictionary<Type, Action<T, IAggregateEvent>> GetAggregateEventApplyMethods<TAggregate, TIdentity, T>(this Type type)
-            where TAggregate : IAggregateRoot<TIdentity>
-            where TIdentity : IIdentity
-        {
-            var aggregateEventType = typeof(IAggregateEvent<TAggregate, TIdentity>);
-
-            return type
-                .GetTypeInfo()
-                .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                .Where(mi =>
-                {
-                    if (mi.Name != "Apply") return false;
-                    var parameters = mi.GetParameters();
-                    return
-                        parameters.Length == 1 &&
-                        aggregateEventType.GetTypeInfo().IsAssignableFrom(parameters[0].ParameterType);
-                })
-                .ToDictionary(
-                    mi => mi.GetParameters()[0].ParameterType,
-                    mi => ReflectionHelper.CompileMethodInvocation<Action<T, IAggregateEvent>>(type, "Apply", mi.GetParameters()[0].ParameterType));
-        }
         
         internal static IReadOnlyDictionary<Type, Action<T, IAggregateSnapshot>> GetAggregateSnapshotHydrateMethods<TAggregate, TIdentity, T>(this Type type)
             where TAggregate : IAggregateRoot<TIdentity>
@@ -197,6 +175,22 @@ namespace Akkatecture.Extensions
             var domainEventTypes = interfaces
                 .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISubscribeToAsync<,,>))
                 .Select(i =>   typeof(IDomainEvent<,,>).MakeGenericType(i.GetGenericArguments()[0],i.GetGenericArguments()[1],i.GetGenericArguments()[2]))
+                .ToList();
+            
+
+            return domainEventTypes;
+        }
+        
+        internal static IReadOnlyList<Type> GetAggregateExecuteTypes(this Type type)
+        {
+            var interfaces = type
+                .GetTypeInfo()
+                .GetInterfaces()
+                .Select(i => i.GetTypeInfo())
+                .ToList();
+            var domainEventTypes = interfaces
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IExecute<>))
+                .Select(i =>   i.GetGenericArguments()[0])
                 .ToList();
             
 
