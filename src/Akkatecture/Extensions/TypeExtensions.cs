@@ -223,6 +223,22 @@ namespace Akkatecture.Extensions
 
             return domainEventTypes;
         }
+        
+        internal static IReadOnlyList<Type> GetAggregateExecuteTypes(this Type type)
+        {
+            var interfaces = type
+                .GetTypeInfo()
+                .GetInterfaces()
+                .Select(i => i.GetTypeInfo())
+                .ToList();
+            var domainEventTypes = interfaces
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IExecute<>))
+                .Select(i =>   i.GetGenericArguments()[0])
+                .ToList();
+            
+
+            return domainEventTypes;
+        }
 
         internal static IReadOnlyList<Type> GetDomainEventSubscriberSubscriptionTypes(this Type type)
         {
