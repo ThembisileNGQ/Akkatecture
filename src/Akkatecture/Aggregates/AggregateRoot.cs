@@ -68,7 +68,7 @@ namespace Akkatecture.Aggregates
         protected AggregateRoot(TIdentity id)
         {
             
-            Settings = new AggregateRootSettings(Context.System.Settings.Config.GetConfig("akkatecture.aggregate-root"));
+            Settings = new AggregateRootSettings(Context.System.Settings.Config);
             
             if (id == null)
                 throw new ArgumentNullException(nameof(id));
@@ -473,6 +473,13 @@ namespace Akkatecture.Aggregates
         {
             return $"{GetType().PrettyPrint()} v{Version}";
         }
+
+        public override void AroundPreRestart(Exception cause, object message)
+        {
+            Log.Error(cause, "Aggregate of Name={0}, and Id={1}; has experienced an error and will now restart", Name, Id);
+            base.AroundPreRestart(cause, message);
+        }
+        
 
         protected void Command<TCommand, TCommandHandler>(Predicate<TCommand> shouldHandle = null)
             where TCommand : ICommand<TAggregate, TIdentity>

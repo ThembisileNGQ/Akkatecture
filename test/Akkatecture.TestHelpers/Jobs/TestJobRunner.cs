@@ -1,3 +1,4 @@
+using System;
 using Akka.Actor;
 using Akkatecture.Jobs;
 
@@ -16,7 +17,8 @@ namespace Akkatecture.TestHelpers.Jobs
 
         public bool Run(TestJob job)
         {
-            ProbeRef.Tell(TestJobDone.With(job.Greeting));
+            var time = Context.System.Settings.System.Scheduler.Now.DateTime;
+            ProbeRef.Tell(new TestJobDone(job.Greeting, time));
 
             return true;
         }
@@ -25,11 +27,13 @@ namespace Akkatecture.TestHelpers.Jobs
     public class TestJobDone
     {
         public string Greeting { get; }
-        public static TestJobDone With(string greeting) => new TestJobDone(greeting);
+        public DateTime At { get; }
         public TestJobDone(
-            string greeting)
+            string greeting,
+            DateTime at)
         {
             Greeting = greeting;
+            At = at;
         }
     }
 }

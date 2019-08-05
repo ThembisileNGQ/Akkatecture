@@ -28,14 +28,14 @@ namespace Akkatecture.Aggregates
 {
     public class AggregateRootSettings
     {
+        private static readonly string _section = "akkatecture.aggregate-root";
         public readonly bool UseDefaultEventRecover;
         public readonly bool UseDefaultSnapshotRecover;
 
         public AggregateRootSettings(Config config)
         {
-            var aggregateRootConfig = config == null
-                ? AkkatectureDefaultSettings.DefaultConfig()
-                : config.WithFallback(AkkatectureDefaultSettings.DefaultConfig());
+            var aggregateRootConfig = config.GetConfig(_section);
+            aggregateRootConfig = aggregateRootConfig ?? AkkatectureDefaultSettings.DefaultConfig().GetConfig(_section);
 
             UseDefaultEventRecover = aggregateRootConfig.GetBoolean("use-default-event-recover");
             UseDefaultSnapshotRecover = aggregateRootConfig.GetBoolean("use-default-snapshot-recover");
