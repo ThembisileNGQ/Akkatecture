@@ -175,6 +175,10 @@ namespace Akkatecture.Tests.UnitTests.Jobs
             
             probe.ExpectNoMsg();
             
+            scheduler.Advance(TimeSpan.FromMinutes(5));
+            
+            probe.ExpectNoMsg();
+            
             
         }
         
