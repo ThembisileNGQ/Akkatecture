@@ -28,11 +28,11 @@ namespace Akkatecture.Jobs.Responses
     public class ScheduleAddedSuccess<TIdentity> : SuccessExecutionResult
         where TIdentity : IJobId
     {
-        public TIdentity Id { get;  }
+        public TIdentity JobId { get;  }
 
-        public ScheduleAddedSuccess(TIdentity id)
+        public ScheduleAddedSuccess(TIdentity jobId)
         {
-            Id = id;
+            JobId = jobId;
         }
     }
 }

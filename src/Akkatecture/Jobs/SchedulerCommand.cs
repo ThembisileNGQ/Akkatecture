@@ -21,6 +21,7 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
 using Akkatecture.ValueObjects;
 
 namespace Akkatecture.Jobs
@@ -35,12 +36,20 @@ namespace Akkatecture.Jobs
         where TJob : IJob
         where TIdentity : IJobId
     {
-        public TIdentity Id { get; }
+        public TIdentity JobId { get; }
+        public object Ack { get; }
+        public object Nack { get; }
 
         public SchedulerCommand(
-            TIdentity id)
+            TIdentity jobId,
+            object ack = null,
+            object nack = null)
         {
-            Id = id;
+            if (jobId == null) throw new ArgumentNullException(nameof(jobId));
+            
+            JobId = jobId;
+            Ack = ack;
+            Nack = nack;
         }
     }
 }

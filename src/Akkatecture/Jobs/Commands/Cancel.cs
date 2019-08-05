@@ -27,8 +27,11 @@ namespace Akkatecture.Jobs.Commands
         where TJob : IJob
         where TIdentity : IJobId
     {
-        public Cancel(TIdentity id)
-            : base(id)
+        public Cancel(
+            TIdentity id,
+            object ack = null,
+            object nack = null)
+            : base(id, ack, nack)
         {
             
         }

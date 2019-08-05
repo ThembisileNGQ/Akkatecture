@@ -3,7 +3,7 @@ using Akkatecture.Jobs;
 namespace Akkatecture.TestHelpers.Jobs
 {
     
-    public class TestJobScheduler  : JobScheduler<TestJob, TestJobId>
+    public class TestJobScheduler  : JobScheduler<TestJobScheduler, TestJob, TestJobId>
     {
         
     }

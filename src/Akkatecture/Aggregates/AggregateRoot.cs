@@ -98,11 +98,11 @@ namespace Akkatecture.Aggregates
             Id = id;
             PersistenceId = id.Value;
             SetSourceIdHistory(100);
+            
             if (Settings.UseDefaultSnapshotRecover)
             {
                 Recover<SnapshotOffer>(Recover);
             }
-
 
             Command<SaveSnapshotSuccess>(SnapshotStatus);
             Command<SaveSnapshotFailure>(SnapshotStatus);

@@ -39,7 +39,7 @@ namespace Akkatecture.Jobs
             Entries = entries;
         }
         
-        public SchedulerState<TJob, TIdentity> AddEntry(Schedule<TJob,TIdentity> entry) => new SchedulerState<TJob, TIdentity>(Entries.SetItem(entry.Id, entry));
+        public SchedulerState<TJob, TIdentity> AddEntry(Schedule<TJob,TIdentity> entry) => new SchedulerState<TJob, TIdentity>(Entries.SetItem(entry.JobId, entry));
         public SchedulerState<TJob, TIdentity> RemoveEntry(TIdentity jobId) => new SchedulerState<TJob, TIdentity>(Entries.Remove(jobId));
     }
 }

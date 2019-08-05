@@ -40,7 +40,7 @@ namespace Akkatecture.Tests.UnitTests.Jobs
             
             testJobScheduler.Tell(schedule, probe);
             
-            probe.ExpectMsg<ScheduleAddedSuccess<TestJobId>>(x => x.Id == jobId,TimeSpan.FromMinutes(1));
+            probe.ExpectMsg<ScheduleAddedSuccess<TestJobId>>(x => x.JobId == jobId);
             
             scheduler.AdvanceTo(when);
 
@@ -65,7 +65,7 @@ namespace Akkatecture.Tests.UnitTests.Jobs
             
             testJobScheduler.Tell(schedule, probe);
             
-            probe.ExpectMsg<ScheduleAddedSuccess<TestJobId>>(x => x.Id == jobId,TimeSpan.FromMinutes(1));
+            probe.ExpectMsg<ScheduleAddedSuccess<TestJobId>>(x => x.JobId == jobId);
             
             scheduler.AdvanceTo(when);
 
@@ -99,7 +99,7 @@ namespace Akkatecture.Tests.UnitTests.Jobs
             
             testJobScheduler.Tell(schedule, probe);
             
-            probe.ExpectMsg<ScheduleAddedSuccess<TestJobId>>(x => x.Id == jobId,TimeSpan.FromMinutes(1));
+            probe.ExpectMsg<ScheduleAddedSuccess<TestJobId>>(x => x.JobId == jobId);
             
             scheduler.AdvanceTo(when);
             

@@ -34,14 +34,29 @@ namespace Akkatecture.Jobs.Commands
         public TimeSpan Interval { get; }
 
         public ScheduleRepeatedly(
-            TIdentity id,
+            TIdentity jobId,
             ActorPath jobRunner,
             TJob job,
             TimeSpan interval,
-            DateTime triggerDate)
-            : base(id, jobRunner, job, triggerDate)
+            DateTime triggerDate,
+            object ack = null,
+            object nack = null)
+            : base(jobId, jobRunner, job, triggerDate, ack, nack)
         {
+            if(interval == default) throw new ArgumentException(nameof(interval));
+            
             Interval = interval;
+        }
+        
+        
+        public override Schedule<TJob,TIdentity> WithAck(object ack)
+        {
+            return new ScheduleRepeatedly<TJob, TIdentity>(JobId, JobRunner, Job, Interval, TriggerDate, ack, Nack);
+        }
+        
+        public override Schedule<TJob,TIdentity> WithNack(object nack)
+        {
+            return new ScheduleRepeatedly<TJob, TIdentity>(JobId, JobRunner, Job, Interval, TriggerDate, Ack, nack);
         }
     }
 }

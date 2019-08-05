@@ -23,7 +23,6 @@
 
 using System;
 using Akka.Actor;
-using Akkatecture.ValueObjects;
 
 namespace Akkatecture.Jobs.Commands
 {
@@ -34,22 +33,38 @@ namespace Akkatecture.Jobs.Commands
         public ActorPath JobRunner { get; }
         public TJob Job { get; }
         public DateTime TriggerDate  { get; }
-
+        
         public Schedule(
-            TIdentity id, 
+            TIdentity jobId, 
             ActorPath jobRunner, 
             TJob job,
-            DateTime triggerDate)
-            : base(id)
+            DateTime triggerDate,
+            object ack = null,
+            object nack = null)
+            : base(jobId, ack, nack)
         {
+            if (jobRunner == null) throw new ArgumentNullException(nameof(jobRunner));
+            if (job == null) throw new ArgumentNullException(nameof(job));
+            if (triggerDate == default) throw new ArgumentException(nameof(triggerDate));
+            
             JobRunner = jobRunner;
             Job = job;
             TriggerDate = triggerDate;
-        }
+        } 
 
         public virtual Schedule<TJob,TIdentity> WithNextTriggerDate(DateTime utcDate)
         {
             return null;
+        }
+        
+        public virtual Schedule<TJob,TIdentity> WithAck(object ack)
+        {
+            return new Schedule<TJob, TIdentity>(JobId, JobRunner, Job, TriggerDate, ack, Nack);
+        }
+        
+        public virtual Schedule<TJob,TIdentity> WithNack(object nack)
+        {
+            return new Schedule<TJob, TIdentity>(JobId, JobRunner, Job, TriggerDate, Ack, nack);
         }
     }
 }

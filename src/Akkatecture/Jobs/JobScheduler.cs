@@ -34,7 +34,8 @@ using Akkatecture.Jobs.Responses;
 
 namespace Akkatecture.Jobs
 {
-    public class JobScheduler<TJob, TIdentity> : ReceivePersistentActor, IJobScheduler
+    public class JobScheduler<TJobScheduler, TJob, TIdentity> : ReceivePersistentActor, IJobScheduler
+        where TJobScheduler : JobScheduler<TJobScheduler, TJob, TIdentity>
         where TJob : IJob
         where TIdentity : IJobId
     {
@@ -48,6 +49,11 @@ namespace Akkatecture.Jobs
 
         public JobScheduler()
         {
+            if ((this as TJobScheduler) == null)
+            {
+                throw new InvalidOperationException(
+                    $"JobScheduler {Name} specifies Type={typeof(TJobScheduler).PrettyPrint()} as generic argument, it should be its own type.");
+            }
             Settings = new JobSchedulerSettings(Context.System.Settings.Config);
             State = SchedulerState<TJob, TIdentity>.New;
             
@@ -93,7 +99,7 @@ namespace Akkatecture.Jobs
                 var selection = Context.ActorSelection(schedule.JobRunner);
                 selection.Tell(schedule.Job, ActorRefs.NoSender);
 
-                Emit(new Finished<TJob, TIdentity>(schedule.Id, now), ApplySchedulerEvent);
+                Emit(new Finished<TJob, TIdentity>(schedule.JobId, now), ApplySchedulerEvent);
 
                 var next = schedule.WithNextTriggerDate(now);
                 if (next != null)
@@ -105,7 +111,7 @@ namespace Akkatecture.Jobs
             return true;
         }
         
-        private bool Execute(Schedule<TJob, TIdentity> command)
+        protected bool Execute(Schedule<TJob, TIdentity> command)
         {
             var sender = Sender;
             _jobDefinitionService.Load(command.Job.GetType());
@@ -118,10 +124,10 @@ namespace Akkatecture.Jobs
                     
                     if (!sender.IsNobody())
                     {
-                        sender.Tell(new ScheduleAddedSuccess<TIdentity>(e.Entry.Id));
+                        sender.Tell(new ScheduleAddedSuccess<TIdentity>(e.Entry.JobId));
                     }
                     
-                    Log.Info("JobScheduler for Job of Name={0}, Definition={1}, and Id={2}, has been successfully scheduled to run at TriggerDate={3}.", Name, jobDefinition, e.Entry.Id, e.Entry.TriggerDate);
+                    Log.Info("JobScheduler for Job of Name={0}, Definition={1}, and Id={2}, has been successfully scheduled to run at TriggerDate={3}.", Name, jobDefinition, e.Entry.JobId, e.Entry.TriggerDate);
                 });
             }
             catch (Exception error)
@@ -137,21 +143,21 @@ namespace Akkatecture.Jobs
             return true;
         }
         
-        private bool Execute(Cancel<TJob, TIdentity> command)
+        protected bool Execute(Cancel<TJob, TIdentity> command)
         {
             var sender = Sender;
-            var id = command.Id;
+            var jobId = command.JobId;
             var now = Context.System.Scheduler.Now.UtcDateTime;
             try
             {
-                Emit(new Cancelled<TJob, TIdentity>(command.Id, now), e =>
+                Emit(new Cancelled<TJob, TIdentity>(command.JobId, now), e =>
                 {
                     ApplySchedulerEvent(e);
                     if (!sender.IsNobody())
                     {
-                        sender.Tell(new ScheduleAddedSuccess<TIdentity>(e.Id));
+                        sender.Tell(new ScheduleAddedSuccess<TIdentity>(e.JobId));
                     }
-                    Log.Info("JobScheduler for Job of Name={0}, and Id={1}, has been successfully cancelled.", Name, e.Id);
+                    Log.Info("JobScheduler for Job of Name={0}, and Id={1}, has been successfully cancelled.", Name, e.JobId);
                 });
             }
             catch (Exception error)
@@ -161,7 +167,7 @@ namespace Akkatecture.Jobs
                     sender.Tell(new ScheduleAddedFailed<TIdentity>(new List<string>{error.Message}));
                 }
                 
-                Log.Error(error,"JobScheduler for Job of Name={0}, and Id={1} has failed to cancel.", Name, id);
+                Log.Error(error,"JobScheduler for Job of Name={0}, and Id={1} has failed to cancel.", Name, jobId);
             }
 
             return true;
@@ -219,16 +225,17 @@ namespace Akkatecture.Jobs
                     State = State.AddEntry(scheduled.Entry);
                     break;
                 case Finished<TJob, TIdentity> completed:
-                    State = State.RemoveEntry(completed.Id);
+                    State = State.RemoveEntry(completed.JobId);
                     break;
                 case Cancelled<TJob, TIdentity> cancelled:
-                    State = State.RemoveEntry(cancelled.Id);
+                    State = State.RemoveEntry(cancelled.JobId);
                     break;
                 default: throw new ArgumentException(nameof(schedulerEvent));
             }
         }
         
-        private void Emit<TEvent>(TEvent schedulerEvent, Action<TEvent> handler) where TEvent : SchedulerEvent<TJob, TIdentity>
+        private void Emit<TEvent>(TEvent schedulerEvent, Action<TEvent> handler) 
+            where TEvent : SchedulerEvent<TJob, TIdentity>
         {
             PersistAsync(schedulerEvent, handler);
         }
