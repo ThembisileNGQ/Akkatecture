@@ -29,11 +29,12 @@ namespace Akkatecture.Tests.UnitTests.Jobs
             
             var probe = CreateTestProbe("job-handler");
             var jobId = TestJobId.New;
-            var scheduler = (TestScheduler)Sys.Scheduler;
+            var scheduler = (TestScheduler) Sys.Scheduler;
+            var greeting = "Hi from the past";
             var testJobScheduler = Sys.ActorOf(Props.Create(() => new TestJobScheduler()).WithDispatcher(CallingThreadDispatcher.Id), "test-job");
             var when = DateTime.UtcNow.AddDays(1);
             
-            var job = new TestJob("hi");
+            var job = new TestJob(greeting);
             var schedule = new Schedule<TestJob, TestJobId>(jobId, probe.Ref.Path, job, when);
             
             testJobScheduler.Tell(schedule, probe);
@@ -42,7 +43,39 @@ namespace Akkatecture.Tests.UnitTests.Jobs
             
             scheduler.AdvanceTo(when);
 
-            probe.ExpectMsg<TestJob>(x => x.Greeting == "hi");
+            probe.ExpectMsg<TestJob>(x => x.Greeting == greeting);
+        }
+        
+        [Fact]
+        [Category(Category)]
+        public void SchedulingJob_ForEvery5minutes_DispatchesJobMessage()
+        {
+            
+            var probe = CreateTestProbe("job-handler");
+            var jobId = TestJobId.New;
+            var scheduler = (TestScheduler) Sys.Scheduler;
+            var greeting = "Hi from the past";
+            var testJobScheduler = Sys.ActorOf(Props.Create(() => new TestJobScheduler()).WithDispatcher(CallingThreadDispatcher.Id), "test-job");
+            var when = DateTime.UtcNow.AddDays(1);
+            
+            var job = new TestJob(greeting);
+            var schedule = new ScheduleRepeatedly<TestJob, TestJobId>(jobId, probe.Ref.Path, job, TimeSpan.FromMinutes(5), when);
+            
+            testJobScheduler.Tell(schedule, probe);
+            
+            probe.ExpectMsg<ScheduleAddedSuccess<TestJobId>>(x => x.Id == jobId,TimeSpan.FromMinutes(1));
+            
+            scheduler.AdvanceTo(when);
+
+            probe.ExpectMsg<TestJob>(x => x.Greeting == greeting);
+            
+            scheduler.Advance(TimeSpan.FromMinutes(5));
+
+            probe.ExpectMsg<TestJob>(x => x.Greeting == greeting);
+            
+            scheduler.Advance(TimeSpan.FromMinutes(5));    
+
+            probe.ExpectMsg<TestJob>(x => x.Greeting == greeting);
         }
         
     }

@@ -51,7 +51,7 @@ namespace Akkatecture.Sagas.AggregateSaga
         private static readonly IReadOnlyDictionary<Type, Action<TSagaState, IAggregateSnapshot>> HydrateMethodsFromState = typeof(TSagaState).GetAggregateSnapshotHydrateMethods<TAggregateSaga, TIdentity, TSagaState>();
         private static readonly IAggregateName SagaName = typeof(TAggregateSaga).GetSagaName();
         private CircularBuffer<ISourceId> _previousSourceIds = new CircularBuffer<ISourceId>(100);
-        protected ILoggingAdapter Logger { get; }
+        
         protected IEventDefinitionService _eventDefinitionService;
         protected ISnapshotDefinitionService _snapshotDefinitionService;
         protected ISnapshotStrategy SnapshotStrategy { get; set; } = SnapshotNeverStrategy.Instance;
@@ -66,7 +66,6 @@ namespace Akkatecture.Sagas.AggregateSaga
 
         protected AggregateSaga()
         {
-            Logger = Context.GetLogger();
             Settings = new AggregateSagaSettings(Context.System.Settings.Config);
             var idValue = Context.Self.Path.Name;
             PersistenceId = idValue;
@@ -92,7 +91,7 @@ namespace Akkatecture.Sagas.AggregateSaga
                 }
                 catch (Exception exception)
                 {
-                    Logger.Error(exception,"AggregateSaga of Name={1}; was unable to activate SagaState of Type={0}.", Name, typeof(TSagaState).PrettyPrint());
+                    Context.GetLogger().Error(exception,"AggregateSaga of Name={1}; was unable to activate SagaState of Type={0}.", Name, typeof(TSagaState).PrettyPrint());
                 }
 
             }
@@ -118,8 +117,8 @@ namespace Akkatecture.Sagas.AggregateSaga
             Command<SaveSnapshotSuccess>(SnapshotStatus);
             Command<SaveSnapshotFailure>(SnapshotStatus);
 
-            _eventDefinitionService = new EventDefinitionService(Logger);
-            _snapshotDefinitionService = new SnapshotDefinitionService(Logger);
+            _eventDefinitionService = new EventDefinitionService(Context.GetLogger());
+            _snapshotDefinitionService = new SnapshotDefinitionService(Context.GetLogger());
 
         }
 
@@ -305,7 +304,7 @@ namespace Akkatecture.Sagas.AggregateSaga
             }
             catch (Exception exception)
             {
-                Logger.Error(exception, "Aggregate of Name={0}, and Id={1}; tried to invoke Method={2} with object Type={3} .",Name, Id, nameof(ApplyCommittedEvent), committedEvent.GetType().PrettyPrint());
+                Log.Error(exception, "Aggregate of Name={0}, and Id={1}; tried to invoke Method={2} with object Type={3} .",Name, Id, nameof(ApplyCommittedEvent), committedEvent.GetType().PrettyPrint());
             }
         }
 
@@ -346,7 +345,7 @@ namespace Akkatecture.Sagas.AggregateSaga
 
         protected virtual IAggregateSnapshot<TAggregateSaga, TIdentity> CreateSnapshot()
         {
-            Logger.Info("AggregateSaga of Name={0}, and Id={2}; attempted to create a snapshot, override the {2}() method to get snapshotting to function.", Name, Id, nameof(CreateSnapshot));
+            Log.Info("AggregateSaga of Name={0}, and Id={2}; attempted to create a snapshot, override the {2}() method to get snapshotting to function.", Name, Id, nameof(CreateSnapshot));
             return null;
         }
 
@@ -356,7 +355,7 @@ namespace Akkatecture.Sagas.AggregateSaga
             var applyMethods = GetEventApplyMethods(committedEvent.AggregateEvent);
             applyMethods(committedEvent.AggregateEvent);
 
-            Logger.Info("AggregateSaga of Name={0}, and Id={1}; committed and applied an AggregateEvent of Type={2}", Name, Id, typeof(TAggregateEvent).PrettyPrint());
+            Log.Info("AggregateSaga of Name={0}, and Id={1}; committed and applied an AggregateEvent of Type={2}", Name, Id, typeof(TAggregateEvent).PrettyPrint());
 
             Version++;
 
@@ -397,7 +396,7 @@ namespace Akkatecture.Sagas.AggregateSaga
         protected virtual void Publish<TEvent>(TEvent aggregateEvent)
         {
             Context.System.EventStream.Publish(aggregateEvent);
-            Logger.Info("Aggregate of Name={0}, and Id={1}; published DomainEvent of Type={2}.",Name, Id, typeof(TEvent).PrettyPrint());
+            Log.Info("Aggregate of Name={0}, and Id={1}; published DomainEvent of Type={2}.",Name, Id, typeof(TEvent).PrettyPrint());
         }
 
         protected Action<IAggregateEvent> GetEventApplyMethods<TAggregateEvent>(TAggregateEvent aggregateEvent)
@@ -427,12 +426,12 @@ namespace Akkatecture.Sagas.AggregateSaga
         {
             try
             {
-                Logger.Debug("AggregateSaga of Name={0}, Id={1}, and Version={2}, is recovering with CommittedEvent of Type={3}.", Name, Id, Version, committedEvent.GetType().PrettyPrint());
+                Log.Debug("AggregateSaga of Name={0}, Id={1}, and Version={2}, is recovering with CommittedEvent of Type={3}.", Name, Id, Version, committedEvent.GetType().PrettyPrint());
                 ApplyEvent(committedEvent.AggregateEvent);
             }
             catch (Exception exception)
             {
-                Logger.Error(exception,"Aggregate of Name={0}, Id={1}; while recovering with event of Type={2} caused an exception.", Name, Id, committedEvent.GetType().PrettyPrint());
+                Log.Error(exception,"Aggregate of Name={0}, Id={1}; while recovering with event of Type={2} caused an exception.", Name, Id, committedEvent.GetType().PrettyPrint());
                 return false;
             }
 
@@ -443,13 +442,13 @@ namespace Akkatecture.Sagas.AggregateSaga
         {
             try
             {
-                Logger.Debug("AggregateSaga of Name={0}, and Id={1}; has received a SnapshotOffer of Type={2}.", Name, Id, aggregateSnapshotOffer.Snapshot.GetType().PrettyPrint());
+                Log.Debug("AggregateSaga of Name={0}, and Id={1}; has received a SnapshotOffer of Type={2}.", Name, Id, aggregateSnapshotOffer.Snapshot.GetType().PrettyPrint());
                 var comittedSnapshot = aggregateSnapshotOffer.Snapshot as CommittedSnapshot<TAggregateSaga, TIdentity, IAggregateSnapshot<TAggregateSaga, TIdentity>>;
                 HydrateSnapshot(comittedSnapshot.AggregateSnapshot, aggregateSnapshotOffer.Metadata.SequenceNr);
             }
             catch (Exception exception)
             {
-                Logger.Error(exception,"AggregateSaga of Name={0}, Id={1}; recovering with snapshot of Type={2} caused an exception.", Name, Id, aggregateSnapshotOffer.Snapshot.GetType().PrettyPrint());
+                Log.Error(exception,"AggregateSaga of Name={0}, Id={1}; recovering with snapshot of Type={2} caused an exception.", Name, Id, aggregateSnapshotOffer.Snapshot.GetType().PrettyPrint());
 
                 return false;
             }
@@ -504,21 +503,21 @@ namespace Akkatecture.Sagas.AggregateSaga
         }
         protected virtual bool SnapshotStatus(SaveSnapshotSuccess snapshotSuccess)
         {
-            Logger.Debug("Aggregate of Name={0}, and Id={1}; saved a snapshot at Version={2}.", Name, Id, snapshotSuccess.Metadata.SequenceNr);
+            Log.Debug("Aggregate of Name={0}, and Id={1}; saved a snapshot at Version={2}.", Name, Id, snapshotSuccess.Metadata.SequenceNr);
             DeleteSnapshots(new SnapshotSelectionCriteria(snapshotSuccess.Metadata.SequenceNr-1));
             return true;
         }
 
         protected virtual bool SnapshotStatus(SaveSnapshotFailure snapshotFailure)
         {
-            Logger.Error(snapshotFailure.Cause,"Aggregate of Name={0}, and Id={1}; failed to save snapshot at Version={2}.", Name, Id, snapshotFailure.Metadata.SequenceNr);
+            Log.Error(snapshotFailure.Cause,"Aggregate of Name={0}, and Id={1}; failed to save snapshot at Version={2}.", Name, Id, snapshotFailure.Metadata.SequenceNr);
             return true;
         }
 
 
         protected virtual bool Recover(RecoveryCompleted recoveryCompleted)
         {
-            Logger.Debug("Aggregate of Name={0}, and Id={1}; has completed recovering from it's event journal at Version={2}.", Name, Id, Version);
+            Log.Debug("Aggregate of Name={0}, and Id={1}; has completed recovering from it's event journal at Version={2}.", Name, Id, Version);
             return true;
         }
     }
