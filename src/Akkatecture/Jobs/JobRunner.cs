@@ -42,7 +42,7 @@ namespace Akkatecture.Jobs
 
             var subscriptionTypes =
                 type
-                    .GetSagaEventSubscriptionTypes();
+                    .GetJobRunTypes();
 
             var methods = type
                 .GetTypeInfo()

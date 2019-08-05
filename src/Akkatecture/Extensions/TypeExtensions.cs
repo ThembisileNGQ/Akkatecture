@@ -290,6 +290,21 @@ namespace Akkatecture.Extensions
                 });
         }
         
+        internal static IReadOnlyList<Type> GetJobRunTypes(this Type type)
+        {
+            var interfaces = type
+                .GetTypeInfo()
+                .GetInterfaces()
+                .Select(i => i.GetTypeInfo())
+                .ToList();
+            var jobRunTypes = interfaces
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRun<>))
+                .Select(i =>   i.GetGenericArguments()[0])
+                .ToList();
+            
+
+            return jobRunTypes;
+        }
         
         internal static IReadOnlyList<Type> GetAsyncSagaEventSubscriptionTypes(this Type type)
         {

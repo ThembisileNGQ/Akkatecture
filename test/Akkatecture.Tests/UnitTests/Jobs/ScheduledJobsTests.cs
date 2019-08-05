@@ -52,6 +52,7 @@ namespace Akkatecture.Tests.UnitTests.Jobs
         {
             
             var probe = CreateTestProbe("job-handler");
+            var jobRunner = Sys.ActorOf(Props.Create(() => new TestJobRunner(probe.Ref)));
             var jobId = TestJobId.New;
             var scheduler = (TestScheduler) Sys.Scheduler;
             var greeting = "Hi from the past";
@@ -59,7 +60,7 @@ namespace Akkatecture.Tests.UnitTests.Jobs
             var when = DateTime.UtcNow.AddDays(1);
             
             var job = new TestJob(greeting);
-            var schedule = new ScheduleRepeatedly<TestJob, TestJobId>(jobId, probe.Ref.Path, job, TimeSpan.FromMinutes(5), when);
+            var schedule = new ScheduleRepeatedly<TestJob, TestJobId>(jobId, jobRunner.Path, job, TimeSpan.FromMinutes(5), when);
             
             testJobScheduler.Tell(schedule, probe);
             
