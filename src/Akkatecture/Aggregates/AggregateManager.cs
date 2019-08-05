@@ -123,13 +123,14 @@ namespace Akkatecture.Aggregates
 
         protected override SupervisorStrategy SupervisorStrategy()
         {
+            var logger = Logger;
             return new OneForOneStrategy(
                 maxNrOfRetries: 3,
                 withinTimeMilliseconds: 3000,
                 localOnlyDecider: x =>
                 {
 
-                    Logger.Warning("{0} will supervise Exception={1} to be decided as {2}.",GetType().PrettyPrint(), x.ToString(), Directive.Restart);
+                    logger.Warning("{0} will supervise Exception={1} to be decided as {2}.",GetType().PrettyPrint(), x.ToString(), Directive.Restart);
                     return Directive.Restart;
                 });
         }

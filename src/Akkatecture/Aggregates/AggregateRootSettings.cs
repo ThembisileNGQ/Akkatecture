@@ -33,7 +33,9 @@ namespace Akkatecture.Aggregates
 
         public AggregateRootSettings(Config config)
         {
-            var aggregateRootConfig = config.WithFallback(AkkatectureDefaultSettings.DefaultConfig());
+            var aggregateRootConfig = config == null
+                ? AkkatectureDefaultSettings.DefaultConfig()
+                : config.WithFallback(AkkatectureDefaultSettings.DefaultConfig());
 
             UseDefaultEventRecover = aggregateRootConfig.GetBoolean("use-default-event-recover");
             UseDefaultSnapshotRecover = aggregateRootConfig.GetBoolean("use-default-snapshot-recover");

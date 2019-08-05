@@ -16,7 +16,7 @@ namespace Akkatecture.TestHelpers.Jobs
 
         public bool Run(TestJob job)
         {
-            ProbeRef.Tell(TestJobDone.Instance);
+            ProbeRef.Tell(TestJobDone.With(job.Greeting));
 
             return true;
         }
@@ -24,6 +24,12 @@ namespace Akkatecture.TestHelpers.Jobs
 
     public class TestJobDone
     {
-        public static TestJobDone Instance => new TestJobDone();
+        public string Greeting { get; }
+        public static TestJobDone With(string greeting) => new TestJobDone(greeting);
+        public TestJobDone(
+            string greeting)
+        {
+            Greeting = greeting;
+        }
     }
 }

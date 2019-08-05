@@ -68,15 +68,15 @@ namespace Akkatecture.Tests.UnitTests.Jobs
             
             scheduler.AdvanceTo(when);
 
-            probe.ExpectMsg<TestJob>(x => x.Greeting == greeting);
+            probe.ExpectMsg<TestJobDone>(x => x.Greeting == greeting);
             
             scheduler.Advance(TimeSpan.FromMinutes(5));
 
-            probe.ExpectMsg<TestJob>(x => x.Greeting == greeting);
+            probe.ExpectMsg<TestJobDone>(x => x.Greeting == greeting);
             
             scheduler.Advance(TimeSpan.FromMinutes(5));    
 
-            probe.ExpectMsg<TestJob>(x => x.Greeting == greeting);
+            probe.ExpectMsg<TestJobDone>(x => x.Greeting == greeting);
         }
         
     }

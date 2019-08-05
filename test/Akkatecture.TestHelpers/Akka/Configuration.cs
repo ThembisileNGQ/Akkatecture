@@ -28,8 +28,8 @@ namespace Akkatecture.TestHelpers.Akka
     public static class Configuration
     {
         public static string Config =
-            @"  akka.loglevel = ""OFF""
-                akka.stdout-loglevel = ""OFF""
+            @"  akka.loglevel = ""INFO""
+                akka.stdout-loglevel = ""INFO""
                 akka.actor.serialize-messages = on
                 loggers = [""Akka.TestKit.TestEventListener, Akka.TestKit""] 
                 akka.persistence.snapshot-store {
