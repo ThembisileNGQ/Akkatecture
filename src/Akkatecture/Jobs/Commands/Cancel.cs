@@ -28,12 +28,22 @@ namespace Akkatecture.Jobs.Commands
         where TIdentity : IJobId
     {
         public Cancel(
-            TIdentity id,
+            TIdentity jobId,
             object ack = null,
             object nack = null)
-            : base(id, ack, nack)
+            : base(jobId, ack, nack)
         {
             
+        }
+        
+        public virtual Cancel<TJob, TIdentity> WithAck(object ack)
+        {
+            return new Cancel<TJob, TIdentity>(JobId, ack, Nack);
+        }
+        
+        public virtual Cancel<TJob,TIdentity> WithNack(object nack)
+        {
+            return new Cancel<TJob, TIdentity>(JobId, Ack, nack);
         }
     }
 }

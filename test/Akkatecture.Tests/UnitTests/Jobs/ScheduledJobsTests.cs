@@ -4,7 +4,6 @@ using Akka.Actor;
 using Akka.TestKit;
 using Akka.TestKit.Xunit2;
 using Akkatecture.Jobs.Commands;
-using Akkatecture.Jobs.Responses;
 using Akkatecture.TestHelpers.Jobs;
 using FluentAssertions;
 using Xunit;
@@ -36,11 +35,13 @@ namespace Akkatecture.Tests.UnitTests.Jobs
             var when = DateTime.UtcNow.AddDays(1);
             
             var job = new TestJob(greeting);
-            var schedule = new Schedule<TestJob, TestJobId>(jobId, probe.Ref.Path, job, when);
+            var schedule = new Schedule<TestJob, TestJobId>(jobId, probe.Ref.Path, job, when)
+                .WithAck(TestJobAck.Instance)
+                .WithNack(TestJobNack.Instance);
             
             testJobScheduler.Tell(schedule, probe);
             
-            probe.ExpectMsg<ScheduleAddedSuccess<TestJobId>>(x => x.JobId == jobId);
+            probe.ExpectMsg<TestJobAck>();
             
             scheduler.AdvanceTo(when);
 
@@ -61,11 +62,13 @@ namespace Akkatecture.Tests.UnitTests.Jobs
             var when = DateTime.UtcNow.AddDays(1);
             
             var job = new TestJob(greeting);
-            var schedule = new ScheduleRepeatedly<TestJob, TestJobId>(jobId, jobRunner.Path, job, TimeSpan.FromMinutes(5), when);
+            var schedule = new ScheduleRepeatedly<TestJob, TestJobId>(jobId, jobRunner.Path, job, TimeSpan.FromMinutes(5), when)
+                .WithAck(TestJobAck.Instance)
+                .WithNack(TestJobNack.Instance);
             
             testJobScheduler.Tell(schedule, probe);
             
-            probe.ExpectMsg<ScheduleAddedSuccess<TestJobId>>(x => x.JobId == jobId);
+            probe.ExpectMsg<TestJobAck>();
             
             scheduler.AdvanceTo(when);
 
@@ -95,11 +98,13 @@ namespace Akkatecture.Tests.UnitTests.Jobs
             var when = DateTime.UtcNow.AddMonths(1);
             
             var job = new TestJob(greeting);
-            var schedule = new ScheduleCron<TestJob, TestJobId>(jobId, jobRunner.Path, job, cronExpression, when);
+            var schedule = new ScheduleCron<TestJob, TestJobId>(jobId, jobRunner.Path, job, cronExpression, when)
+                .WithAck(TestJobAck.Instance)
+                .WithNack(TestJobNack.Instance);
             
             testJobScheduler.Tell(schedule, probe);
             
-            probe.ExpectMsg<ScheduleAddedSuccess<TestJobId>>(x => x.JobId == jobId);
+            probe.ExpectMsg<TestJobAck>();
             
             scheduler.AdvanceTo(when);
             
@@ -129,6 +134,48 @@ namespace Akkatecture.Tests.UnitTests.Jobs
                 
                 return x.Greeting == greeting;
             });
+        }
+        
+        
+        [Fact]
+        [Category(Category)]
+        public void SchedulingJob_AndThenCancellingJob_CeasesDispatching()
+        {
+            
+            var probe = CreateTestProbe("job-handler");
+            var jobRunner = Sys.ActorOf(Props.Create(() => new TestJobRunner(probe.Ref)));
+            var jobId = TestJobId.New;
+            var scheduler = (TestScheduler) Sys.Scheduler;
+            var greeting = "Hi from the past";
+            var testJobScheduler = Sys.ActorOf(Props.Create(() => new TestJobScheduler()).WithDispatcher(CallingThreadDispatcher.Id), "test-job");
+            var when = DateTime.UtcNow.AddDays(1);
+            
+            var job = new TestJob(greeting);
+            var schedule = new ScheduleRepeatedly<TestJob, TestJobId>(jobId, jobRunner.Path, job, TimeSpan.FromMinutes(5), when)
+                .WithAck(TestJobAck.Instance)
+                .WithNack(TestJobNack.Instance);
+            
+            testJobScheduler.Tell(schedule, probe);
+            
+            probe.ExpectMsg<TestJobAck>();
+            
+            scheduler.AdvanceTo(when);
+
+            probe.ExpectMsg<TestJobDone>(x => x.Greeting == greeting);
+            
+            var cancelSchedule = new Cancel<TestJob, TestJobId>(jobId)
+                .WithAck(TestJobAck.Instance)
+                .WithNack(TestJobNack.Instance);
+            
+            testJobScheduler.Tell(cancelSchedule, probe);
+            
+            probe.ExpectMsg<TestJobAck>();
+            
+            scheduler.Advance(TimeSpan.FromMinutes(5));
+            
+            probe.ExpectNoMsg();
+            
+            
         }
         
     }

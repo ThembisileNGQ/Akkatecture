@@ -22,7 +22,6 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
 using Akka.Event;
@@ -30,7 +29,6 @@ using Akka.Persistence;
 using Akkatecture.Extensions;
 using Akkatecture.Jobs.Commands;
 using Akkatecture.Jobs.Events;
-using Akkatecture.Jobs.Responses;
 
 namespace Akkatecture.Jobs
 {
@@ -52,7 +50,7 @@ namespace Akkatecture.Jobs
             if ((this as TJobScheduler) == null)
             {
                 throw new InvalidOperationException(
-                    $"JobScheduler {Name} specifies Type={typeof(TJobScheduler).PrettyPrint()} as generic argument, it should be its own type.");
+                    $"JobScheduler for Job of Name={Name} specifies Type={typeof(TJobScheduler).PrettyPrint()} as generic argument, it should be its own type.");
             }
             Settings = new JobSchedulerSettings(Context.System.Settings.Config);
             State = SchedulerState<TJob, TIdentity>.New;
@@ -94,7 +92,7 @@ namespace Akkatecture.Jobs
             {
                 _jobDefinitionService.Load(schedule.Job.GetType());
                 var jobDefinition = _jobDefinitionService.GetDefinition(schedule.Job.GetType());
-                Log.Info("JobScheduler of Name={0}, sending job of Definition={1} to JobRunner at Path={2}.", Name, jobDefinition, schedule.JobRunner);
+                Log.Info("JobScheduler for Job of Name={0}; sending job of Definition={1} to JobRunner at Path={2}.", Name, jobDefinition, schedule.JobRunner);
 
                 var selection = Context.ActorSelection(schedule.JobRunner);
                 selection.Tell(schedule.Job, ActorRefs.NoSender);
@@ -118,26 +116,26 @@ namespace Akkatecture.Jobs
             var jobDefinition = _jobDefinitionService.GetDefinition(command.Job.GetType());
             try
             {
-                Emit(new Scheduled<TJob, TIdentity>(command), e =>
+                Emit(new Scheduled<TJob, TIdentity>(command.WithOutAcks()), e =>
                 {
                     ApplySchedulerEvent(e);
                     
-                    if (!sender.IsNobody())
+                    if (!sender.IsNobody() && command.Ack != null)
                     {
-                        sender.Tell(new ScheduleAddedSuccess<TIdentity>(e.Entry.JobId));
+                        sender.Tell(command.Ack);
                     }
                     
-                    Log.Info("JobScheduler for Job of Name={0}, Definition={1}, and Id={2}, has been successfully scheduled to run at TriggerDate={3}.", Name, jobDefinition, e.Entry.JobId, e.Entry.TriggerDate);
+                    Log.Info("JobScheduler for Job of Name={0}, Definition={1}, and Id={2}; has been successfully scheduled to run at TriggerDate={3}.", Name, jobDefinition, e.Entry.JobId, e.Entry.TriggerDate);
                 });
             }
             catch (Exception error)
             {
-                if (!sender.IsNobody())
+                if (!sender.IsNobody() && command.Nack != null)
                 {
-                    sender.Tell(new ScheduleAddedFailed<TIdentity>(new List<string>{error.Message}));
+                    sender.Tell(command.Nack);
                 }
                 
-                Log.Error(error,"JobScheduler for Job of Name={0}, and Definition={1}, has failed to schedule a job.", Name, jobDefinition);
+                Log.Error(error,"JobScheduler for Job of Name={0}, and Definition={1}; has failed to schedule a job.", Name, jobDefinition);
             }
 
             return true;
@@ -153,21 +151,21 @@ namespace Akkatecture.Jobs
                 Emit(new Cancelled<TJob, TIdentity>(command.JobId, now), e =>
                 {
                     ApplySchedulerEvent(e);
-                    if (!sender.IsNobody())
+                    if (!sender.IsNobody() && command.Ack != null)
                     {
-                        sender.Tell(new ScheduleAddedSuccess<TIdentity>(e.JobId));
+                        sender.Tell(command.Ack);
                     }
-                    Log.Info("JobScheduler for Job of Name={0}, and Id={1}, has been successfully cancelled.", Name, e.JobId);
+                    Log.Info("JobScheduler for Job of Name={0}, and Id={1}; has been successfully cancelled.", Name, e.JobId);
                 });
             }
             catch (Exception error)
             {
-                if (!sender.IsNobody())
+                if (!sender.IsNobody() && command.Nack != null)
                 {
-                    sender.Tell(new ScheduleAddedFailed<TIdentity>(new List<string>{error.Message}));
+                    sender.Tell(command.Nack);
                 }
                 
-                Log.Error(error,"JobScheduler for Job of Name={0}, and Id={1} has failed to cancel.", Name, jobId);
+                Log.Error(error,"JobScheduler for Job of Name={0}, and Id={1}; has failed to cancel.", Name, jobId);
             }
 
             return true;
@@ -175,7 +173,7 @@ namespace Akkatecture.Jobs
 
         private bool Execute(SaveSnapshotSuccess command)
         {
-            Log.Debug("JobScheduler for Job of Name={0} Successfully saved its scheduler snapshot. Removing all events before SequenceNr={1}.", Name ,command.Metadata.SequenceNr);
+            Log.Debug("JobScheduler for Job of Name={0}; Successfully saved its scheduler snapshot. Removing all events before SequenceNr={1}.", Name ,command.Metadata.SequenceNr);
             DeleteMessages(command.Metadata.SequenceNr - 1);
 
             return true;
@@ -183,21 +181,21 @@ namespace Akkatecture.Jobs
         
         private bool Execute(SaveSnapshotFailure command)
         {
-            Log.Error(command.Cause, "Job of Name={0} at SequenceNr={1}, Failed to save scheduler snapshot.", Name, command.Metadata.SequenceNr);
+            Log.Error(command.Cause, "JobScheduler for Job of Name={0}, at SequenceNr={1}; Failed to save scheduler snapshot.", Name, command.Metadata.SequenceNr);
 
             return true;
         }
         
         private bool Execute(DeleteMessagesSuccess command)
         {
-            Log.Debug( "Job of Name={0} at SequenceNr={1}, deleted scheduler messages to SequenceNr={2}.", Name, LastSequenceNr, command.ToSequenceNr);
+            Log.Debug( "Job of Name={0} at SequenceNr={1}; deleted scheduler messages to SequenceNr={2}.", Name, LastSequenceNr, command.ToSequenceNr);
 
             return true;
         }
         
         private bool Execute(DeleteMessagesFailure command)
         {
-            Log.Error(command.Cause, "Job of Name={0} at SequenceNr={1}, Failed to delete scheduler messages to SequenceNr={2}.", Name, LastSequenceNr, command.ToSequenceNr);
+            Log.Error(command.Cause, "Job of Name={0} at SequenceNr={1}; Failed to delete scheduler messages to SequenceNr={2}.", Name, LastSequenceNr, command.ToSequenceNr);
 
             return true;
         }
