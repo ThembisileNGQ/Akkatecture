@@ -52,12 +52,12 @@ namespace Akkatecture.Jobs.Commands
             TriggerDate = triggerDate;
         } 
 
-        public virtual Schedule<TJob,TIdentity> WithNextTriggerDate(DateTime utcDate)
+        public virtual Schedule<TJob, TIdentity> WithNextTriggerDate(DateTime utcDate)
         {
             return null;
         }
         
-        public virtual Schedule<TJob,TIdentity> WithAck(object ack)
+        public virtual Schedule<TJob, TIdentity> WithAck(object ack)
         {
             return new Schedule<TJob, TIdentity>(JobId, JobRunner, Job, TriggerDate, ack, Nack);
         }
@@ -66,5 +66,12 @@ namespace Akkatecture.Jobs.Commands
         {
             return new Schedule<TJob, TIdentity>(JobId, JobRunner, Job, TriggerDate, Ack, nack);
         }
+
+        public virtual Schedule<TJob, TIdentity> WithOutAcks()
+        {
+            return WithAck(null).WithNack(null);
+        }
+        
+        
     }
 }
