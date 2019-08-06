@@ -39,12 +39,13 @@ namespace Akkatecture.Aggregates
         protected ILoggingAdapter Logger { get; set; }
         protected Func<DeadLetter, bool> DeadLetterHandler => Handle;
         public AggregateManagerSettings Settings { get; }
+        public string Name { get; }
 
         protected AggregateManager()
         {
             Logger = Context.GetLogger();
             Settings = new AggregateManagerSettings(Context.System.Settings.Config);
-
+            Name = GetType().PrettyPrint();
             Receive<Terminated>(Terminate);
 
             if(Settings.AutoDispatchOnReceive)
@@ -60,7 +61,7 @@ namespace Akkatecture.Aggregates
 
         protected virtual bool Dispatch(TCommand command)
         {
-            Logger.Info("{0} received {1}", GetType().PrettyPrint(),command.GetType().PrettyPrint());
+            Logger.Info("AggregateManager of Type={0}; has received a command of Type={1}", Name, command.GetType().PrettyPrint());
 
             var aggregateRef = FindOrCreate(command.AggregateId);
 
@@ -72,7 +73,7 @@ namespace Akkatecture.Aggregates
 
         protected virtual bool ReDispatch(TCommand command)
         {
-            Logger.Info("{0} as dead letter {1}",GetType().PrettyPrint(), command.GetType().PrettyPrint());
+            Logger.Info("AggregateManager of Type={0}; is ReDispatching deadletter of Type={1}", Name, command.GetType().PrettyPrint());
 
             var aggregateRef = FindOrCreate(command.AggregateId);
 
@@ -130,7 +131,7 @@ namespace Akkatecture.Aggregates
                 localOnlyDecider: x =>
                 {
 
-                    logger.Warning("{0} will supervise Exception={1} to be decided as {2}.",GetType().PrettyPrint(), x.ToString(), Directive.Restart);
+                    logger.Warning("AggregateManager of Type={0}; will supervise Exception={1} to be decided as {2}.",Name, x.ToString(), Directive.Restart);
                     return Directive.Restart;
                 });
         }

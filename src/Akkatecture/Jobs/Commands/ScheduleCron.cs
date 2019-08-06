@@ -37,15 +37,15 @@ namespace Akkatecture.Jobs.Commands
 
         public ScheduleCron(
             TIdentity jobId,
-            ActorPath jobRunner,
             TJob job,
             string cronExpression,
             DateTime triggerDate,
             object ack = null,
             object nack = null)
-            : base(jobId, jobRunner, job, triggerDate, ack, nack)
+            : base(jobId, job, triggerDate, ack, nack)
         {
             if (string.IsNullOrWhiteSpace(cronExpression)) throw new ArgumentNullException(nameof(cronExpression));
+            
             CronExpression = cronExpression;
             _expression = Cronos.CronExpression.Parse(cronExpression);
         }
@@ -54,19 +54,19 @@ namespace Akkatecture.Jobs.Commands
         {
             var next = _expression.GetNextOccurrence(utcDate);
             if (next.HasValue)
-                return new ScheduleCron<TJob, TIdentity>(JobId, JobRunner, Job, CronExpression, next.Value);
+                return new ScheduleCron<TJob, TIdentity>(JobId, Job, CronExpression, next.Value);
             
             return null;
         }
         
         public override Schedule<TJob,TIdentity> WithAck(object ack)
         {
-            return new ScheduleCron<TJob, TIdentity>(JobId, JobRunner, Job, CronExpression, TriggerDate, ack, Nack);
+            return new ScheduleCron<TJob, TIdentity>(JobId, Job, CronExpression, TriggerDate, ack, Nack);
         }
         
         public override Schedule<TJob,TIdentity> WithNack(object nack)
         {
-            return new ScheduleCron<TJob, TIdentity>(JobId, JobRunner, Job, CronExpression, TriggerDate, Ack, nack);
+            return new ScheduleCron<TJob, TIdentity>(JobId, Job, CronExpression, TriggerDate, Ack, nack);
         }
     }
 }

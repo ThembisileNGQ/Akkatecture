@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - IExecute interface as an alternative way to add command handlers to the aggregate.
 - JobScheduler and JobRunner actor types for scheduling jobs.
+- receive timeouts for aggregate roots.
+
 ### Changed
 - AggregateRoot and AggregateSaga logging members are using Eventsourced.Log member.
 

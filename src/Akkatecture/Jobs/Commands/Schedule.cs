@@ -30,24 +30,20 @@ namespace Akkatecture.Jobs.Commands
         where TJob : IJob
         where TIdentity : IJobId
     {
-        public ActorPath JobRunner { get; }
         public TJob Job { get; }
         public DateTime TriggerDate  { get; }
         
         public Schedule(
-            TIdentity jobId, 
-            ActorPath jobRunner, 
+            TIdentity jobId,
             TJob job,
             DateTime triggerDate,
             object ack = null,
             object nack = null)
             : base(jobId, ack, nack)
         {
-            if (jobRunner == null) throw new ArgumentNullException(nameof(jobRunner));
             if (job == null) throw new ArgumentNullException(nameof(job));
             if (triggerDate == default) throw new ArgumentException(nameof(triggerDate));
             
-            JobRunner = jobRunner;
             Job = job;
             TriggerDate = triggerDate;
         } 
@@ -59,12 +55,12 @@ namespace Akkatecture.Jobs.Commands
         
         public virtual Schedule<TJob, TIdentity> WithAck(object ack)
         {
-            return new Schedule<TJob, TIdentity>(JobId, JobRunner, Job, TriggerDate, ack, Nack);
+            return new Schedule<TJob, TIdentity>(JobId, Job, TriggerDate, ack, Nack);
         }
         
         public virtual Schedule<TJob,TIdentity> WithNack(object nack)
         {
-            return new Schedule<TJob, TIdentity>(JobId, JobRunner, Job, TriggerDate, Ack, nack);
+            return new Schedule<TJob, TIdentity>(JobId, Job, TriggerDate, Ack, nack);
         }
 
         public virtual Schedule<TJob, TIdentity> WithOutAcks()

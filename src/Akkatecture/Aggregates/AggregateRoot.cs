@@ -114,6 +114,8 @@ namespace Akkatecture.Aggregates
             }
             
             InitReceives();
+            SetReceiveTimeout(Settings.SetReceiveTimeout);
+            Command<ReceiveTimeout>(Timeout);
 
         }
 
@@ -474,6 +476,13 @@ namespace Akkatecture.Aggregates
             return $"{GetType().PrettyPrint()} v{Version}";
         }
 
+        public bool Timeout(ReceiveTimeout message)
+        {
+            Log.Debug("Aggregate of Name={0}, and Id={1}; has received a timeout message and will stop.", Name, Id);
+            Context.Stop(Self);
+            return true;
+        }
+        
         public override void AroundPreRestart(Exception cause, object message)
         {
             Log.Error(cause, "Aggregate of Name={0}, and Id={1}; has experienced an error and will now restart", Name, Id);

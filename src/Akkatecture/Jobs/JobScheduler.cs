@@ -1,5 +1,8 @@
 // The MIT License (MIT)
 //
+// Copyright (c) 2017-2019 Bartosz Sypytkowski
+// Modified from original source https://github.com/Horusiath/Akka.Persistence.Reminders
+//
 // Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
 // 
@@ -32,17 +35,17 @@ using Akkatecture.Jobs.Events;
 
 namespace Akkatecture.Jobs
 {
-    public class JobScheduler<TJobScheduler, TJob, TIdentity> : ReceivePersistentActor, IJobScheduler
+    public class JobScheduler<TJobScheduler, TJob, TIdentity> : ReceivePersistentActor, IJobScheduler<TIdentity>
         where TJobScheduler : JobScheduler<TJobScheduler, TJob, TIdentity>
         where TJob : IJob
         where TIdentity : IJobId
     {
-        private readonly ICancelable _tickerTask;
         private static readonly IJobName JobName = typeof(TJob).GetJobName();
-        public IJobName Name => JobName;
+        private readonly ICancelable _tickerTask;
         private readonly IJobDefinitionService _jobDefinitionService;
-        public SchedulerState<TJob, TIdentity> State { get; private set; }
-        public JobSchedulerSettings Settings { get; }
+        public IJobName Name => JobName;
+        protected SchedulerState<TJob, TIdentity> State { get; private set; }
+        protected JobSchedulerSettings Settings { get; }
         public override string PersistenceId { get; }
 
         public JobScheduler()
@@ -52,11 +55,12 @@ namespace Akkatecture.Jobs
                 throw new InvalidOperationException(
                     $"JobScheduler for Job of Name={Name} specifies Type={typeof(TJobScheduler).PrettyPrint()} as generic argument, it should be its own type.");
             }
+            
             Settings = new JobSchedulerSettings(Context.System.Settings.Config);
             State = SchedulerState<TJob, TIdentity>.New;
-            
-            
-            PersistenceId = Settings.PersistenceId;
+
+
+            PersistenceId = $"{Name}-scheduler";
             JournalPluginId = Settings.JournalPluginId;
             SnapshotPluginId = Settings.SnapshotPluginId;
             
@@ -92,10 +96,10 @@ namespace Akkatecture.Jobs
             {
                 _jobDefinitionService.Load(schedule.Job.GetType());
                 var jobDefinition = _jobDefinitionService.GetDefinition(schedule.Job.GetType());
-                Log.Info("JobScheduler for Job of Name={0}; sending job of Definition={1} to JobRunner at Path={2}.", Name, jobDefinition, schedule.JobRunner);
+                Log.Info("JobScheduler for Job of Name={0}; sending job of Definition={1} to JobRunner.", Name, jobDefinition);
 
-                var selection = Context.ActorSelection(schedule.JobRunner);
-                selection.Tell(schedule.Job, ActorRefs.NoSender);
+                var manager = Context.ActorSelection(Context.Parent.Path.Parent);
+                manager.Tell(schedule.Job, ActorRefs.NoSender);
 
                 Emit(new Finished<TJob, TIdentity>(schedule.JobId, now), ApplySchedulerEvent);
 
@@ -241,6 +245,7 @@ namespace Akkatecture.Jobs
         protected override void PostStop()
         {
             _tickerTask.Cancel();
+            Log.Info("JobScheduler for Job Name={0} has stopped.", Name);
             base.PostStop();
         }
     }

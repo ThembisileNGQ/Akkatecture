@@ -27,4 +27,10 @@ namespace Akkatecture.Jobs
     {
         
     }
+    
+    public interface IJobScheduler<out TIdentity>
+        where TIdentity : IJobId
+    {
+        
+    }
 }
