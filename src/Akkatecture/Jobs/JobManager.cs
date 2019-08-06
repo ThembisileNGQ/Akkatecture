@@ -45,8 +45,8 @@ namespace Akkatecture.Jobs
             Expression<Func<TJobScheduler>> jobSchedulerFactory,
             Expression<Func<TJobRunner>> jobRunnerFactory)
         {
-            var runnerProps = Props.Create(jobRunnerFactory).WithDispatcher("akka.test.calling-thread-dispatcher");
-            var schedulerProps = Props.Create(jobSchedulerFactory).WithDispatcher("akka.test.calling-thread-dispatcher");
+            var runnerProps = Props.Create(jobRunnerFactory).WithDispatcher(Context.Props.Dispatcher);
+            var schedulerProps = Props.Create(jobSchedulerFactory).WithDispatcher(Context.Props.Dispatcher);
             var runnerName = $"{Name}-runner";
             var schedulerName = $"{Name}-scheduler";
             
@@ -58,7 +58,7 @@ namespace Akkatecture.Jobs
                         TimeSpan.FromSeconds(10),
                         TimeSpan.FromSeconds(60),
                         0.2,
-                        3)).WithDispatcher("akka.test.calling-thread-dispatcher");
+                        3)).WithDispatcher(Context.Props.Dispatcher);
             
             var schedulerSupervisorProps = 
                 BackoffSupervisor.Props(
@@ -68,7 +68,7 @@ namespace Akkatecture.Jobs
                         TimeSpan.FromSeconds(10),
                         TimeSpan.FromSeconds(60),
                         0.2,
-                        3)).WithDispatcher("akka.test.calling-thread-dispatcher");
+                        3)).WithDispatcher(Context.Props.Dispatcher);
             
             JobRunner = Context.ActorOf(runnerSupervisorProps,$"{runnerName}-supervisor");
             JobScheduler = Context.ActorOf(schedulerSupervisorProps,$"{schedulerName}-supervisor");

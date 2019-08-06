@@ -47,6 +47,7 @@ namespace Akkatecture.Jobs.Commands
             Interval = interval;
         }
         
+        public override Schedule<TJob,TIdentity> WithNextTriggerDate(DateTime utcDate) => new ScheduleRepeatedly<TJob,TIdentity>(JobId, Job, Interval, TriggerDate + Interval);
         
         public override Schedule<TJob,TIdentity> WithAck(object ack)
         {
