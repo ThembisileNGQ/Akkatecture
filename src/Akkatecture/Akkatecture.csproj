@@ -3,6 +3,7 @@
     <PropertyGroup>
         <ProjectGuid>{294B5F75-4BF1-4CD1-AA98-1369A4E4ACDE}</ProjectGuid>
         <RootNamespace>Akkatecture</RootNamespace>
+        <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
   <PropertyGroup>

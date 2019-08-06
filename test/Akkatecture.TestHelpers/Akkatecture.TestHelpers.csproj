@@ -3,6 +3,7 @@
   <PropertyGroup>
     <ProjectGuid>{D9461EE2-175F-4F2B-AD75-FB93C09ABCDE}</ProjectGuid>
     <SonarQubeExclude>true</SonarQubeExclude>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup>
