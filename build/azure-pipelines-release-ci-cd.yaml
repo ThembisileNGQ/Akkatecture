@@ -24,66 +24,42 @@ jobs:
       buildConfiguration: 'Release'
 
     steps:
-    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
-      displayName: 'Restore [Akkatecture]'
-      inputs:
-        FakeVersion: 5.15.3
-        FakeScript: build/build.fsx
-        ScriptArguments: '--single-target --target Restore'
-        WorkingDirectory: build/
+    - template: templates/fake-template.yaml
+      parameters:
+        displayName: 'Restore [Akkatecture]'
+        target: Restore
 
-    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
-      displayName: 'Prepare Analysis [Akkatecture]'
-      inputs:
-        FakeVersion: 5.15.3
-        FakeScript: build/build.fsx
-        ScriptArguments: '--single-target --target SonarQubeStart'
-        WorkingDirectory: build/
+    - template: templates/fake-template.yaml
+      parameters:
+        displayName: 'Prepare Analysis [Akkatecture]'
+        target: SonarQubeStart
 
-    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
-      displayName: 'Build [Akkatecture]'
-      inputs:
-        FakeVersion: 5.15.3
-        FakeScript: build/build.fsx
-        ScriptArguments: '--single-target --target Build'
-        WorkingDirectory: build/
+    - template: templates/fake-template.yaml
+      parameters:
+        displayName: 'Build [Akkatecture]'
+        target: Build
 
-    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
-      displayName: 'Test [Akkatecture.Tests]'
-      inputs:
-        FakeVersion: 5.15.3
-        FakeScript: build/build.fsx
-        ScriptArguments: '--single-target --target Test'
-        WorkingDirectory: build/
+    - template: templates/fake-template.yaml
+      parameters:
+        displayName: 'Test [Akkatecture.Tests]'
+        target: Test
 
-    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
-      displayName: 'Test [Akkatecture.Tests.MultiNode]'
-      inputs:
-        FakeVersion: 5.15.3
-        FakeScript: build/build.fsx
-        ScriptArguments: '--single-target --target MultiNodeTest'
-        WorkingDirectory: build/
+    - template: templates/fake-template.yaml
+      parameters:
+        displayName: 'Test [Akkatecture.Tests.MultiNode]'
+        target: MultiNodeTest
 
-    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
-      displayName: 'Run Analysis [Akkatecture]'
-      inputs:
-        FakeVersion: 5.15.3
-        FakeScript: build/build.fsx
-        ScriptArguments: '--single-target --target SonarQubeEnd'
-        WorkingDirectory: build/
+    - template: templates/fake-template.yaml
+      parameters:
+        displayName: 'Run Analysis [Akkatecture]'
+        target: SonarQubeEnd
 
-    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
-      displayName: 'Push Packages [Akkatecture]'
-      inputs:
-        FakeVersion: 5.15.3
-        FakeScript: build/build.fsx
-        ScriptArguments: '--single-target --target Push'
-        WorkingDirectory: build/
+    - template: templates/fake-template.yaml
+      parameters:
+        displayName: 'Push Packages [Akkatecture]'
+        target: Push
 
-    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
-      displayName: 'Push Packages [Akkatecture]'
-      inputs:
-        FakeVersion: 5.15.3
-        FakeScript: build/build.fsx
-        ScriptArguments: '--single-target --target GitHubRelease'
-        WorkingDirectory: build/
+    - template: templates/fake-template.yaml
+      parameters:
+        displayName: 'GitHub Release [Akkatecture]'
+        target: GitHubRelease
