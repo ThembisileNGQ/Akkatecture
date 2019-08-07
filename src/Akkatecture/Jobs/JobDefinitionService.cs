@@ -1,4 +1,4 @@
-﻿// The MIT License (MIT)
+// The MIT License (MIT)
 //
 // Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
@@ -22,26 +22,21 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using Akka.Configuration;
-using Akkatecture.Configuration;
+using Akka.Event;
+using Akkatecture.Core.VersionedTypes;
 
-namespace Akkatecture.Aggregates
+namespace Akkatecture.Jobs
 {
-    public class AggregateRootSettings
+    public class JobDefinitionService : VersionedTypeDefinitionService<IJob, JobVersionAttribute, JobDefinition>, IJobDefinitionService
     {
-        private static readonly string _section = "akkatecture.aggregate-root";
-        public readonly bool UseDefaultEventRecover;
-        public readonly bool UseDefaultSnapshotRecover;
-        public readonly TimeSpan SetReceiveTimeout;
-
-        public AggregateRootSettings(Config config)
+        public JobDefinitionService(ILoggingAdapter logger)
+            : base(logger)
         {
-            var aggregateRootConfig = config.GetConfig(_section);
-            aggregateRootConfig = aggregateRootConfig ?? AkkatectureDefaultSettings.DefaultConfig().GetConfig(_section);
+        }
 
-            UseDefaultEventRecover = aggregateRootConfig.GetBoolean("use-default-event-recover");
-            UseDefaultSnapshotRecover = aggregateRootConfig.GetBoolean("use-default-snapshot-recover");
-            SetReceiveTimeout = aggregateRootConfig.GetTimeSpan("set-receive-timeout");
+        protected override JobDefinition CreateDefinition(int version, Type type, string name)
+        {
+            return new JobDefinition(version, type, name);
         }
     }
 }

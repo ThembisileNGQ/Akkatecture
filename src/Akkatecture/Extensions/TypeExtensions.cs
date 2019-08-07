@@ -34,6 +34,7 @@ using Akkatecture.Aggregates;
 using Akkatecture.Aggregates.Snapshot;
 using Akkatecture.Core;
 using Akkatecture.Events;
+using Akkatecture.Jobs;
 using Akkatecture.Sagas;
 using Akkatecture.Subscribers;
 
@@ -118,6 +119,48 @@ namespace Akkatecture.Extensions
                         t.GetTypeInfo().GetCustomAttributes<SagaNameAttribute>().SingleOrDefault()?.Name ??
                         t.Name);
                 });
+        }
+        
+        private static readonly ConcurrentDictionary<Type, JobName> JobNames = new ConcurrentDictionary<Type, JobName>();
+
+        public static JobName GetJobName(
+            this Type jobType)
+        {
+            return JobNames.GetOrAdd(
+                jobType,
+                t =>
+                {
+                    if (!typeof(IJob).GetTypeInfo().IsAssignableFrom(jobType))
+                    {
+                        throw new ArgumentException($"Type '{jobType.PrettyPrint()}' is not a job");
+                    }
+
+                    return new JobName(
+                        t.GetTypeInfo().GetCustomAttributes<JobNameAttribute>().SingleOrDefault()?.Name ??
+                        t.Name);
+                });
+        }
+
+        internal static IReadOnlyDictionary<Type, Action<T, IAggregateEvent>> GetAggregateEventApplyMethods<TAggregate, TIdentity, T>(this Type type)
+            where TAggregate : IAggregateRoot<TIdentity>
+            where TIdentity : IIdentity
+        {
+            var aggregateEventType = typeof(IAggregateEvent<TAggregate, TIdentity>);
+
+            return type
+                .GetTypeInfo()
+                .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .Where(mi =>
+                {
+                    if (mi.Name != "Apply") return false;
+                    var parameters = mi.GetParameters();
+                    return
+                        parameters.Length == 1 &&
+                        aggregateEventType.GetTypeInfo().IsAssignableFrom(parameters[0].ParameterType);
+                })
+                .ToDictionary(
+                    mi => mi.GetParameters()[0].ParameterType,
+                    mi => ReflectionHelper.CompileMethodInvocation<Action<T, IAggregateEvent>>(type, "Apply", mi.GetParameters()[0].ParameterType));
         }
         
         internal static IReadOnlyDictionary<Type, Action<T, IAggregateSnapshot>> GetAggregateSnapshotHydrateMethods<TAggregate, TIdentity, T>(this Type type)
@@ -263,6 +306,21 @@ namespace Akkatecture.Extensions
                 });
         }
         
+        internal static IReadOnlyList<Type> GetJobRunTypes(this Type type)
+        {
+            var interfaces = type
+                .GetTypeInfo()
+                .GetInterfaces()
+                .Select(i => i.GetTypeInfo())
+                .ToList();
+            var jobRunTypes = interfaces
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRun<>))
+                .Select(i =>   i.GetGenericArguments()[0])
+                .ToList();
+            
+
+            return jobRunTypes;
+        }
         
         internal static IReadOnlyList<Type> GetAsyncSagaEventSubscriptionTypes(this Type type)
         {

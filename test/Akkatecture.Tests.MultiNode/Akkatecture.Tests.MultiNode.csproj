@@ -4,6 +4,7 @@
     <TargetFramework>$(NetCoreAppVersion)</TargetFramework>
     <NoWarn>xUnit1013</NoWarn>
     <IsPackable>false</IsPackable>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,4 +1,4 @@
-﻿// The MIT License (MIT)
+// The MIT License (MIT)
 //
 // Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
@@ -22,26 +22,34 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using Akka.Configuration;
-using Akkatecture.Configuration;
+using Akkatecture.ValueObjects;
 
-namespace Akkatecture.Aggregates
+namespace Akkatecture.Jobs
 {
-    public class AggregateRootSettings
+    public abstract class SchedulerMessage<TJob, TIdentity> : ValueObject
+        where TJob : IJob
+        where TIdentity : IJobId
     {
-        private static readonly string _section = "akkatecture.aggregate-root";
-        public readonly bool UseDefaultEventRecover;
-        public readonly bool UseDefaultSnapshotRecover;
-        public readonly TimeSpan SetReceiveTimeout;
+        
+    }
+    public abstract class SchedulerCommand<TJob, TIdentity> : SchedulerMessage<TJob, TIdentity>
+        where TJob : IJob
+        where TIdentity : IJobId
+    {
+        public TIdentity JobId { get; }
+        public object Ack { get; }
+        public object Nack { get; }
 
-        public AggregateRootSettings(Config config)
+        public SchedulerCommand(
+            TIdentity jobId,
+            object ack = null,
+            object nack = null)
         {
-            var aggregateRootConfig = config.GetConfig(_section);
-            aggregateRootConfig = aggregateRootConfig ?? AkkatectureDefaultSettings.DefaultConfig().GetConfig(_section);
-
-            UseDefaultEventRecover = aggregateRootConfig.GetBoolean("use-default-event-recover");
-            UseDefaultSnapshotRecover = aggregateRootConfig.GetBoolean("use-default-snapshot-recover");
-            SetReceiveTimeout = aggregateRootConfig.GetTimeSpan("set-receive-timeout");
+            if (jobId == null) throw new ArgumentNullException(nameof(jobId));
+            
+            JobId = jobId;
+            Ack = ack;
+            Nack = nack;
         }
     }
 }

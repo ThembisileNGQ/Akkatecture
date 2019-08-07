@@ -21,13 +21,15 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using Akka.Configuration;
+
 namespace Akkatecture.TestHelpers.Akka
 {
     public static class Configuration
     {
         public static string Config =
-            @"  akka.loglevel = ""OFF""
-                akka.stdout-loglevel = ""OFF""
+            @"  akka.loglevel = ""INFO""
+                akka.stdout-loglevel = ""INFO""
                 akka.actor.serialize-messages = on
                 loggers = [""Akka.TestKit.TestEventListener, Akka.TestKit""] 
                 akka.persistence.snapshot-store {
@@ -42,5 +44,12 @@ namespace Akkatecture.TestHelpers.Akka
                     plugin-dispatcher = ""akka.actor.default-dispatcher""
                 }
             ";
+        
+        public static Config ConfigWithTestScheduler =
+
+            ConfigurationFactory.ParseString(@"
+                akkatecture.job-scheduler.tick-interval = 250ms
+                akka.scheduler.implementation = ""Akka.TestKit.TestScheduler, Akka.TestKit""").WithFallback(
+                ConfigurationFactory.ParseString(Config));
     }
 }

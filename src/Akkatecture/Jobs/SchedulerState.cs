@@ -1,4 +1,4 @@
-﻿// The MIT License (MIT)
+// The MIT License (MIT)
 //
 // Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
@@ -21,27 +21,25 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
-using Akka.Configuration;
-using Akkatecture.Configuration;
+using System.Collections.Immutable;
+using Akkatecture.Jobs.Commands;
 
-namespace Akkatecture.Aggregates
+namespace Akkatecture.Jobs
 {
-    public class AggregateRootSettings
+    public class SchedulerState<TJob, TIdentity>
+        where TJob : IJob
+        where TIdentity : IJobId
     {
-        private static readonly string _section = "akkatecture.aggregate-root";
-        public readonly bool UseDefaultEventRecover;
-        public readonly bool UseDefaultSnapshotRecover;
-        public readonly TimeSpan SetReceiveTimeout;
+        public static SchedulerState<TJob, TIdentity> New { get; } = new SchedulerState<TJob, TIdentity>(ImmutableDictionary<TIdentity, Schedule<TJob,TIdentity>>.Empty);
 
-        public AggregateRootSettings(Config config)
+        public ImmutableDictionary<TIdentity, Schedule<TJob, TIdentity>> Entries { get; }
+        public SchedulerState(
+            ImmutableDictionary<TIdentity, Schedule<TJob,TIdentity>> entries)
         {
-            var aggregateRootConfig = config.GetConfig(_section);
-            aggregateRootConfig = aggregateRootConfig ?? AkkatectureDefaultSettings.DefaultConfig().GetConfig(_section);
-
-            UseDefaultEventRecover = aggregateRootConfig.GetBoolean("use-default-event-recover");
-            UseDefaultSnapshotRecover = aggregateRootConfig.GetBoolean("use-default-snapshot-recover");
-            SetReceiveTimeout = aggregateRootConfig.GetTimeSpan("set-receive-timeout");
+            Entries = entries;
         }
+        
+        public SchedulerState<TJob, TIdentity> AddEntry(Schedule<TJob,TIdentity> entry) => new SchedulerState<TJob, TIdentity>(Entries.SetItem(entry.JobId, entry));
+        public SchedulerState<TJob, TIdentity> RemoveEntry(TIdentity jobId) => new SchedulerState<TJob, TIdentity>(Entries.Remove(jobId));
     }
 }

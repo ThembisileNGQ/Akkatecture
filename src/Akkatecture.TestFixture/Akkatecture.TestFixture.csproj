@@ -3,6 +3,7 @@
   <PropertyGroup>
     <ProjectGuid>{0CB7A8CC-E3CD-481C-81C9-BA830DC32361}</ProjectGuid>
     <RootNamespace>Akkatecture.TestFixture</RootNamespace>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup>

@@ -1,4 +1,4 @@
-﻿// The MIT License (MIT)
+// The MIT License (MIT)
 //
 // Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
@@ -22,26 +22,41 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using Akka.Configuration;
-using Akkatecture.Configuration;
+using Akka.Actor;
+using Akkatecture.Jobs;
 
-namespace Akkatecture.Aggregates
+namespace Akkatecture.TestHelpers.Jobs
 {
-    public class AggregateRootSettings
+    public class TestJobRunner : JobRunner<TestJob, TestJobId>,
+        IRun<TestJob>
     {
-        private static readonly string _section = "akkatecture.aggregate-root";
-        public readonly bool UseDefaultEventRecover;
-        public readonly bool UseDefaultSnapshotRecover;
-        public readonly TimeSpan SetReceiveTimeout;
+        public IActorRef ProbeRef { get; }
 
-        public AggregateRootSettings(Config config)
+        public TestJobRunner(
+            IActorRef probeRef)
         {
-            var aggregateRootConfig = config.GetConfig(_section);
-            aggregateRootConfig = aggregateRootConfig ?? AkkatectureDefaultSettings.DefaultConfig().GetConfig(_section);
+            ProbeRef = probeRef;
+        }
 
-            UseDefaultEventRecover = aggregateRootConfig.GetBoolean("use-default-event-recover");
-            UseDefaultSnapshotRecover = aggregateRootConfig.GetBoolean("use-default-snapshot-recover");
-            SetReceiveTimeout = aggregateRootConfig.GetTimeSpan("set-receive-timeout");
+        public bool Run(TestJob job)
+        {
+            var time = Context.System.Settings.System.Scheduler.Now.DateTime;
+            ProbeRef.Tell(new TestJobDone(job.Greeting, time));
+
+            return true;
+        }
+    }
+
+    public class TestJobDone
+    {
+        public string Greeting { get; }
+        public DateTime At { get; }
+        public TestJobDone(
+            string greeting,
+            DateTime at)
+        {
+            Greeting = greeting;
+            At = at;
         }
     }
 }

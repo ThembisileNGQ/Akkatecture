@@ -1,4 +1,4 @@
-﻿// The MIT License (MIT)
+// The MIT License (MIT)
 //
 // Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
@@ -21,27 +21,29 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
-using Akka.Configuration;
-using Akkatecture.Configuration;
-
-namespace Akkatecture.Aggregates
+namespace Akkatecture.Jobs.Commands
 {
-    public class AggregateRootSettings
+    public class Cancel<TJob, TIdentity> : SchedulerCommand<TJob, TIdentity>
+        where TJob : IJob
+        where TIdentity : IJobId
     {
-        private static readonly string _section = "akkatecture.aggregate-root";
-        public readonly bool UseDefaultEventRecover;
-        public readonly bool UseDefaultSnapshotRecover;
-        public readonly TimeSpan SetReceiveTimeout;
-
-        public AggregateRootSettings(Config config)
+        public Cancel(
+            TIdentity jobId,
+            object ack = null,
+            object nack = null)
+            : base(jobId, ack, nack)
         {
-            var aggregateRootConfig = config.GetConfig(_section);
-            aggregateRootConfig = aggregateRootConfig ?? AkkatectureDefaultSettings.DefaultConfig().GetConfig(_section);
-
-            UseDefaultEventRecover = aggregateRootConfig.GetBoolean("use-default-event-recover");
-            UseDefaultSnapshotRecover = aggregateRootConfig.GetBoolean("use-default-snapshot-recover");
-            SetReceiveTimeout = aggregateRootConfig.GetTimeSpan("set-receive-timeout");
+            
+        }
+        
+        public virtual Cancel<TJob, TIdentity> WithAck(object ack)
+        {
+            return new Cancel<TJob, TIdentity>(JobId, ack, Nack);
+        }
+        
+        public virtual Cancel<TJob,TIdentity> WithNack(object nack)
+        {
+            return new Cancel<TJob, TIdentity>(JobId, Ack, nack);
         }
     }
 }

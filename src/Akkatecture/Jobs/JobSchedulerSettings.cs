@@ -1,4 +1,4 @@
-﻿// The MIT License (MIT)
+// The MIT License (MIT)
 //
 // Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
@@ -25,23 +25,22 @@ using System;
 using Akka.Configuration;
 using Akkatecture.Configuration;
 
-namespace Akkatecture.Aggregates
+namespace Akkatecture.Jobs
 {
-    public class AggregateRootSettings
+    public class JobSchedulerSettings
     {
-        private static readonly string _section = "akkatecture.aggregate-root";
-        public readonly bool UseDefaultEventRecover;
-        public readonly bool UseDefaultSnapshotRecover;
-        public readonly TimeSpan SetReceiveTimeout;
+        public string JournalPluginId { get; }
+        public string SnapshotPluginId { get; }
+        public TimeSpan TickInterval { get; }
 
-        public AggregateRootSettings(Config config)
+        public JobSchedulerSettings(Config config)
         {
-            var aggregateRootConfig = config.GetConfig(_section);
-            aggregateRootConfig = aggregateRootConfig ?? AkkatectureDefaultSettings.DefaultConfig().GetConfig(_section);
-
-            UseDefaultEventRecover = aggregateRootConfig.GetBoolean("use-default-event-recover");
-            UseDefaultSnapshotRecover = aggregateRootConfig.GetBoolean("use-default-snapshot-recover");
-            SetReceiveTimeout = aggregateRootConfig.GetTimeSpan("set-receive-timeout");
+            var schedulerConfig = config.WithFallback(AkkatectureDefaultSettings.DefaultConfig());
+            
+            schedulerConfig = schedulerConfig.GetConfig("akkatecture.job-scheduler");
+            JournalPluginId = schedulerConfig.GetString("journal-plugin-id");
+            SnapshotPluginId = schedulerConfig.GetString("snapshot-plugin-id");
+            TickInterval = schedulerConfig.GetTimeSpan("tick-interval");
         }
     }
 }
