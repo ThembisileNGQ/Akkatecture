@@ -37,7 +37,7 @@ using Xunit.Abstractions;
 namespace Akkatecture.Tests.UnitTests.Jobs
 {
     [Collection("ScheduledJobsTests")]
-    public class ScheduledJobsTests: TestKit
+    public class ScheduledJobsTests : TestKit
     {
         private const string Category = "Jobs";
 
@@ -57,6 +57,7 @@ namespace Akkatecture.Tests.UnitTests.Jobs
             var greeting = $"hi here here is a random guid {Guid.NewGuid()}";
             var job = new TestJob(greeting);
             var when = DateTime.UtcNow.AddDays(1);
+            var day = TimeSpan.FromDays(1);
             Expression<Func<TestJobScheduler>> testJobSchedulerExpression = () => new TestJobScheduler();
             Expression<Func<TestJobRunner>> testJobRunnerExpression = () => new TestJobRunner(probe);
             
@@ -84,7 +85,11 @@ namespace Akkatecture.Tests.UnitTests.Jobs
                 x.At.Should().BeCloseTo(when);
                 return x.Greeting == greeting;
             });
-            scheduler.AdvanceTo(when.AddDays(1));
+            scheduler.Advance(day);
+            probe.ExpectNoMsg();
+            scheduler.Advance(day);
+            probe.ExpectNoMsg();
+            scheduler.Advance(day);
             probe.ExpectNoMsg();
         }
         
@@ -116,7 +121,7 @@ namespace Akkatecture.Tests.UnitTests.Jobs
             
             
             testJobManager.Tell(schedule, probe);
-            probe.ExpectMsg<TestJobAck>(TimeSpan.FromMinutes(1));
+            probe.ExpectMsg<TestJobAck>();
             scheduler.AdvanceTo(when);
             
             
