@@ -30,13 +30,10 @@ jobs:
       buildConfiguration: 'Release'
 
     steps:
-    - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
+    - template: templates/fake-template.yaml
       displayName: 'Restore [Akkatecture]'
-      inputs:
-        FakeVersion: 5.15.3
-        FakeScript: build/build.fsx
-        ScriptArguments: '--single-target --target Restore'
-        WorkingDirectory: build/
+      parameters:
+        target: Restore
 
     - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
       displayName: 'Prepare Analysis [Akkatecture]'
