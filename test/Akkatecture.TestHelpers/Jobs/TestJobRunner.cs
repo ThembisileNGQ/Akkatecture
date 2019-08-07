@@ -23,6 +23,7 @@
 
 using System;
 using Akka.Actor;
+using Akka.Event;
 using Akkatecture.Jobs;
 
 namespace Akkatecture.TestHelpers.Jobs
@@ -42,7 +43,7 @@ namespace Akkatecture.TestHelpers.Jobs
         {
             var time = Context.System.Settings.System.Scheduler.Now.DateTime;
             ProbeRef.Tell(new TestJobDone(job.Greeting, time));
-
+            Context.GetLogger().Info("JobRunner has processed TestJob.");
             return true;
         }
     }

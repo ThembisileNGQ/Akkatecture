@@ -48,7 +48,7 @@ namespace Akkatecture.TestHelpers.Akka
         public static Config ConfigWithTestScheduler =
 
             ConfigurationFactory.ParseString(@"
-                akkatecture.job-scheduler.tick-interval = 250ms
+                akkatecture.job-scheduler.tick-interval = 500ms
                 akka.scheduler.implementation = ""Akka.TestKit.TestScheduler, Akka.TestKit""").WithFallback(
                 ConfigurationFactory.ParseString(Config));
     }
