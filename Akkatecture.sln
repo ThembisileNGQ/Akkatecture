@@ -76,6 +76,9 @@ ProjectSection(SolutionItems) = preProject
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "jobs", "jobs", "{94E321E7-073B-4B06-874B-A411D6971A7F}"
+ProjectSection(SolutionItems) = preProject
+	examples\jobs\README.md = examples\jobs\README.md
+EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akkatecture.Examples.Jobs", "examples\jobs\Akkatecture.Examples.Jobs\Akkatecture.Examples.Jobs.csproj", "{D1FC3A57-86CD-4A83-8604-7811BF707022}"
 EndProject
