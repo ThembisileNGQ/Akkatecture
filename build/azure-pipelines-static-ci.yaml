@@ -10,12 +10,18 @@ pr:
   branches:
     include:
     - '*'
+  paths:
+    exclude:
+      - 'README.md'
+      - 'CODE_OF_CONDUCT.md'
+      - 'CHANGELOG.md'
+      - 'THIRD-PARTY-NOTICES.txt'
 
 variables:
   branch: "master"
   majorVersion: '0'
-  minorVersion: '4'
-  patchVersion: '6'
+  minorVersion: '5'
+  patchVersion: '0'
   feedVersion: 'pr'
   dayOfYear: $(DayOfYear)
   revCounter: $(BuildRevision)

@@ -10,8 +10,8 @@ pr: none
 variables:
   branch: "master"
   majorVersion: '0'
-  minorVersion: '4'
-  patchVersion: '6'
+  minorVersion: '5'
+  patchVersion: '0'
   feedVersion: 'nuget'
 
 name: ${{ format('{0}.{1}.{2}', variables.majorVersion, variables.minorVersion, variables.patchVersion) }}
