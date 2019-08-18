@@ -21,6 +21,7 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
 using Akka.Configuration;
 using Akkatecture.Configuration;
 
@@ -28,16 +29,19 @@ namespace Akkatecture.Aggregates
 {
     public class AggregateRootSettings
     {
+        private static readonly string _section = "akkatecture.aggregate-root";
         public readonly bool UseDefaultEventRecover;
         public readonly bool UseDefaultSnapshotRecover;
+        public readonly TimeSpan SetReceiveTimeout;
 
         public AggregateRootSettings(Config config)
         {
             var aggregateRootConfig = config.WithFallback(AkkatectureDefaultSettings.DefaultConfig());
-            aggregateRootConfig = aggregateRootConfig.GetConfig("akkatecture.aggregate-root");
+            aggregateRootConfig = aggregateRootConfig.GetConfig(_section);
 
             UseDefaultEventRecover = aggregateRootConfig.GetBoolean("use-default-event-recover");
             UseDefaultSnapshotRecover = aggregateRootConfig.GetBoolean("use-default-snapshot-recover");
+            SetReceiveTimeout = aggregateRootConfig.GetTimeSpan("set-receive-timeout");
         }
     }
 }

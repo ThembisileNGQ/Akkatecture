@@ -25,7 +25,7 @@ using Akkatecture.Aggregates;
 using Akkatecture.Aggregates.Snapshot;
 using Akkatecture.Sagas;
 using Akkatecture.TestHelpers.Aggregates.Entities;
-using Akkatecture.TestHelpers.Aggregates.Sagas.Events;
+using Akkatecture.TestHelpers.Aggregates.Sagas.TestAsync.Events;
 
 namespace Akkatecture.TestHelpers.Aggregates.Sagas.TestAsync
 {

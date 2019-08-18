@@ -3,39 +3,31 @@
   <PropertyGroup>
     <ProjectGuid>{FE32A6E6-7356-43DE-996B-122878AD4FD9}</ProjectGuid>
     <SonarQubeExclude>true</SonarQubeExclude>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>$(NetCoreAppVersion)</TargetFramework>
     <IsPackable>false</IsPackable>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <Title>Akkatecture.Tests</Title>
-    <Authors>Lutando Ngqakaza</Authors>
-    <Company>Lutando Ngqakaza</Company>
-    <Copyright>Copyright (c) Lutando Ngqakaza 2018 - 2019</Copyright>
     <Description>
       Akkatecture's unit and integration test project.
     </Description>
-    <PackageTags>akka cqrs es eventsourcing</PackageTags>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/Lutando/Akkatecture</RepositoryUrl>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <NeutralLanguage>en-GB</NeutralLanguage>
-    <PackageReleaseNotes>Externally Updated</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Akka" Version="1.3.13" />
-    <PackageReference Include="Akka.Cluster.TestKit" Version="1.3.13" />
-    <PackageReference Include="Akka.TestKit.Xunit2" Version="1.3.13" />
-    <PackageReference Include="coverlet.msbuild" Version="2.6.3" />
-    <PackageReference Include="FluentAssertions" Version="5.7.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
-    <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
+    <PackageReference Include="Akka" Version="$(AkkaVersion)" />
+    <PackageReference Include="Akka.Cluster.TestKit" Version="$(AkkaClusterTestKitVersion)" />
+    <PackageReference Include="Akka.TestKit.Xunit2" Version="$(AkkaTestKitXunitVersion)" />
+    <PackageReference Include="coverlet.msbuild" Version="$(CoverletMSBuildVersion)" />
+    <PackageReference Include="FluentAssertions" Version="$(FluentAssertionsVersion)" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(TestSdkVersion)" />
+    <PackageReference Include="xunit" Version="$(XunitVersion)" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="$(XunitRunnerVSVersion)" />
   </ItemGroup>
 
   <ItemGroup>

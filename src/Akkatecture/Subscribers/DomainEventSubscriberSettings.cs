@@ -28,13 +28,14 @@ namespace Akkatecture.Subscribers
 {
     public class DomainEventSubscriberSettings
     {
+        private static readonly string _section = "akkatecture.domain-event-subscriber";
         public readonly bool AutoSubscribe;
         public readonly bool AutoReceive;
 
         public DomainEventSubscriberSettings(Config config)
         {
             var domainEventSubscriberConfig = config.WithFallback(AkkatectureDefaultSettings.DefaultConfig());
-            domainEventSubscriberConfig = domainEventSubscriberConfig.GetConfig("akkatecture.domain-event-subscriber");
+            domainEventSubscriberConfig = domainEventSubscriberConfig.GetConfig(_section);
 
             AutoSubscribe = domainEventSubscriberConfig.GetBoolean("auto-subscribe");
             AutoReceive = domainEventSubscriberConfig.GetBoolean("auto-receive");

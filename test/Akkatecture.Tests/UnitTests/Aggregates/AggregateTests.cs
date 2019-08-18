@@ -21,7 +21,6 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Akka.Actor;
@@ -76,7 +75,6 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
         public async Task SendingCommand_ToAggregateRoot_ShouldReplyWithProperMessage()
         {
             var eventProbe = CreateTestProbe("event-probe");
-            var commandProbe = CreateTestProbe("command-probe");
             Sys.EventStream.Subscribe(eventProbe, typeof(IDomainEvent<TestAggregate, TestAggregateId, TestCreatedEvent>));
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
             
@@ -339,7 +337,7 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             var commandId = CommandId.New;
             var command = new TestSuccessExecutionResultCommand(aggregateId, commandId);
             
-            var result = await aggregateManager.Ask<SuccessExecutionResult>(command);
+            await aggregateManager.Ask<SuccessExecutionResult>(command);
         }
         
         [Fact]
@@ -350,14 +348,15 @@ namespace Akkatecture.Tests.UnitTests.Aggregates
             var aggregateId = TestAggregateId.New;
             var commandId = CommandId.New;
             var command = new TestFailedExecutionResultCommand(aggregateId, commandId);
-            
-            var result = await aggregateManager.Ask<FailedExecutionResult>(command);
+
+            await aggregateManager.Ask<FailedExecutionResult>(command);
         }
         [Fact]
         [Category(Category)]
         public void TestDistinctCommand_AfterTwoHandles_CommandFails()
         {
-           /*
+            // TODO https://dev.azure.com/lutando/Akkatecture/_workitems/edit/25
+           /* 
             var probe = CreateTestProbe("event-probe");
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
             var aggregateId = TestAggregateId.New;

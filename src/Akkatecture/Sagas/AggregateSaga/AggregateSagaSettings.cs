@@ -28,13 +28,14 @@ namespace Akkatecture.Sagas.AggregateSaga
 {
     public class AggregateSagaSettings
     {
+        private static string _section = "akkatecture.aggregate-saga";
         public readonly bool AutoReceive;
         public readonly bool UseDefaultEventRecover;
         public readonly bool UseDefaultSnapshotRecover;
         public AggregateSagaSettings(Config config)
         {
             var aggregateSagaConfig = config.WithFallback(AkkatectureDefaultSettings.DefaultConfig());
-            aggregateSagaConfig = aggregateSagaConfig.GetConfig("akkatecture.aggregate-saga");
+            aggregateSagaConfig = aggregateSagaConfig.GetConfig(_section);
 
             AutoReceive = aggregateSagaConfig.GetBoolean("auto-receive");
             UseDefaultEventRecover = aggregateSagaConfig.GetBoolean("use-default-event-recover");

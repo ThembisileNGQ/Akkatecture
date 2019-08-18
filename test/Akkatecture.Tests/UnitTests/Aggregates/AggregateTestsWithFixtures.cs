@@ -26,7 +26,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Akka.TestKit.Xunit2;
-using Akkatecture.Aggregates;
 using Akkatecture.Commands;
 using Akkatecture.TestFixture.Aggregates;
 using Akkatecture.TestFixture.Extensions;

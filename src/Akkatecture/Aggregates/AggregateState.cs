@@ -26,8 +26,6 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using Akkatecture.Aggregates.Snapshot;
 using Akkatecture.Core;
 using Akkatecture.Extensions;
 

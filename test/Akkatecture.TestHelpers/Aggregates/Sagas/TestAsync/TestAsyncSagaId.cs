@@ -23,7 +23,7 @@
 
 using Akkatecture.Sagas;
 
-namespace Akkatecture.TestHelpers.Aggregates.Sagas
+namespace Akkatecture.TestHelpers.Aggregates.Sagas.TestAsync
 {
     public class TestAsyncSagaId : SagaId<TestAsyncSagaId>
     {

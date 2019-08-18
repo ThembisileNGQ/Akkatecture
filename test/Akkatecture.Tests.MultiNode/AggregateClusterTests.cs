@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using Akka.Actor;
 using Akka.Cluster.Sharding;
 using Akka.Cluster.TestKit;
@@ -9,10 +10,8 @@ using Akka.Remote.TestKit;
 using Akkatecture.Clustering.Configuration;
 using Akkatecture.Clustering.Core;
 using Akkatecture.Commands;
-using Akkatecture.TestHelpers;
 using Akkatecture.TestHelpers.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Commands;
-using FluentAssertions;
 
 namespace Akkatecture.Tests.MultiNode
 {
@@ -60,6 +59,7 @@ namespace Akkatecture.Tests.MultiNode
             
         }
     }
+    [SuppressMessage("ReSharper", "xUnit1013")]
     public class AggregateClusterTests : MultiNodeClusterSpec
     {
         private readonly AggregateClusterTestConfig _config;
@@ -159,7 +159,7 @@ namespace Akkatecture.Tests.MultiNode
                     _aggregateManagerProxy.Value.Tell(new CreateTestCommand(aggregateId, commandId), probe);
 
                     probe.ExpectMsg<TestExecutionResult>(
-                        x => x.Result.IsSuccess == true 
+                        x => x.Result.IsSuccess
                                && x.SourceId.Value == commandId.Value ,TimeSpan.FromSeconds(10));
                     
                 }, _config.Client);

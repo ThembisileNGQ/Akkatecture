@@ -22,9 +22,8 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using Akkatecture.Aggregates;
-using Akkatecture.TestHelpers.Aggregates.Sagas.TestAsync;
 
-namespace Akkatecture.TestHelpers.Aggregates.Sagas.Events
+namespace Akkatecture.TestHelpers.Aggregates.Sagas.TestAsync.Events
 {
     public class TestAsyncSagaCompletedEvent : AggregateEvent<TestAsyncSaga, TestAsyncSagaId>
     {

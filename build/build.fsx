@@ -151,6 +151,7 @@ let endpointCredentials : EndpointCredentials =
                  yield internalCredential.Value }
     
     {EndpointCredentials = Seq.toList credentials}
+
 // --------------------------------------------------------------------------------------
 // Build Current Working Directory
 // --------------------------------------------------------------------------------------
@@ -398,7 +399,7 @@ Target.create "GitHubRelease" (fun _ ->
                 yield "*see the [changelog](https://github.com/Lutando/Akkatecture/blob/dev/CHANGELOG.md) for all other release information*"
             } 
         GitHub.createClientWithToken githubKey.Value
-        |> GitHub.draftNewRelease "Lutando" "Akkatecture" buildNumber true releaseNotes
+        |> GitHub.draftNewRelease "Lutando" "Akkatecture" buildNumber false releaseNotes
         |> GitHub.publishDraft
         |> Async.RunSynchronously
 
@@ -430,4 +431,4 @@ Target.create "Default" DoNothing
   ==> "MultiNodeTest"
   ==> "Default"
 
-Target.runOrDefault "Build"
+Target.runOrDefault "Default"

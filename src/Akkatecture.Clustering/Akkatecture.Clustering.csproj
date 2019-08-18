@@ -6,27 +6,21 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>$(NetStandardVersion)</TargetFramework>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <Title>Akkatecture.Clustering</Title>
-    <Authors>Lutando Ngqakaza</Authors>
-    <Company>Lutando Ngqakaza</Company>
-    <Copyright>Copyright (c) Lutando Ngqakaza 2018 - 2019</Copyright>
+  </PropertyGroup>
+  
+  <PropertyGroup>
     <Description>
-      a cqrs and event sourcing framework for akka.net
+      clustering library for akkatecture to enable distributed scenarios
     </Description>
-    <PackageTags>akka cqrs es eventsourcing clustering actors microservices actor-model</PackageTags>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/Lutando/Akkatecture</RepositoryUrl>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <NeutralLanguage>en-GB</NeutralLanguage>
-    <PackageReleaseNotes>Externally Updated</PackageReleaseNotes>
-    <PackageIconUrl>https://akkatecture.net/logos/logo-512.png</PackageIconUrl>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <PackageTags>
+      akka;cqrs;es;eventsourcing;clustering;actors;microservices;actor-model
+    </PackageTags>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -34,11 +28,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Akka.Cluster" Version="1.3.13" />
-    <PackageReference Include="Akka.Cluster.Sharding" Version="1.3.12-beta" />
-    <PackageReference Include="Akka.Cluster.Tools" Version="1.3.13" />
-    <PackageReference Include="Akka.Persistence" Version="1.3.13" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-19367-01" PrivateAssets="All" />
+    <PackageReference Include="Akka.Cluster" Version="$(AkkaClusterVersion)" />
+    <PackageReference Include="Akka.Cluster.Sharding" Version="$(AkkaClusterShardingVersion)" />
+    <PackageReference Include="Akka.Cluster.Tools" Version="$(AkkaClusterToolsVersion)" />
+    <PackageReference Include="Akka.Persistence" Version="$(AkkaPersistenceVersion)" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(SourceLinkGithubVersion)" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>

@@ -26,6 +26,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Akkatecture.Core;
 using FluentAssertions;
 using Xunit;
@@ -98,6 +99,7 @@ namespace Akkatecture.Tests.UnitTests.Core
             public int I { get; set; }
         }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
         public class Calculator
         {
             public int Add(int a, int b)

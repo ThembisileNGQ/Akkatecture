@@ -43,95 +43,26 @@ using Akka.MultiNodeTestRunner.Shared.Persistence;
 using Akka.MultiNodeTestRunner.Shared.Sinks;
 using Akka.Remote.TestKit;
 using Xunit;
+using Xunit.Sdk;
 
 namespace Akkatecture.MultiNodeTestRunner
 {
-    /// <summary>
-    /// Entry point for the MultiNodeTestRunner
-    /// </summary>
-    class Program
+    public class Program
     {
         private static HashSet<string> _validNetCorePlatform = new HashSet<string>
         {
-            "net",
             "netcore"
         };
 
         protected static ActorSystem TestRunSystem;
         protected static IActorRef SinkCoordinator;
-
-        /// <summary>
-        /// file output directory
-        /// </summary>
         protected static string OutputDirectory;
-
         protected static bool TeamCityFormattingOn;
-
-        /// <summary>
-        /// MultiNodeTestRunner takes the following <see cref="args"/>:
-        /// 
-        /// C:\> Akka.MultiNodeTestRunner.exe [assembly name] [-Dmultinode.enable-filesink=on] [-Dmultinode.output-directory={dir path}] [-Dmultinode.spec={spec name}]
-        /// 
-        /// <list type="number">
-        /// <listheader>
-        ///     <term>Argument</term>
-        ///     <description>The name and possible value of a given Akka.MultiNodeTestRunner.exe argument.</description>
-        /// </listheader>
-        /// <item>
-        ///     <term>AssemblyName</term>
-        ///     <description>
-        ///         The full path or name of an assembly containing as least one MultiNodeSpec in the current working directory.
-        /// 
-        ///         i.e. "Akka.Cluster.Tests.MultiNode.dll"
-        ///              "C:\akka.net\src\Akka.Cluster.Tests\bin\Debug\Akka.Cluster.Tests.MultiNode.dll"
-        ///     </description>
-        /// </item>
-        /// <item>
-        ///     <term>-Dmultinode.enable-filesink</term>
-        ///     <description>Having this flag set means that the contents of this test run will be saved in the
-        ///                 current working directory as a .JSON file.
-        ///     </description>
-        /// </item>
-        /// <item>
-        ///     <term>-Dmultinode.multinode.output-directory</term>
-        ///     <description>Setting this flag means that any persistent multi-node test runner output files
-        ///                  will be written to this directory instead of the default, which is the same folder
-        ///                  as the test binary.
-        ///     </description>
-        /// </item>
-        /// <item>
-        ///     <term>-Dmultinode.listen-address={ip}</term>
-        ///     <description>
-        ///             Determines the address that this multi-node test runner will use to listen for log messages from
-        ///             individual NodeTestRunner.exe processes.
-        /// 
-        ///             Defaults to 127.0.0.1
-        ///     </description>
-        /// </item>
-        /// <item>
-        ///     <term>-Dmultinode.listen-port={port}</term>
-        ///     <description>
-        ///             Determines the port number that this multi-node test runner will use to listen for log messages from
-        ///             individual NodeTestRunner.exe processes.
-        /// 
-        ///             Defaults to 6577
-        ///     </description>
-        /// </item>
-        /// <item>
-        ///     <term>-Dmultinode.spec={spec name}</term>
-        ///     <description>
-        ///             Setting this flag means that only tests which contains the spec name will be executed
-        ///             otherwise all tests will be executed
-        ///     </description>
-        /// </item>
-        /// </list>
-        /// </summary>
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             OutputDirectory = CommandLine.GetPropertyOrDefault("multinode.output-directory", string.Empty);
             TestRunSystem = ActorSystem.Create("TestRunnerLogging");
 
-            var suiteName = Path.GetFileNameWithoutExtension(Path.GetFullPath(args[0].Trim('"')));
             var teamCityFormattingOn = CommandLine.GetPropertyOrDefault("multinode.teamcity", "false");
             if (!Boolean.TryParse(teamCityFormattingOn, out TeamCityFormattingOn))
                 throw new ArgumentException("Invalid argument provided for -Dteamcity");
@@ -253,8 +184,9 @@ namespace Akkatecture.MultiNodeTestRunner
                                 var process = new Process
                                 {
                                     StartInfo = new ProcessStartInfo
+                                        
                                     {
-                                        FileName = fileName,
+                                        FileName = fileName ?? throw new NullException(nameof(fileName)),
                                         UseShellExecute = false,
                                         RedirectStandardOutput = true,
                                         Arguments = sbArguments.ToString(),
@@ -308,7 +240,6 @@ namespace Akkatecture.MultiNodeTestRunner
                             foreach (var process in processes)
                             {
                                 process.WaitForExit();
-                                var exitCode = process.ExitCode;
                                 process.Dispose();
                             }
 
@@ -351,12 +282,7 @@ namespace Akkatecture.MultiNodeTestRunner
             Environment.Exit(ExitCodeContainer.ExitCode);
         }
 
-        static string ChangeDllPathPlatform(string path, string targetPlatform)
-        {
-            return Path.GetFullPath(Path.Combine(Path.GetDirectoryName(path), "..", targetPlatform, Path.GetFileName(path)));
-        }
-
-        static void EnableAllSinks(string assemblyName, string platform)
+        private static void EnableAllSinks(string assemblyName, string platform)
         {
             var now = DateTime.UtcNow;
 
@@ -412,18 +338,16 @@ namespace Akkatecture.MultiNodeTestRunner
             SinkCoordinator.Tell(new SinkCoordinator.RunnerMessage(message));
         }
 
-        private static void PublishToAllSinks(string message)
-        {
-            SinkCoordinator.Tell(message, ActorRefs.NoSender);
-        }
     }
 
     internal class TcpLoggingServer : ReceiveActor
     {
-        private readonly ILoggingAdapter _log = Context.GetLogger();
+        private readonly ILoggingAdapter _log;
 
         public TcpLoggingServer(IActorRef sinkCoordinator)
         {
+            _log =  Context.GetLogger();
+            
             Receive<Tcp.Connected>(connected =>
             {
                 _log.Info($"Node connected on {Sender}");

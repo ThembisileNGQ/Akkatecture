@@ -35,7 +35,7 @@ namespace Akkatecture.Subscribers
 {
     public abstract class DomainEventSubscriber : ReceiveActor
     {
-        private IReadOnlyList<Type> _subscriptionTypes { get; }
+        private IReadOnlyList<Type> SubscriptionTypes { get; }
         protected ILoggingAdapter Logger { get; }
         public DomainEventSubscriberSettings Settings { get; }
 
@@ -43,7 +43,7 @@ namespace Akkatecture.Subscribers
         {
             Logger = Context.GetLogger();
             Settings = new DomainEventSubscriberSettings(Context.System.Settings.Config);
-            _subscriptionTypes = new List<Type>();
+            SubscriptionTypes = new List<Type>();
             
             if (Settings.AutoSubscribe)
             {
@@ -62,9 +62,9 @@ namespace Akkatecture.Subscribers
                 subscriptionTypes.AddRange(asyncDomainEventSubscriptionTypes);
                 subscriptionTypes.AddRange(domainEventsubscriptionTypes);
 
-                _subscriptionTypes = subscriptionTypes;
+                SubscriptionTypes = subscriptionTypes;
                 
-                foreach (var subscriptionType in _subscriptionTypes)
+                foreach (var subscriptionType in SubscriptionTypes)
                 {
                     Context.System.EventStream.Subscribe(Self, subscriptionType);
                 }
@@ -179,7 +179,7 @@ namespace Akkatecture.Subscribers
         
         protected void UnsubscribeFromAllTopics()
         {
-            foreach (var type in _subscriptionTypes)
+            foreach (var type in SubscriptionTypes)
             {
                 Context.System.EventStream.Unsubscribe(Self, type);
             }

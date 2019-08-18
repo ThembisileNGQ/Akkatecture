@@ -6,13 +6,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2019-08-18
+
 ### Added
-- xUnit2 TestOutputHelper logging
-- Akkatecture.Clustering Multi Node Tests
-- FAKE build system
-- Delete Previous Snapshot 
-- CHANGELOG.
-- CODE_OF_CONDUCT.
+- `IExecute` interface as an alternative way to add command handlers to the aggregate.
+- `JobScheduler` and `JobRunner` actor types for scheduling persistent jobs. 
+- receive timeouts for aggregate roots.
+
+### Changed
+- `AggregateRoot` and `AggregateSaga` logging members are using `Eventsourced.Log` member.
+
+## [0.4.6] - 2019-07-27
+
+### Added
+- xUnit2 TestOutputHelper logging.
+- Akkatecture.Clustering Multi Node Tests.
+- FAKE build system.
+- Delete Previous Snapshot .
+- CHANGELOG.md.
+- CODE_OF_CONDUCT.md.
+- THIRD-PARTY-NOTICES.txt.
 
 ## [0.4.5] - 2019-05-15
 
@@ -20,14 +33,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Logging to use string format + params rather than interpolation.
 
 ### Fixed
-- CommittedSnapshot name from ComittedSnapshot.
+- `CommittedSnapshot` name from `ComittedSnapshot`.
 - AggregateRoot.EmitAll(...) to allow for more generic cases to be handled.
 
 ## [0.4.4] - 2019-05-09
 
 ### Added
-- DomainEventMapper that maps from journal events to.
-- AggregateTestFixture support for asserting aggregate root replies.
+- `DomainEventMapper` that maps from journal events to.
+- `AggregateTestFixture` support for asserting aggregate root replies.
 
 ### Changed
 - Access levels for aggregate root properties to be more private.
@@ -154,7 +167,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MIT License.
 - Project logo.
 
-[Unreleased]: https://github.com/Lutando/Akkatecture/compare/0.4.5...HEAD
+[Unreleased]: https://github.com/Lutando/Akkatecture/compare/0.5.0...HEAD
+[0.5.0]: https://github.com/Lutando/Akkatecture/compare/0.4.6...0.5.0
+[0.4.6]: https://github.com/Lutando/Akkatecture/compare/0.4.5...0.4.6
 [0.4.5]: https://github.com/Lutando/Akkatecture/compare/0.4.4...0.4.5
 [0.4.4]: https://github.com/Lutando/Akkatecture/compare/0.4.3...0.4.4
 [0.4.3]: https://github.com/Lutando/Akkatecture/compare/0.4.2...0.4.3

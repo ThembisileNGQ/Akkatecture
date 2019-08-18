@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using Akka.Actor;
 using Akka.Cluster.Sharding;
 using Akka.Cluster.TestKit;
@@ -13,9 +14,8 @@ using Akkatecture.Commands;
 using Akkatecture.TestHelpers.Aggregates;
 using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Entities;
-using Akkatecture.TestHelpers.Aggregates.Sagas;
-using Akkatecture.TestHelpers.Aggregates.Sagas.Events;
 using Akkatecture.TestHelpers.Aggregates.Sagas.Test;
+using Akkatecture.TestHelpers.Aggregates.Sagas.Test.Events;
 
 namespace Akkatecture.Tests.MultiNode
 {
@@ -65,6 +65,7 @@ namespace Akkatecture.Tests.MultiNode
         }
     }
     
+    [SuppressMessage("ReSharper", "xUnit1013")]
     public class AggregateSagaClusterTests :  MultiNodeClusterSpec
     {
         public static Guid TestIdNamespace = Guid.Parse("9b235972-af6b-47eb-bcfe-09e8941fb2a7");
@@ -195,7 +196,7 @@ namespace Akkatecture.Tests.MultiNode
                 _aggregateProxy.Value.Tell(new CreateTestCommand(sender, commandId), senderProbe);
 
                 senderProbe.ExpectMsg<TestExecutionResult>(
-                    x => x.Result.IsSuccess == true 
+                    x => x.Result.IsSuccess 
                          && x.SourceId.Value == commandId.Value ,TimeSpan.FromSeconds(10));
                 
                 
@@ -203,7 +204,7 @@ namespace Akkatecture.Tests.MultiNode
                 _aggregateProxy.Value.Tell(nextAggregateCommand, senderProbe);
 
                 senderProbe.ExpectMsg<TestExecutionResult>(
-                    x => x.Result.IsSuccess == true, TimeSpan.FromSeconds(10));
+                    x => x.Result.IsSuccess, TimeSpan.FromSeconds(10));
                 
                 // set up receiver
                 var receiverProbe = CreateTestProbe("receiver-probe");
@@ -211,7 +212,7 @@ namespace Akkatecture.Tests.MultiNode
                 _aggregateProxy.Value.Tell(new CreateTestCommand(receiver, commandId2), receiverProbe);
 
                 receiverProbe.ExpectMsg<TestExecutionResult>(
-                    x => x.Result.IsSuccess == true 
+                    x => x.Result.IsSuccess 
                          && x.SourceId.Value == commandId2.Value ,TimeSpan.FromSeconds(10));
 
             }, _config.Client);
@@ -236,7 +237,7 @@ namespace Akkatecture.Tests.MultiNode
                 _aggregateProxy.Value.Tell(nextAggregateCommand,senderProbe);
                     
                 senderProbe.ExpectMsg<TestExecutionResult>(
-                    x => x.Result.IsSuccess == true, TimeSpan.FromSeconds(10));
+                    x => x.Result.IsSuccess, TimeSpan.FromSeconds(10));
                     
             }, _config.Client);
             

@@ -24,9 +24,8 @@
 using System;
 using System.Linq.Expressions;
 using Akkatecture.Sagas.AggregateSaga;
-using Akkatecture.TestHelpers.Aggregates.Sagas.Test;
 
-namespace Akkatecture.TestHelpers.Aggregates.Sagas
+namespace Akkatecture.TestHelpers.Aggregates.Sagas.Test
 {
     public class TestSagaManager : AggregateSagaManager<TestSaga,TestSagaId,TestSagaLocator>
     {

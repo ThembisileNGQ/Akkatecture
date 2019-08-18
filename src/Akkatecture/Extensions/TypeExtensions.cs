@@ -34,6 +34,7 @@ using Akkatecture.Aggregates;
 using Akkatecture.Aggregates.Snapshot;
 using Akkatecture.Core;
 using Akkatecture.Events;
+using Akkatecture.Jobs;
 using Akkatecture.Sagas;
 using Akkatecture.Subscribers;
 
@@ -116,6 +117,26 @@ namespace Akkatecture.Extensions
 
                     return new AggregateName(
                         t.GetTypeInfo().GetCustomAttributes<SagaNameAttribute>().SingleOrDefault()?.Name ??
+                        t.Name);
+                });
+        }
+        
+        private static readonly ConcurrentDictionary<Type, JobName> JobNames = new ConcurrentDictionary<Type, JobName>();
+
+        public static JobName GetJobName(
+            this Type jobType)
+        {
+            return JobNames.GetOrAdd(
+                jobType,
+                t =>
+                {
+                    if (!typeof(IJob).GetTypeInfo().IsAssignableFrom(jobType))
+                    {
+                        throw new ArgumentException($"Type '{jobType.PrettyPrint()}' is not a job");
+                    }
+
+                    return new JobName(
+                        t.GetTypeInfo().GetCustomAttributes<JobNameAttribute>().SingleOrDefault()?.Name ??
                         t.Name);
                 });
         }
@@ -202,6 +223,22 @@ namespace Akkatecture.Extensions
 
             return domainEventTypes;
         }
+        
+        internal static IReadOnlyList<Type> GetAggregateExecuteTypes(this Type type)
+        {
+            var interfaces = type
+                .GetTypeInfo()
+                .GetInterfaces()
+                .Select(i => i.GetTypeInfo())
+                .ToList();
+            var domainEventTypes = interfaces
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IExecute<>))
+                .Select(i =>   i.GetGenericArguments()[0])
+                .ToList();
+            
+
+            return domainEventTypes;
+        }
 
         internal static IReadOnlyList<Type> GetDomainEventSubscriberSubscriptionTypes(this Type type)
         {
@@ -269,6 +306,21 @@ namespace Akkatecture.Extensions
                 });
         }
         
+        internal static IReadOnlyList<Type> GetJobRunTypes(this Type type)
+        {
+            var interfaces = type
+                .GetTypeInfo()
+                .GetInterfaces()
+                .Select(i => i.GetTypeInfo())
+                .ToList();
+            var jobRunTypes = interfaces
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRun<>))
+                .Select(i =>   i.GetGenericArguments()[0])
+                .ToList();
+            
+
+            return jobRunTypes;
+        }
         
         internal static IReadOnlyList<Type> GetAsyncSagaEventSubscriptionTypes(this Type type)
         {
