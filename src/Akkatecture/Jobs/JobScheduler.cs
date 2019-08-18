@@ -139,7 +139,7 @@ namespace Akkatecture.Jobs
                     sender.Tell(command.Nack);
                 }
                 
-                Log.Error(error,"JobScheduler for Job of Name={0}, and Definition={1}; has failed to schedule a job.", Name, jobDefinition);
+                Log.Error(error,"JobScheduler for Job of Name={0}, and Definition={1}, and Id={2}; has failed to schedule a job.", Name, jobDefinition, command.JobId);
             }
 
             return true;
