@@ -32,11 +32,12 @@ namespace Akkatecture.Examples.Jobs
         public bool Run(PrintJob job)
         {
             //Only thing that print runner does is it prints out the contents of the job message
+            var time = Context.System.Scheduler.Now.DateTime;
             Context
                 .GetLogger()
                 .Info(
                     "PrinJobRunner at Timestamp={0}, is printing Content={1}",
-                    Context.System.Scheduler.Now.DateTime,
+                    time,
                     job.Content);
 
             return true;

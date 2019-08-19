@@ -22,5 +22,3 @@ This is the console application that creates the actor system and interfaces wit
 In this sample, we instantiate the actor system and the various domain entities required for it to work. The domain entity required to 
 initialize this, is the `UserAccountAggregateManager`. We then interface with the domain by telling the manager to create user accounts 
 by instantiating and telling it a `CreateUserAccountCommand`.
-
-> to run the application in jetbrains rider or visual studio code, run the `Akkatecture.Examples.Application` configuration in the IDE.

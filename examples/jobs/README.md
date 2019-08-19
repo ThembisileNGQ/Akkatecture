@@ -19,8 +19,4 @@ This is the console application that creates the actor system and interfaces wit
 
 ### Description
 
-In this sample, we instantiate the actor system and the various domain entities required for it to work. The domain entity required to 
-initialize this, is the `UserAccountAggregateManager`. We then interface with the domain by telling the manager to create user accounts 
-by instantiating and telling it a `CreateUserAccountCommand`.
-
-> to run the application in jetbrains rider or visual studio code, run the `Akkatecture.Examples.Application` configuration in the IDE.
+This sample shows how to print a log statement every 10 seconds that is scheduled by a persisted scheduled job. As configured by the configuration item `akkatecture.job-scheduler.tick-interval = 500ms`, the scheduler will poll itself for any new jobs to be triggered. If a new job is to be trigger, the scheduler will send the job command to the job runner via the parent (`JobManager`). The job manager receives this message and then processes it like any other akka actor would.
