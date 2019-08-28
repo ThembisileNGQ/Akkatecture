@@ -39,10 +39,15 @@ namespace Akkatecture.Subscribers
         protected ILoggingAdapter Logger { get; }
         public DomainEventSubscriberSettings Settings { get; }
 
-        protected DomainEventSubscriber()
+        protected DomainEventSubscriber(
+            DomainEventSubscriberSettings settings = null)
         {
             Logger = Context.GetLogger();
-            Settings = new DomainEventSubscriberSettings(Context.System.Settings.Config);
+            if (settings == null)
+                Settings = new DomainEventSubscriberSettings(Context.System.Settings.Config);
+            else
+                Settings = settings;
+            
             SubscriptionTypes = new List<Type>();
             
             if (Settings.AutoSubscribe)
