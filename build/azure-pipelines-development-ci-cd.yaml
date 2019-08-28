@@ -20,7 +20,7 @@ variables:
   branch: "dev"
   majorVersion: '0'
   minorVersion: '5'
-  patchVersion: '0'
+  patchVersion: '1'
   feedVersion: 'alpha'
   dayOfYear: $(DayOfYear)
   revCounter: $(BuildRevision)
