@@ -6,7 +6,7 @@ steps:
   - task: isaacabraham.fsharp-helpers-extension.a2dadf20-1a83-4220-a4ee-b52f6c77f3cf.FAKE5@1
     displayName: ${{ parameters.displayName }}
     inputs:
-      FakeVersion: 5.15.3
+      FakeVersion: 5.16.1
       FakeScript: build/build.fsx
       ScriptArguments: ${{ format('--single-target --target {0}', parameters.target) }} 
       WorkingDirectory: build/
