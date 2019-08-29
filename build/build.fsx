@@ -217,8 +217,9 @@ Target.create "SonarQubeStart" (fun _ ->
                 Key = "Lutando_Akkatecture"
                 Name = "Akkatecture"
                 Version = buildNumber
+                Organization = Some "lutando-github"
                 Settings = [
-                    "sonar.verbose=true /o:lutando-github";
+                    "sonar.verbose=true";
                     "sonar.host.url=https://sonarcloud.io/";
                     sonarBranchName;
                     sonarLogin;
