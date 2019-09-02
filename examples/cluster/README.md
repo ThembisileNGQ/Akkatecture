@@ -23,5 +23,3 @@ If you take a look at the hocon configurations for the [client](https://github.c
 The sample is as easy as running all three projects at the same time. To interact with the domain just press enter on the clients console window, resulting in random commands being created, which are then fed through the cluster proxy that will serialize, deserialize, and route the commands to the necessary aggregate. To exit the applications safely, Press `Q` and enter. 
 
 The purpose of this example is to show how you can distribute your actorsystem using `Akka.Cluster`. Doing this does not require any changes to your domain code. Basically now your domain can be distributed across separate, networked nodes.
-
-> To run the project in jetbrains rider or visual studio code, run the `Akkatecture.Examples.SeedWorkerCluster` configuration in the IDE.

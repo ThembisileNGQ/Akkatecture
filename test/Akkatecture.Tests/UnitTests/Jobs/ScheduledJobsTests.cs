@@ -57,7 +57,6 @@ namespace Akkatecture.Tests.UnitTests.Jobs
             var greeting = $"hi here here is a random guid {Guid.NewGuid()}";
             var job = new TestJob(greeting);
             var when = DateTime.UtcNow.AddDays(1);
-            var day = TimeSpan.FromDays(1);
             Expression<Func<TestJobScheduler>> testJobSchedulerExpression = () => new TestJobScheduler();
             Expression<Func<TestJobRunner>> testJobRunnerExpression = () => new TestJobRunner(probe);
             

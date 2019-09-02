@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 2019-09-02
+
+### Changed 
+- increased `FromObject(...)` accessibility to proteted and made it virtual.
+
 ## [0.5.0] - 2019-08-18
 
 ### Added

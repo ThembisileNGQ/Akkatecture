@@ -34,6 +34,8 @@ Akkatecture comes with a few prescribed examples on how one might use it:
 
 * **[Web](https://github.com/Lutando/Akkatecture/tree/dev/examples/web):** This sample shows how to integrate akka into an aspnet core project, specifically how to inject actor references when using akkatecture. Furthermore this project models a long running process that might be run behind a web application or something similar. Read the [readme](https://github.com/Lutando/Akkatecture/tree/dev/examples/web/README.md) for more detailed information about the example.
 
+* **[Jobs](https://github.com/Lutando/Akkatecture/tree/dev/examples/jobs):** A simple sample that demonstrates how you would make a scheduled persistent job. Jobs are commands that can be persisted and scheduled to be executed at any arbitrary trigger point in time. Read the [readme](https://github.com/Lutando/Akkatecture/tree/dev/examples/jobs/README.md) for more detailed information about the example. The documentation for this can be found [here](https://akkatecture.net/docs/scheduled-jobs).
+
 * **[Tests](https://github.com/Lutando/Akkatecture/tree/dev/test/Akkatecture.Tests):** The test examples found in the Akkatecture.Test project is there to provide assistance when doing testing for Akkatecture. There is a simple domain modelled within the [Akkatecture.TestHelpers](https://github.com/Lutando/Akkatecture/tree/dev/test/Akkatecture.TestHelpers) project that includes a model of an aggregate with a simple aggregate saga, and these are used to do simple black box style testing on Akkatecture using akka.net's TestKit.
 
 
@@ -66,11 +68,6 @@ It would also be beneficial for you to be familiar with actor systems, akka.net,
 ### Status of Akkatecture
 
 Akkatecture is still in development. The goal of this projects first version is to provide you with the neccassary building blocks to build out your own cqrs and event sourced application without having to think of the implementation details of akka.net coupled with CQRS and event sourcing. Right now Akkatecture is focussed on developing the story for projection rebuilding. Projection rebuilding is a crucial feature that will lend Akkatecture to a version `1.0.0` release.
-
-akkatecture is currently missing these crucial features:
-
-- resumable projections / read models.
-- scheduled jobs / persistent jobs.
 
 ### Contributing
 

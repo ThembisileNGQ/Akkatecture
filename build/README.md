@@ -28,10 +28,3 @@ INTERNAL_FEED_PAT is the environment secret that holds the azure dev ops persona
 NUGET_FEED_PAT is the standard NuGet API Key, it too, requires the rights to add new packages
 
 SONARCLOUD_TOKEN is the toke that sonarscanner uses to upload results to https://sonarcloud.io
-
-
-# TODO 
-
-Archive Zipping
-GitHub Releasing
-Making Variables Lazy

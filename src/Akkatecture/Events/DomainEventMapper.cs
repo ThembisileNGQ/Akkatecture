@@ -22,6 +22,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using Akka.Persistence.Query;
 using Akkatecture.Aggregates;
 
 namespace Akkatecture.Events
@@ -55,6 +56,19 @@ namespace Akkatecture.Events
             {
                 return evt;
             }
+        }
+
+        public static EventEnvelope FromEnvelope(EventEnvelope eventEnvelope)
+        {
+            var domainEvent = FromCommittedEvent(eventEnvelope.Event);
+            
+            var newEventEnvelope = new EventEnvelope(
+                eventEnvelope.Offset,
+                eventEnvelope.PersistenceId,
+                eventEnvelope.SequenceNr,
+                domainEvent);
+
+            return newEventEnvelope;
         }
     }
     

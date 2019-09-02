@@ -27,6 +27,7 @@
   <ItemGroup>
     <PackageReference Include="Akka" Version="$(AkkaVersion)" />
     <PackageReference Include="Akka.Persistence" Version="$(AkkaPersistenceVersion)" />
+    <PackageReference Include="Akka.Persistence.Query" Version="$(AkkaPersistenceQueryVersion)" />
     <PackageReference Include="Cronos" Version="0.7.0" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(SourceLinkGithubVersion)" PrivateAssets="All" />
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
