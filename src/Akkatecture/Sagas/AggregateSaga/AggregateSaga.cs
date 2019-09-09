@@ -244,7 +244,7 @@ namespace Akkatecture.Sagas.AggregateSaga
             PersistAll(committedEvents, ApplyObjectCommittedEvent);
         }
         
-        private object FromObject(object aggregateEvent, long version, IMetadata metadata = null)
+        protected virtual object FromObject(object aggregateEvent, long version, IMetadata metadata = null)
         {
             if (aggregateEvent is IAggregateEvent)
             {
