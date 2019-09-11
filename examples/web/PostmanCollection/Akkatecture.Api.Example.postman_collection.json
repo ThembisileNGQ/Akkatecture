@@ -61,7 +61,7 @@
 						"header": [],
 						"body": {},
 						"url": {
-							"raw": "{{ApiUrl}}api/resources",
+							"raw": "{{ApiUrl}}/api/resources",
 							"host": [
 								"{{ApiUrl}}api"
 							],
