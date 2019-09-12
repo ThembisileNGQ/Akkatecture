@@ -63,7 +63,7 @@
 						"url": {
 							"raw": "{{ApiUrl}}/api/resources",
 							"host": [
-								"{{ApiUrl}}api"
+								"{{ApiUrl}}/api"
 							],
 							"path": [
 								"resources"
