@@ -29,4 +29,16 @@
     <PackageReference Include="Akka.TestKit" Version="$(AkkaTestKitVersion)" />
   </ItemGroup>
   
+  <ItemGroup>
+    <Compile Remove="Aggregates\Sagas\TestSagaTimeouts\**" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Remove="Aggregates\Sagas\TestSagaTimeouts\**" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="Aggregates\Sagas\TestSagaTimeouts\**" />
+  </ItemGroup>
+  
 </Project>

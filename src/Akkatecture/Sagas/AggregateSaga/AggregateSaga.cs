@@ -1,4 +1,4 @@
-﻿// The MIT License (MIT)
+// The MIT License (MIT)
 //
 // Copyright (c) 2015-2019 Rasmus Mikkelsen
 // Copyright (c) 2015-2019 eBay Software Foundation
@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Akka.Actor;
 using Akka.Event;
 using Akka.Persistence;
 using Akkatecture.Aggregates;
@@ -38,6 +39,8 @@ using Akkatecture.Aggregates.Snapshot.Strategies;
 using Akkatecture.Core;
 using Akkatecture.Events;
 using Akkatecture.Extensions;
+using Akkatecture.Jobs.Commands;
+using Akkatecture.Sagas.SagaTimeouts;
 using SnapshotMetadata = Akkatecture.Aggregates.Snapshot.SnapshotMetadata;
 
 namespace Akkatecture.Sagas.AggregateSaga
@@ -50,10 +53,13 @@ namespace Akkatecture.Sagas.AggregateSaga
         private static readonly IReadOnlyDictionary<Type, Action<TSagaState, IAggregateEvent>> ApplyMethodsFromState = typeof(TSagaState).GetAggregateStateEventApplyMethods<TAggregateSaga, TIdentity, TSagaState>();
         private static readonly IReadOnlyDictionary<Type, Action<TSagaState, IAggregateSnapshot>> HydrateMethodsFromState = typeof(TSagaState).GetAggregateSnapshotHydrateMethods<TAggregateSaga, TIdentity, TSagaState>();
         private static readonly IAggregateName SagaName = typeof(TAggregateSaga).GetSagaName();
+        private static readonly List<Type> _sagaTimeoutTypes = new List<Type>();
+        private Dictionary<Type, IActorRef> SagaTimeoutManagers { get; set; }
         private CircularBuffer<ISourceId> _previousSourceIds = new CircularBuffer<ISourceId>(100);
         
         protected IEventDefinitionService _eventDefinitionService;
         protected ISnapshotDefinitionService _snapshotDefinitionService;
+        
         protected ISnapshotStrategy SnapshotStrategy { get; set; } = SnapshotNeverStrategy.Instance;
         public TSagaState State { get; }
         public IAggregateName Name => SagaName;
@@ -93,7 +99,6 @@ namespace Akkatecture.Sagas.AggregateSaga
                 {
                     Context.GetLogger().Error(exception,"AggregateSaga of Name={1}; was unable to activate SagaState of Type={0}.", Name, typeof(TSagaState).PrettyPrint());
                 }
-
             }
 
             if (Settings.AutoReceive)
@@ -102,6 +107,8 @@ namespace Akkatecture.Sagas.AggregateSaga
                 InitAsyncReceives();
             }
 
+            InitTimeoutJobManagers();
+            InitAsyncTimeoutJobManagers();
 
             if (Settings.UseDefaultEventRecover)
             {
@@ -109,17 +116,116 @@ namespace Akkatecture.Sagas.AggregateSaga
                 Recover<RecoveryCompleted>(Recover);
             }
 
-
             if (Settings.UseDefaultSnapshotRecover)
                 Recover<SnapshotOffer>(Recover);
-
             
             Command<SaveSnapshotSuccess>(SnapshotStatus);
             Command<SaveSnapshotFailure>(SnapshotStatus);
 
             _eventDefinitionService = new EventDefinitionService(Context.GetLogger());
             _snapshotDefinitionService = new SnapshotDefinitionService(Context.GetLogger());
+            
+        }
 
+        protected override void PreStart()
+        {
+            base.PreStart();
+            SagaTimeoutManagers = new Dictionary<Type, IActorRef>();
+            foreach (var sagaTimeoutType in _sagaTimeoutTypes)
+            {
+                var sagaTimeoutManagerType = typeof(SagaTimeoutManager<>).MakeGenericType(sagaTimeoutType);
+                var sagaTimeoutManager = Context.ActorOf(Props.Create(() => 
+                        (ActorBase) Activator.CreateInstance(sagaTimeoutManagerType)), 
+                    $"{sagaTimeoutType.Name}-timeoutmanager");
+                SagaTimeoutManagers.Add(sagaTimeoutType, sagaTimeoutManager);
+            }
+        }
+
+        public void InitTimeoutJobManagers()
+        {
+            var type = GetType();
+            var timeoutSubscriptionTypes = type.GetSagaTimeoutSubscriptionTypes();
+            if (timeoutSubscriptionTypes.Count == 0) return;
+
+            var methods = type
+                .GetTypeInfo()
+                .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .Where(mi =>
+                {
+                    if (mi.Name != "HandleTimeout")
+                        return false;
+                    var parameters = mi.GetParameters();
+                    return
+                        parameters.Length == 1;
+                }).ToDictionary(
+                    mi => mi.GetParameters()[0].ParameterType,
+                    mi => mi);
+            
+            var method = type
+                .GetBaseType("ReceivePersistentActor")
+                .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .Where(mi =>
+                {
+                    if (mi.Name != "Command") return false;
+                    var parameters = mi.GetParameters();
+                    return
+                        parameters.Length == 1
+                        && parameters[0].ParameterType.Name.Contains("Func");
+                })
+                .First();
+            
+            foreach (var timeoutSubscriptionType in timeoutSubscriptionTypes)
+            {
+                var funcType = typeof(Func<,>).MakeGenericType(timeoutSubscriptionType, typeof(bool));
+                var timeoutHandlerFunction = Delegate.CreateDelegate(funcType, this, methods[timeoutSubscriptionType]);
+                var timeoutHandlerMethod = method.MakeGenericMethod(timeoutSubscriptionType);
+                timeoutHandlerMethod.Invoke(this, new[] { timeoutHandlerFunction });
+                _sagaTimeoutTypes.Add(timeoutSubscriptionType);
+            }
+        }
+
+        public void InitAsyncTimeoutJobManagers()
+        {
+            var type = GetType();
+            var timeoutSubscriptionTypes = type.GetAsyncSagaTimeoutSubscriptionTypes();  
+            if (timeoutSubscriptionTypes.Count == 0) return;
+            
+            var methods = type
+                .GetTypeInfo()
+                .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .Where(mi =>
+                {
+                    if (mi.Name != "HandleTimeoutAsync")
+                        return false;
+                    var parameters = mi.GetParameters();
+                    return
+                        parameters.Length == 1;
+                }).ToDictionary(
+                    mi => mi.GetParameters()[0].ParameterType,
+                    mi => mi);
+            
+            var method = type
+                .GetBaseType("ReceivePersistentActor")
+                .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .Where(mi =>
+                {
+                    if (mi.Name != "CommandAsync") return false;
+                    var parameters = mi.GetParameters();
+                    return
+                        parameters.Length == 2
+                        && parameters[0].ParameterType.Name.Contains("Func");
+                })
+                .First();
+            
+            foreach (var timeoutSubscriptionType in timeoutSubscriptionTypes)
+            {
+                var funcType = typeof(Func<,>).MakeGenericType(timeoutSubscriptionType, typeof(Task));
+                var timeoutHandlerFunction = Delegate.CreateDelegate(funcType, this, methods[timeoutSubscriptionType]);
+                var timeoutHandlerMethod = method.MakeGenericMethod(timeoutSubscriptionType);
+                timeoutHandlerMethod.Invoke(this, new[] { timeoutHandlerFunction, null });
+                
+                _sagaTimeoutTypes.Add(timeoutSubscriptionType);
+            }
         }
 
         public void InitReceives()
@@ -135,7 +241,7 @@ namespace Akkatecture.Sagas.AggregateSaga
                 .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                 .Where(mi =>
                 {
-                    if (mi.Name != "Handle")
+                    if (mi.Name != "Handle" && mi.Name != "HandleTimeout")
                         return false;
 
                     var parameters = mi.GetParameters();
@@ -146,7 +252,6 @@ namespace Akkatecture.Sagas.AggregateSaga
                 .ToDictionary(
                     mi => mi.GetParameters()[0].ParameterType,
                     mi => mi);
-
 
             var method = type
                 .GetBaseType("ReceivePersistentActor")
@@ -196,7 +301,6 @@ namespace Akkatecture.Sagas.AggregateSaga
                     mi => mi.GetParameters()[0].ParameterType,
                     mi => mi);
 
-
             var method = type
                 .GetBaseType("ReceivePersistentActor")
                 .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
@@ -219,7 +323,6 @@ namespace Akkatecture.Sagas.AggregateSaga
                 actorReceiveMethod.Invoke(this, new[] { subscriptionFunction, null });
             }
         }
-
 
         protected virtual void Emit<TAggregateEvent>(TAggregateEvent aggregateEvent, IMetadata metadata = null)
             where TAggregateEvent : class, IAggregateEvent<TAggregateSaga, TIdentity>
@@ -349,6 +452,24 @@ namespace Akkatecture.Sagas.AggregateSaga
             return null;
         }
 
+        public void RequestTimeout<TTimeout>(TTimeout timeoutMessage, TimeSpan timeSpan) 
+            where TTimeout : class, ISagaTimeoutJob
+        {
+            var timeoutMessageType = timeoutMessage.GetType();
+            var manager = SagaTimeoutManagers[timeoutMessageType];
+            var sagaTimeoutId = SagaTimeoutId.New;
+            var scheduledMessage = new Schedule<TTimeout, SagaTimeoutId>(
+                sagaTimeoutId, 
+                timeoutMessage, 
+                DateTime.UtcNow.Add(timeSpan));
+            manager.Tell(scheduledMessage);
+        }
+
+        public void RequestTimeout<TTimeout>(TimeSpan timeSpan) where TTimeout : class, ISagaTimeoutJob, new()
+        {
+            RequestTimeout(new TTimeout(), timeSpan);
+        }
+
         protected void ApplyCommittedEvent<TAggregateEvent>(ICommittedEvent<TAggregateSaga, TIdentity, TAggregateEvent> committedEvent)
             where TAggregateEvent : class, IAggregateEvent<TAggregateSaga, TIdentity>
         {
@@ -391,7 +512,6 @@ namespace Akkatecture.Sagas.AggregateSaga
             }
 
         }
-
 
         protected virtual void Publish<TEvent>(TEvent aggregateEvent)
         {
@@ -514,11 +634,11 @@ namespace Akkatecture.Sagas.AggregateSaga
             return true;
         }
 
-
         protected virtual bool Recover(RecoveryCompleted recoveryCompleted)
         {
             Log.Debug("Aggregate of Name={0}, and Id={1}; has completed recovering from it's event journal at Version={2}.", Name, Id, Version);
             return true;
         }
+
     }
 }

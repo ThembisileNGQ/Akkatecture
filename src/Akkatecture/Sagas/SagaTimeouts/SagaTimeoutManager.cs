@@ -1,4 +1,4 @@
-﻿// The MIT License (MIT)
+// The MIT License (MIT)
 //
 // Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
@@ -21,39 +21,20 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using Akkatecture.Aggregates;
-using Akkatecture.Sagas;
-using Akkatecture.TestHelpers.Aggregates.Sagas.Test.Events;
+using Akka.Actor;
+using Akkatecture.Jobs;
 
-namespace Akkatecture.TestHelpers.Aggregates.Sagas.Test
+namespace Akkatecture.Sagas.SagaTimeouts
 {
-    public class TestSagaState : SagaState<TestSaga, TestSagaId, IMessageApplier<TestSaga, TestSagaId>>,
-        IApply<TestSagaStartedEvent>,
-        IApply<TestSagaTransactionCompletedEvent>,
-        IApply<TestSagaCompletedEvent>, 
-        IApply<TestSagaTimeoutOccurred>
-    {
-        public TestAggregateId Sender { get; set; }
-        public TestAggregateId Receiver { get; set; }
-        public Entities.Test Test { get; set; }
-        public void Apply(TestSagaStartedEvent aggregateEvent)
-        {
-            Sender = aggregateEvent.Sender;
-            Receiver = aggregateEvent.Receiver;
-            Test = aggregateEvent.SentTest;
-        }
-
-        public void Apply(TestSagaTransactionCompletedEvent aggregateEvent)
-        {
-        }
-
-        public void Apply(TestSagaCompletedEvent aggregateEvent)
-        {
-        }
-	
-        public void Apply(TestSagaTimeoutOccurred asdf)
-        {
-        }
-
+    public class SagaTimeoutManager<TTimeout> : 
+        JobManager<
+            SagaTimeoutJobScheduler<TTimeout>, 
+            SagaTimeoutJobRunner<TTimeout>, 
+            TTimeout, 
+            SagaTimeoutId> where TTimeout : ISagaTimeoutJob
+    { 
+        public SagaTimeoutManager() : base(
+            () => new SagaTimeoutJobScheduler<TTimeout>(),
+            () => new SagaTimeoutJobRunner<TTimeout>()) {}
     }
 }

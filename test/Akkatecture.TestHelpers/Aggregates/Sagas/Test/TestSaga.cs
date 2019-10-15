@@ -21,26 +21,33 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
+using System.Threading.Tasks;
 using Akka.Actor;
 using Akkatecture.Aggregates;
 using Akkatecture.Commands;
 using Akkatecture.Sagas;
 using Akkatecture.Sagas.AggregateSaga;
+using Akkatecture.Sagas.SagaTimeouts;
 using Akkatecture.TestHelpers.Aggregates.Commands;
 using Akkatecture.TestHelpers.Aggregates.Events;
 using Akkatecture.TestHelpers.Aggregates.Sagas.Test.Events;
+using Akkatecture.TestHelpers.Aggregates.Sagas.Test.SagaTimeouts;
 
 namespace Akkatecture.TestHelpers.Aggregates.Sagas.Test
 {
-    public class TestSaga : AggregateSaga<TestSaga,TestSagaId,TestSagaState>,
+    public class TestSaga : AggregateSaga<TestSaga, TestSagaId, TestSagaState>,
         ISagaIsStartedBy<TestAggregate, TestAggregateId, TestSentEvent>,
-        ISagaHandles<TestAggregate, TestAggregateId, TestReceivedEvent>
+        ISagaHandles<TestAggregate, TestAggregateId, TestReceivedEvent>,
+        ISagaHandlesTimeout<TestSagaTimeout>,
+        ISagaHandlesTimeoutAsync<TestSagaTimeout2>
     {
         private IActorRef TestAggregateManager { get; }
+
         public TestSaga(IActorRef testAggregateManager)
         {
             TestAggregateManager = testAggregateManager;
-            
+
             Command<EmitTestSagaState>(Handle);
         }
 
@@ -53,8 +60,15 @@ namespace Akkatecture.TestHelpers.Aggregates.Sagas.Test
                     CommandId.New,
                     domainEvent.AggregateIdentity,
                     domainEvent.AggregateEvent.Test);
+                
+                RequestTimeout(new TestSagaTimeout("First timeout test"),
+                    TimeSpan.FromSeconds(5));
 
-                Emit(new TestSagaStartedEvent(domainEvent.AggregateIdentity, domainEvent.AggregateEvent.RecipientAggregateId, domainEvent.AggregateEvent.Test));
+                RequestTimeout(new TestSagaTimeout2("Second timeout test; handled asynchronously"),
+                    TimeSpan.FromSeconds(10));
+                
+                Emit(new TestSagaStartedEvent(domainEvent.AggregateIdentity,
+                    domainEvent.AggregateEvent.RecipientAggregateId, domainEvent.AggregateEvent.Test));
 
                 TestAggregateManager.Tell(command);
 
@@ -71,6 +85,7 @@ namespace Akkatecture.TestHelpers.Aggregates.Sagas.Test
                 Self.Tell(new EmitTestSagaState());
 
             }
+
             return true;
         }
 
@@ -83,7 +98,19 @@ namespace Akkatecture.TestHelpers.Aggregates.Sagas.Test
         private class EmitTestSagaState
         {
         }
+
+        public bool HandleTimeout(TestSagaTimeout timeout)
+        {
+            var message = ((TestSagaTimeout) timeout).MessageToInclude;
+            Emit(new TestSagaTimeoutOccurred(message));
+            return true;
+        }
+
+        public Task HandleTimeoutAsync(TestSagaTimeout2 timeout)
+        {
+            var message = ((TestSagaTimeout2) timeout).MessageToInclude;
+            Emit(new TestSagaTimeoutOccurred(message));
+            return Task.CompletedTask;
+        }
     }
-    
-    
 }
