@@ -35,7 +35,7 @@
     <XunitVersion>2.4.1</XunitVersion>
     <XunitRunnerVSVersion>2.4.1</XunitRunnerVSVersion>
     <XunitRunnerUtilityVersion>2.4.1</XunitRunnerUtilityVersion>
-    <CoverletMSBuildVersion>2.6.3</CoverletMSBuildVersion>
+    <CoverletMSBuildVersion>2.7.0</CoverletMSBuildVersion>
     <FluentAssertionsVersion>5.9.0</FluentAssertionsVersion>
     <TestSdkVersion>16.3.0</TestSdkVersion>
     <SourceLinkGithubVersion>1.0.0-beta2-19367-01</SourceLinkGithubVersion>
