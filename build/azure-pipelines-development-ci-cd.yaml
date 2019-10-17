@@ -17,7 +17,8 @@ trigger:
 pr: none
 
 variables:
-  branch: "dev"
+- template: templates/versions-template.yaml
+  branch: 'dev'
   majorVersion: '0'
   minorVersion: '5'
   patchVersion: '1'
