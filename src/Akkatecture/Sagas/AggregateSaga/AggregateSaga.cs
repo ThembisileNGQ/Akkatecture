@@ -289,7 +289,7 @@ namespace Akkatecture.Sagas.AggregateSaga
                 .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                 .Where(mi =>
                 {
-                    if (mi.Name != "HandleAsync")
+                    if (mi.Name != "HandleAsync" && mi.Name != "HandleTimeoutAsync")
                         return false;
 
                     var parameters = mi.GetParameters();
