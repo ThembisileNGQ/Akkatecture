@@ -10,9 +10,6 @@ using Akkatecture.Extensions;
 
 namespace Akkatecture.Query
 {
-    
-    
-    
     public class Consumer
     {
         public ActorSystem ActorSystem { get; set; }
