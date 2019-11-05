@@ -1,0 +1,4 @@
+variables:
+  majorVersion: '0'
+  minorVersion: '5'
+  patchVersion: '1'
