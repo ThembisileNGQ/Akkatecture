@@ -35,5 +35,9 @@
     <ProjectReference Include="..\..\src\Akkatecture\Akkatecture.csproj" />
     <ProjectReference Include="..\Akkatecture.TestHelpers\Akkatecture.TestHelpers.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="IntegrationTests\Aggregates\Sagas\AggregateSagaTimeoutTests.cs" />
+  </ItemGroup>
   
 </Project>

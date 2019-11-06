@@ -36,6 +36,7 @@ using Akkatecture.Core;
 using Akkatecture.Events;
 using Akkatecture.Jobs;
 using Akkatecture.Sagas;
+using Akkatecture.Sagas.SagaTimeouts;
 using Akkatecture.Subscribers;
 
 namespace Akkatecture.Extensions
@@ -372,6 +373,37 @@ namespace Akkatecture.Extensions
             return startedByEventTypes;
         }
         
+        internal static IReadOnlyList<Type> GetAsyncSagaTimeoutSubscriptionTypes(this Type type)
+        {
+            var interfaces = type
+                .GetTypeInfo()
+                .GetInterfaces()
+                .Select(i => i.GetTypeInfo())
+                .ToList();
+            
+            var sagaTimeoutSubscriptionTypes = interfaces
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISagaHandlesTimeoutAsync<>))
+                .Select(t => t.GetGenericArguments()[0])
+                .ToList();
+            
+            return sagaTimeoutSubscriptionTypes;
+        }
+        internal static IReadOnlyList<Type> GetSagaTimeoutSubscriptionTypes(this Type type)
+        {
+            var interfaces = type
+                .GetTypeInfo()
+                .GetInterfaces()
+                .Select(i => i.GetTypeInfo())
+                .ToList();
+            
+            var sagaTimeoutSubscriptionTypes = interfaces
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISagaHandlesTimeout<>))
+                .Select(t => t.GetGenericArguments()[0])
+                .ToList();
+            
+            return sagaTimeoutSubscriptionTypes;
+        }
+        
         internal static IReadOnlyDictionary<Type, Func<T,IAggregateEvent, IAggregateEvent>> GetAggregateEventUpcastMethods<TAggregate, TIdentity, T>(this Type type)
             where TAggregate : IAggregateRoot<TIdentity>
             where TIdentity : IIdentity
@@ -427,6 +459,5 @@ namespace Akkatecture.Extensions
             }
             return type;
         }
-
     }
 }
