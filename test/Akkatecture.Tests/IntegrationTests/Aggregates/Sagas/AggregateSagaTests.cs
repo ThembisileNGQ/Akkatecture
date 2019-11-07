@@ -21,6 +21,7 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
 using System.ComponentModel;
 using Akka.Actor;
 using Akka.TestKit.Xunit2;
@@ -56,6 +57,8 @@ namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
             Sys.EventStream.Subscribe(eventProbe, typeof(DomainEvent<TestSaga, TestSagaId, TestSagaStartedEvent>));
             Sys.EventStream.Subscribe(eventProbe, typeof(DomainEvent<TestSaga, TestSagaId, TestSagaCompletedEvent>));
             Sys.EventStream.Subscribe(eventProbe, typeof(DomainEvent<TestSaga, TestSagaId, TestSagaTransactionCompletedEvent>));
+            Sys.EventStream.Subscribe(eventProbe, typeof(DomainEvent<TestSaga, TestSagaId, TestSagaTimeoutOccurred>));
+            
             var aggregateManager = Sys.ActorOf(Props.Create(() => new TestAggregateManager()), "test-aggregatemanager");
             Sys.ActorOf(Props.Create(() => new TestSagaManager(() => new TestSaga(aggregateManager))), "test-sagaaggregatemanager");
             
@@ -75,19 +78,25 @@ namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
             var sagaStartingCommand = new GiveTestCommand(senderAggregateId, CommandId.New,receiverAggregateId,senderTest);
             aggregateManager.Tell(sagaStartingCommand);
             
-
-
             eventProbe.
                 ExpectMsg<DomainEvent<TestSaga, TestSagaId, TestSagaStartedEvent>>(
                     x => x.AggregateEvent.Sender.Equals(senderAggregateId)
                          && x.AggregateEvent.Receiver.Equals(receiverAggregateId)
-                         && x.AggregateEvent.SentTest.Equals(senderTest));
+                         && x.AggregateEvent.SentTest.Equals(senderTest),new TimeSpan(0,0,20));
             
             eventProbe.
-                ExpectMsg<DomainEvent<TestSaga, TestSagaId, TestSagaTransactionCompletedEvent>>();
+                ExpectMsg<DomainEvent<TestSaga, TestSagaId, TestSagaTransactionCompletedEvent>>(new TimeSpan(0,0,20));
             
             eventProbe.
-                ExpectMsg<DomainEvent<TestSaga, TestSagaId, TestSagaCompletedEvent>>();
+                ExpectMsg<DomainEvent<TestSaga, TestSagaId, TestSagaCompletedEvent>>(new TimeSpan(0,0,20));
+                        
+            eventProbe.ExpectMsg<DomainEvent<TestSaga, TestSagaId, TestSagaTimeoutOccurred>>(
+                timeoutMsg => timeoutMsg.AggregateEvent.TimeoutMessage.Equals("First timeout test"),
+                TimeSpan.FromSeconds(15));
+            
+            eventProbe.ExpectMsg<DomainEvent<TestSaga, TestSagaId, TestSagaTimeoutOccurred>>(
+                timeoutMsg => timeoutMsg.AggregateEvent.TimeoutMessage.StartsWith("Second timeout test"),
+                TimeSpan.FromSeconds(15));
         }
         
         [Fact]
@@ -116,8 +125,6 @@ namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
 
             var sagaStartingCommand = new GiveTestCommand(senderAggregateId, CommandId.New,receiverAggregateId,senderTest);
             aggregateManager.Tell(sagaStartingCommand);
-            
-
 
             eventProbe.
                 ExpectMsg<DomainEvent<TestAsyncSaga, TestAsyncSagaId, TestAsyncSagaStartedEvent>>(
@@ -126,11 +133,10 @@ namespace Akkatecture.Tests.IntegrationTests.Aggregates.Sagas
                          && x.AggregateEvent.SentTest.Equals(senderTest)
                          && x.Metadata.ContainsKey("some-key"));
             
-            eventProbe.
-                ExpectMsg<DomainEvent<TestAsyncSaga, TestAsyncSagaId, TestAsyncSagaTransactionCompletedEvent>>();
+            eventProbe.ExpectMsg<DomainEvent<TestAsyncSaga, TestAsyncSagaId, TestAsyncSagaTransactionCompletedEvent>>();
             
-            eventProbe.
-                ExpectMsg<DomainEvent<TestAsyncSaga, TestAsyncSagaId, TestAsyncSagaCompletedEvent>>();
+            eventProbe.ExpectMsg<DomainEvent<TestAsyncSaga, TestAsyncSagaId, TestAsyncSagaCompletedEvent>>();
+
         }
     }
 }

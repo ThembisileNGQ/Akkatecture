@@ -62,7 +62,7 @@ aggregateManager.Tell(changeNameCommand);
 
 ### Assumptions About Akkatecture Developers
 
-It would be ideal if you have some expirience in domain driven design, cqrs, and event sourcing.
+It would be ideal if you have some experience in domain driven design, cqrs, and event sourcing.
 It would also be beneficial for you to be familiar with actor systems, akka.net, and the extensibility points that akka gives you through hocon configuration. If you need to skill up on akka.net, check out petabridge's [akka-bootcamp](https://github.com/petabridge/akka-bootcamp). If you are already familiar with akka.net, go through the [walkthrough](https://akkatecture.net/docs/walkthrough-introduction) and you would have covered most of the concepts that this framework offers.
 
 ### Status of Akkatecture

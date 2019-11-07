@@ -1,4 +1,4 @@
-﻿// The MIT License (MIT)
+// The MIT License (MIT)
 //
 // Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
@@ -21,39 +21,22 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using Akkatecture.Aggregates;
-using Akkatecture.Sagas;
-using Akkatecture.TestHelpers.Aggregates.Sagas.Test.Events;
+using Akka.Actor;
+using Akkatecture.Jobs;
 
-namespace Akkatecture.TestHelpers.Aggregates.Sagas.Test
+namespace Akkatecture.Sagas.SagaTimeouts
 {
-    public class TestSagaState : SagaState<TestSaga, TestSagaId, IMessageApplier<TestSaga, TestSagaId>>,
-        IApply<TestSagaStartedEvent>,
-        IApply<TestSagaTransactionCompletedEvent>,
-        IApply<TestSagaCompletedEvent>, 
-        IApply<TestSagaTimeoutOccurred>
+    public class SagaTimeoutJobRunner<TTimeout>:  JobRunner<TTimeout, SagaTimeoutId>, IRun<TTimeout>
+        where TTimeout: ISagaTimeoutJob, IJob
     {
-        public TestAggregateId Sender { get; set; }
-        public TestAggregateId Receiver { get; set; }
-        public Entities.Test Test { get; set; }
-        public void Apply(TestSagaStartedEvent aggregateEvent)
-        {
-            Sender = aggregateEvent.Sender;
-            Receiver = aggregateEvent.Receiver;
-            Test = aggregateEvent.SentTest;
-        }
-
-        public void Apply(TestSagaTransactionCompletedEvent aggregateEvent)
+        public SagaTimeoutJobRunner()
         {
         }
 
-        public void Apply(TestSagaCompletedEvent aggregateEvent)
+        public bool Run(TTimeout job)
         {
+            Context.ActorSelection(Context.Parent.Path.Parent.Parent).Tell(job);
+            return true;
         }
-	
-        public void Apply(TestSagaTimeoutOccurred asdf)
-        {
-        }
-
     }
 }

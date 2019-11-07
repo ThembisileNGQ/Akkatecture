@@ -27,6 +27,6 @@
   
   <ItemGroup>
     <PackageReference Include="Akka.TestKit" Version="$(AkkaTestKitVersion)" />
-  </ItemGroup>
+  </ItemGroup> 
   
 </Project>
