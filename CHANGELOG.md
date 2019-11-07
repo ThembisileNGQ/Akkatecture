@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added 
 - `SagaTimeouts` as a means to cancel or schedule processes within an `AggregateSaga`. All thanks [malclear](https://github.com/malclear) for implementing it.
 
+### Fixed
+- Postman collections in the web example. All thanks to [4deeptech](https://github.com/4deeptech).
+- Templated variables for package version now referenced in all the yaml files.
+
 ## [0.5.1] - 2019-09-02
 
 ### Changed 
@@ -177,7 +181,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MIT License.
 - Project logo.
 
-[Unreleased]: https://github.com/Lutando/Akkatecture/compare/0.5.0...HEAD
+[Unreleased]: https://github.com/Lutando/Akkatecture/compare/0.6.0...HEAD
+[0.6.0]: https://github.com/Lutando/Akkatecture/compare/0.5.1...0.6.0
+[0.5.1]: https://github.com/Lutando/Akkatecture/compare/0.5.0...0.5.1
 [0.5.0]: https://github.com/Lutando/Akkatecture/compare/0.4.6...0.5.0
 [0.4.6]: https://github.com/Lutando/Akkatecture/compare/0.4.5...0.4.6
 [0.4.5]: https://github.com/Lutando/Akkatecture/compare/0.4.4...0.4.5
