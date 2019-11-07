@@ -1,4 +1,4 @@
 variables:
   majorVersion: '0'
-  minorVersion: '5'
-  patchVersion: '1'
+  minorVersion: '6'
+  patchVersion: '0'
