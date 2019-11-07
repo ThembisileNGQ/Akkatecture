@@ -8,11 +8,11 @@ trigger: none
 pr: none
 
 variables:
-  branch: "master"
-  majorVersion: '0'
-  minorVersion: '5'
-  patchVersion: '1'
-  feedVersion: 'nuget'
+- template:  templates/versions-template.yaml
+- name: 'branch'
+  value: 'master'
+- name: 'feedVersion'
+  value: 'nuget'
 
 name: ${{ format('{0}.{1}.{2}', variables.majorVersion, variables.minorVersion, variables.patchVersion) }}
 

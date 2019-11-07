@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2019-11-07
+
+### Added 
+- `SagaTimeouts` as a means to cancel or schedule processes within an `AggregateSaga`. All thanks [malclear](https://github.com/malclear) for implementing it.
+
 ## [0.5.1] - 2019-09-02
 
 ### Changed 

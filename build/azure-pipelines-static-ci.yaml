@@ -18,14 +18,17 @@ pr:
       - 'THIRD-PARTY-NOTICES.txt'
 
 variables:
-  branch: "master"
-  majorVersion: '0'
-  minorVersion: '5'
-  patchVersion: '1'
-  feedVersion: 'pr'
-  dayOfYear: $(DayOfYear)
-  revCounter: $(BuildRevision)
-  revision: ${{ format('{0}{1}', variables.dayOfYear, variables.revCounter) }}
+- template:  templates/versions-template.yaml
+- name: 'branch'
+  value: 'master'
+- name: 'feedVersion'
+  value: 'pr'
+- name: 'dayOfYear'
+  value: $(DayOfYear)
+- name: 'revCounter'
+  value: $(BuildRevision)
+- name: 'revision'
+  value: ${{ format('{0}{1}', variables.dayOfYear, variables.revCounter) }}
 
 name: ${{ format('{0}.{1}.{2}-{3}-{4}', variables.majorVersion, variables.minorVersion, variables.patchVersion, variables.feedVersion, variables.revision) }}
 
