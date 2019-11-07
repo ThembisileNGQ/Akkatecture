@@ -36,7 +36,7 @@ namespace Akkatecture.Examples.Jobs
             Context
                 .GetLogger()
                 .Info(
-                    "PrinJobRunner at Timestamp={0}, is printing Content={1}",
+                    "PrintJobRunner at Timestamp={0}, is printing Content={1}",
                     time,
                     job.Content);
 

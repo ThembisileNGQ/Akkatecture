@@ -77,6 +77,7 @@ namespace Akkatecture.Sagas.AggregateSaga
                 {
                     Context.System.EventStream.Subscribe(Self, type);
                 }
+
             }
 
             if (Settings.AutoSpawnOnReceive)
@@ -124,8 +125,8 @@ namespace Akkatecture.Sagas.AggregateSaga
                 withinTimeMilliseconds: 3000,
                 localOnlyDecider: x =>
                 {
-
-                    Logger.Warning("{0} will supervise Exception={1} to be decided as {2}.",GetType().PrettyPrint(), x.ToString(),Directive.Restart);
+                    Logger.Warning("{0} will supervise Exception={1} to be decided as {2}.",
+                        GetType().PrettyPrint(), x.ToString(),Directive.Restart);
                     return Directive.Restart;
                 });
         }
@@ -146,7 +147,5 @@ namespace Akkatecture.Sagas.AggregateSaga
             Context.Watch(saga);
             return saga;
         }
-        
     }
-    
 }

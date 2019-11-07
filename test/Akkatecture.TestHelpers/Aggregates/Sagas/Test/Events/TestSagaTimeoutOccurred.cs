@@ -1,4 +1,4 @@
-﻿// The MIT License (MIT)
+// The MIT License (MIT)
 //
 // Copyright (c) 2018 - 2019 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
@@ -22,38 +22,16 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using Akkatecture.Aggregates;
-using Akkatecture.Sagas;
-using Akkatecture.TestHelpers.Aggregates.Sagas.Test.Events;
 
-namespace Akkatecture.TestHelpers.Aggregates.Sagas.Test
+namespace Akkatecture.TestHelpers.Aggregates.Sagas.Test.Events
 {
-    public class TestSagaState : SagaState<TestSaga, TestSagaId, IMessageApplier<TestSaga, TestSagaId>>,
-        IApply<TestSagaStartedEvent>,
-        IApply<TestSagaTransactionCompletedEvent>,
-        IApply<TestSagaCompletedEvent>, 
-        IApply<TestSagaTimeoutOccurred>
+    public class TestSagaTimeoutOccurred : AggregateEvent<TestSaga, TestSagaId>
     {
-        public TestAggregateId Sender { get; set; }
-        public TestAggregateId Receiver { get; set; }
-        public Entities.Test Test { get; set; }
-        public void Apply(TestSagaStartedEvent aggregateEvent)
-        {
-            Sender = aggregateEvent.Sender;
-            Receiver = aggregateEvent.Receiver;
-            Test = aggregateEvent.SentTest;
-        }
+        public string TimeoutMessage { get; }
 
-        public void Apply(TestSagaTransactionCompletedEvent aggregateEvent)
+        public TestSagaTimeoutOccurred(string timeoutMessage)
         {
+            TimeoutMessage = timeoutMessage;
         }
-
-        public void Apply(TestSagaCompletedEvent aggregateEvent)
-        {
-        }
-	
-        public void Apply(TestSagaTimeoutOccurred asdf)
-        {
-        }
-
     }
 }
