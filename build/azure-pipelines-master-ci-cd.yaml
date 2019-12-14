@@ -17,7 +17,7 @@ trigger:
 pr: none
 
 variables:
-- template:  templates/versions-template.yaml
+- template:  templates/variables-template.yaml
 - name: 'branch'
   value: 'master'
 - name: 'feedVersion'
@@ -34,7 +34,7 @@ name: ${{ format('{0}.{1}.{2}-{3}-{4}', variables.majorVersion, variables.minorV
 jobs:
   - job: Build
     pool:
-      vmImage: 'Ubuntu 16.04'
+      vmImage: $(vmImage)
     variables:
       buildConfiguration: 'Release'
 
