@@ -39,11 +39,6 @@ jobs:
       buildConfiguration: 'Release'
 
     steps:
-      #Install LaTeX compiler
-    - bash: |
-        dotnet --list-sdks
-      displayName: 'List [SDKs]'
-
     - template: templates/fake-template.yaml
       parameters:
         displayName: 'Restore [Akkatecture]'
