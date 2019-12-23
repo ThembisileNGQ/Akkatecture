@@ -30,7 +30,7 @@
     <AkkaClusterShardingVersion>1.3.13-beta</AkkaClusterShardingVersion>
     <AkkaClusterToolsVersion>1.3.16</AkkaClusterToolsVersion>
     <AkkaTestKitVersion>1.3.16</AkkaTestKitVersion>
-    <AkkaClusterTestKitVersion>1.3.16</AkkaClusterTestKitVersion>
+    <AkkaClusterTestKitVersion>1.3.17</AkkaClusterTestKitVersion>
     <AkkaTestKitXunitVersion>1.3.16</AkkaTestKitXunitVersion>
     <XunitVersion>2.4.1</XunitVersion>
     <XunitRunnerVSVersion>2.4.1</XunitRunnerVSVersion>
