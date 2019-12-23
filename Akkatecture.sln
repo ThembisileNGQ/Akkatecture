@@ -73,6 +73,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{19634F28-9CC5-4B76-83B6-5AA41B3CA78E}"
 ProjectSection(SolutionItems) = preProject
 	build\templates\fake-template.yaml = build\templates\fake-template.yaml
+	build\templates\variables-template.yaml = build\templates\variables-template.yaml
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "jobs", "jobs", "{94E321E7-073B-4B06-874B-A411D6971A7F}"
