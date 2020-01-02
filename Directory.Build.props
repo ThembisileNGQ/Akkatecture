@@ -2,7 +2,7 @@
   <PropertyGroup>
    <Authors>Lutando Ngqakaza</Authors>
     <Company>Lutando Ngqakaza</Company>
-    <Copyright>Copyright (c) Lutando Ngqakaza 2018 - 2019</Copyright>
+    <Copyright>Copyright (c) Lutando Ngqakaza 2018 - 2020</Copyright>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/Lutando/Akkatecture</RepositoryUrl>
