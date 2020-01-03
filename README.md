@@ -136,7 +136,7 @@ Prerelease feeds and nightly feeds (called alpha feeds in this project). Provide
 ```
 The MIT License (MIT)
 
-Copyright (c) 2018 - 2019 Lutando Ngqakaza
+Copyright (c) 2018 - 2020 Lutando Ngqakaza
 
 https://github.com/Lutando/Akkatecture
 

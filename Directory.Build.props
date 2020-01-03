@@ -2,7 +2,7 @@
   <PropertyGroup>
    <Authors>Lutando Ngqakaza</Authors>
     <Company>Lutando Ngqakaza</Company>
-    <Copyright>Copyright (c) Lutando Ngqakaza 2018 - 2019</Copyright>
+    <Copyright>Copyright (c) Lutando Ngqakaza 2018 - 2020</Copyright>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/Lutando/Akkatecture</RepositoryUrl>
@@ -36,7 +36,7 @@
     <XunitRunnerVSVersion>2.4.1</XunitRunnerVSVersion>
     <XunitRunnerUtilityVersion>2.4.1</XunitRunnerUtilityVersion>
     <CoverletMSBuildVersion>2.7.0</CoverletMSBuildVersion>
-    <FluentAssertionsVersion>5.9.0</FluentAssertionsVersion>
+    <FluentAssertionsVersion>5.10.0</FluentAssertionsVersion>
     <TestSdkVersion>16.3.0</TestSdkVersion>
     <SourceLinkGithubVersion>1.0.0</SourceLinkGithubVersion>
   </PropertyGroup>
