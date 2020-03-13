@@ -22,7 +22,7 @@
     <NetCoreAppVersion>netcoreapp2.2</NetCoreAppVersion>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
     <AkkaVersion>1.3.18</AkkaVersion>
-    <AkkaPersistenceVersion>1.3.18</AkkaPersistenceVersion>
+    <AkkaPersistenceVersion>1.4.2</AkkaPersistenceVersion>
     <AkkaPersistenceQueryVersion>1.3.18</AkkaPersistenceQueryVersion>
     <AkkaRemoteVersion>1.3.18</AkkaRemoteVersion>
     <AkkaRemoteTestKitVersion>1.3.18</AkkaRemoteTestKitVersion>
