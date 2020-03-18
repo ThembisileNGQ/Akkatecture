@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.2] - 2020-03-18
+
+### Changed
+- Licensing year to include 2020
+- Upgraded to Akka.NET v1.4.2
+- Upgraded to MultiNode Test Kit to 0.5.0
+
+## [0.6.1] - 2019-12-23
+
+### Changed
+- Made some internal fixes to cater for code scanning.
+
 ## [0.6.0] - 2019-11-07
 
 ### Added 
