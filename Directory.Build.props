@@ -29,7 +29,7 @@
     <AkkaClusterVersion>1.4.2</AkkaClusterVersion>
     <AkkaClusterShardingVersion>1.4.2</AkkaClusterShardingVersion>
     <AkkaClusterToolsVersion>1.4.2</AkkaClusterToolsVersion>
-    <AkkaTestKitVersion>1.4.2</AkkaTestKitVersion>
+    <AkkaTestKitVersion>1.4.4</AkkaTestKitVersion>
     <AkkaClusterTestKitVersion>1.4.2</AkkaClusterTestKitVersion>
     <AkkaTestKitXunitVersion>1.4.2</AkkaTestKitXunitVersion>
     <XunitVersion>2.4.1</XunitVersion>
