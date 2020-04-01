@@ -31,7 +31,7 @@
     <AkkaClusterToolsVersion>1.4.2</AkkaClusterToolsVersion>
     <AkkaTestKitVersion>1.4.2</AkkaTestKitVersion>
     <AkkaClusterTestKitVersion>1.4.2</AkkaClusterTestKitVersion>
-    <AkkaTestKitXunitVersion>1.4.2</AkkaTestKitXunitVersion>
+    <AkkaTestKitXunitVersion>1.4.4</AkkaTestKitXunitVersion>
     <XunitVersion>2.4.1</XunitVersion>
     <XunitRunnerVSVersion>2.4.1</XunitRunnerVSVersion>
     <XunitRunnerUtilityVersion>2.4.1</XunitRunnerUtilityVersion>
