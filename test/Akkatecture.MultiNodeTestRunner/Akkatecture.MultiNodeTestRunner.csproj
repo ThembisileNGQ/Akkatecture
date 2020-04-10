@@ -20,7 +20,7 @@
     <PackageReference Include="xunit" Version="$(XunitVersion)" />
     <PackageReference Include="xunit.runner.utility" Version="$(XunitRunnerUtilityVersion)" />
     <PackageReference Include="coverlet.msbuild" Version="$(CoverletMSBuildVersion)" />
-    <PackageReference Include="Akkatecture.MultiNode.Shared" Version="0.5.0" />
+    <PackageReference Include="Akkatecture.MultiNode.Shared" Version="$(AkkatectureMultiNodeSharedVersion)" />
   </ItemGroup>
 
   <ItemGroup>
