@@ -31,7 +31,7 @@
     <AkkaClusterToolsVersion>1.4.5</AkkaClusterToolsVersion>
     <AkkaTestKitVersion>1.4.5</AkkaTestKitVersion>
     <AkkaClusterTestKitVersion>1.4.5</AkkaClusterTestKitVersion>
-    <AkkaTestKitXunitVersion>1.4.5</AkkaTestKitXunitVersion>
+    <AkkaTestKitXunitVersion>1.4.6</AkkaTestKitXunitVersion>
     <AkkatectureMultiNodeSharedVersion>0.5.1</AkkatectureMultiNodeSharedVersion>
     <XunitVersion>2.4.1</XunitVersion>
     <XunitRunnerVSVersion>2.4.1</XunitRunnerVSVersion>
