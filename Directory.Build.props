@@ -21,17 +21,17 @@
   <PropertyGroup>
     <NetCoreAppVersion>netcoreapp2.2</NetCoreAppVersion>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
-    <AkkaVersion>1.4.6</AkkaVersion>
-    <AkkaPersistenceVersion>1.4.6</AkkaPersistenceVersion>
-    <AkkaPersistenceQueryVersion>1.4.6</AkkaPersistenceQueryVersion>
-    <AkkaRemoteVersion>1.4.6</AkkaRemoteVersion>
-    <AkkaRemoteTestKitVersion>1.4.6</AkkaRemoteTestKitVersion>
-    <AkkaClusterVersion>1.4.6</AkkaClusterVersion>
-    <AkkaClusterShardingVersion>1.4.6</AkkaClusterShardingVersion>
-    <AkkaClusterToolsVersion>1.4.6</AkkaClusterToolsVersion>
-    <AkkaTestKitVersion>1.4.6</AkkaTestKitVersion>
-    <AkkaClusterTestKitVersion>1.4.6</AkkaClusterTestKitVersion>
-    <AkkaTestKitXunitVersion>1.4.6</AkkaTestKitXunitVersion>
+    <AkkaVersion>1.4.7</AkkaVersion>
+    <AkkaPersistenceVersion>1.4.7</AkkaPersistenceVersion>
+    <AkkaPersistenceQueryVersion>1.4.7</AkkaPersistenceQueryVersion>
+    <AkkaRemoteVersion>1.4.7</AkkaRemoteVersion>
+    <AkkaRemoteTestKitVersion>1.4.7</AkkaRemoteTestKitVersion>
+    <AkkaClusterVersion>1.4.7</AkkaClusterVersion>
+    <AkkaClusterShardingVersion>1.4.7</AkkaClusterShardingVersion>
+    <AkkaClusterToolsVersion>1.4.7</AkkaClusterToolsVersion>
+    <AkkaTestKitVersion>1.4.7</AkkaTestKitVersion>
+    <AkkaClusterTestKitVersion>1.4.7</AkkaClusterTestKitVersion>
+    <AkkaTestKitXunitVersion>1.4.7</AkkaTestKitXunitVersion>
     <AkkatectureMultiNodeSharedVersion>0.5.1</AkkatectureMultiNodeSharedVersion>
     <XunitVersion>2.4.1</XunitVersion>
     <XunitRunnerVSVersion>2.4.1</XunitRunnerVSVersion>
