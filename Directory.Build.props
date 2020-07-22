@@ -29,7 +29,7 @@
     <AkkaClusterVersion>1.4.7</AkkaClusterVersion>
     <AkkaClusterShardingVersion>1.4.7</AkkaClusterShardingVersion>
     <AkkaClusterToolsVersion>1.4.7</AkkaClusterToolsVersion>
-    <AkkaTestKitVersion>1.4.7</AkkaTestKitVersion>
+    <AkkaTestKitVersion>1.4.9</AkkaTestKitVersion>
     <AkkaClusterTestKitVersion>1.4.7</AkkaClusterTestKitVersion>
     <AkkaTestKitXunitVersion>1.4.7</AkkaTestKitXunitVersion>
     <AkkatectureMultiNodeSharedVersion>0.5.1</AkkatectureMultiNodeSharedVersion>
