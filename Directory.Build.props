@@ -21,7 +21,7 @@
   <PropertyGroup>
     <NetCoreAppVersion>netcoreapp2.2</NetCoreAppVersion>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
-    <AkkaVersion>1.4.7</AkkaVersion>
+    <AkkaVersion>1.4.10</AkkaVersion>
     <AkkaPersistenceVersion>1.4.7</AkkaPersistenceVersion>
     <AkkaPersistenceQueryVersion>1.4.7</AkkaPersistenceQueryVersion>
     <AkkaRemoteVersion>1.4.7</AkkaRemoteVersion>
