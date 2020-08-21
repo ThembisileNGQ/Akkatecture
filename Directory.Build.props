@@ -24,7 +24,7 @@
     <AkkaVersion>1.4.7</AkkaVersion>
     <AkkaPersistenceVersion>1.4.7</AkkaPersistenceVersion>
     <AkkaPersistenceQueryVersion>1.4.7</AkkaPersistenceQueryVersion>
-    <AkkaRemoteVersion>1.4.7</AkkaRemoteVersion>
+    <AkkaRemoteVersion>1.4.10</AkkaRemoteVersion>
     <AkkaRemoteTestKitVersion>1.4.7</AkkaRemoteTestKitVersion>
     <AkkaClusterVersion>1.4.7</AkkaClusterVersion>
     <AkkaClusterShardingVersion>1.4.7</AkkaClusterShardingVersion>
