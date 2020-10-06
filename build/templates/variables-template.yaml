@@ -1,5 +1,5 @@
 variables:
   majorVersion: '0'
   minorVersion: '6'
-  patchVersion: '3'
+  patchVersion: '4'
   vmImage: 'ubuntu-latest'
