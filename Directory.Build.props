@@ -21,24 +21,24 @@
   <PropertyGroup>
     <NetCoreAppVersion>netcoreapp2.2</NetCoreAppVersion>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
-    <AkkaVersion>1.4.4</AkkaVersion>
-    <AkkaPersistenceVersion>1.4.4</AkkaPersistenceVersion>
-    <AkkaPersistenceQueryVersion>1.4.4</AkkaPersistenceQueryVersion>
-    <AkkaRemoteVersion>1.4.4</AkkaRemoteVersion>
-    <AkkaRemoteTestKitVersion>1.4.4</AkkaRemoteTestKitVersion>
-    <AkkaClusterVersion>1.4.4</AkkaClusterVersion>
-    <AkkaClusterShardingVersion>1.4.4</AkkaClusterShardingVersion>
-    <AkkaClusterToolsVersion>1.4.4</AkkaClusterToolsVersion>
-    <AkkaTestKitVersion>1.4.4</AkkaTestKitVersion>
-    <AkkaClusterTestKitVersion>1.4.4</AkkaClusterTestKitVersion>
-    <AkkaTestKitXunitVersion>1.4.4</AkkaTestKitXunitVersion>
+    <AkkaVersion>1.4.10</AkkaVersion>
+    <AkkaPersistenceVersion>1.4.10</AkkaPersistenceVersion>
+    <AkkaPersistenceQueryVersion>1.4.10</AkkaPersistenceQueryVersion>
+    <AkkaRemoteVersion>1.4.10</AkkaRemoteVersion>
+    <AkkaRemoteTestKitVersion>1.4.10</AkkaRemoteTestKitVersion>
+    <AkkaClusterVersion>1.4.10</AkkaClusterVersion>
+    <AkkaClusterShardingVersion>1.4.10</AkkaClusterShardingVersion>
+    <AkkaClusterToolsVersion>1.4.10</AkkaClusterToolsVersion>
+    <AkkaTestKitVersion>1.4.10</AkkaTestKitVersion>
+    <AkkaClusterTestKitVersion>1.4.10</AkkaClusterTestKitVersion>
+    <AkkaTestKitXunitVersion>1.4.10</AkkaTestKitXunitVersion>
     <AkkatectureMultiNodeSharedVersion>0.5.1</AkkatectureMultiNodeSharedVersion>
     <XunitVersion>2.4.1</XunitVersion>
-    <XunitRunnerVSVersion>2.4.1</XunitRunnerVSVersion>
+    <XunitRunnerVSVersion>2.4.2</XunitRunnerVSVersion>
     <XunitRunnerUtilityVersion>2.4.1</XunitRunnerUtilityVersion>
-    <CoverletMSBuildVersion>2.8.0</CoverletMSBuildVersion>
-    <FluentAssertionsVersion>5.10.2</FluentAssertionsVersion>
-    <TestSdkVersion>16.5.0</TestSdkVersion>
+    <CoverletMSBuildVersion>2.9.0</CoverletMSBuildVersion>
+    <FluentAssertionsVersion>5.10.3</FluentAssertionsVersion>
+    <TestSdkVersion>16.6.1</TestSdkVersion>
     <SourceLinkGithubVersion>1.0.0</SourceLinkGithubVersion>
   </PropertyGroup>
 
