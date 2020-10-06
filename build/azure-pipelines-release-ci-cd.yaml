@@ -24,6 +24,12 @@ jobs:
       buildConfiguration: 'Release'
 
     steps:
+    - task: UseDotNet@2
+      displayName: 'Install [Dotnet SDK]'
+      inputs:
+        packageType: sdk
+        version: 2.2.300
+
     - template: templates/fake-template.yaml
       parameters:
         displayName: 'Restore [Akkatecture]'
