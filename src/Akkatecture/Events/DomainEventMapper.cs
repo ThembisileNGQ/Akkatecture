@@ -66,7 +66,8 @@ namespace Akkatecture.Events
                 eventEnvelope.Offset,
                 eventEnvelope.PersistenceId,
                 eventEnvelope.SequenceNr,
-                domainEvent);
+                domainEvent,
+                eventEnvelope.Timestamp);
 
             return newEventEnvelope;
         }

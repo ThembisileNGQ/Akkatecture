@@ -56,7 +56,7 @@ let installSonarScanner toolsDirectory =
         | _ -> failwith "SonarScanner failed to install"
 
 let installCoverlet toolsDirectory =
-    let arg = sprintf "tool install coverlet.console --tool-path %s" toolsDirectory
+    let arg = sprintf "tool install coverlet.console --version 1.7.2 --tool-path %s" toolsDirectory
 
     let execution = Shell.Exec (cmd = "dotnet", args = arg) 
 

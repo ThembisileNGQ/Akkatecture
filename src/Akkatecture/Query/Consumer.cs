@@ -78,7 +78,7 @@ namespace Akkatecture.Query
                 .Select(x =>
                 {
                     var domainEvent = mapper.FromJournal(x.Event, string.Empty).Events.Single();
-                    return new EventEnvelope(x.Offset, x.PersistenceId, x.SequenceNr, domainEvent);
+                    return new EventEnvelope(x.Offset, x.PersistenceId, x.SequenceNr, domainEvent, x.Timestamp);
                 });
         }
         
@@ -93,7 +93,7 @@ namespace Akkatecture.Query
                 .Select(x =>
                 {
                     var domainEvent = mapper.FromJournal(x.Event, string.Empty).Events.Single();
-                    return new EventEnvelope(x.Offset, x.PersistenceId, x.SequenceNr, domainEvent);
+                    return new EventEnvelope(x.Offset, x.PersistenceId, x.SequenceNr, domainEvent, x.Timestamp);
                 });
         }
     }
