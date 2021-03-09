@@ -5,3 +5,4 @@
 # Aggregate Tier Sponsors
 
 - Aaron Stannard @Aaronontheweb
+- David Rivera @mithril52
