@@ -3,7 +3,7 @@
 // Copyright (c) 2017-2020 Bartosz Sypytkowski
 // Modified from original source https://github.com/Horusiath/Akka.Persistence.Reminders
 //
-// Copyright (c) 2018 - 2020 Lutando Ngqakaza
+// Copyright (c) 2018 - 2021 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
 // 
 // 

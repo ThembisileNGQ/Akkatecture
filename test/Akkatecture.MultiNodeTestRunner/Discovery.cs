@@ -4,7 +4,7 @@
 // Copyright (c) 2013 - 2020 .NET Foundation
 // Modified from original source https://github.com/akkadotnet/akka.net
 //
-// Copyright (c) 2018 - 2020 Lutando Ngqakaza
+// Copyright (c) 2018 - 2021 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of

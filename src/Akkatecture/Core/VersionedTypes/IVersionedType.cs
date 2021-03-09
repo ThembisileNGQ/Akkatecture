@@ -1,10 +1,10 @@
 ﻿// The MIT License (MIT)
 //
-// Copyright (c) 2015-2020 Rasmus Mikkelsen
-// Copyright (c) 2015-2020 eBay Software Foundation
+// Copyright (c) 2015-2021 Rasmus Mikkelsen
+// Copyright (c) 2015-2021 eBay Software Foundation
 // Modified from original source https://github.com/eventflow/EventFlow
 //
-// Copyright (c) 2018 - 2020 Lutando Ngqakaza
+// Copyright (c) 2018 - 2021 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
 // 
 // 

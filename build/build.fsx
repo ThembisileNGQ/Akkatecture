@@ -47,7 +47,7 @@ let installCredentialProvider sourceDirectory endpointCredentials =
     Trace.logfn "Nugetfeedurls: %s" (env "VSS_NUGET_EXTERNAL_FEED_ENDPOINTS")
 
 let installSonarScanner toolsDirectory =
-    let arg = sprintf "tool install dotnet-sonarscanner --version 4.10.0 --tool-path %s" toolsDirectory
+    let arg = sprintf "tool install dotnet-sonarscanner --version 5.0.1 --tool-path %s" toolsDirectory
 
     let execution = Shell.Exec (cmd = "dotnet", args = arg) 
 

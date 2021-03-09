@@ -1,10 +1,10 @@
 ﻿// The MIT License (MIT)
 //
-// Copyright (c) 2015-2020 Rasmus Mikkelsen
-// Copyright (c) 2015-2020 eBay Software Foundation
+// Copyright (c) 2015-2021 Rasmus Mikkelsen
+// Copyright (c) 2015-2021 eBay Software Foundation
 // Modified from original source https://github.com/eventflow/EventFlow
 //
-// Copyright (c) 2018 - 2020 Lutando Ngqakaza
+// Copyright (c) 2018 - 2021 Lutando Ngqakaza
 // https://github.com/Lutando/Akkatecture 
 // 
 // 
@@ -74,7 +74,7 @@ namespace Akkatecture.Core
             // Modified from original
             // https://github.com/LogosBible/Logos.Utility/blob/master/src/Logos.Utility/GuidUtility.cs
             //
-            // Copyright 2007-2013 Logos Bible Software
+            // Copyright 2007-2021 Logos Bible Software
             // 
             // Permission is hereby granted, free of charge, to any person obtaining a copy of
             // this software and associated documentation files(the "Software"), to deal in
