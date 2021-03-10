@@ -30,7 +30,7 @@
     <AkkaClusterShardingVersion>1.4.16</AkkaClusterShardingVersion>
     <AkkaClusterToolsVersion>1.4.16</AkkaClusterToolsVersion>
     <AkkaTestKitVersion>1.4.16</AkkaTestKitVersion>
-    <AkkaClusterTestKitVersion>1.4.16</AkkaClusterTestKitVersion>
+    <AkkaClusterTestKitVersion>1.4.17</AkkaClusterTestKitVersion>
     <AkkaTestKitXunitVersion>1.4.16</AkkaTestKitXunitVersion>
     <AkkatectureMultiNodeSharedVersion>0.5.2</AkkatectureMultiNodeSharedVersion>
     <XunitVersion>2.4.1</XunitVersion>
