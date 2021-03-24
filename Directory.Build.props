@@ -27,7 +27,7 @@
     <AkkaRemoteVersion>1.4.17</AkkaRemoteVersion>
     <AkkaRemoteTestKitVersion>1.4.17</AkkaRemoteTestKitVersion>
     <AkkaClusterVersion>1.4.17</AkkaClusterVersion>
-    <AkkaClusterShardingVersion>1.4.17</AkkaClusterShardingVersion>
+    <AkkaClusterShardingVersion>1.4.18</AkkaClusterShardingVersion>
     <AkkaClusterToolsVersion>1.4.17</AkkaClusterToolsVersion>
     <AkkaTestKitVersion>1.4.17</AkkaTestKitVersion>
     <AkkaClusterTestKitVersion>1.4.17</AkkaClusterTestKitVersion>
