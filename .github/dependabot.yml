@@ -1,0 +1,80 @@
+version: 2
+updates:
+- package-ecosystem: nuget
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "04:00"
+  open-pull-requests-limit: 10
+  target-branch: dev
+  reviewers:
+  - Lutando
+  assignees:
+  - Lutando
+  ignore:
+  - dependency-name: coverlet.msbuild
+    versions:
+    - ">= 3.a, < 4"
+  - dependency-name: Microsoft.Extensions.DependencyInjection.Abstractions
+    versions:
+    - ">= 3.a, < 4"
+  - dependency-name: Microsoft.Extensions.DependencyInjection.Abstractions
+    versions:
+    - ">= 5.a, < 6"
+  - dependency-name: Microsoft.Extensions.DependencyModel
+    versions:
+    - ">= 3.a, < 4"
+  - dependency-name: Microsoft.Extensions.DependencyModel
+    versions:
+    - ">= 5.a, < 6"
+  - dependency-name: Akka.Remote
+    versions:
+    - 1.4.16
+    - 1.4.17
+    - 1.4.18
+  - dependency-name: Akka.Cluster
+    versions:
+    - 1.4.16
+    - 1.4.17
+    - 1.4.18
+  - dependency-name: Akka
+    versions:
+    - 1.4.16
+    - 1.4.17
+    - 1.4.18
+  - dependency-name: Akka.Cluster.TestKit
+    versions:
+    - 1.4.17
+    - 1.4.18
+  - dependency-name: Akka.Cluster.Sharding
+    versions:
+    - 1.4.16
+    - 1.4.17
+    - 1.4.18
+  - dependency-name: Akka.Persistence.Query
+    versions:
+    - 1.4.16
+    - 1.4.17
+    - 1.4.18
+  - dependency-name: Akka.TestKit
+    versions:
+    - 1.4.16
+    - 1.4.17
+    - 1.4.18
+  - dependency-name: Akka.Remote.TestKit
+    versions:
+    - 1.4.16
+    - 1.4.17
+    - 1.4.18
+  - dependency-name: Akka.Persistence
+    versions:
+    - 1.4.16
+    - 1.4.17
+    - 1.4.18
+  - dependency-name: Akka.TestKit.Xunit2
+    versions:
+    - 1.4.16
+    - 1.4.17
+  - dependency-name: Akka.Cluster.Tools
+    versions:
+    - 1.4.16
