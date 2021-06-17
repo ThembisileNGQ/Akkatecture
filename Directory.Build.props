@@ -23,7 +23,7 @@
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
     <AkkaVersion>1.4.17</AkkaVersion>
     <AkkaPersistenceVersion>1.4.17</AkkaPersistenceVersion>
-    <AkkaPersistenceQueryVersion>1.4.17</AkkaPersistenceQueryVersion>
+    <AkkaPersistenceQueryVersion>1.4.21</AkkaPersistenceQueryVersion>
     <AkkaRemoteVersion>1.4.17</AkkaRemoteVersion>
     <AkkaRemoteTestKitVersion>1.4.17</AkkaRemoteTestKitVersion>
     <AkkaClusterVersion>1.4.17</AkkaClusterVersion>
