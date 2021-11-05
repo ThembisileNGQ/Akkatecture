@@ -25,22 +25,22 @@ Go ahead and take a look at [our documentation](http://akkatecture.net/docs/gett
 
 Akkatecture comes with a few prescribed examples on how one might use it:
 
-* **[Simple](https://github.com/Lutando/Akkatecture/tree/dev/examples/simple):** A simple console based example that shows the most simple example of how to create an aggregate and issue commands to it.
+* **[Simple](https://github.com/AfterLutz/Akkatecture/tree/dev/examples/simple):** A simple console based example that shows the most simple example of how to create an aggregate and issue commands to it.
 
 * **[Walkthrough](https://github.com/Akkatecture/Walkthrough):** Tutorial style sample based on the walkthrough in the Akkatecture documentation. The walkthrough proposes domain that should be modelled based on some business requirements. The walkthrough goes step by step covering all the primitives and features covered in Akkatecture to give you an understanding of the framework. The beginning of the walkthrough can be found [here](https://akkatecture.net/docs/walkthrough-introduction).
 
 
-* **[Cluster](https://github.com/Lutando/Akkatecture/tree/dev/examples/cluster):** A more involved sample that shows you how to do distributed aggregates using clustering. Read the [readme](https://github.com/Lutando/Akkatecture/tree/dev/examples/cluster/README.md) for the sample for a good overview of the example.
+* **[Cluster](https://github.com/AfterLutz/Akkatecture/tree/dev/examples/cluster):** A more involved sample that shows you how to do distributed aggregates using clustering. Read the [readme](https://github.com/AfterLutz/Akkatecture/tree/dev/examples/cluster/README.md) for the sample for a good overview of the example.
 
-* **[Web](https://github.com/Lutando/Akkatecture/tree/dev/examples/web):** This sample shows how to integrate akka into an aspnet core project, specifically how to inject actor references when using akkatecture. Furthermore this project models a long running process that might be run behind a web application or something similar. Read the [readme](https://github.com/Lutando/Akkatecture/tree/dev/examples/web/README.md) for more detailed information about the example.
+* **[Web](https://github.com/AfterLutz/Akkatecture/tree/dev/examples/web):** This sample shows how to integrate akka into an aspnet core project, specifically how to inject actor references when using akkatecture. Furthermore this project models a long running process that might be run behind a web application or something similar. Read the [readme](https://github.com/AfterLutz/Akkatecture/tree/dev/examples/web/README.md) for more detailed information about the example.
 
-* **[Jobs](https://github.com/Lutando/Akkatecture/tree/dev/examples/jobs):** A simple sample that demonstrates how you would make a scheduled persistent job. Jobs are commands that can be persisted and scheduled to be executed at any arbitrary trigger point in time. Read the [readme](https://github.com/Lutando/Akkatecture/tree/dev/examples/jobs/README.md) for more detailed information about the example. The documentation for this can be found [here](https://akkatecture.net/docs/scheduled-jobs).
+* **[Jobs](https://github.com/AfterLutz/Akkatecture/tree/dev/examples/jobs):** A simple sample that demonstrates how you would make a scheduled persistent job. Jobs are commands that can be persisted and scheduled to be executed at any arbitrary trigger point in time. Read the [readme](https://github.com/AfterLutz/Akkatecture/tree/dev/examples/jobs/README.md) for more detailed information about the example. The documentation for this can be found [here](https://akkatecture.net/docs/scheduled-jobs).
 
-* **[Tests](https://github.com/Lutando/Akkatecture/tree/dev/test/Akkatecture.Tests):** The test examples found in the Akkatecture.Test project is there to provide assistance when doing testing for Akkatecture. There is a simple domain modelled within the [Akkatecture.TestHelpers](https://github.com/Lutando/Akkatecture/tree/dev/test/Akkatecture.TestHelpers) project that includes a model of an aggregate with a simple aggregate saga, and these are used to do simple black box style testing on Akkatecture using akka.net's TestKit.
+* **[Tests](https://github.com/AfterLutz/Akkatecture/tree/dev/test/Akkatecture.Tests):** The test examples found in the Akkatecture.Test project is there to provide assistance when doing testing for Akkatecture. There is a simple domain modelled within the [Akkatecture.TestHelpers](https://github.com/AfterLutz/Akkatecture/tree/dev/test/Akkatecture.TestHelpers) project that includes a model of an aggregate with a simple aggregate saga, and these are used to do simple black box style testing on Akkatecture using akka.net's TestKit.
 
 
 **Note:** This example is part of the Akkatecture simple example project, so checkout [the
-code](https://github.com/Lutando/Akkatecture/blob/master/examples/simple/Akkatecture.Examples.Application/Program.cs#L13) and give it a run.
+code](https://github.com/AfterLutz/Akkatecture/blob/master/examples/simple/Akkatecture.Examples.Application/Program.cs#L13) and give it a run.
 ```csharp
 //Create actor system
 var system = ActorSystem.Create("useraccount-example");
@@ -116,7 +116,7 @@ Akka.net gives us a wealth of good APIs out of the box that can be used to build
 
 ## Changelog
 
-Akkatecture uses the methods of [Keep A Changelog](https://github.com/olivierlacan/keep-a-changelog) to keep track of features or functionality that has been added, changed, deprecated, removed, fixed, or patched for security reasons. The changelog also serves as a source of truth for the project's [release notes](https://github.com/Lutando/Akkatecture/releases).
+Akkatecture uses the methods of [Keep A Changelog](https://github.com/olivierlacan/keep-a-changelog) to keep track of features or functionality that has been added, changed, deprecated, removed, fixed, or patched for security reasons. The changelog also serves as a source of truth for the project's [release notes](https://github.com/AfterLutz/Akkatecture/releases).
 
 ## Prerelease and Nightly Builds
 Prerelease feeds and nightly feeds (called alpha feeds in this project). Provide the most up to date packages for the project. Roughly speaking the prerelease feed is the most up to date packages that reflect master, and the nightly feed reflects the most up to packages derived from the dev branch. In other words, alpha feed is less stable than the prerelease feed but gets the features and fixes first. The access to the feeds: 
@@ -138,7 +138,7 @@ The MIT License (MIT)
 
 Copyright (c) 2018 - 2020 Lutando Ngqakaza
 
-https://github.com/Lutando/Akkatecture
+https://github.com/AfterLutz/Akkatecture
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
